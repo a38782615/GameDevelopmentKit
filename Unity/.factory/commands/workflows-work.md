@@ -7,43 +7,43 @@ argument-hint: 计划文件路径（可选）
 
 高效执行工作计划，保持质量并完成功能。
 
-## 执行工作流程
+## Execution Workflow
 
-### 阶段 1：快速启动
-1. 阅读计划并澄清任何歧义
-2. 设置环境（分支或工作树）
-3. 从计划任务创建待办列表
+### Phase 1: Quick Start
+1. Read plan and clarify any ambiguities
+2. Setup environment (branch or worktree)
+3. Create todo list from plan tasks
 
-### 阶段 2：执行
-1. 任务执行循环 - 边做边标记进度
-2. 遵循代码库中的现有模式
-3. 每次更改后持续测试
-4. 使用 TodoWrite 跟踪进度
+### Phase 2: Execute
+1. Task execution loop - mark progress as you go
+2. Follow existing patterns in codebase
+3. Test continuously after each change
+4. Track progress with TodoWrite
 
-### 阶段 3：质量检查
-1. 运行完整测试套件
-2. 运行代码检查
-3. 可选：对复杂更改使用审查代理
+### Phase 3: Quality Check
+1. Run full test suite
+2. Run linting
+3. Optional: Use reviewer agents for complex changes
 
-### 阶段 4：交付
-1. 使用约定格式创建提交
-2. 创建带摘要的拉取请求
-3. 通知完成
+### Phase 4: Ship It
+1. Create commit with conventional format
+2. Create pull request with summary
+3. Notify completion
 
-## 关键原则
+## Key Principles
 
-- **快速启动，更快执行** - 一次性澄清问题，然后执行
-- **计划是你的指南** - 遵循引用的模式
-- **边做边测** - 不要等到最后
-- **交付完整功能** - 不要让功能停在 80%
+- **Start Fast, Execute Faster** - Get clarification once, then execute
+- **The Plan is Your Guide** - Follow referenced patterns
+- **Test As You Go** - Don't wait until the end
+- **Ship Complete Features** - Don't leave features 80% done
 
-## 质量检查清单
+## Quality Checklist
 
-- [ ] 所有任务标记为已完成
-- [ ] 测试通过
-- [ ] 代码检查通过
-- [ ] 代码遵循现有模式
-- [ ] 提交信息遵循约定格式
+- [ ] All tasks marked completed
+- [ ] Tests pass
+- [ ] Linting passes
+- [ ] Code follows existing patterns
+- [ ] Commit messages follow conventional format
 
 ---
 

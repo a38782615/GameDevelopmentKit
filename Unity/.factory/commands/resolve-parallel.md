@@ -5,37 +5,37 @@ argument-hint: 文件或目录路径
 
 # /resolve-parallel
 
-并行解决代码文件中的 TODO 注释。
+Resolve TODO comments in code files in parallel.
 
-## 用法
+## Usage
 
 ```
-/resolve-parallel [文件或目录路径]
+/resolve-parallel [file or directory]
 ```
 
-## 目的
+## Purpose
 
-通过启动并行代理来查找和解决代码中的 TODO、FIXME 和 HACK 注释。
+Find and resolve TODO, FIXME, and HACK comments in code by launching parallel agents to address each one.
 
-## 流程
+## Process
 
-1. **扫描 TODO** - 查找所有 TODO/FIXME/HACK 注释
-2. **分类** - 按类型和优先级分组
-3. **启动并行代理** - 每个 TODO 一个代理
-4. **实现修复** - 每个代理解决其分配的 TODO
-5. **验证** - 运行测试确保修复有效
+1. **Scan for TODOs** - Find all TODO/FIXME/HACK comments
+2. **Categorize** - Group by type and priority
+3. **Launch Parallel Agents** - One agent per TODO
+4. **Implement Fixes** - Each agent resolves its assigned TODO
+5. **Verify** - Run tests to ensure fixes work
 
-## TODO 类型
+## TODO Types
 
-- `TODO` - 待实现的功能
-- `FIXME` - 待修复的 Bug
-- `HACK` - 待处理的技术债务
-- `XXX` - 需要关注
-- `OPTIMIZE` - 需要性能优化
+- `TODO` - Feature to implement
+- `FIXME` - Bug to fix
+- `HACK` - Technical debt to address
+- `XXX` - Needs attention
+- `OPTIMIZE` - Performance improvement needed
 
-## 输出
+## Output
 
-已解决 TODO 的汇总，包含：
-- 修改的文件
-- 已解决的 TODO
-- 任何剩余问题
+Summary of resolved TODOs with:
+- Files modified
+- TODOs resolved
+- Any remaining issues

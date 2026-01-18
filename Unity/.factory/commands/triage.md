@@ -5,46 +5,46 @@ argument-hint: 问题列表或目录
 
 # /triage
 
-对问题、bug 或任务进行分类和优先级排序。
+Triage and prioritize issues, bugs, or tasks.
 
-## 用法
+## Usage
 
 ```
-/triage [问题列表或目录]
+/triage [issue list or directory]
 ```
 
-## 目的
+## Purpose
 
-根据影响、工作量和紧急程度，系统地评估和排序问题、bug 或任务列表。
+Systematically evaluate and prioritize a list of issues, bugs, or tasks based on impact, effort, and urgency.
 
-## 分类标准
+## Triage Criteria
 
-### 严重程度
-- **P1 严重** - 系统宕机、数据丢失、安全漏洞
-- **P2 高** - 主要功能损坏、显著影响用户
-- **P3 中** - 功能降级、存在变通方案
-- **P4 低** - 小问题、外观问题、锦上添花
+### Severity Levels
+- **P1 CRITICAL** - System down, data loss, security breach
+- **P2 HIGH** - Major feature broken, significant user impact
+- **P3 MEDIUM** - Feature degraded, workaround exists
+- **P4 LOW** - Minor issue, cosmetic, nice-to-have
 
-### 工作量估算
-- **XS** - < 1 小时
-- **S** - 1-4 小时
-- **M** - 1-2 天
-- **L** - 3-5 天
-- **XL** - > 1 周
+### Effort Estimation
+- **XS** - < 1 hour
+- **S** - 1-4 hours
+- **M** - 1-2 days
+- **L** - 3-5 days
+- **XL** - > 1 week
 
-### 优先级矩阵
+### Priority Matrix
 
-| 影响 \ 工作量 | XS | S | M | L | XL |
+| Impact \ Effort | XS | S | M | L | XL |
 |-----------------|----|----|----|----|-----|
-| 严重 | 立即 | 立即 | 立即 | 计划 | 计划 |
-| 高 | 立即 | 尽快 | 尽快 | 计划 | 待定 |
-| 中 | 尽快 | 尽快 | 计划 | 待定 | 待定 |
-| 低 | 尽快 | 计划 | 待定 | 待定 | 待定 |
+| Critical | NOW | NOW | NOW | Plan | Plan |
+| High | NOW | Soon | Soon | Plan | Backlog |
+| Medium | Soon | Soon | Plan | Backlog | Backlog |
+| Low | Soon | Plan | Backlog | Backlog | Backlog |
 
-## 输出
+## Output
 
-优先级排序后的列表，包含：
-- 严重程度分配
-- 工作量估算
-- 建议操作（立即/尽快/计划/待定）
-- 已识别的依赖关系
+Prioritized list with:
+- Severity assignment
+- Effort estimate
+- Recommended action (NOW/Soon/Plan/Backlog)
+- Dependencies identified
