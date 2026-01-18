@@ -7,58 +7,58 @@ argument-hint: PR号、分支名或文件路径
 
 使用多代理分析进行详尽的代码审查。
 
-## Review Process
+## 审查流程
 
-### 1. Setup
-- Determine review target type
-- Checkout the branch being reviewed
-- Fetch PR metadata if applicable
+### 1. 准备
+- 确定审查目标类型
+- 检出待审查的分支
+- 如适用，获取 PR 元数据
 
-### 2. Parallel Agent Analysis
+### 2. 并行代理分析
 
-Launch these agents in parallel:
+并行启动以下代理：
 
-| Agent | Focus |
+| 代理 | 关注点 |
 |-------|-------|
-| `architecture-strategist` | Architectural compliance |
-| `code-simplicity-reviewer` | Simplicity and minimalism |
-| `security-sentinel` | Security vulnerabilities |
-| `performance-oracle` | Performance issues |
-| `pattern-recognition-specialist` | Patterns and anti-patterns |
-| `git-history-analyzer` | Code evolution context |
+| `architecture-strategist` | 架构合规性 |
+| `code-simplicity-reviewer` | 简洁性和极简主义 |
+| `security-sentinel` | 安全漏洞 |
+| `performance-oracle` | 性能问题 |
+| `pattern-recognition-specialist` | 模式和反模式 |
+| `git-history-analyzer` | 代码演进上下文 |
 
-### 3. Stakeholder Perspectives
+### 3. 利益相关者视角
 
-Consider viewpoints of:
-- **Developer**: Ease of understanding and modification
-- **Operations**: Deployment and monitoring
-- **End User**: Intuitiveness and performance
-- **Security Team**: Attack surface and compliance
-- **Business**: ROI and risks
+考虑以下角色的观点：
+- **开发者**：易于理解和修改
+- **运维**：部署和监控
+- **最终用户**：直观性和性能
+- **安全团队**：攻击面和合规性
+- **业务方**：投资回报率和风险
 
-### 4. Scenario Exploration
+### 4. 场景探索
 
-- Happy path
-- Invalid inputs
-- Boundary conditions
-- Concurrent access
-- Scale testing
-- Network issues
-- Security attacks
+- 正常路径
+- 无效输入
+- 边界条件
+- 并发访问
+- 规模测试
+- 网络问题
+- 安全攻击
 
-### 5. Findings Synthesis
+### 5. 发现汇总
 
-Categorize findings by severity:
-- **P1 CRITICAL** - Blocks merge
-- **P2 IMPORTANT** - Should fix
-- **P3 NICE-TO-HAVE** - Enhancements
+按严重程度分类发现：
+- **P1 严重** - 阻止合并
+- **P2 重要** - 应该修复
+- **P3 建议** - 改进建议
 
-## Output
+## 输出
 
-Summary report with:
-- Total findings count by severity
-- Created todo files for each finding
-- Recommended next steps
+汇总报告，包含：
+- 按严重程度统计的发现总数
+- 为每个发现创建的待办文件
+- 建议的后续步骤
 
 ---
 

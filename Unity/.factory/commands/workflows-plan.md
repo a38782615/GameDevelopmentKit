@@ -7,12 +7,12 @@ argument-hint: 功能描述
 
 将功能描述、bug报告或改进想法转换为结构化的 markdown 计划文档。
 
-## Workflow
+## 工作流程
 
-1. **Repository Research** - Understand project conventions and patterns
-2. **Issue Planning** - Draft clear, actionable plan structure
-3. **Choose Detail Level** - **必须询问用户**选择详细程度，等待回复后再继续
-4. **Create Plan File** - Write to `plans/<issue_title>.md`
+1. **仓库研究** - 了解项目约定和模式
+2. **问题规划** - 起草清晰、可执行的计划结构
+3. **选择详细程度** - **必须询问用户**选择详细程度，等待回复后再继续
+4. **创建计划文件** - 写入 `plans/<issue_title>.md`
 
 ## 执行规则（必须遵守）
 
@@ -25,34 +25,34 @@ argument-hint: 功能描述
 
 **等待用户回复后，再根据选择的级别创建计划文档。不得跳过此步骤。**
 
-## Detail Levels
+## 详细程度级别
 
-### MINIMAL (Quick Issue)
-- Problem statement
-- Basic acceptance criteria
-- Essential context only
+### MINIMAL（快速问题）
+- 问题陈述
+- 基本验收标准
+- 仅包含必要上下文
 
-### MORE (Standard Issue)
-- Detailed background and motivation
-- Technical considerations
-- Success metrics
-- Dependencies and risks
+### MORE（标准问题）
+- 详细背景和动机
+- 技术考量
+- 成功指标
+- 依赖和风险
 
-### A LOT (Comprehensive Issue)
-- Detailed implementation phases
-- Alternative approaches considered
-- Resource requirements and timeline
-- Risk mitigation strategies
+### A LOT（全面问题）
+- 详细实现阶段
+- 考虑过的替代方案
+- 资源需求和时间线
+- 风险缓解策略
 
-## Output
+## 输出
 
-Plan file saved to `plans/<issue_title>.md`
+计划文件保存到 `plans/<issue_title>.md`
 
-## Next Steps After Planning
+## 规划后的后续步骤
 
-1. Run `/workflows-work` to execute the plan
-2. Run `/workflows-review` after implementation
-3. Run `/workflows-compound` to document learnings
+1. 运行 `/workflows-work` 执行计划
+2. 实现后运行 `/workflows-review`
+3. 运行 `/workflows-compound` 记录经验教训
 
 ---
 

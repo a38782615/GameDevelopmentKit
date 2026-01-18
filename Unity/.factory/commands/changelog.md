@@ -10,47 +10,47 @@ Create engaging changelogs for recent merges.
 ## Usage
 
 ```
-/changelog [since date or commit]
+/changelog [起始日期或 commit]
 ```
 
-## Purpose
+## 目的
 
-Generate a well-formatted changelog from recent git history, suitable for release notes or team updates.
+从最近的 git 历史生成格式良好的变更日志，适用于发布说明或团队更新。
 
-## Process
+## 流程
 
-1. **Gather Commits** - Read git log since specified point
-2. **Categorize Changes** - Group by type (feat, fix, refactor, etc.)
-3. **Extract Highlights** - Identify notable changes
-4. **Format Output** - Create readable changelog
+1. **收集提交** - 读取指定时间点以来的 git 日志
+2. **分类变更** - 按类型分组（feat、fix、refactor 等）
+3. **提取亮点** - 识别值得注意的变更
+4. **格式化输出** - 创建可读的变更日志
 
-## Changelog Format
+## 变更日志格式
 
 ```markdown
-# Changelog
+# 变更日志
 
 ## [Version] - YYYY-MM-DD
 
-### Added
-- New feature description
+### 新增
+- 新功能描述
 
-### Changed
-- Change description
+### 变更
+- 变更描述
 
-### Fixed
-- Bug fix description
+### 修复
+- Bug 修复描述
 
-### Removed
-- Removed feature description
+### 移除
+- 移除的功能描述
 ```
 
-## Commit Type Mapping
+## 提交类型映射
 
-| Prefix | Category |
+| 前缀 | 分类 |
 |--------|----------|
-| feat | Added |
-| fix | Fixed |
-| refactor | Changed |
-| docs | Documentation |
-| test | Testing |
-| chore | Maintenance |
+| feat | 新增 |
+| fix | 修复 |
+| refactor | 变更 |
+| docs | 文档 |
+| test | 测试 |
+| chore | 维护 |

@@ -7,22 +7,22 @@ argument-hint: 问题描述（可选）
 
 记录最近解决的问题，积累团队知识。
 
-## Purpose
+## 目的
 
-Captures problem solutions while context is fresh, creating structured documentation for future reference.
+在上下文还清晰时捕获问题解决方案，创建结构化文档供未来参考。
 
-**Why "compound"?** Each documented solution compounds your team's knowledge. The first time you solve a problem takes research. Document it, and the next occurrence takes minutes.
+**为什么叫"compound"（复利）？** 每个记录的解决方案都会让团队知识产生复利效应。第一次解决问题需要研究。记录下来后，下次遇到同样问题只需几分钟。
 
-## What It Captures
+## 捕获内容
 
-- **Problem symptom**: Exact error messages, observable behavior
-- **Investigation steps tried**: What didn't work and why
-- **Root cause analysis**: Technical explanation
-- **Working solution**: Step-by-step fix with code examples
-- **Prevention strategies**: How to avoid in future
-- **Cross-references**: Links to related issues and docs
+- **问题症状**：具体错误信息、可观察的行为
+- **尝试过的排查步骤**：什么方法没用以及原因
+- **根因分析**：技术层面的解释
+- **有效解决方案**：带代码示例的分步修复
+- **预防策略**：如何避免未来再次发生
+- **交叉引用**：相关问题和文档的链接
 
-## Output Categories
+## 输出分类
 
 - build-errors/
 - test-failures/
@@ -34,11 +34,11 @@ Captures problem solutions while context is fresh, creating structured documenta
 - integration-issues/
 - logic-errors/
 
-## Execution Rules (MANDATORY)
+## 执行规则（必须遵守）
 
 执行此命令时，**必须**使用 Task 工具启动子代理来完成文档：
 
-### Step 1: 启动子代理（并行）
+### 步骤 1：启动子代理（并行）
 
 使用 Task 工具启动 `technical-writer` 子代理，提供以下信息：
 
@@ -58,19 +58,19 @@ Captures problem solutions while context is fresh, creating structured documenta
 分类选择: {根据问题类型选择 Output Categories}
 ```
 
-### Step 2: 确认完成
+### 步骤 2：确认完成
 
 子代理完成后，更新 TODO 列表标记文档已创建。
 
-## The Compounding Philosophy
+## 复利哲学
 
 ```
 Plan -> Work -> Review -> Compound -> Repeat
 ```
 
-Each cycle compounds: plans inform future plans, reviews catch more issues, patterns get documented.
+每个循环都在积累：计划为未来的计划提供参考，审查发现更多问题，模式被记录下来。
 
-**Each unit of engineering work should make subsequent units easier—not harder.**
+**每一单位的工程工作都应该让后续工作变得更容易——而不是更难。**
 
 ---
 

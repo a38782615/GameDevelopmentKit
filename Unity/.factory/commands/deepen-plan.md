@@ -5,39 +5,39 @@ argument-hint: 计划文件路径
 
 # /deepen-plan
 
-Enhance plans with parallel research agents for each section.
+使用并行研究代理增强计划的每个部分。
 
-## Usage
+## 用法
 
 ```
-/deepen-plan [plan file path]
+/deepen-plan [计划文件路径]
 ```
 
-## Purpose
+## 目的
 
-Takes an existing plan and enriches each section with deeper research, best practices, and implementation details using parallel agents.
+读取现有计划，使用并行代理为每个部分补充更深入的研究、最佳实践和实现细节。
 
-## Process
+## 流程
 
-1. **Parse Plan** - Read the plan file and identify sections
-2. **Launch Parallel Research** - For each section:
-   - `best-practices-researcher` - Industry standards
-   - `repo-research-analyst` - Existing patterns in codebase
-   - `performance-oracle` - Performance considerations
-3. **Synthesize Results** - Merge findings into enhanced plan
-4. **Update Plan File** - Write enriched version
+1. **解析计划** - 读取计划文件并识别各个部分
+2. **启动并行研究** - 为每个部分启动：
+   - `best-practices-researcher` - 行业标准
+   - `repo-research-analyst` - 代码库中的现有模式
+   - `performance-oracle` - 性能考量
+3. **综合结果** - 将研究发现合并到增强计划中
+4. **更新计划文件** - 写入增强版本
 
-## When to Use
+## 何时使用
 
-- After `/workflows:plan` for complex features
-- When you need more implementation details
-- Before starting work on unfamiliar areas
-- When the plan feels too high-level
+- 对复杂功能执行 `/workflows:plan` 之后
+- 当你需要更多实现细节时
+- 在开始不熟悉领域的工作之前
+- 当计划感觉太高层次时
 
-## Output
+## 输出
 
-Enhanced plan file with:
-- Deeper technical details
-- Code examples from codebase
-- Best practices references
-- Performance considerations
+增强的计划文件，包含：
+- 更深入的技术细节
+- 代码库中的代码示例
+- 最佳实践参考
+- 性能考量
