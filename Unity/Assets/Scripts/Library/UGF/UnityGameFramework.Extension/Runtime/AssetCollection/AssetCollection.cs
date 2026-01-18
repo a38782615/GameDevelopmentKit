@@ -17,16 +17,45 @@ namespace UnityGameFramework.Extension
     [CreateAssetMenu(fileName = "AssetCollection", menuName = "UGF/AssetCollection")]
     public sealed class AssetCollection : SerializedScriptableObject
     {
+        [OdinSerialize, Searchable]
+        [DictionaryDrawerSettings(KeyLabel = "Path", ValueLabel = "Object", IsReadOnly = true)]
+        private Dictionary<string, Object> m_AssetDict = new Dictionary<string, Object>();
+
+        public T GetAsset<T>(string path) where T : Object
+        {
+            m_AssetDict.TryGetValue(path, out Object obj);
+            return (T)obj;
+        }
+
+        public Dictionary<string, Object>.KeyCollection Names
+        {
+            get
+            {
+                return m_AssetDict.Keys;
+            }
+        }
+
+        public Dictionary<string, Object>.ValueCollection Assets
+        {
+            get
+            {
+                return m_AssetDict.Values;
+            }
+        }
+
 #if UNITY_EDITOR
         private void Awake()
         {
-            Pack();
+            if (!string.IsNullOrEmpty(AssetDatabase.GetAssetPath(this)))
+            {
+                Pack();
+            }
         }
 
         [SerializeField]
         private string m_CollectionPatterns;
         [SerializeField]
-        [OnValueChanged("OnPathChange", IncludeChildren = true)]
+        [OnValueChanged(nameof(OnPathChange), IncludeChildren = true)]
         [AssetsOnly]
         private List<DefaultAsset> m_CollectionPaths = new List<DefaultAsset>();
         
@@ -99,14 +128,5 @@ namespace UnityGameFramework.Extension
             }
         }
 #endif
-        [OdinSerialize, Searchable]
-        [DictionaryDrawerSettings(KeyLabel = "Path", ValueLabel = "Object", IsReadOnly = true)]
-        private Dictionary<string, Object> m_AssetDict = new Dictionary<string, Object>();
-
-        public T GetAsset<T>(string path) where T : Object
-        {
-            m_AssetDict.TryGetValue(path, out Object obj);
-            return (T)obj;
-        }
     }
 }
