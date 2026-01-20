@@ -16,6 +16,14 @@
     "UnityMCP": {
       "type": "http",
       "url": "http://localhost:7080/mcp"
+    },
+    "excel": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "excel-mcp-server",
+        "stdio"
+      ]
     }
   }
 }
