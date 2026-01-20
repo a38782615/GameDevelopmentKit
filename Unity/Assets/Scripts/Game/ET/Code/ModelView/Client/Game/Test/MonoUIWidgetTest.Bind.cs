@@ -19,7 +19,7 @@ namespace ET.Client
 
 #if UNITY_EDITOR
         [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
-        [Sirenix.OdinInspector.GUIColor(1,0.8f,0), Sirenix.OdinInspector.PropertyOrder(-99999)]
+        [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
         [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
         private string BindDataExitEmptyWarning => "BindData exit empty, please check.";
 

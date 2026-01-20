@@ -1,0 +1,17 @@
+﻿using Cysharp.Threading.Tasks;
+
+namespace ET.Client
+{
+	[MessageHandler(SceneType.GenAtom)]
+	public class M2C_PathfindingResultHandler : MessageHandler<Scene, M2C_PathfindingResult>
+	{
+		protected override async UniTask Run(Scene root, M2C_PathfindingResult message)
+		{
+			Unit unit = root.CurrentScene().GetComponent<UnitComponent>().Get(message.Id);
+
+			float speed = unit.GetComponent<NumericComponent>().GetAsFloat(NumericType.Speed);
+
+			await unit.GetComponent<MoveComponent>().MoveToAsync(message.Points, speed);
+		}
+	}
+}

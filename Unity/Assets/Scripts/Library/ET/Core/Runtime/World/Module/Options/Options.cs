@@ -15,7 +15,7 @@ namespace ET
         BenchmarkClient,
         BenchmarkServer,
         
-        Demo,
+        GenAtom,
         LockStep,
     }
 

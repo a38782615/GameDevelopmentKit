@@ -3,7 +3,7 @@
     "Id": 801,
     "CSName": "UIHelp",
     "Desc": "帮助界面",
-    "AssetName": "Demo/UIHelp",
+    "AssetName": "GenAtom/UIHelp",
     "UIGroupName": "Pop",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false
@@ -12,7 +12,7 @@
     "Id": 802,
     "CSName": "UILobby",
     "Desc": "大厅面",
-    "AssetName": "Demo/UILobby",
+    "AssetName": "GenAtom/UILobby",
     "UIGroupName": "Pop",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false
@@ -21,7 +21,7 @@
     "Id": 803,
     "CSName": "UILogin",
     "Desc": "登录界面",
-    "AssetName": "Demo/UILogin",
+    "AssetName": "GenAtom/UILogin",
     "UIGroupName": "Default",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false

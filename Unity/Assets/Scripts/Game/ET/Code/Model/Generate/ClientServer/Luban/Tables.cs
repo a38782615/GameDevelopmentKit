@@ -20,7 +20,7 @@ public partial class Tables
     public DTOneConfig DTOneConfig { private set; get; }
     public DTAIConfig DTAIConfig { private set; get; }
     public DTUnitConfig DTUnitConfig { private set; get; }
-    public DTDemo DTDemo { private set; get; }
+    public DTGenAtom DTGenAtom { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -53,9 +53,9 @@ public partial class Tables
         DTUnitConfig = new DTUnitConfig(() => loader("dtunitconfig"));
         loadTasks.Add(DTUnitConfig.LoadAsync());
         _tables.Add("DTUnitConfig", DTUnitConfig);
-        DTDemo = new DTDemo(() => loader("dtdemo"));
-        loadTasks.Add(DTDemo.LoadAsync());
-        _tables.Add("DTDemo", DTDemo);
+        DTGenAtom = new DTGenAtom(() => loader("dtgenatom"));
+        loadTasks.Add(DTGenAtom.LoadAsync());
+        _tables.Add("DTGenAtom", DTGenAtom);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -73,7 +73,7 @@ public partial class Tables
         DTOneConfig.ResolveRef(this);
         DTAIConfig.ResolveRef(this);
         DTUnitConfig.ResolveRef(this);
-        DTDemo.ResolveRef(this);
+        DTGenAtom.ResolveRef(this);
         PostResolveRef();
     }
 

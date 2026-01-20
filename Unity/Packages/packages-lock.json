@@ -27,6 +27,14 @@
       "dependencies": {},
       "hash": "93c7e64d2fa1b8ce1798f0cbce75034f63a45c04"
     },
+    "com.boxqkrtm.ide.cursor": {
+      "version": "file:com.unity.ide.cursor",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.9"
+      }
+    },
     "com.code-philosophy.hybridclr": {
       "version": "https://github.com/focus-creative-games/hybridclr_unity.git",
       "depth": 0,
@@ -68,6 +76,15 @@
       "source": "git",
       "dependencies": {},
       "hash": "33356da2c43fa28397192baee70910c978e3169f"
+    },
+    "com.coplaydev.unity-mcp": {
+      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "hash": "aaf6308b331f6cbcc2a41f11d90ac2109154343e"
     },
     "com.cysharp.memorypack": {
       "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/Plugins/MemoryPack#1.10.0",
@@ -299,7 +316,7 @@
     },
     "com.unity.test-framework": {
       "version": "1.6.0",
-      "depth": 2,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {
         "com.unity.ext.nunit": "2.0.3",
