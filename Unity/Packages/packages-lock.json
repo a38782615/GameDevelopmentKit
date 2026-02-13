@@ -381,28 +381,28 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "d2be8583c8790c9dec00355e7fdb4ffc36efeefc"
+      "hash": "fb636d1db98d7cc7c9690ce01b64c3bcdd732b1a"
     },
     "me.xw.protobufunity": {
       "version": "https://github.com/XuToWei/Protobuf-Unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "edb6f89f22472bac82dd27c3bd40906aeff0cb94"
+      "hash": "749522159547e3aa80110e3ea747f294f0e2caf3"
     },
     "me.xw.reactivebinding": {
       "version": "https://github.com/XuToWei/ReactiveBinding.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "56b0900a95fc44d09797fb62f29e8ea5ed3961c4"
+      "hash": "9f16082a3e06c1f8562956d230e15b7ec49035fb"
     },
     "me.xw.statecontroller": {
       "version": "https://github.com/XuToWei/StateController.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "889687aacf5a0a592e494d31838dc107c1db4e31"
+      "hash": "70eee1ee18304328efb281a716fac722dcdf11cb"
     },
     "me.xw.toolbarextension": {
       "version": "https://github.com/XuToWei/ToolbarExtension.git",

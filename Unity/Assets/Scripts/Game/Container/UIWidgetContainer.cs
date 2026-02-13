@@ -8,23 +8,36 @@ namespace Game
         private readonly List<AUIWidget> m_UIWidgets = new List<AUIWidget>();
         public List<AUIWidget> UIWidgets => m_UIWidgets;
 
-        public AUGuiForm Owner
+        public AUIForm UIFormOwner
         {
             get;
             private set;
         }
 
-        public static UIWidgetContainer Create(AUGuiForm owner)
+        public static UIWidgetContainer Create(AUIForm uiFormOwner)
         {
             UIWidgetContainer uiWidgetContainer = ReferencePool.Acquire<UIWidgetContainer>();
-            uiWidgetContainer.Owner = owner;
+            uiWidgetContainer.UIFormOwner = uiFormOwner;
             return uiWidgetContainer;
+        }
+        
+        public void GetAllUIWidgets(List<AUIWidget> results)
+        {
+            if (results == null)
+            {
+                throw new GameFrameworkException("Results is invalid.");
+            }
+            results.Clear();
+            foreach (AUIWidget uiWidget in m_UIWidgets)
+            {
+                results.Add(uiWidget);
+            }
         }
 
         public void Clear()
         {
             m_UIWidgets.Clear();
-            Owner = null;
+            UIFormOwner = null;
         }
 
         public void AddUIWidget(AUIWidget uiWidget, object userData = null)
@@ -35,10 +48,10 @@ namespace Game
             }
             if (m_UIWidgets.Contains(uiWidget))
             {
-                throw new GameFrameworkException(Utility.Text.Format("Can't duplicate add UIWidget : '{0}'!", uiWidget.CachedTransform.name));
+                throw new GameFrameworkException(Utility.Text.Format("Can't duplicate add UIWidget : '{0}'!", uiWidget.CachedRectTransform.name));
             }
             m_UIWidgets.Add(uiWidget);
-            uiWidget.SetUIFormOwner(Owner.UIForm);
+            uiWidget.SetUIFormOwner(UIFormOwner);
             uiWidget.OnInit(userData);
         }
 
@@ -55,7 +68,7 @@ namespace Game
             }
             if (!m_UIWidgets.Remove(uiWidget))
             {
-                throw new GameFrameworkException(Utility.Text.Format("UIWidget : '{0}' not in container.", uiWidget.CachedTransform.name));
+                throw new GameFrameworkException(Utility.Text.Format("UIWidget : '{0}' not in container.", uiWidget.CachedRectTransform.name));
             }
         }
 
@@ -81,7 +94,7 @@ namespace Game
             }
             if (!m_UIWidgets.Contains(uiWidget))
             {
-                throw new GameFrameworkException(Utility.Text.Format("Can't open UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, Owner.Name));
+                throw new GameFrameworkException(Utility.Text.Format("Can't open UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, UIFormOwner.Name));
             }
             if (uiWidget.Available)
             {
@@ -98,7 +111,7 @@ namespace Game
         public void DynamicOpenUIWidget(AUIWidget uiWidget, object userData = null)
         {
             OpenUIWidget(uiWidget, userData);
-            uiWidget.OnDepthChanged(Owner.UIForm.UIGroup.Depth, Owner.UIForm.DepthInUIGroup);
+            uiWidget.OnDepthChanged(UIFormOwner.UIForm.UIGroup.Depth, UIFormOwner.UIForm.DepthInUIGroup);
         }
 
         public void CloseUIWidget(AUIWidget uiWidget, bool isShutdown, object userData = null)
@@ -109,7 +122,7 @@ namespace Game
             }
             if (!m_UIWidgets.Contains(uiWidget))
             {
-                throw new GameFrameworkException(Utility.Text.Format("Can't open UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, Owner.Name));
+                throw new GameFrameworkException(Utility.Text.Format("Can't open UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, UIFormOwner.Name));
             }
             if (!uiWidget.Available)
             {
