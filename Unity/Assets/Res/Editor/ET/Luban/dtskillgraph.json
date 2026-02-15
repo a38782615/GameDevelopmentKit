@@ -1,0 +1,590 @@
+[
+  {
+    "Id": 2001,
+    "Name": "BeRecBlood",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 2,
+        "content": "{\"guid\":\"a8c2d6c0-65f1-4bed-8a6a-70197e84bb56\",\"nodeType\":2,\"position\":{\"x\":933.3333740234375,\"y\":226.6666717529297},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"healSourceType\":0,\"healFixedValue\":2.0,\"healFormula\":\"\",\"healMMCType\":0,\"healSetByCallerKey\":\"\",\"healMMCCaptureAttribute\":202,\"healMMCAttributeSource\":0,\"healMMCCoefficient\":1.0,\"healMMCUseSnapshot\":true,\"healMultiplyByStackCount\":false,\"healCalculationType\":0}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"d086a8c9-8557-4a61-8fd2-64b3c1e543a3\",\"nodeType\":14,\"position\":{\"x\":1148.666748046875,\"y\":208.00001525878907},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"positionBindingName\":\"head\",\"textType\":1,\"fixedText\":\"\",\"contextDataKey\":\"Heal\",\"textColor\":{\"r\":0.04063582420349121,\"g\":1.0,\"b\":0.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f\",\"nodeType\":10,\"position\":{\"x\":370.6666564941406,\"y\":484.6666564941406},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.BeRecBlood\",\"_hashCode\":-1099994396,\"_shortName\":\"被动回血\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"3\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 11,
+        "content": "{\"guid\":\"426755b7-c39a-4524-9cb5-960a31a19c10\",\"nodeType\":11,\"position\":{\"x\":587.3333740234375,\"y\":114.66667175292969},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"10\",\"isPeriodic\":true,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":1,\"stackLimit\":1,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[{\"_name\":\"CD.BeRecBlood\",\"_hashCode\":-1099994396,\"_shortName\":\"被动回血\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"cancelOnAbilityEnd\":true,\"buffId\":0}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"d5809887-df6e-4604-bd09-36cef191ce83\",\"nodeType\":0,\"position\":{\"x\":210.66668701171876,\"y\":114.66667175292969},\"targetType\":1,\"skillId\":2001,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[{\"eventType\":2,\"customEventTag\":\"\"}]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"426755b7-c39a-4524-9cb5-960a31a19c10\",\"outputPortName\":\"每周期执行\",\"inputNodeGuid\":\"a8c2d6c0-65f1-4bed-8a6a-70197e84bb56\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"a8c2d6c0-65f1-4bed-8a6a-70197e84bb56\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"d086a8c9-8557-4a61-8fd2-64b3c1e543a3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"d5809887-df6e-4604-bd09-36cef191ce83\",\"outputPortName\":\"激活\",\"inputNodeGuid\":\"426755b7-c39a-4524-9cb5-960a31a19c10\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"426755b7-c39a-4524-9cb5-960a31a19c10\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1002,
+    "Name": "Blood",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":677.5999755859375,\"y\":-1998.4000244140625},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46136},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.4000244140625,\"y\":-2019.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.4000244140625,\"y\":-1825.5999755859375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.Blood\",\"_hashCode\":274000851,\"_shortName\":\"Blood\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"3\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"nodeType\":14,\"position\":{\"x\":383.20001220703127,\"y\":-1531.199951171875},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":1.0,\"g\":0.0,\"b\":0.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"011aad56-e96c-41eb-9d85-e793d74a40bb\",\"nodeType\":7,\"position\":{\"x\":677.5999755859375,\"y\":-1879.199951171875},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"nodeType\":1,\"position\":{\"x\":195.20001220703126,\"y\":-1761.5999755859375},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":3.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":true,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 11,
+        "content": "{\"guid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"nodeType\":11,\"position\":{\"x\":-160.8000030517578,\"y\":-1761.5999755859375},\"targetType\":0,\"assetTags\":{\"_tags\":[{\"_name\":\"Buff.DeBuff.Dot\",\"_hashCode\":-637848644,\"_shortName\":\"Dot\",\"_ancestorHashCodes\":[937056111,321157895],\"_ancestorNames\":[\"Buff\",\"Buff.DeBuff\"]}]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"10\",\"isPeriodic\":true,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":1,\"stackLimit\":3,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":1,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"buffId\":0}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":-452.0,\"y\":-1786.4000244140625},\"targetType\":1,\"searchShapeType\":1,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":5.0,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-472.0,\"y\":-2380.800048828125},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Attack_02\",\"animationDuration\":\"22\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":7,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":22,\"portId\":\"97dc121c-84b7-4f94-9997-02e0e5b2ea6c\"}],\"timeCues\":[{\"startTime\":7,\"endTime\":48,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.4000244140625,\"y\":-1853.5999755859375},\"targetType\":1,\"skillId\":1002,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.Blood\",\"_hashCode\":274000851,\"_shortName\":\"Blood\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]},{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"outputPortName\":\"每周期执行\",\"inputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"97dc121c-84b7-4f94-9997-02e0e5b2ea6c\",\"inputNodeGuid\":\"011aad56-e96c-41eb-9d85-e793d74a40bb\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 7001,
+    "Name": "FireCircle",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.6666259765625,\"y\":-2011.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"nodeType\":1,\"position\":{\"x\":46.66668701171875,\"y\":-1808.666748046875},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":10.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":false,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"2d7e41c4-8e90-4b61-879c-4b2e5b9486db\",\"nodeType\":14,\"position\":{\"x\":408.6666564941406,\"y\":-1747.3333740234375},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":0.0,\"g\":0.323091983795166,\"b\":1.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"3aafa9a5-4766-4204-91ab-d797aeb3c0e1\",\"nodeType\":7,\"position\":{\"x\":580.6666259765625,\"y\":-1987.3333740234375},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-491.33331298828127,\"y\":-2478.66650390625},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45210},\"animationName\":\"Attack\",\"animationDuration\":\"24\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":11,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":24,\"portId\":\"7ecf9fe6-7c5e-46ae-bade-7922214225e2\"}],\"timeCues\":[]}"
+      },
+      {
+        "nodeType": 8,
+        "content": "{\"guid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"nodeType\":8,\"position\":{\"x\":-401.33331298828127,\"y\":-1826.666748046875},\"targetType\":2,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"launchPositionSource\":0,\"launchBindingName\":\"center\",\"targetPositionSource\":1,\"targetBindingName\":\"center\",\"projectileTargetType\":0,\"flyOver\":false,\"offsetAngle\":0.0,\"curveHeight\":0.0,\"projectilePrefab\":{\"instanceID\":46040},\"speed\":3.0,\"maxDistance\":10.0,\"collisionRadius\":0.5,\"isPiercing\":false,\"maxPierceCount\":1,\"collisionTargetTags\":{\"_tags\":[]},\"collisionExcludeTags\":{\"_tags\":[]},\"isBouncing\":false,\"bounceTargetMode\":0,\"maxBounceCount\":3,\"bounceSearchRadius\":10.0,\"canBounceToSameTarget\":false,\"bounceAngleOffset\":0.0}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1220.6666259765625,\"y\":-1747.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.FireCircle\",\"_hashCode\":522143731,\"_shortName\":\"FireCircle\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"1\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-880.6666259765625,\"y\":-1851.3333740234375},\"targetType\":1,\"skillId\":7001,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.Wind\",\"_hashCode\":1982736573,\"_shortName\":\"Wind\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[{\"_name\":\"Buff.DeBuff.Stun\",\"_hashCode\":1791562953,\"_shortName\":\"Stun\",\"_ancestorHashCodes\":[937056111,321157895],\"_ancestorNames\":[\"Buff\",\"Buff.DeBuff\"]}]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"outputPortName\":\"碰撞时\",\"inputNodeGuid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"2d7e41c4-8e90-4b61-879c-4b2e5b9486db\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"7ecf9fe6-7c5e-46ae-bade-7922214225e2\",\"inputNodeGuid\":\"3aafa9a5-4766-4204-91ab-d797aeb3c0e1\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1010,
+    "Name": "FireCircle2",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.6666259765625,\"y\":-2011.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":-10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"nodeType\":1,\"position\":{\"x\":46.66668701171875,\"y\":-1808.666748046875},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":10.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":false,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"2d7e41c4-8e90-4b61-879c-4b2e5b9486db\",\"nodeType\":14,\"position\":{\"x\":408.6666564941406,\"y\":-1747.3333740234375},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":0.0,\"g\":0.323091983795166,\"b\":1.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"3aafa9a5-4766-4204-91ab-d797aeb3c0e1\",\"nodeType\":7,\"position\":{\"x\":580.6666259765625,\"y\":-1987.3333740234375},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-491.33331298828127,\"y\":-2478.66650390625},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Attack_01\",\"animationDuration\":\"18\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":11,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":24,\"portId\":\"7ecf9fe6-7c5e-46ae-bade-7922214225e2\"}],\"timeCues\":[]}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1220.6666259765625,\"y\":-1747.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.FireCircle\",\"_hashCode\":522143731,\"_shortName\":\"FireCircle\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"1\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.6666259765625,\"y\":-1851.3333740234375},\"targetType\":1,\"skillId\":1010,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.FireCircle\",\"_hashCode\":522143731,\"_shortName\":\"FireCircle\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      },
+      {
+        "nodeType": 8,
+        "content": "{\"guid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"nodeType\":8,\"position\":{\"x\":-400.6666564941406,\"y\":-1836.666748046875},\"targetType\":2,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"launchPositionSource\":0,\"launchBindingName\":\"center\",\"targetPositionSource\":1,\"targetBindingName\":\"center\",\"projectileTargetType\":0,\"flyOver\":false,\"offsetAngle\":0.0,\"curveHeight\":0.0,\"projectilePrefab\":{\"instanceID\":46040},\"speed\":3.0,\"maxDistance\":10.0,\"collisionRadius\":0.5,\"isPiercing\":false,\"maxPierceCount\":1,\"collisionTargetTags\":{\"_tags\":[]},\"collisionExcludeTags\":{\"_tags\":[]},\"isBouncing\":true,\"bounceTargetMode\":0,\"maxBounceCount\":2,\"bounceSearchRadius\":10.0,\"canBounceToSameTarget\":false,\"bounceAngleOffset\":50.0}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"90bacd9f-d882-4bba-aaa8-41ed993ac3ff\",\"outputPortName\":\"碰撞时\",\"inputNodeGuid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"eae41233-d297-46fe-a6c8-0b5c876fbb2a\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"2d7e41c4-8e90-4b61-879c-4b2e5b9486db\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"7ecf9fe6-7c5e-46ae-bade-7922214225e2\",\"inputNodeGuid\":\"3aafa9a5-4766-4204-91ab-d797aeb3c0e1\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1005,
+    "Name": "God",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.6666259765625,\"y\":-2011.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"nodeType\":7,\"position\":{\"x\":700.0,\"y\":-1856.666748046875},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":677.3333740234375,\"y\":-1998.666748046875},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46138},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.6666259765625,\"y\":-1747.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.God\",\"_hashCode\":1317201809,\"_shortName\":\"God\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"5\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 22,
+        "content": "{\"guid\":\"091ecddb-f80b-4c00-aa06-f9bc718618d2\",\"nodeType\":22,\"position\":{\"x\":-93.33332824707031,\"y\":-1708.666748046875},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"0.5\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"displaceType\":1,\"speed\":10.0,\"distance\":3.0,\"minDistance\":0.5,\"pointSource\":0,\"pointBindingName\":\"\"}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":-452.0,\"y\":-1786.666748046875},\"targetType\":1,\"searchShapeType\":0,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":4.0,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-646.0,\"y\":-2456.0},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Skill_attack_1009\",\"animationDuration\":\"25\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":4,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":25,\"portId\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\"}],\"timeCues\":[{\"startTime\":0,\"endTime\":75,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.6666259765625,\"y\":-1853.3333740234375},\"targetType\":1,\"skillId\":1005,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.RecBlood\",\"_hashCode\":1043024739,\"_shortName\":\"RecBlood\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]},{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\",\"inputNodeGuid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"091ecddb-f80b-4c00-aa06-f9bc718618d2\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1007,
+    "Name": "RecBlood",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.4000244140625,\"y\":-2019.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 2,
+        "content": "{\"guid\":\"5fb21a71-2fff-4477-b79b-4c1a8bc10f9a\",\"nodeType\":2,\"position\":{\"x\":-571.2000122070313,\"y\":-1987.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"healSourceType\":0,\"healFixedValue\":10.0,\"healFormula\":\"\",\"healMMCType\":0,\"healSetByCallerKey\":\"\",\"healMMCCaptureAttribute\":202,\"healMMCAttributeSource\":0,\"healMMCCoefficient\":1.0,\"healMMCUseSnapshot\":true,\"healMultiplyByStackCount\":false,\"healCalculationType\":0}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"011aad56-e96c-41eb-9d85-e793d74a40bb\",\"nodeType\":7,\"position\":{\"x\":-333.6000061035156,\"y\":-1780.0},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1223.199951171875,\"y\":-1826.4000244140625},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.RecBlood\",\"_hashCode\":1163914435,\"_shortName\":\"回血\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"3\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-902.4000244140625,\"y\":-1844.0},\"targetType\":1,\"skillId\":1007,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.RecBlood\",\"_hashCode\":1163914435,\"_shortName\":\"回血\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":-304.0,\"y\":-2072.0},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":45954},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"becb4d53-8a9e-4dc0-95a3-618d1e79ecc7\",\"nodeType\":14,\"position\":{\"x\":-313.6000061035156,\"y\":-1951.199951171875},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":1,\"fixedText\":\"\",\"contextDataKey\":\"Heal\",\"textColor\":{\"r\":0.0,\"g\":1.0,\"b\":0.10971927642822266,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"激活\",\"inputNodeGuid\":\"5fb21a71-2fff-4477-b79b-4c1a8bc10f9a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"5fb21a71-2fff-4477-b79b-4c1a8bc10f9a\",\"outputPortName\":\"初始效果\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"5fb21a71-2fff-4477-b79b-4c1a8bc10f9a\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"011aad56-e96c-41eb-9d85-e793d74a40bb\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"5fb21a71-2fff-4477-b79b-4c1a8bc10f9a\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"becb4d53-8a9e-4dc0-95a3-618d1e79ecc7\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1003,
+    "Name": "RuFood",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.4000244140625,\"y\":-2011.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.4000244140625,\"y\":-1747.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.RuFood\",\"_hashCode\":-1045902856,\"_shortName\":\"RuFood\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"5\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":677.5999755859375,\"y\":-1998.4000244140625},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46100},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"nodeType\":7,\"position\":{\"x\":700.0,\"y\":-1856.800048828125},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"93ec5a43-cc34-4e4a-acb3-39da2f2c3010\",\"nodeType\":12,\"position\":{\"x\":468.79998779296877,\"y\":-1749.5999755859375},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":true,\"positionSource\":2,\"particlePrefab\":{\"instanceID\":46228},\"particleBindingName\":\"head\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":true,\"particleLoop\":true}"
+      },
+      {
+        "nodeType": 11,
+        "content": "{\"guid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"nodeType\":11,\"position\":{\"x\":18.399993896484376,\"y\":-1786.4000244140625},\"targetType\":0,\"assetTags\":{\"_tags\":[{\"_name\":\"Buff.DeBuff.Stun\",\"_hashCode\":1791562953,\"_shortName\":\"Stun\",\"_ancestorHashCodes\":[937056111,321157895],\"_ancestorNames\":[\"Buff\",\"Buff.DeBuff\"]}]},\"grantedTags\":{\"_tags\":[{\"_name\":\"Buff.DeBuff.Stun\",\"_hashCode\":1791562953,\"_shortName\":\"Stun\",\"_ancestorHashCodes\":[937056111,321157895],\"_ancestorNames\":[\"Buff\",\"Buff.DeBuff\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"4\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":1,\"stackLimit\":1,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":1,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"buffId\":0}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":-452.0,\"y\":-1786.4000244140625},\"targetType\":1,\"searchShapeType\":0,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":2.5,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-452.0,\"y\":-2375.199951171875},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Skill_attack_1005\",\"animationDuration\":\"16\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":7,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":16,\"portId\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\"}],\"timeCues\":[{\"startTime\":6,\"endTime\":55,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.4000244140625,\"y\":-1853.5999755859375},\"targetType\":1,\"skillId\":1003,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.RuFood\",\"_hashCode\":-1045902856,\"_shortName\":\"RuFood\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]},{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"cb1df36f-5729-423e-9d1a-287db5a433f0\",\"outputPortName\":\"初始效果\",\"inputNodeGuid\":\"93ec5a43-cc34-4e4a-acb3-39da2f2c3010\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\",\"inputNodeGuid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1009,
+    "Name": "SpeedUp",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.6666259765625,\"y\":-2011.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"nodeType\":7,\"position\":{\"x\":700.0,\"y\":-1856.666748046875},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-502.6666564941406,\"y\":-2384.0},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Stand\",\"animationDuration\":\"24\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":25,\"portId\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\"}],\"timeCues\":[]}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.6666259765625,\"y\":-1747.3333740234375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.SpeedUp\",\"_hashCode\":-605747253,\"_shortName\":\"急速\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"10\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 11,
+        "content": "{\"guid\":\"632c75e2-152b-4376-8e9e-62c0e74f92d0\",\"nodeType\":11,\"position\":{\"x\":-514.6666259765625,\"y\":-1880.0},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"7\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":300,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":2,\"stackLimit\":1,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"buffId\":0}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.6666259765625,\"y\":-1853.3333740234375},\"targetType\":1,\"skillId\":1009,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.SpeedUp\",\"_hashCode\":-605747253,\"_shortName\":\"急速\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\",\"inputNodeGuid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"激活\",\"inputNodeGuid\":\"632c75e2-152b-4376-8e9e-62c0e74f92d0\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1001,
+    "Name": "Sweep",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1130.6666259765625,\"y\":-2232.0},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.Sweep\",\"_hashCode\":-303359587,\"_shortName\":\"Sweep\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"1\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1130.6666259765625,\"y\":-2479.333251953125},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":-10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-416.6666564941406,\"y\":-2824.66650390625},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Skill_attack_1001\",\"animationDuration\":\"18\",\"isAnimationLooping\":true,\"timeEffects\":[{\"triggerTime\":7,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":18,\"portId\":\"84e238a8-5baf-470e-829f-186695064945\"}],\"timeCues\":[{\"startTime\":7,\"endTime\":48,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"2cfdacd2-0186-49dd-b177-4eb8c0ad87bd\",\"nodeType\":7,\"position\":{\"x\":731.3333740234375,\"y\":-2080.0},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":731.3333740234375,\"y\":-2344.0},\"targetType\":1,\"searchShapeType\":1,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":5.0,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":731.3333740234375,\"y\":-2488.66650390625},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46136},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"nodeType\":1,\"position\":{\"x\":994.666748046875,\"y\":-2344.0},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":10.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":false,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"nodeType\":14,\"position\":{\"x\":1190.0,\"y\":-2344.0},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":1.0,\"g\":0.0,\"b\":0.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-797.3333740234375,\"y\":-2479.333251953125},\"targetType\":1,\"skillId\":1001,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.Sweep\",\"_hashCode\":-303359587,\"_shortName\":\"Sweep\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"84e238a8-5baf-470e-829f-186695064945\",\"inputNodeGuid\":\"2cfdacd2-0186-49dd-b177-4eb8c0ad87bd\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1008,
+    "Name": "ThreeFire",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"nodeType\":14,\"position\":{\"x\":1677.3333740234375,\"y\":-2239.333251953125},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":1.0,\"g\":0.0,\"b\":0.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"nodeType\":1,\"position\":{\"x\":1452.666748046875,\"y\":-2239.333251953125},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":10.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":false,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"2cfdacd2-0186-49dd-b177-4eb8c0ad87bd\",\"nodeType\":7,\"position\":{\"x\":1052.666748046875,\"y\":-2551.333251953125},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1144.0,\"y\":-2405.333251953125},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1067.3333740234375,\"y\":-2188.66650390625},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.ThreeFire\",\"_hashCode\":960327319,\"_shortName\":\"ThreeFire\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"1\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-746.6666259765625,\"y\":-2405.333251953125},\"targetType\":1,\"skillId\":1008,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.ThreeFire\",\"_hashCode\":960327319,\"_shortName\":\"ThreeFire\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-238.66665649414063,\"y\":-2405.333251953125},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Attack_01\",\"animationDuration\":\"18\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":7,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":18,\"portId\":\"84e238a8-5baf-470e-829f-186695064945\"}],\"timeCues\":[]}"
+      },
+      {
+        "nodeType": 8,
+        "content": "{\"guid\":\"ce857360-de7e-4457-b348-9c124ce98879\",\"nodeType\":8,\"position\":{\"x\":1040.666748046875,\"y\":-2305.333251953125},\"targetType\":2,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"launchPositionSource\":0,\"launchBindingName\":\"center\",\"targetPositionSource\":1,\"targetBindingName\":\"center\",\"projectileTargetType\":0,\"flyOver\":true,\"offsetAngle\":30.0,\"curveHeight\":0.0,\"projectilePrefab\":{\"instanceID\":45938},\"speed\":10.0,\"maxDistance\":10.0,\"collisionRadius\":0.5,\"isPiercing\":false,\"maxPierceCount\":1,\"collisionTargetTags\":{\"_tags\":[]},\"collisionExcludeTags\":{\"_tags\":[]},\"isBouncing\":false,\"bounceTargetMode\":0,\"maxBounceCount\":3,\"bounceSearchRadius\":10.0,\"canBounceToSameTarget\":false,\"bounceAngleOffset\":0.0}"
+      },
+      {
+        "nodeType": 8,
+        "content": "{\"guid\":\"9a695e91-e218-425e-82ed-1e157bf1b014\",\"nodeType\":8,\"position\":{\"x\":1022.666748046875,\"y\":-2131.333251953125},\"targetType\":2,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"launchPositionSource\":0,\"launchBindingName\":\"center\",\"targetPositionSource\":1,\"targetBindingName\":\"center\",\"projectileTargetType\":0,\"flyOver\":true,\"offsetAngle\":0.0,\"curveHeight\":0.0,\"projectilePrefab\":{\"instanceID\":45938},\"speed\":10.0,\"maxDistance\":10.0,\"collisionRadius\":0.5,\"isPiercing\":false,\"maxPierceCount\":1,\"collisionTargetTags\":{\"_tags\":[]},\"collisionExcludeTags\":{\"_tags\":[]},\"isBouncing\":false,\"bounceTargetMode\":0,\"maxBounceCount\":3,\"bounceSearchRadius\":10.0,\"canBounceToSameTarget\":false,\"bounceAngleOffset\":0.0}"
+      },
+      {
+        "nodeType": 8,
+        "content": "{\"guid\":\"d897a922-5756-42cf-ac65-90a48c1e5a17\",\"nodeType\":8,\"position\":{\"x\":1022.666748046875,\"y\":-1978.0},\"targetType\":2,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"launchPositionSource\":0,\"launchBindingName\":\"center\",\"targetPositionSource\":1,\"targetBindingName\":\"center\",\"projectileTargetType\":0,\"flyOver\":true,\"offsetAngle\":-30.0,\"curveHeight\":0.0,\"projectilePrefab\":{\"instanceID\":45938},\"speed\":10.0,\"maxDistance\":10.0,\"collisionRadius\":0.5,\"isPiercing\":false,\"maxPierceCount\":1,\"collisionTargetTags\":{\"_tags\":[]},\"collisionExcludeTags\":{\"_tags\":[]},\"isBouncing\":false,\"bounceTargetMode\":0,\"maxBounceCount\":3,\"bounceSearchRadius\":10.0,\"canBounceToSameTarget\":false,\"bounceAngleOffset\":0.0}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"c353e286-8ef0-460a-b917-887f2aeb390a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"ce857360-de7e-4457-b348-9c124ce98879\",\"outputPortName\":\"碰撞时\",\"inputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"9a695e91-e218-425e-82ed-1e157bf1b014\",\"outputPortName\":\"碰撞时\",\"inputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"d897a922-5756-42cf-ac65-90a48c1e5a17\",\"outputPortName\":\"碰撞时\",\"inputNodeGuid\":\"f8947676-1084-4228-b991-1509cc7fe851\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"84e238a8-5baf-470e-829f-186695064945\",\"inputNodeGuid\":\"2cfdacd2-0186-49dd-b177-4eb8c0ad87bd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"ce857360-de7e-4457-b348-9c124ce98879\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"9a695e91-e218-425e-82ed-1e157bf1b014\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"d897a922-5756-42cf-ac65-90a48c1e5a17\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1006,
+    "Name": "Wan",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.4000244140625,\"y\":-2011.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"nodeType\":7,\"position\":{\"x\":700.0,\"y\":-1856.800048828125},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 22,
+        "content": "{\"guid\":\"091ecddb-f80b-4c00-aa06-f9bc718618d2\",\"nodeType\":22,\"position\":{\"x\":-93.60000610351563,\"y\":-1708.800048828125},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"0.5\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"displaceType\":0,\"speed\":10.0,\"distance\":3.0,\"minDistance\":0.5,\"pointSource\":0,\"pointBindingName\":\"\"}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.4000244140625,\"y\":-1747.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.Wan\",\"_hashCode\":87403585,\"_shortName\":\"Wan\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"5\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":677.5999755859375,\"y\":-1998.4000244140625},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46012},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":false,\"particleLoop\":false}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":-452.0,\"y\":-1786.4000244140625},\"targetType\":1,\"searchShapeType\":0,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":4.0,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-502.3999938964844,\"y\":-2384.0},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Skill_attack_1009\",\"animationDuration\":\"25\",\"isAnimationLooping\":false,\"timeEffects\":[{\"triggerTime\":4,\"portId\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\"},{\"triggerTime\":25,\"portId\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\"}],\"timeCues\":[{\"startTime\":0,\"endTime\":75,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.4000244140625,\"y\":-1853.5999755859375},\"targetType\":1,\"skillId\":1006,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.Wan\",\"_hashCode\":87403585,\"_shortName\":\"Wan\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]},{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\",\"inputNodeGuid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"de0ba361-3aba-4ef0-bb07-9b418fcae591\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"091ecddb-f80b-4c00-aa06-f9bc718618d2\",\"inputPortName\":\"输入\"}"
+    ]
+  },
+  {
+    "Id": 1004,
+    "Name": "Wind",
+    "Description": "",
+    "NodesJsons": [
+      {
+        "nodeType": 3,
+        "content": "{\"guid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"nodeType\":3,\"position\":{\"x\":-1186.4000244140625,\"y\":-2011.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[{\"attrType\":100,\"operation\":0,\"magnitudeSourceType\":0,\"fixedValue\":10.0,\"formula\":\"\",\"mmcType\":0,\"setByCallerKey\":\"\",\"mmcCaptureAttribute\":200,\"mmcAttributeSource\":0,\"mmcCoefficient\":1.0,\"mmcUseSnapshot\":true}],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 14,
+        "content": "{\"guid\":\"764289ea-065e-4f48-afc0-0f6963d18d57\",\"nodeType\":14,\"position\":{\"x\":492.0,\"y\":-1539.199951171875},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":false,\"positionSource\":2,\"positionBindingName\":\"head\",\"textType\":0,\"fixedText\":\"\",\"contextDataKey\":\"DamageResult\",\"textColor\":{\"r\":1.0,\"g\":0.0,\"b\":0.0,\"a\":1.0},\"criticalColor\":{\"r\":1.0,\"g\":0.5,\"b\":0.0,\"a\":1.0},\"missColor\":{\"r\":0.5,\"g\":0.5,\"b\":0.5,\"a\":1.0},\"fontSize\":45.0,\"criticalFontSize\":60.0,\"duration\":1.5,\"offset\":{\"x\":0.0,\"y\":0.0},\"moveDirection\":{\"x\":0.0,\"y\":1.0}}"
+      },
+      {
+        "nodeType": 1,
+        "content": "{\"guid\":\"a32d1135-94db-4f81-95ba-9d5f105ef8d0\",\"nodeType\":1,\"position\":{\"x\":308.79998779296877,\"y\":-1720.0},\"targetType\":0,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":0,\"duration\":\"0\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true,\"damageType\":0,\"damageSourceType\":0,\"damageFixedValue\":1.0,\"damageFormula\":\"\",\"damageMMCType\":0,\"damageSetByCallerKey\":\"\",\"damageMMCCaptureAttribute\":200,\"damageMMCAttributeSource\":0,\"damageMMCCoefficient\":1.0,\"damageMMCUseSnapshot\":true,\"damageMultiplyByStackCount\":false,\"damageCalculationType\":0}"
+      },
+      {
+        "nodeType": 12,
+        "content": "{\"guid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"nodeType\":12,\"position\":{\"x\":677.5999755859375,\"y\":-1998.4000244140625},\"targetType\":1,\"requiredTags\":{\"_tags\":[]},\"immunityTags\":{\"_tags\":[]},\"destroyWithNode\":true,\"positionSource\":0,\"particlePrefab\":{\"instanceID\":46308},\"particleBindingName\":\"down\",\"particleOffset\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"particleScale\":{\"x\":1.0,\"y\":1.0,\"z\":1.0},\"attachToTarget\":true,\"particleLoop\":true}"
+      },
+      {
+        "nodeType": 10,
+        "content": "{\"guid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"nodeType\":10,\"position\":{\"x\":-1186.4000244140625,\"y\":-1747.199951171875},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[{\"_name\":\"CD.Wind\",\"_hashCode\":1982736573,\"_shortName\":\"Wind\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]}]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":1,\"duration\":\"15\",\"isPeriodic\":false,\"period\":\"1\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":false,\"cooldownType\":0,\"maxCharges\":2,\"chargeTime\":\"10\"}"
+      },
+      {
+        "nodeType": 7,
+        "content": "{\"guid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"nodeType\":7,\"position\":{\"x\":700.0,\"y\":-1856.800048828125},\"targetType\":1,\"endType\":0}"
+      },
+      {
+        "nodeType": 21,
+        "content": "{\"guid\":\"d8847c3e-459e-4589-a96b-37ebb5ec458b\",\"nodeType\":21,\"position\":{\"x\":-308.79998779296877,\"y\":-1769.5999755859375},\"targetType\":1,\"assetTags\":{\"_tags\":[]},\"grantedTags\":{\"_tags\":[]},\"applicationRequiredTags\":{\"_tags\":[]},\"applicationImmunityTags\":{\"_tags\":[]},\"removeGameEffectsWithTags\":{\"_tags\":[]},\"durationType\":2,\"duration\":\"0\",\"isPeriodic\":true,\"period\":\"0.3\",\"executeOnApplication\":false,\"attributeModifiers\":[],\"stackType\":0,\"stackLimit\":0,\"stackDurationRefreshPolicy\":0,\"stackPeriodResetPolicy\":0,\"stackExpirationPolicy\":0,\"stackOverflowPolicy\":0,\"ongoingRequiredTags\":{\"_tags\":[]},\"cancelOnAbilityEnd\":true}"
+      },
+      {
+        "nodeType": 4,
+        "content": "{\"guid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"nodeType\":4,\"position\":{\"x\":27.20001220703125,\"y\":-1769.5999755859375},\"targetType\":1,\"searchShapeType\":0,\"searchLineType\":0,\"positionSource\":0,\"positionBindingName\":\"center\",\"searchCircleRadius\":2.5,\"searchSectorRadius\":2.0,\"searchSectorAngle\":180.0,\"searchLineDirectionOffsetAngle\":0.0,\"searchLineDirectionWidth\":1.0,\"searchLineDirectionLength\":10.0,\"lineStartPositionSource\":0,\"lineStartBindingName\":\"\",\"lineEndPositionSource\":1,\"lineEndBindingName\":\"\",\"searchLineBetweenWidth\":1.0,\"searchLineAbsoluteAngle\":0.0,\"searchLineAbsoluteWidth\":1.0,\"searchLineAbsoluteLength\":10.0,\"maxTargets\":999,\"searchTargetTags\":{\"_tags\":[{\"_name\":\"unitType.monster\",\"_hashCode\":-2021655864,\"_shortName\":\"monster\",\"_ancestorHashCodes\":[1600484460],\"_ancestorNames\":[\"unitType\"]}]},\"searchExcludeTags\":{\"_tags\":[]}}"
+      },
+      {
+        "nodeType": 20,
+        "content": "{\"guid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"nodeType\":20,\"position\":{\"x\":-452.0,\"y\":-2375.199951171875},\"targetType\":1,\"skeletonDataAsset\":{\"instanceID\":45066},\"animationName\":\"Skill_attack_1011\",\"animationDuration\":\"12\",\"isAnimationLooping\":true,\"timeEffects\":[{\"triggerTime\":250,\"portId\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\"}],\"timeCues\":[{\"startTime\":0,\"endTime\":255,\"portId\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\"}]}"
+      },
+      {
+        "nodeType": 0,
+        "content": "{\"guid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"nodeType\":0,\"position\":{\"x\":-878.4000244140625,\"y\":-1853.5999755859375},\"targetType\":1,\"skillId\":1004,\"assetTags\":{\"_tags\":[]},\"cancelAbilitiesWithTags\":{\"_tags\":[]},\"blockAbilitiesWithTags\":{\"_tags\":[]},\"activationOwnedTags\":{\"_tags\":[{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"activationRequiredTags\":{\"_tags\":[]},\"activationBlockedTags\":{\"_tags\":[{\"_name\":\"CD.Wind\",\"_hashCode\":1982736573,\"_shortName\":\"Wind\",\"_ancestorHashCodes\":[-1137859925],\"_ancestorNames\":[\"CD\"]},{\"_name\":\"Skill.Running\",\"_hashCode\":-51601538,\"_shortName\":\"Running\",\"_ancestorHashCodes\":[1312877309],\"_ancestorNames\":[\"Skill\"]}]},\"ongoingBlockedTags\":{\"_tags\":[]},\"eventOutputPorts\":[]}"
+      }
+    ],
+    "ConnectionsJson": [
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"动画\",\"inputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"冷却\",\"inputNodeGuid\":\"c28fb88d-51b1-47b2-be59-859e0ac638e3\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"消耗\",\"inputNodeGuid\":\"9d6f459d-b588-4b64-843b-1b71e8f299ae\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"356907e0-1488-4128-bfcc-7ff73cfc3330\",\"outputPortName\":\"激活\",\"inputNodeGuid\":\"d8847c3e-459e-4589-a96b-37ebb5ec458b\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"d8847c3e-459e-4589-a96b-37ebb5ec458b\",\"outputPortName\":\"每周期执行\",\"inputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"e33ab94c-1496-4d6a-ba5e-1afd38bb0c30\",\"outputPortName\":\"对每个目标\",\"inputNodeGuid\":\"a32d1135-94db-4f81-95ba-9d5f105ef8d0\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"a32d1135-94db-4f81-95ba-9d5f105ef8d0\",\"outputPortName\":\"完成效果\",\"inputNodeGuid\":\"764289ea-065e-4f48-afc0-0f6963d18d57\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"8dea1941-c520-4f9a-aee0-40932c8542ef\",\"inputNodeGuid\":\"cde57fb8-b693-4da8-a4a8-fd61e56c5dcd\",\"inputPortName\":\"输入\"}",
+      "{\"outputNodeGuid\":\"432ff1e3-b18d-476d-af80-d39ddc07402a\",\"outputPortName\":\"f41c85e0-7f26-494e-9ffc-4a06c980f811\",\"inputNodeGuid\":\"f73ba91e-a76b-456c-b19c-a5176809d5f5\",\"inputPortName\":\"输入\"}"
+    ]
+  }
+]

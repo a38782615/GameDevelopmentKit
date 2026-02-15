@@ -11,39 +11,39 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.InputField m_PasswordInputField;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private ET.Client.MonoUIWidgetTest m_TestWidgetTest;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_Test1RectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_Test2RectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_Test3RectTransform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private ET.Client.MonoUIWidgetTest m_testWidgetTest;
 
 
         public UnityEngine.UI.InputField AccountInputField => m_AccountInputField;
         public UnityEngine.UI.Button LoginButton => m_LoginButton;
         public UnityEngine.UI.InputField PasswordInputField => m_PasswordInputField;
-        public ET.Client.MonoUIWidgetTest TestWidgetTest => m_TestWidgetTest;
         public UnityEngine.RectTransform Test1RectTransform => m_Test1RectTransform;
         public UnityEngine.RectTransform Test2RectTransform => m_Test2RectTransform;
         public UnityEngine.RectTransform Test3RectTransform => m_Test3RectTransform;
+        public ET.Client.MonoUIWidgetTest testWidgetTest => m_testWidgetTest;
 
 
 #if UNITY_EDITOR
         [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
         [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
         [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
-        private string BindDataExitEmptyWarning => "BindData exit empty, please check.";
+        private string BindDataExitEmptyWarning => "BindData contains empty reference, please check.";
 
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_AccountInputField == null) return true;
             if (this.m_LoginButton == null) return true;
             if (this.m_PasswordInputField == null) return true;
-            if (this.m_TestWidgetTest == null) return true;
             if (this.m_Test1RectTransform == null) return true;
             if (this.m_Test2RectTransform == null) return true;
             if (this.m_Test3RectTransform == null) return true;
+            if (this.m_testWidgetTest == null) return true;
             return false;
         }
 #endif

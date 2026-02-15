@@ -14,14 +14,14 @@ namespace ET.Client
             self.View.TestCloseButton.Set(self.OnClickTestCloseButton);
             Log.Info("UIWidget测试OnInit");
         }
-        
+
         [UGFUIWidgetSystem]
         private static void UGFUIWidgetOnOpen(this UIWidgetTest self)
         {
             self.View.TestUXText.text = "UIWidget测试成功!";
             Log.Info("UIWidget测试OnOpen");
         }
-        
+
         private static async UniTask OnClickTestReopenButton(this UIWidgetTest self)
         {
             Log.Info("点击了测试按钮");
@@ -31,7 +31,7 @@ namespace ET.Client
             await scene.GetComponent<UIComponent>().AddUIFormComponentAsync<UIFormLoginComponent>(UGFUIFormId.UILogin);
             Log.Info("测试登录界面打开");
         }
-        
+
         private static void OnClickTestCloseButton(this UIWidgetTest self)
         {
             Log.Info("点击了关闭按钮");

@@ -17,6 +17,9 @@ public partial class Tables
     public DTAIConfig DTAIConfig { private set; get; }
     public DTUnitConfig DTUnitConfig { private set; get; }
     public DTGenAtom DTGenAtom { private set; get; }
+    public DTSkill DTSkill { private set; get; }
+    public DTSkillGraph DTSkillGraph { private set; get; }
+    public DTUnit DTUnit { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -40,6 +43,15 @@ public partial class Tables
         DTGenAtom = new DTGenAtom(() => loader("dtgenatom"));
         loadTasks.Add(DTGenAtom.LoadAsync());
         _tables.Add("DTGenAtom", DTGenAtom);
+        DTSkill = new DTSkill(() => loader("dtskill"));
+        loadTasks.Add(DTSkill.LoadAsync());
+        _tables.Add("DTSkill", DTSkill);
+        DTSkillGraph = new DTSkillGraph(() => loader("dtskillgraph"));
+        loadTasks.Add(DTSkillGraph.LoadAsync());
+        _tables.Add("DTSkillGraph", DTSkillGraph);
+        DTUnit = new DTUnit(() => loader("dtunit"));
+        loadTasks.Add(DTUnit.LoadAsync());
+        _tables.Add("DTUnit", DTUnit);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -54,6 +66,9 @@ public partial class Tables
         DTAIConfig.ResolveRef(this);
         DTUnitConfig.ResolveRef(this);
         DTGenAtom.ResolveRef(this);
+        DTSkill.ResolveRef(this);
+        DTSkillGraph.ResolveRef(this);
+        DTUnit.ResolveRef(this);
         PostResolveRef();
     }
 

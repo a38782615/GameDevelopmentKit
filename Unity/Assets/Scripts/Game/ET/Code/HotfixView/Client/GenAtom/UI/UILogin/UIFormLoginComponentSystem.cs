@@ -12,13 +12,15 @@ namespace ET.Client
         private static void UGFUIFormOnInit(this UIFormLoginComponent self)
         {
             Log.Debug("Login界面OnInit");
+            self.LoadTest1().Forget();
+            self.LoadTest2().Forget();
+            self.LoadTest3().Forget();
         }
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormLoginComponent self)
         {
             self.View.LoginButton.SetAsync(self.OnLogin);
-            self.View.TestWidgetTest.UGFUIWidget.Open();
             self.LoadTest1().Forget();
             self.LoadTest2().Forget();
             self.LoadTest3().Forget();
@@ -28,7 +30,7 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormLoginComponent self, bool isShutdown)
         {
-            
+
         }
 
         public static UniTask OnLogin(this UIFormLoginComponent self)
@@ -45,7 +47,6 @@ namespace ET.Client
             uiWidget.CachedRectTransform.SetParent(self.View.Test1RectTransform);
             uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             uiWidget.CachedRectTransform.localScale = Vector3.one;
-            uiWidget.Open();
         }
 
         private static async UniTaskVoid LoadTest2(this UIFormLoginComponent self)
@@ -54,16 +55,14 @@ namespace ET.Client
             uiWidget.CachedRectTransform.SetParent(self.View.Test2RectTransform);
             uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             uiWidget.CachedRectTransform.localScale = Vector3.one;
-            uiWidget.Open();
         }
 
         private static async UniTaskVoid LoadTest3(this UIFormLoginComponent self)
         {
             var uiWidget = await self.LoadChildUIWidgetAsync<UIWidgetTest>(UGFUIEntityId.WidgetTest);
-            uiWidget.CachedTransform.SetParent(self.View.Test3RectTransform);
-            uiWidget.CachedTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            uiWidget.CachedTransform.localScale = Vector3.one;
-            uiWidget.Open();
+            uiWidget.CachedRectTransform.SetParent(self.View.Test3RectTransform);
+            uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            uiWidget.CachedRectTransform.localScale = Vector3.one;
         }
     }
 }

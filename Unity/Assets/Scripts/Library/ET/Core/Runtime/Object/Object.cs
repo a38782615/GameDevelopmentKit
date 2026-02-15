@@ -12,12 +12,12 @@ namespace ET
             // return MongoHelper.ToJson(this);
             return ((object)this).ToJson();
         }
-        
+
         public string ToJson()
         {
             return MongoHelper.ToJson(this);
         }
-        
+
         public byte[] ToBson()
         {
             return MongoHelper.Serialize(this);

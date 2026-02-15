@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1001,
+    "Name": "Sweep",
+    "Desc": "横扫",
+    "IconPath": "Sprites/SkillIcon/01101"
+  },
+  {
+    "Id": 1002,
+    "Name": "Blood",
+    "Desc": "流血",
+    "IconPath": "Sprites/SkillIcon/01102"
+  },
+  {
+    "Id": 1003,
+    "Name": "RuFood",
+    "Desc": "践踏",
+    "IconPath": "Sprites/SkillIcon/01103"
+  },
+  {
+    "Id": 1004,
+    "Name": "Wind",
+    "Desc": "旋风斩",
+    "IconPath": "Sprites/SkillIcon/01104"
+  },
+  {
+    "Id": 1005,
+    "Name": "God",
+    "Desc": "神罗天正",
+    "IconPath": "Sprites/SkillIcon/01105"
+  },
+  {
+    "Id": 1006,
+    "Name": "Wan",
+    "Desc": "万象天引",
+    "IconPath": "Sprites/SkillIcon/01106"
+  },
+  {
+    "Id": 1007,
+    "Name": "RecBlood",
+    "Desc": "回血",
+    "IconPath": "Sprites/SkillIcon/01107"
+  },
+  {
+    "Id": 1008,
+    "Name": "ThreeFire",
+    "Desc": "三火球",
+    "IconPath": "Sprites/SkillIcon/01108"
+  },
+  {
+    "Id": 1009,
+    "Name": "SpeedUp",
+    "Desc": "急速",
+    "IconPath": "Sprites/SkillIcon/01109"
+  },
+  {
+    "Id": 1010,
+    "Name": "FireCircle2",
+    "Desc": "火球术",
+    "IconPath": "Sprites/SkillIcon/01110"
+  },
+  {
+    "Id": 2001,
+    "Name": "BeRecBlood",
+    "Desc": "被动回血",
+    "IconPath": "Sprites/SkillIcon/01210"
+  },
+  {
+    "Id": 7001,
+    "Name": "FireCircle",
+    "Desc": "火球术",
+    "IconPath": ""
+  }
+]

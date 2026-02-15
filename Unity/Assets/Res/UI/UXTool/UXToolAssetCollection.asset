@@ -16,16 +16,16 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
+    - {fileID: 11400000}
     - {fileID: 21300000, guid: b9975f2be09eab4449a3f00368f0da41, type: 3}
     - {fileID: 4900000, guid: fef68d1dd70201b4bb76246e05dbcf8d, type: 3}
+    - {fileID: -944628639613478452, guid: 8d42b919fb94e5f4f998957f2ac1ff81, type: 3}
+    - {fileID: 4900000, guid: c6e5d00057c459640b5d6d14026d13f6, type: 3}
+    - {fileID: 4900000, guid: 54e50a6ecae1b70438e1c50bdbf55e39, type: 3}
     - {fileID: 2100000, guid: 00cf0597250ef1d49b7946f79b3796dc, type: 2}
     - {fileID: 2100000, guid: b44b5ab44e24caa4b80290b9fd405077, type: 2}
     - {fileID: 4800000, guid: 85bf385d20f84094e8640d446e72f03a, type: 3}
     - {fileID: 4800000, guid: ef43a0db1f649274590f3d130c1f0ff3, type: 3}
-    - {fileID: 10900000, guid: 209beda86bef4cdf945cf90c8999e832, type: 3}
-    - {fileID: -944628639613478452, guid: 8d42b919fb94e5f4f998957f2ac1ff81, type: 3}
-    - {fileID: 4900000, guid: c6e5d00057c459640b5d6d14026d13f6, type: 3}
-    - {fileID: 4900000, guid: 54e50a6ecae1b70438e1c50bdbf55e39, type: 3}
     - {fileID: 100100200, guid: 8310fdcd0a33c11499ae784ea3571f0b, type: 3}
     - {fileID: 100100200, guid: 7ca3b64aa69c9244d9f90d2b7dd613b4, type: 3}
     - {fileID: 8029058313460966628, guid: 9a7e5f9d69f95dc4593996b20425e542, type: 3}
@@ -46,6 +46,7 @@ MonoBehaviour:
     - {fileID: 470181647751531769, guid: c9813d46d59b6fc488d2df43cec8e152, type: 3}
     - {fileID: 129291512494320572, guid: cb9dc182bed8c52428dfa0309bd9ccc1, type: 3}
     - {fileID: 129291512494320572, guid: 14961014bd33abd4a818582f9c84ba81, type: 3}
+    - {fileID: 10900000, guid: 209beda86bef4cdf945cf90c8999e832, type: 3}
     - {fileID: 9100000, guid: ea52d03e4ad273945844b8c7eae6a8c4, type: 2}
     - {fileID: 7400000, guid: e4e4e84c4dc3870418a08777475cf6b5, type: 2}
     - {fileID: 7400000, guid: 237bd69835dcdba469d42326c4f3813f, type: 2}
@@ -182,13 +183,13 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 148
+      Data: 149
     - Name: 
       Entry: 7
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/need_replace.png
+      Data: Assets/Res/UI/UXTool/UXToolAssetCollection.asset
     - Name: $v
       Entry: 10
       Data: 0
@@ -200,7 +201,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/thai_dict.txt
+      Data: Assets/Res/UI/UXTool/GUI/need_replace.png
     - Name: $v
       Entry: 10
       Data: 1
@@ -212,7 +213,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/Material/Outline.mat
+      Data: Assets/Res/UI/UXTool/GUI/thai_dict.txt
     - Name: $v
       Entry: 10
       Data: 2
@@ -224,7 +225,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/Material/UXImage.mat
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/InputMapping.inputactions
     - Name: $v
       Entry: 10
       Data: 3
@@ -236,7 +237,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/Shader/Outline.shader
+      Data: Assets/Res/UI/UXTool/Feature/UIColorConfig/ui_color_config.json
     - Name: $v
       Entry: 10
       Data: 4
@@ -248,7 +249,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/Shader/UXImage.shader
+      Data: Assets/Res/UI/UXTool/Feature/UIColorConfig/ui_gradient_config.json
     - Name: $v
       Entry: 10
       Data: 5
@@ -260,7 +261,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/GUI/Shader/ShaderLibrary/SDFUtils.cginc
+      Data: Assets/Res/UI/UXTool/GUI/Material/Outline.mat
     - Name: $v
       Entry: 10
       Data: 6
@@ -272,7 +273,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/InputMapping.inputactions
+      Data: Assets/Res/UI/UXTool/GUI/Material/UXImage.mat
     - Name: $v
       Entry: 10
       Data: 7
@@ -284,7 +285,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/UIColorConfig/ui_color_config.json
+      Data: Assets/Res/UI/UXTool/GUI/Shader/Outline.shader
     - Name: $v
       Entry: 10
       Data: 8
@@ -296,7 +297,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/UIColorConfig/ui_gradient_config.json
+      Data: Assets/Res/UI/UXTool/GUI/Shader/UXImage.shader
     - Name: $v
       Entry: 10
       Data: 9
@@ -548,7 +549,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/GamePad/GamePadContainer.controller
+      Data: Assets/Res/UI/UXTool/GUI/Shader/ShaderLibrary/SDFUtils.cginc
     - Name: $v
       Entry: 10
       Data: 30
@@ -560,7 +561,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/GamePad/GamePadGuide.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/GamePad/GamePadContainer.controller
     - Name: $v
       Entry: 10
       Data: 31
@@ -572,7 +573,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/click.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/GamePad/GamePadGuide.anim
     - Name: $v
       Entry: 10
       Data: 32
@@ -584,7 +585,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/clickPrefab.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/click.anim
     - Name: $v
       Entry: 10
       Data: 33
@@ -596,7 +597,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/longclick.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/clickPrefab.controller
     - Name: $v
       Entry: 10
       Data: 34
@@ -608,7 +609,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/longclickPrefab.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/longclick.anim
     - Name: $v
       Entry: 10
       Data: 35
@@ -620,7 +621,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/rotate.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/longclickPrefab.controller
     - Name: $v
       Entry: 10
       Data: 36
@@ -632,7 +633,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/rotate.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/rotate.anim
     - Name: $v
       Entry: 10
       Data: 37
@@ -644,7 +645,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideDown.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/rotate.controller
     - Name: $v
       Entry: 10
       Data: 38
@@ -656,7 +657,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideDown_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideDown.controller
     - Name: $v
       Entry: 10
       Data: 39
@@ -668,7 +669,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideLeft.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideDown_loop.anim
     - Name: $v
       Entry: 10
       Data: 40
@@ -680,7 +681,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideLeft_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideLeft.controller
     - Name: $v
       Entry: 10
       Data: 41
@@ -692,7 +693,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideRight.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideLeft_loop.anim
     - Name: $v
       Entry: 10
       Data: 42
@@ -704,7 +705,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideRight_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideRight.controller
     - Name: $v
       Entry: 10
       Data: 43
@@ -716,7 +717,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUp.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideRight_loop.anim
     - Name: $v
       Entry: 10
       Data: 44
@@ -728,7 +729,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUpDown.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUp.controller
     - Name: $v
       Entry: 10
       Data: 45
@@ -740,7 +741,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUpDown_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUpDown.controller
     - Name: $v
       Entry: 10
       Data: 46
@@ -752,7 +753,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUp_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUpDown_loop.anim
     - Name: $v
       Entry: 10
       Data: 47
@@ -764,7 +765,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/updrag.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/slideUp_loop.anim
     - Name: $v
       Entry: 10
       Data: 48
@@ -776,7 +777,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/updragPrefab.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/updrag.anim
     - Name: $v
       Entry: 10
       Data: 49
@@ -788,7 +789,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/arrowLine.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/Gesture/updragPrefab.controller
     - Name: $v
       Entry: 10
       Data: 50
@@ -800,7 +801,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/ArrowLineWidget.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/arrowLine.anim
     - Name: $v
       Entry: 10
       Data: 51
@@ -812,7 +813,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/highLight.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/ArrowLineWidget.controller
     - Name: $v
       Entry: 10
       Data: 52
@@ -824,7 +825,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/highlight_loop.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/highLight.controller
     - Name: $v
       Entry: 10
       Data: 53
@@ -836,7 +837,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/TargetStroke.anim
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/highlight_loop.anim
     - Name: $v
       Entry: 10
       Data: 54
@@ -848,7 +849,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/TargetStroke.controller
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/TargetStroke.anim
     - Name: $v
       Entry: 10
       Data: 55
@@ -860,7 +861,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/angle_line.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Animation/HighLight/TargetStroke.controller
     - Name: $v
       Entry: 10
       Data: 56
@@ -872,7 +873,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/arrow.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/angle_line.png
     - Name: $v
       Entry: 10
       Data: 57
@@ -884,7 +885,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_01.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/arrow.png
     - Name: $v
       Entry: 10
       Data: 58
@@ -896,7 +897,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_02.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_01.png
     - Name: $v
       Entry: 10
       Data: 59
@@ -908,7 +909,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_03.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_02.png
     - Name: $v
       Entry: 10
       Data: 60
@@ -920,7 +921,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/CircleFill.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/changan_03.png
     - Name: $v
       Entry: 10
       Data: 61
@@ -932,7 +933,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/circle_large.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/CircleFill.png
     - Name: $v
       Entry: 10
       Data: 62
@@ -944,7 +945,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/circle_small.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/circle_large.png
     - Name: $v
       Entry: 10
       Data: 63
@@ -956,7 +957,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/forefinger.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/circle_small.png
     - Name: $v
       Entry: 10
       Data: 64
@@ -968,7 +969,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/img_outline.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/forefinger.png
     - Name: $v
       Entry: 10
       Data: 65
@@ -980,7 +981,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/img_wenzibg2.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/img_outline.png
     - Name: $v
       Entry: 10
       Data: 66
@@ -992,7 +993,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/img_wenzibg2.png
     - Name: $v
       Entry: 10
       Data: 67
@@ -1004,7 +1005,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line_left.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line.png
     - Name: $v
       Entry: 10
       Data: 68
@@ -1016,7 +1017,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line_right.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line_left.png
     - Name: $v
       Entry: 10
       Data: 69
@@ -1028,7 +1029,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/press_slide.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/line_right.png
     - Name: $v
       Entry: 10
       Data: 70
@@ -1040,7 +1041,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/rectangle02.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/press_slide.png
     - Name: $v
       Entry: 10
       Data: 71
@@ -1052,7 +1053,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/round.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/rectangle02.png
     - Name: $v
       Entry: 10
       Data: 72
@@ -1064,7 +1065,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/thumb.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/round.png
     - Name: $v
       Entry: 10
       Data: 73
@@ -1076,7 +1077,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_pc.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_atlas/thumb.png
     - Name: $v
       Entry: 10
       Data: 74
@@ -1088,7 +1089,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_ps.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_pc.png
     - Name: $v
       Entry: 10
       Data: 75
@@ -1100,7 +1101,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_ps5.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_ps.png
     - Name: $v
       Entry: 10
       Data: 76
@@ -1112,7 +1113,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_xbox.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_ps5.png
     - Name: $v
       Entry: 10
       Data: 77
@@ -1124,7 +1125,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_A.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/icon_guide_joystick_xbox.png
     - Name: $v
       Entry: 10
       Data: 78
@@ -1136,7 +1137,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_B.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_A.png
     - Name: $v
       Entry: 10
       Data: 79
@@ -1148,7 +1149,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_LB.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_B.png
     - Name: $v
       Entry: 10
       Data: 80
@@ -1160,7 +1161,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_LT.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_LB.png
     - Name: $v
       Entry: 10
       Data: 81
@@ -1172,7 +1173,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_RB.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_LT.png
     - Name: $v
       Entry: 10
       Data: 82
@@ -1184,7 +1185,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_RT.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_RB.png
     - Name: $v
       Entry: 10
       Data: 83
@@ -1196,7 +1197,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_X.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_RT.png
     - Name: $v
       Entry: 10
       Data: 84
@@ -1208,7 +1209,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_Y.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_X.png
     - Name: $v
       Entry: 10
       Data: 85
@@ -1220,7 +1221,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_yuan.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_Y.png
     - Name: $v
       Entry: 10
       Data: 86
@@ -1232,7 +1233,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_yuan_stick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_yuan.png
     - Name: $v
       Entry: 10
       Data: 87
@@ -1244,7 +1245,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_A.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_pc_yuan_stick.png
     - Name: $v
       Entry: 10
       Data: 88
@@ -1256,7 +1257,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_B.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_A.png
     - Name: $v
       Entry: 10
       Data: 89
@@ -1268,7 +1269,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_down.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_B.png
     - Name: $v
       Entry: 10
       Data: 90
@@ -1280,7 +1281,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_L1.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_down.png
     - Name: $v
       Entry: 10
       Data: 91
@@ -1292,7 +1293,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_L2.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_L1.png
     - Name: $v
       Entry: 10
       Data: 92
@@ -1304,7 +1305,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_left.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_L2.png
     - Name: $v
       Entry: 10
       Data: 93
@@ -1316,7 +1317,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_leftstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_left.png
     - Name: $v
       Entry: 10
       Data: 94
@@ -1328,7 +1329,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_option.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_leftstick.png
     - Name: $v
       Entry: 10
       Data: 95
@@ -1340,7 +1341,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_R1.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_option.png
     - Name: $v
       Entry: 10
       Data: 96
@@ -1352,7 +1353,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_R2.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_R1.png
     - Name: $v
       Entry: 10
       Data: 97
@@ -1364,7 +1365,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_right.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_R2.png
     - Name: $v
       Entry: 10
       Data: 98
@@ -1376,7 +1377,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_rightstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_right.png
     - Name: $v
       Entry: 10
       Data: 99
@@ -1388,7 +1389,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_select.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_rightstick.png
     - Name: $v
       Entry: 10
       Data: 100
@@ -1400,7 +1401,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_up.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_select.png
     - Name: $v
       Entry: 10
       Data: 101
@@ -1412,7 +1413,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_X.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_up.png
     - Name: $v
       Entry: 10
       Data: 102
@@ -1424,7 +1425,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_Y.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_X.png
     - Name: $v
       Entry: 10
       Data: 103
@@ -1436,7 +1437,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_A.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS5_Y.png
     - Name: $v
       Entry: 10
       Data: 104
@@ -1448,7 +1449,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_B.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_A.png
     - Name: $v
       Entry: 10
       Data: 105
@@ -1460,7 +1461,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_down.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_B.png
     - Name: $v
       Entry: 10
       Data: 106
@@ -1472,7 +1473,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_L1.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_down.png
     - Name: $v
       Entry: 10
       Data: 107
@@ -1484,7 +1485,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_L2.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_L1.png
     - Name: $v
       Entry: 10
       Data: 108
@@ -1496,7 +1497,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_left.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_L2.png
     - Name: $v
       Entry: 10
       Data: 109
@@ -1508,7 +1509,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_leftstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_left.png
     - Name: $v
       Entry: 10
       Data: 110
@@ -1520,7 +1521,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Option.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_leftstick.png
     - Name: $v
       Entry: 10
       Data: 111
@@ -1532,7 +1533,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_R1.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Option.png
     - Name: $v
       Entry: 10
       Data: 112
@@ -1544,7 +1545,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_R2.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_R1.png
     - Name: $v
       Entry: 10
       Data: 113
@@ -1556,7 +1557,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_right.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_R2.png
     - Name: $v
       Entry: 10
       Data: 114
@@ -1568,7 +1569,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_rightstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_right.png
     - Name: $v
       Entry: 10
       Data: 115
@@ -1580,7 +1581,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Share.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_rightstick.png
     - Name: $v
       Entry: 10
       Data: 116
@@ -1592,7 +1593,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_up.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Share.png
     - Name: $v
       Entry: 10
       Data: 117
@@ -1604,7 +1605,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_X.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_up.png
     - Name: $v
       Entry: 10
       Data: 118
@@ -1616,7 +1617,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Y.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_X.png
     - Name: $v
       Entry: 10
       Data: 119
@@ -1628,7 +1629,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_A.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_PS_Y.png
     - Name: $v
       Entry: 10
       Data: 120
@@ -1640,7 +1641,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_B.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_A.png
     - Name: $v
       Entry: 10
       Data: 121
@@ -1652,7 +1653,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_down.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_B.png
     - Name: $v
       Entry: 10
       Data: 122
@@ -1664,7 +1665,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_LB.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_down.png
     - Name: $v
       Entry: 10
       Data: 123
@@ -1676,7 +1677,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_left.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_LB.png
     - Name: $v
       Entry: 10
       Data: 124
@@ -1688,7 +1689,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_leftstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_left.png
     - Name: $v
       Entry: 10
       Data: 125
@@ -1700,7 +1701,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_little-right.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_leftstick.png
     - Name: $v
       Entry: 10
       Data: 126
@@ -1712,7 +1713,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_little_left.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_little-right.png
     - Name: $v
       Entry: 10
       Data: 127
@@ -1724,7 +1725,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_LT.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_little_left.png
     - Name: $v
       Entry: 10
       Data: 128
@@ -1736,7 +1737,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_RB.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_LT.png
     - Name: $v
       Entry: 10
       Data: 129
@@ -1748,7 +1749,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_right.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_RB.png
     - Name: $v
       Entry: 10
       Data: 130
@@ -1760,7 +1761,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_rightstick.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_right.png
     - Name: $v
       Entry: 10
       Data: 131
@@ -1772,7 +1773,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_RT.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_rightstick.png
     - Name: $v
       Entry: 10
       Data: 132
@@ -1784,7 +1785,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_top.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_RT.png
     - Name: $v
       Entry: 10
       Data: 133
@@ -1796,7 +1797,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_X.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_top.png
     - Name: $v
       Entry: 10
       Data: 134
@@ -1808,7 +1809,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_Y.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_X.png
     - Name: $v
       Entry: 10
       Data: 135
@@ -1820,7 +1821,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/CircleGuide.shader
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Image/beginnerguide_gamepad_tips_atlas/img_joystick_xbox_Y.png
     - Name: $v
       Entry: 10
       Data: 136
@@ -1832,7 +1833,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/CircleMaterial.mat
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/CircleGuide.shader
     - Name: $v
       Entry: 10
       Data: 137
@@ -1844,7 +1845,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/Ellipse.shader
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/CircleMaterial.mat
     - Name: $v
       Entry: 10
       Data: 138
@@ -1856,7 +1857,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/LOGO.png
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/Ellipse.shader
     - Name: $v
       Entry: 10
       Data: 139
@@ -1868,7 +1869,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/RectGuide.shader
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/LOGO.png
     - Name: $v
       Entry: 10
       Data: 140
@@ -1880,7 +1881,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/RectMaterial.mat
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/RectGuide.shader
     - Name: $v
       Entry: 10
       Data: 141
@@ -1892,7 +1893,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/TuoyuanMaterial.mat
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/RectMaterial.mat
     - Name: $v
       Entry: 10
       Data: 142
@@ -1904,7 +1905,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/GamePadWidget.prefab
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Material/HighLight/TuoyuanMaterial.mat
     - Name: $v
       Entry: 10
       Data: 143
@@ -1916,7 +1917,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/GestureWidget.prefab
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/GamePadWidget.prefab
     - Name: $v
       Entry: 10
       Data: 144
@@ -1928,7 +1929,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/HighLightWidget.prefab
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/GestureWidget.prefab
     - Name: $v
       Entry: 10
       Data: 145
@@ -1940,7 +1941,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/TargetStrokeWidget.prefab
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/HighLightWidget.prefab
     - Name: $v
       Entry: 10
       Data: 146
@@ -1952,10 +1953,22 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/TextWidget.prefab
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/TargetStrokeWidget.prefab
     - Name: $v
       Entry: 10
       Data: 147
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/Feature/BeginnerGuide/Prefab/Widget/TextWidget.prefab
+    - Name: $v
+      Entry: 10
+      Data: 148
     - Name: 
       Entry: 8
       Data: 
@@ -1967,5 +1980,4 @@ MonoBehaviour:
       Data: 
   m_CollectionPatterns: 
   m_CollectionPathGUIDs:
-  - 4dc0f66eebcb9404898c95065ffbdfc5
-  - 8b773f8814eed104e972e457bb453592
+  - 2f5d5e8d664db854799a7bd076fbd496

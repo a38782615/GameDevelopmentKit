@@ -75,9 +75,9 @@
     <!--UNITY_!HOTFIX_ET_SERVER-
     -UNITY_!HOTFIX_ET_SERVER-->
     
-    <!--UNITY_HOTFIX_ET_SERVER_START-->
+    <!--UNITY_HOTFIX_ET_SERVER-
     <assembly fullname="MongoDB.Driver" preserve="all" />
-    <!--UNITY_HOTFIX_ET_SERVER_END-->
+    -UNITY_HOTFIX_ET_SERVER-->
 
     <!--UNITY_GAMEHOT-
     -UNITY_GAMEHOT-->
