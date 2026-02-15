@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Buff效果节点数据（统一的Buff类型）

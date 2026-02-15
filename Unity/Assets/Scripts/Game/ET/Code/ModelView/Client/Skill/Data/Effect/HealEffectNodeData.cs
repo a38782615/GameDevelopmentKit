@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 治疗效果节点数据（瞬时效果）

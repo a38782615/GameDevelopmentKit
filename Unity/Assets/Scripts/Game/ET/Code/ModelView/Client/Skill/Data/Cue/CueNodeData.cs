@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 表现节点数据基类 - 对应 GAS 的 GameplayCue

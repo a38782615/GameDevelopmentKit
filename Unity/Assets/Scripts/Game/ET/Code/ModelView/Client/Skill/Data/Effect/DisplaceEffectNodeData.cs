@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 位移效果节点数据

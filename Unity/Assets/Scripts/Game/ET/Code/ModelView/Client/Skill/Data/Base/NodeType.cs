@@ -1,4 +1,4 @@
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 节点类型枚举 - 按GAS概念分类

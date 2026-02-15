@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 游戏标签集合 - 不可变的标签数组

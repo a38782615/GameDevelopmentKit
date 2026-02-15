@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 粒子特效Cue节点数据

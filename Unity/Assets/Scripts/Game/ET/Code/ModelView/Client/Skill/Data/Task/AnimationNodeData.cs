@@ -5,7 +5,7 @@ using Spine.Unity;
 #endif
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 动画节点数据 - 用于播放动画并在时间轴上触发效果和Cue

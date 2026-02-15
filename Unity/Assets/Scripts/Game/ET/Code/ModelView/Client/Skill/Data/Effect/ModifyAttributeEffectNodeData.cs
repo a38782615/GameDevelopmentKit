@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性修改效果节点数据（瞬时效果）

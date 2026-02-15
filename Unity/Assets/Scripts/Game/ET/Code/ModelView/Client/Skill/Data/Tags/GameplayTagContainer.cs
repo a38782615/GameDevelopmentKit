@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 游戏标签容器 - 可变的标签集合（带引用计数）

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 执行计算上下文 - 传递给计算类的数据

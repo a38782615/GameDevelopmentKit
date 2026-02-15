@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性修改器数据 - 对应GAS的GameplayModifierInfo

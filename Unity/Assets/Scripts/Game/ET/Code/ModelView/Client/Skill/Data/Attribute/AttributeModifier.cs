@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性修改器 - 定义如何修改属性

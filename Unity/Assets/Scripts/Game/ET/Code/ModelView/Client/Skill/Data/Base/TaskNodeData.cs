@@ -1,6 +1,6 @@
 using System;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 任务节点数据基类 - 用于执行特定任务的节点

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 投射物目标类型

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 效果节点数据基类 - 所有效果节点的公共数据

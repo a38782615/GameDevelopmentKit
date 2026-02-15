@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Scripting.APIUpdating;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 搜索目标任务节点数据

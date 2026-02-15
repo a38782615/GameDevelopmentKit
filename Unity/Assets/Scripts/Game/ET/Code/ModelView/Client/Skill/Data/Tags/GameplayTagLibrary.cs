@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 游戏标签静态库 - 提供所有标签的静态引用

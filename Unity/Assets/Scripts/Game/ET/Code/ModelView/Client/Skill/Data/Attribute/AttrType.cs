@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性类型枚举

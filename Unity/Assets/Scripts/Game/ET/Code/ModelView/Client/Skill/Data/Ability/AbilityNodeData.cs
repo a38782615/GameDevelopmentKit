@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 时间效果数据 - 只有触发时间，没有结束时间

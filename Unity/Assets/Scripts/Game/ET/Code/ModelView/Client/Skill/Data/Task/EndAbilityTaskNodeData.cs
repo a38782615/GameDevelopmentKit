@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Scripting.APIUpdating;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 结束技能任务节点数据

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性容器 - 管理一个实体的所有属性

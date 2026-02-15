@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 技能数据转换器 - 将 Luban 表数据转换为 SkillData
