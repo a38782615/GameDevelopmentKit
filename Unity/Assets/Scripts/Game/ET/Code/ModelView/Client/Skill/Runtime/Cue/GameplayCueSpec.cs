@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Cue Spec基类 - 包含动态数据和执行逻辑

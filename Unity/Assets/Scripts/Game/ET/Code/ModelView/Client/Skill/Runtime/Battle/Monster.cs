@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     public class Monster : SkillUnit
     {

@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 投射物效果Spec

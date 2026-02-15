@@ -4,7 +4,7 @@ using Spine;
 using Spine.Unity;
 #endif
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 控制效果动画处理器 - 监听标签事件，控制动画播放

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 公式计算器 - 解析并计算属性公式

@@ -1,6 +1,6 @@
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Spec工厂 - 根据节点类型创建对应的Spec实例

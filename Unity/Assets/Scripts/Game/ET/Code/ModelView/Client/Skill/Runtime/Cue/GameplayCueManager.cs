@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Cue管理器 - 管理所有激活的Cue

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Buff效果Spec（持续效果）

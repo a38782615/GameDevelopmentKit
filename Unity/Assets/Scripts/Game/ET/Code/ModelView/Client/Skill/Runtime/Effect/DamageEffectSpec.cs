@@ -1,4 +1,4 @@
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 伤害效果Spec（瞬时效果）

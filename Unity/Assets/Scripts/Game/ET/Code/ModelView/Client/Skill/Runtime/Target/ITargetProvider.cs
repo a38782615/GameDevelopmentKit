@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 目标提供者接口

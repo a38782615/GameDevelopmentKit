@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 飘字管理器 - 负责创建和管理飘字

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ET
+namespace ET.Client
 {
     public class UnitManager : Singleton<UnitManager>
     {

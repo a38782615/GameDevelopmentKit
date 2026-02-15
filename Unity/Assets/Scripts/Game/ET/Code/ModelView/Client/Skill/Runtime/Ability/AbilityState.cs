@@ -1,4 +1,4 @@
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 技能状态枚举 - 对应GAS的技能生命周期状态

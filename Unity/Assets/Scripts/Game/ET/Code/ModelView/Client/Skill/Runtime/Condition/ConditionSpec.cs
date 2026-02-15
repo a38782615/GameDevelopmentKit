@@ -1,7 +1,7 @@
 using System;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 条件Spec基类 - 用于条件判断分支的节点

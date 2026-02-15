@@ -1,6 +1,6 @@
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 结束技能任务Spec

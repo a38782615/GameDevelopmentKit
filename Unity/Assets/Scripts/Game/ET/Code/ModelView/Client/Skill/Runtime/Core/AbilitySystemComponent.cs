@@ -1,7 +1,7 @@
 using System;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 技能系统组件 - GAS的核心实现

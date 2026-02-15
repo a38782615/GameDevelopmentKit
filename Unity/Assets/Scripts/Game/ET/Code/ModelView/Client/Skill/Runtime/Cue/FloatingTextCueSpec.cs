@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 飘字Cue Spec

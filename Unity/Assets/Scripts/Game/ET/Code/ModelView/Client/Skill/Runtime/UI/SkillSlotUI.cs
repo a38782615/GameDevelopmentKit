@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
-namespace ET
+namespace ET.Client
 {
     public class SkillSlotUI : MonoBehaviour
     {

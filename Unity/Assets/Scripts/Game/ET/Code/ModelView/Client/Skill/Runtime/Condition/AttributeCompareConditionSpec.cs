@@ -1,4 +1,4 @@
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 属性比较条件Spec

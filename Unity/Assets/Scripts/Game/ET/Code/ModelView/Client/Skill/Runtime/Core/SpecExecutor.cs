@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Spec执行器 - 独立于AbilitySpec的节点执行工具

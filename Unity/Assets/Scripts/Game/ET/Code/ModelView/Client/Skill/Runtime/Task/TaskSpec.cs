@@ -1,7 +1,7 @@
 using System;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 任务Spec基类 - 用于执行特定任务的节点

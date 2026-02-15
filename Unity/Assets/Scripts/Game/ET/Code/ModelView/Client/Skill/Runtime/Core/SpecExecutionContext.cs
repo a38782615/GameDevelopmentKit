@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// Spec执行上下文 - 提供执行所需的所有信息

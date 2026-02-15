@@ -1,4 +1,4 @@
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 冷却效果Spec

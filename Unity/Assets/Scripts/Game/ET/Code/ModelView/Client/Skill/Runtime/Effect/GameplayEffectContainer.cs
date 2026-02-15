@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 效果容器 - 管理ASC上所有激活的效果

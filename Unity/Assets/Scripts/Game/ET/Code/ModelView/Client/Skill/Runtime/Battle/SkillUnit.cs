@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
 
     public class SkillUnit : MonoBehaviour

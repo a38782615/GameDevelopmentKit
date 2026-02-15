@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 技能容器 - 管理ASC拥有的所有技能

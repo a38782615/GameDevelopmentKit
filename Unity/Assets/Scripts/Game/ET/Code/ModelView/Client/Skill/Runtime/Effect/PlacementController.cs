@@ -4,7 +4,7 @@ using System.Linq;
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 放置物控制器

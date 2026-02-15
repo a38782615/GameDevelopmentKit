@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace ET
+namespace ET.Client
 {
     /// <summary>
     /// 位移效果Spec - 持续移动目标位置（吸引/击退/吸引到指定点）
