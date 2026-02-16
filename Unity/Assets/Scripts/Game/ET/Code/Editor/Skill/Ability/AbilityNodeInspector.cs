@@ -2,7 +2,7 @@ using UnityEngine.UIElements;
 using UnityEngine;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class AbilityNodeInspector : NodeInspectorBase
     {

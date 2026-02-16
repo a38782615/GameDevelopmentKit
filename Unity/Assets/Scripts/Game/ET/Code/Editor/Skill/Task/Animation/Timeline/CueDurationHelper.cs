@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Cue时长辅助工具 - 从Cue节点数据提取资源时长

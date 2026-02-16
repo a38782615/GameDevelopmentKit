@@ -1,7 +1,7 @@
 using UnityEngine.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class DefaultNodeInspector : NodeInspectorBase
     {

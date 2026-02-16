@@ -6,11 +6,11 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class SkillAssetTreeView : TreeView
     {
-        private const string RootPath = "Assets/Unity/Resources/ScriptObject/SkillAsset";
+        public static string RootPath = "Assets/Res/Editor/Skill/Resources/SkillAsset";
         public event Action<string> OnFileSelected;
 
         private Dictionary<int, string> idToPathMap = new Dictionary<int, string>();

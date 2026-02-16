@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 属性选择器控件 - 用于在编辑器中选择属性类型

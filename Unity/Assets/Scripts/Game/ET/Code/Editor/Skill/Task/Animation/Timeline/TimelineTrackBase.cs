@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Timeline轨道基类

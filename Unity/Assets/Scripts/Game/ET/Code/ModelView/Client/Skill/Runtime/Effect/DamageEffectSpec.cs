@@ -3,6 +3,7 @@ namespace ET.Client
     /// <summary>
     /// 伤害效果Spec（瞬时效果）
     /// </summary>
+    [EnableClass]
     public class DamageEffectSpec : GameplayEffectSpec
     {
         private DamageEffectNodeData DamageNodeData => NodeData as DamageEffectNodeData;

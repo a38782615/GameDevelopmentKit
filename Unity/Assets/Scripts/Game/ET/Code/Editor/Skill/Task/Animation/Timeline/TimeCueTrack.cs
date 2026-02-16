@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using System;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 时间Cue轨道 - 显示为矩形区域，支持整体拖拽和边缘调整

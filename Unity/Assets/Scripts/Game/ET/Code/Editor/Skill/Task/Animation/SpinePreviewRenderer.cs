@@ -7,7 +7,7 @@ using Spine.Unity.Editor;
 using System;
 using System.Collections.Generic;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Spine预览渲染器 - 在编辑器中将Spine动画渲染到RenderTexture

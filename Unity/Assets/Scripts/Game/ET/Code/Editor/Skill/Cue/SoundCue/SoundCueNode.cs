@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 音效Cue节点

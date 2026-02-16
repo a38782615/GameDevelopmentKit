@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace ET.Editor.Tools
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 技能资源重命名工具
@@ -12,8 +12,6 @@ namespace ET.Editor.Tools
     /// </summary>
     public class SkillAssetRenamer : EditorWindow
     {
-        private const string SKILL_ASSET_PATH = "Assets/Unity/Resources/ScriptObject/SkillAsset";
-
         /// <summary>
         /// 中文技能名 -> CD Tag 英文名 映射
         /// </summary>
@@ -35,7 +33,7 @@ namespace ET.Editor.Tools
         [MenuItem("SkillEditor/重命名技能资源为英文")]
         public static void RenameSkillAssets()
         {
-            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SKILL_ASSET_PATH });
+            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
             int renamedCount = 0;
             var renamedList = new List<string>();
 
@@ -86,7 +84,7 @@ namespace ET.Editor.Tools
         [MenuItem("SkillEditor/更新技能 SkillId 字段")]
         public static void UpdateSkillIds()
         {
-            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SKILL_ASSET_PATH });
+            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
             int updatedCount = 0;
 
             foreach (var guid in guids)

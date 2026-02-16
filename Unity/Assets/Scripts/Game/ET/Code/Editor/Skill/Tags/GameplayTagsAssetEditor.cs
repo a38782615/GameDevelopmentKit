@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// GameplayTagsAsset 的自定义 Inspector
@@ -60,17 +60,31 @@ namespace ET.Editor
             // 打开编辑器按钮
             var openEditorButton = new Button(() =>
             {
-                GameplayTagsEditorWindow.ShowWindow(asset);
+                GameplayTagsEditorWindow.ShowWindow();
             })
             {
                 text = "打开标签编辑器",
                 style =
                 {
-                    height = 30,
+                    height = 20,
                     marginBottom = 10
                 }
             };
             root.Add(openEditorButton);
+            // 打开编辑器按钮
+            var gen = new Button(() =>
+            {
+                GameplayTagCodeGenerator.AutoGenerate(asset);
+            })
+            {
+                text = "生成代码",
+                style =
+                {
+                    height = 20,
+                    marginBottom = 10
+                }
+            };
+            root.Add(gen);
 
             // 标签列表预览
             var foldout = new Foldout

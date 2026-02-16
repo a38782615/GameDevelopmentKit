@@ -9,6 +9,7 @@ namespace ET.Client
     /// 职责：存储效果、Tick更新、查询效果
     /// 堆叠判断由 GameplayEffectSpec.ExecuteDurationEffect 处理
     /// </summary>
+    [EnableClass]
     public class GameplayEffectContainer
     {
         /// <summary>

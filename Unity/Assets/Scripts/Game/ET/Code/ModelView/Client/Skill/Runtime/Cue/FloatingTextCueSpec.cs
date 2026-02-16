@@ -7,6 +7,7 @@ namespace ET.Client
     /// 飘字Cue Spec
     /// 显示伤害、治疗、状态等飘字
     /// </summary>
+    [EnableClass]
     public class FloatingTextCueSpec : GameplayCueSpec
     {
         // ============ 动态数据 ============

@@ -3,6 +3,7 @@ namespace ET.Client
     /// <summary>
     /// 属性比较条件Spec
     /// </summary>
+    [EnableClass]
     public class AttributeCompareConditionSpec : ConditionSpec
     {
         private AttributeCompareConditionNodeData CompareNodeData => NodeData as AttributeCompareConditionNodeData;

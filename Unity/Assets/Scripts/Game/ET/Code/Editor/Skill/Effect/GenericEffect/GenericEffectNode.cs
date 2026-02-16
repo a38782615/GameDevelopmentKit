@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 通用效果节点 - 暴露基类全部配置能力

@@ -5,6 +5,7 @@ namespace ET.Client
     /// <summary>
     /// 延迟目标提供者 - 在需要时才执行搜索
     /// </summary>
+    [EnableClass]
     public class LazyTargetProvider : ITargetProvider
     {
         private System.Func<List<AbilitySystemComponent>> _searchFunc;

@@ -9,6 +9,7 @@ namespace ET.Client
     /// <summary>
     /// 技能栏管理器 - 使用UGUI
     /// </summary>
+    [EnableClass]
     public class SkillBarUI : MonoBehaviour
     {
         [Header("引用")]

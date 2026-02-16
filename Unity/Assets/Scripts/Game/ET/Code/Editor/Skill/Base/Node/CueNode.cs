@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 表现节点基类 - 所有Cue节点继承此类

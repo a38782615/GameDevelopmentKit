@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 游戏标签编辑器窗口
@@ -12,7 +12,7 @@ namespace ET.Editor
     /// </summary>
     public class GameplayTagsEditorWindow : EditorWindow
     {
-        private const string ASSET_PATH = "Assets/Unity/Resources/ScriptObject/TagAsset/GameplayTagsAsset.asset";
+        private const string ASSET_PATH = "Assets/Res/Editor/Skill/Resources/TagAsset/GameplayTagsAsset.asset";
 
         private GameplayTagsAsset _asset;
         private VisualElement _treeContainer;
@@ -37,15 +37,8 @@ namespace ET.Editor
         // 累积的重命名映射（旧路径 -> 新路径），应用更改时一次性处理
         private Dictionary<string, string> _pendingRenames = new Dictionary<string, string>();
 
-        [MenuItem("Tools/Gameplay Tags Editor")]
+        [MenuItem("SkillEditor/Gameplay Tags Editor")]
         public static void ShowWindow()
-        {
-            var window = GetWindow<GameplayTagsEditorWindow>();
-            window.titleContent = new GUIContent("标签编辑器");
-            window.minSize = new Vector2(400, 500);
-        }
-
-        public static void ShowWindow(GameplayTagsAsset asset)
         {
             var window = GetWindow<GameplayTagsEditorWindow>();
             window.titleContent = new GUIContent("标签编辑器");
@@ -151,6 +144,18 @@ namespace ET.Editor
                 }
             };
             root.Add(_applyButton);
+            // 应用更改按钮
+            var gen = new Button(() => GameplayTagCodeGenerator.AutoGenerate(_asset))
+            {
+                text = "代码生成",
+                style =
+                {
+                    height = 28,
+                    fontSize = 13,
+                    marginBottom = 8
+                }
+            };
+            root.Add(gen);
 
             // 分隔线
             root.Add(CreateSeparator());

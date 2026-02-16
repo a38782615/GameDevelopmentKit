@@ -8,6 +8,7 @@ namespace ET.Client
     /// 单位属性GUI显示器
     /// 在游戏运行时显示Player和Boss的属性面板
     /// </summary>
+    [EnableClass]
     public class UnitAttributeGUI : MonoBehaviour
     {
         [Header("引用")]

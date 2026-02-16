@@ -5,6 +5,7 @@ namespace ET.Client
     /// <summary>
     /// 结束技能任务Spec
     /// </summary>
+    [EnableClass]
     public class EndAbilityTaskSpec : TaskSpec
     {
         private EndAbilityTaskNodeData EndAbilityNodeData => NodeData as EndAbilityTaskNodeData;

@@ -8,9 +8,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using ET.Editor.Tools;
 using Debug = UnityEngine.Debug;
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class SkillEditorWindow : EditorWindow
     {
@@ -26,7 +25,7 @@ namespace ET.Editor
         private VisualElement centerPanel;
         private bool _isGraphDirty = false;
 
-        [MenuItem("Tools/Skill Editor")]
+        [MenuItem("SkillEditor/Skill Editor")]
         public static void OpenWindow()
         {
             var window = GetWindow<SkillEditorWindow>();
@@ -454,7 +453,7 @@ namespace ET.Editor
                 // 1. 导出所有技能到 Excel
                 EditorUtility.DisplayProgressBar("导出到 Luban", "正在导出技能到 Excel...", 0.3f);
 
-                var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { "Assets/Unity/Resources/ScriptObject/SkillAsset" });
+                var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
                 var skills = new List<SkillGraphData>();
                 foreach (var guid in guids)
                 {

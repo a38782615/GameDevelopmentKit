@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 时间刻度尺 - 显示时间标记和刻度线（使用帧作为单位）

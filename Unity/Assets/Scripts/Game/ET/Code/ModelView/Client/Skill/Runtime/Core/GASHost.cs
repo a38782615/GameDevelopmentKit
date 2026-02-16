@@ -7,8 +7,10 @@ namespace ET.Client
     /// GAS全局更新驱动器 - 单例模式
     /// 负责驱动所有ASC的Tick更新，避免每个ASC单独挂载MonoBehaviour
     /// </summary>
+    [EnableClass]
     public class GASHost : MonoBehaviour
     {
+        [StaticField]
         private static GASHost _instance;
         public static GASHost Instance
         {

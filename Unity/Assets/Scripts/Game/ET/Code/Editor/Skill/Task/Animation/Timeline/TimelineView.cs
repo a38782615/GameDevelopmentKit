@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Timeline主容器 - 管理时间刻度尺和所有轨道

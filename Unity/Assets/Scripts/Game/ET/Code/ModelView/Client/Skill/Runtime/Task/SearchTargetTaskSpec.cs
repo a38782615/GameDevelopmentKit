@@ -8,6 +8,7 @@ namespace ET.Client
     /// 搜索目标任务Spec
     /// 使用Physics2D进行碰撞检测
     /// </summary>
+    [EnableClass]
     public class SearchTargetTaskSpec : TaskSpec
     {
         private List<AbilitySystemComponent> _foundTargets = new List<AbilitySystemComponent>();

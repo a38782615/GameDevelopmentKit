@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 飘字Cue节点

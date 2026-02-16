@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 任务节点统一基类 - 所有Task节点的基类

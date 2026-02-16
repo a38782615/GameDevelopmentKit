@@ -6,6 +6,7 @@ namespace ET.Client
     /// <summary>
     /// 目标搜索器 - 提供各种形状的目标搜索功能
     /// </summary>
+    [EnableClass]
     public class TargetSearcher
     {
         /// <summary>

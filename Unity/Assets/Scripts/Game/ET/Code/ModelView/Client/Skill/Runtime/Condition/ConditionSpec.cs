@@ -7,6 +7,7 @@ namespace ET.Client
     /// 条件Spec基类 - 用于条件判断分支的节点
     /// 特点：瞬时执行、返回布尔结果、根据结果执行不同分支
     /// </summary>
+    [EnableClass]
     public abstract class ConditionSpec
     {
         // ============ 基础标识 ============

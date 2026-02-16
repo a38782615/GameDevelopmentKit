@@ -8,6 +8,7 @@ namespace ET.Client
     /// Spec执行上下文 - 提供执行所需的所有信息
     /// 在整个技能执行过程中传递
     /// </summary>
+    [EnableClass]
     public class SpecExecutionContext
     {
         /// <summary>

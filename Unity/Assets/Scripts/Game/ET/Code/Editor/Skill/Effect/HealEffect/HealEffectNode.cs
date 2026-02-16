@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 治疗效果节点（瞬时效果）

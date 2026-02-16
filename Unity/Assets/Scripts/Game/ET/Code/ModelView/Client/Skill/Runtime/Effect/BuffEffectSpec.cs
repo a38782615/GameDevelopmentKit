@@ -6,6 +6,7 @@ namespace ET.Client
     /// <summary>
     /// Buff效果Spec（持续效果）
     /// </summary>
+    [EnableClass]
     public class BuffEffectSpec : GameplayEffectSpec
     {
         private BuffEffectNodeData BuffNodeData => NodeData as BuffEffectNodeData;

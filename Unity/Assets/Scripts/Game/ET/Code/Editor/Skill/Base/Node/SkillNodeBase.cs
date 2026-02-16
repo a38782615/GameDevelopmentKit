@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 using System;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public abstract class SkillNodeBase : Node
     {

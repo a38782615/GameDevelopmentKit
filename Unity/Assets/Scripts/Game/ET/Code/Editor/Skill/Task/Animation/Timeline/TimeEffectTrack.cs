@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using System;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 时间效果轨道 - 显示为菱形标记，可拖拽改变触发时间

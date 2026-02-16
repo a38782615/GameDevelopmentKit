@@ -7,6 +7,7 @@ namespace ET.Client
     /// 技能运行时实例 - 对应GAS的FGameplayAbilitySpec
     /// 每个授予的技能都有一个Spec实例，包含运行时状态和执行逻辑
     /// </summary>
+    [EnableClass]
     public class GameplayAbilitySpec
     {
         /// <summary>

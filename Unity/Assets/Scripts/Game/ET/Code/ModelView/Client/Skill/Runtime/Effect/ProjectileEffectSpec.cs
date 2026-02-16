@@ -8,6 +8,7 @@ namespace ET.Client
     /// 负责生成投射物并管理其生命周期
     /// 注意：这是一个特殊的Effect，生命周期由投射物控制
     /// </summary>
+    [EnableClass]
     public class ProjectileEffectSpec : GameplayEffectSpec
     {
         private ProjectileEffectNodeData ProjectileNodeData => NodeData as ProjectileEffectNodeData;

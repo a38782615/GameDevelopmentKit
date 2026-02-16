@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public static class NodeInspectorFactory
     {

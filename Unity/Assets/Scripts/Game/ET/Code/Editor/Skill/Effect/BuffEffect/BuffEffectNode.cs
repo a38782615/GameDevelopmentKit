@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Buff效果节点（统一的Buff类型）

@@ -9,6 +9,7 @@ namespace ET.Client
     /// 投射物控制器
     /// 挂在投射物GameObject上，负责飞行逻辑和碰撞检测
     /// </summary>
+    [EnableClass]
     public class ProjectileController : MonoBehaviour
     {
         // ============ 事件 ============

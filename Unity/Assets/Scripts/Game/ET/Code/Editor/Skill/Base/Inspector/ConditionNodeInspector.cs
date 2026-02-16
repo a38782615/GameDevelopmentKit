@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 条件节点Inspector基类 - 所有Condition节点的Inspector继承此类

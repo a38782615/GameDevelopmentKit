@@ -7,6 +7,7 @@ namespace ET.Client
     /// 技能系统组件 - GAS的核心实现
     /// 管理技能、效果、属性、标签的中枢组件
     /// </summary>
+    [EnableClass]
     public class AbilitySystemComponent
     {
         /// <summary>

@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using System.Reflection;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class NodeInspectorView : VisualElement
     {

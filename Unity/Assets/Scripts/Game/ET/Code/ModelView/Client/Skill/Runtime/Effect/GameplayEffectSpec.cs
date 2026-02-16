@@ -8,6 +8,7 @@ namespace ET.Client
     /// 瞬时效果: 不授予标签，直接修改BaseValue（永久）
     /// 持续效果: Apply时授予标签+添加Modifier（临时），Remove时移除
     /// </summary>
+    [EnableClass]
     public class GameplayEffectSpec
     {
         // ============ 基础标识 ============

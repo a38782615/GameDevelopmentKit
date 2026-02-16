@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 技能节点 - 对应 GameplayAbility

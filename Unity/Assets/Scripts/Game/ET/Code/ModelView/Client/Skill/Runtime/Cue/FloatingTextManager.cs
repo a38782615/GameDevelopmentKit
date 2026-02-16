@@ -9,6 +9,7 @@ namespace ET.Client
     /// 飘字管理器 - 负责创建和管理飘字
     /// 需要挂载到场景中，并配置 Canvas 和 Camera
     /// </summary>
+    [EnableClass]
     public class FloatingTextManager : MonoBehaviour
     {
         [StaticField]

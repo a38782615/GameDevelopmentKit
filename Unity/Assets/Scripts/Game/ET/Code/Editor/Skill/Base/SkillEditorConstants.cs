@@ -1,7 +1,7 @@
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 技能编辑器全局常量（委托到 SkillConstants）

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 表现节点Inspector基类 - 所有Cue节点的Inspector继承此类

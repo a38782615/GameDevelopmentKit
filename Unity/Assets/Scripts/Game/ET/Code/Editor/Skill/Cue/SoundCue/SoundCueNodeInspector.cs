@@ -3,7 +3,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public class SoundCueNodeInspector : CueNodeInspector
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 标签代码生成器
@@ -13,7 +13,7 @@ namespace ET.Editor
     /// </summary>
     public static class GameplayTagCodeGenerator
     {
-        private const string DEFAULT_NAMESPACE = "ET.SkillData";
+        private const string DEFAULT_NAMESPACE = "ET.Client";
         private const string DEFAULT_CLASS_NAME = "GameplayTagLibrary";
 
         private const string LIBRARY_FILE_NAME = "GameplayTagLibrary.cs";
@@ -172,6 +172,7 @@ namespace ET.Editor
             sb.AppendLine("        /// <summary>");
             sb.AppendLine("        /// 标签名称到标签实例的映射");
             sb.AppendLine("        /// </summary>");
+            sb.AppendLine("        [StaticField]");
             sb.AppendLine("        public static readonly Dictionary<string, GameplayTag> TagMap = new Dictionary<string, GameplayTag>");
             sb.AppendLine("        {");
 

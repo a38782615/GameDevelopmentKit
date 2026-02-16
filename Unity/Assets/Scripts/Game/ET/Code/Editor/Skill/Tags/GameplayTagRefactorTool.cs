@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Tag 重构工具 - 当 Tag 重命名或删除时，自动更新所有引用该 Tag 的技能资产

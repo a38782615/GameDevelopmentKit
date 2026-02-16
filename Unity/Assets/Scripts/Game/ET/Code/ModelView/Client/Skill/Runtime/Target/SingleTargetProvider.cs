@@ -5,6 +5,7 @@ namespace ET.Client
     /// <summary>
     /// 单目标提供者 - 只持有一个目标
     /// </summary>
+    [EnableClass]
     public class SingleTargetProvider : ITargetProvider
     {
         private AbilitySystemComponent _target;

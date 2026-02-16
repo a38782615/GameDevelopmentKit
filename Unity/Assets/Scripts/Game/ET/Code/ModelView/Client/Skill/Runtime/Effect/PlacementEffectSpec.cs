@@ -8,6 +8,7 @@ namespace ET.Client
     /// 负责生成放置物并管理其生命周期
     /// 支持进入/离开/停留三种事件
     /// </summary>
+    [EnableClass]
     public class PlacementEffectSpec : GameplayEffectSpec
     {
         private PlacementEffectNodeData PlacementNodeData => NodeData as PlacementEffectNodeData;

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ET.SkillData;
 using Spine.Unity;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 动画节点 - 支持拖拽Spine文件、选择动画、预览播放，并在时间轴上触发效果和Cue

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Cue区域拖拽操作器 - 使用更简单直接的方式

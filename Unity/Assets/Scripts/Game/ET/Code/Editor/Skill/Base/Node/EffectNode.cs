@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 效果节点统一基类 - 所有Effect节点的基类

@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 冷却效果节点

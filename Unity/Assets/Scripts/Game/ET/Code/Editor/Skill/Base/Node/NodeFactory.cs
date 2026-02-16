@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 节点工厂 - 负责创建各类型节点

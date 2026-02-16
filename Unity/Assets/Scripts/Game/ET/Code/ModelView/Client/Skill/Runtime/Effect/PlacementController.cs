@@ -11,6 +11,7 @@ namespace ET.Client
     /// 挂在放置物GameObject上，负责碰撞检测
     /// 支持进入/离开/停留三种事件
     /// </summary>
+    [EnableClass]
     public class PlacementController : MonoBehaviour
     {
         // ============ 事件 ============

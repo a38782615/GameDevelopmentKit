@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public interface INodeInspector
     {
@@ -41,7 +41,7 @@ namespace ET.Editor
                 ApplyEnumFieldStyle(targetTypeField);
                 targetTypeField.RegisterValueChangedCallback(evt =>
                 {
-                    node.NodeData.targetType = (Skill.TargetType)evt.newValue;
+                    node.NodeData.targetType = (TargetType)evt.newValue;
                     node.SyncUIFromData();
                 });
                 container.Add(targetTypeField);

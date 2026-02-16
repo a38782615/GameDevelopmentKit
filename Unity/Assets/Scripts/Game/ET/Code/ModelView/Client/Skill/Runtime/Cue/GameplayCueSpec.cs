@@ -8,6 +8,7 @@ namespace ET.Client
     /// Cue Spec基类 - 包含动态数据和执行逻辑
     /// Cue节点用于播放视觉/音效表现，不改变游戏状态
     /// </summary>
+    [EnableClass]
     public abstract class GameplayCueSpec
     {
         /// <summary>

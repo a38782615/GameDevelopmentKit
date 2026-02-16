@@ -12,6 +12,7 @@ namespace ET.Client
     ///
     /// 使用方式：挂载到角色上，配置 ASC 引用
     /// </summary>
+    [EnableClass]
     public class AnimationComponent : MonoBehaviour
     {
         [Header("引用")]

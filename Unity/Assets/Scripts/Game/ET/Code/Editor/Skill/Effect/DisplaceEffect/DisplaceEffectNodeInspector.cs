@@ -3,7 +3,7 @@ using UnityEditor.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 位移效果节点Inspector

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    [EnableClass]
     public class Player : SkillUnit
     {
         public SkillUnit target;

@@ -2,7 +2,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 属性比较条件节点Inspector

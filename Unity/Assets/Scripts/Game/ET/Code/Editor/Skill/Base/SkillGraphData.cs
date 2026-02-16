@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ET.Skill
+namespace ET.Client.Editor
 {
     [CreateAssetMenu(fileName = "SkillGraph", menuName = "SkillEditor/SkillGraph")]
     public class SkillGraphData : ScriptableObject

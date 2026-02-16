@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 投射物效果节点 - 简洁版，只显示端口

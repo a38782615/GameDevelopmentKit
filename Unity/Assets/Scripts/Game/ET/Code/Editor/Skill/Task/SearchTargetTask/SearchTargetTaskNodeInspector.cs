@@ -1,9 +1,6 @@
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 
-
-
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 搜索目标任务节点Inspector
@@ -89,13 +86,13 @@ namespace ET.Editor
                             var lineParamsContainer = new VisualElement();
                             shapeParamsContainer.Add(lineParamsContainer);
 
-                            void UpdateLineParams(LineType lineType)
+                            void UpdateLineParams(SkillLineType lineType)
                             {
                                 lineParamsContainer.Clear();
 
                                 switch (lineType)
                                 {
-                                    case LineType.UnitDirection:
+                                    case SkillLineType.UnitDirection:
                                         lineParamsContainer.Add(CreateFloatField("偏移角度", data.searchLineDirectionOffsetAngle, value =>
                                         {
                                             data.searchLineDirectionOffsetAngle = value;
@@ -113,7 +110,7 @@ namespace ET.Editor
                                         }));
                                         break;
 
-                                    case LineType.BetweenPoints:
+                                    case SkillLineType.BetweenPoints:
                                         // 起点位置来源
                                         var startSourceField = new EnumField("起点来源", data.lineStartPositionSource);
                                         ApplyEnumFieldStyle(startSourceField);
@@ -153,7 +150,7 @@ namespace ET.Editor
                                         }));
                                         break;
 
-                                    case LineType.AbsoluteAngle:
+                                    case SkillLineType.AbsoluteAngle:
                                         lineParamsContainer.Add(CreateFloatField("绝对角度", data.searchLineAbsoluteAngle, value =>
                                         {
                                             data.searchLineAbsoluteAngle = value;
@@ -175,8 +172,8 @@ namespace ET.Editor
 
                             lineTypeField.RegisterValueChangedCallback(evt =>
                             {
-                                data.searchLineType = (LineType)evt.newValue;
-                                UpdateLineParams((LineType)evt.newValue);
+                                data.searchLineType = (SkillLineType)evt.newValue;
+                                UpdateLineParams((SkillLineType)evt.newValue);
                                 searchNode.SyncUIFromData();
                             });
 

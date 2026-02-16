@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 任务节点Inspector基类 - 所有Task节点的Inspector继承此类

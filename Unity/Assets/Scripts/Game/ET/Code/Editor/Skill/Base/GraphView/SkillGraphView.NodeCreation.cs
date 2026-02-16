@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public partial class SkillGraphView
     {

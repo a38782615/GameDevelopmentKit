@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 播放指示器 - 时间轴上的绿色竖线，支持拖拽跳转

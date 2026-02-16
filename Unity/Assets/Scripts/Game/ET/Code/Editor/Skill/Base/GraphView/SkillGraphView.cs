@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 using UnityEditor;
 
 using Unity.Mathematics;
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     public partial class SkillGraphView : GraphView
     {

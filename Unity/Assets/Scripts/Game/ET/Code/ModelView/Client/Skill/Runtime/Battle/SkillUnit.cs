@@ -5,6 +5,7 @@ using UnityEngine;
 namespace ET.Client
 {
 
+    [EnableClass]
     public class SkillUnit : MonoBehaviour
     {
         public AbilitySystemComponent ownerASC;

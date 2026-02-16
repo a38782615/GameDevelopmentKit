@@ -4,7 +4,7 @@ using UnityEditor.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 放置物效果节点Inspector

@@ -5,6 +5,7 @@ namespace ET.Client
     /// <summary>
     /// 简单目标提供者 - 直接持有目标列表
     /// </summary>
+    [EnableClass]
     public class SimpleTargetProvider : ITargetProvider
     {
         private List<AbilitySystemComponent> _targets = new List<AbilitySystemComponent>();

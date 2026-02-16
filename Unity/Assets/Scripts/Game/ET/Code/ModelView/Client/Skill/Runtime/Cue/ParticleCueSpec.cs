@@ -7,6 +7,7 @@ namespace ET.Client
     /// 粒子特效Cue Spec
     /// 播放粒子特效
     /// </summary>
+    [EnableClass]
     public class ParticleCueSpec : GameplayCueSpec
     {
         // ============ 动态数据 ============

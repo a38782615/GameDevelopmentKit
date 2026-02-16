@@ -1,0 +1,229 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712d50f1a34d7443b852f2516036979, type: 3}
+  m_Name: GameplayTagsAsset
+  m_EditorClassIdentifier: 
+  _treeNodes:
+  - name: Root
+    id: 0
+    parentId: -1
+    childrenIds: 30000000440000004900000052000000
+  - name: unitType
+    id: 48
+    parentId: 0
+    childrenIds: 3100000032000000
+  - name: hero
+    id: 49
+    parentId: 48
+    childrenIds: 
+  - name: monster
+    id: 50
+    parentId: 48
+    childrenIds: 
+  - name: DeBuff
+    id: 54
+    parentId: 73
+    childrenIds: 370000004a000000
+  - name: Stun
+    id: 55
+    parentId: 54
+    childrenIds: 
+  - name: CD
+    id: 68
+    parentId: 0
+    childrenIds: 450000004600000047000000480000004b0000004c0000004d0000004e0000004f0000005000000051000000
+  - name: Sweep
+    id: 69
+    parentId: 68
+    childrenIds: 
+  - name: Blood
+    id: 70
+    parentId: 68
+    childrenIds: 
+  - name: FireCircle
+    id: 71
+    parentId: 68
+    childrenIds: 
+  - name: RuFood
+    id: 72
+    parentId: 68
+    childrenIds: 
+  - name: Buff
+    id: 73
+    parentId: 0
+    childrenIds: 36000000
+  - name: Dot
+    id: 74
+    parentId: 54
+    childrenIds: 
+  - name: Wind
+    id: 75
+    parentId: 68
+    childrenIds: 
+  - name: RecBlood
+    id: 76
+    parentId: 68
+    childrenIds: 
+  - name: Wan
+    id: 77
+    parentId: 68
+    childrenIds: 
+  - name: God
+    id: 78
+    parentId: 68
+    childrenIds: 
+  - name: BeRecBlood
+    id: 79
+    parentId: 68
+    childrenIds: 
+  - name: ThreeFire
+    id: 80
+    parentId: 68
+    childrenIds: 
+  - name: SpeedUp
+    id: 81
+    parentId: 68
+    childrenIds: 
+  - name: Skill
+    id: 82
+    parentId: 0
+    childrenIds: 53000000
+  - name: Running
+    id: 83
+    parentId: 82
+    childrenIds: 
+  _cachedTags:
+  - _name: Buff
+    _hashCode: 937056111
+    _shortName: Buff
+    _ancestorHashCodes: 
+    _ancestorNames: []
+  - _name: Buff.DeBuff
+    _hashCode: 321157895
+    _shortName: DeBuff
+    _ancestorHashCodes: 6f57da37
+    _ancestorNames:
+    - Buff
+  - _name: Buff.DeBuff.Dot
+    _hashCode: -637848644
+    _shortName: Dot
+    _ancestorHashCodes: 6f57da37077b2413
+    _ancestorNames:
+    - Buff
+    - Buff.DeBuff
+  - _name: Buff.DeBuff.Stun
+    _hashCode: 1791562953
+    _shortName: Stun
+    _ancestorHashCodes: 6f57da37077b2413
+    _ancestorNames:
+    - Buff
+    - Buff.DeBuff
+  - _name: CD
+    _hashCode: -1137859925
+    _shortName: CD
+    _ancestorHashCodes: 
+    _ancestorNames: []
+  - _name: CD.BeRecBlood
+    _hashCode: 1911582038
+    _shortName: BeRecBlood
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.Blood
+    _hashCode: 274000851
+    _shortName: Blood
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.FireCircle
+    _hashCode: 522143731
+    _shortName: FireCircle
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.God
+    _hashCode: 1317201809
+    _shortName: God
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.RecBlood
+    _hashCode: 1043024739
+    _shortName: RecBlood
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.RuFood
+    _hashCode: -1045902856
+    _shortName: RuFood
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.SpeedUp
+    _hashCode: 1005672567
+    _shortName: SpeedUp
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.Sweep
+    _hashCode: -303359587
+    _shortName: Sweep
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.ThreeFire
+    _hashCode: 960327319
+    _shortName: ThreeFire
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.Wan
+    _hashCode: 87403585
+    _shortName: Wan
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: CD.Wind
+    _hashCode: 1982736573
+    _shortName: Wind
+    _ancestorHashCodes: aba22dbc
+    _ancestorNames:
+    - CD
+  - _name: Skill
+    _hashCode: 1312877309
+    _shortName: Skill
+    _ancestorHashCodes: 
+    _ancestorNames: []
+  - _name: Skill.Running
+    _hashCode: -51601538
+    _shortName: Running
+    _ancestorHashCodes: fdea404e
+    _ancestorNames:
+    - Skill
+  - _name: unitType
+    _hashCode: 1600484460
+    _shortName: unitType
+    _ancestorHashCodes: 
+    _ancestorNames: []
+  - _name: unitType.hero
+    _hashCode: 1831381558
+    _shortName: hero
+    _ancestorHashCodes: 6c74655f
+    _ancestorNames:
+    - unitType
+  - _name: unitType.monster
+    _hashCode: -2021655864
+    _shortName: monster
+    _ancestorHashCodes: 6c74655f
+    _ancestorNames:
+    - unitType
+  _nextId: 84

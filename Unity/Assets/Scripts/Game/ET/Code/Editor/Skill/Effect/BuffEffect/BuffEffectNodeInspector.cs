@@ -4,7 +4,7 @@ using UnityEditor.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Buff效果节点Inspector

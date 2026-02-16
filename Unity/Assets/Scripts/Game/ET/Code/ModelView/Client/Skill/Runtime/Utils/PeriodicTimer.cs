@@ -3,6 +3,7 @@ namespace ET.Client
     /// <summary>
     /// 周期计时器 - 用于周期性效果
     /// </summary>
+    [EnableClass]
     public class PeriodicTimer
     {
         /// <summary>

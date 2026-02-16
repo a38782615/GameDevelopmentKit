@@ -7,6 +7,7 @@ namespace ET.Client
     /// <summary>
     /// 技能容器 - 管理ASC拥有的所有技能
     /// </summary>
+    [EnableClass]
     public class AbilityContainer
     {
         /// <summary>

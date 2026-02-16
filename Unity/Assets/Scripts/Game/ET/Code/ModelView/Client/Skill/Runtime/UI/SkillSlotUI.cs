@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace ET.Client
 {
+    [EnableClass]
     public class SkillSlotUI : MonoBehaviour
     {
         [Header("UI组件引用")]

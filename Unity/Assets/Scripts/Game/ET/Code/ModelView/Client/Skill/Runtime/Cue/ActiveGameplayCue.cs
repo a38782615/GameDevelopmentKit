@@ -6,6 +6,7 @@ namespace ET.Client
     /// 激活的Cue - 正在播放的Cue实例
     /// 管理Cue的生命周期
     /// </summary>
+    [EnableClass]
     public class ActiveGameplayCue
     {
         /// <summary>

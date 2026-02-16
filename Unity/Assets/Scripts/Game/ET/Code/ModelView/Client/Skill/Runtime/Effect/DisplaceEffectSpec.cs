@@ -7,6 +7,7 @@ namespace ET.Client
     /// 位移效果Spec - 持续移动目标位置（吸引/击退/吸引到指定点）
     /// 利用基类的 Duration/Tick 机制实现逐帧位移
     /// </summary>
+    [EnableClass]
     public class DisplaceEffectSpec : GameplayEffectSpec
     {
         private DisplaceEffectNodeData DisplaceNodeData => NodeData as DisplaceEffectNodeData;

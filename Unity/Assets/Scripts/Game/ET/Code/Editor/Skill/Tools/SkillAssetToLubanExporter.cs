@@ -10,7 +10,7 @@ using MiniExcelLibs;
 using UnityEditor;
 using UnityEngine;
 
-namespace ET.Editor.Tools
+namespace ET.Client.Editor
 {
     /// <summary>
     /// SkillAsset 导出到 Luban Excel 工具
@@ -18,8 +18,7 @@ namespace ET.Editor.Tools
     /// </summary>
     public class SkillAssetToLubanExporter : EditorWindow
     {
-        private const string SKILL_ASSET_PATH = "Assets/Unity/Resources/ScriptObject/SkillAsset";
-        private const string EXCEL_PATH = "Luban/MiniTemplate/Datas/#SkillGraph.xlsx";
+        private const string EXCEL_PATH = "Luban/MiniTemplate/Datas/SkillGraph.xlsx";
         private const int DATA_START_ROW = 5; // 数据从第5行开始
 
         private Vector2 _scrollPosition;
@@ -38,7 +37,7 @@ namespace ET.Editor.Tools
         [MenuItem("SkillEditor/快速导出所有技能到 Excel")]
         public static void QuickExportAll()
         {
-            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SKILL_ASSET_PATH });
+            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
             var skills = new List<SkillGraphData>();
 
             foreach (var guid in guids)
@@ -65,7 +64,7 @@ namespace ET.Editor.Tools
             _skillAssets.Clear();
             _selectedAssets.Clear();
 
-            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SKILL_ASSET_PATH });
+            var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);

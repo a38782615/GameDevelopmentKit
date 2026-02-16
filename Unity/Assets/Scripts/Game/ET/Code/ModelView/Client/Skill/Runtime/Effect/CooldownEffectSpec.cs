@@ -4,6 +4,7 @@ namespace ET.Client
     /// 冷却效果Spec
     /// 支持普通CD和充能CD两种模式
     /// </summary>
+    [EnableClass]
     public class CooldownEffectSpec : GameplayEffectSpec
     {
         private CooldownEffectNodeData CooldownNodeData => NodeData as CooldownEffectNodeData;

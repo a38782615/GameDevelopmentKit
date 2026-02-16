@@ -6,6 +6,7 @@ namespace ET.Client
     /// <summary>
     /// 飘字动画组件 - 带随机弧度的弹出效果
     /// </summary>
+    [EnableClass]
     public class FloatingTextAnimator : MonoBehaviour
     {
         private float _duration;

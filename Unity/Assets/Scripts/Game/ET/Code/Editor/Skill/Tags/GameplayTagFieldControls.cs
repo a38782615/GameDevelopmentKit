@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 标签选择器控件 - 用于在节点中选择单个标签

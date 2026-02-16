@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    [EnableClass]
     public class PlayerMovement : MonoBehaviour
     {
         private SkillUnit _unit;

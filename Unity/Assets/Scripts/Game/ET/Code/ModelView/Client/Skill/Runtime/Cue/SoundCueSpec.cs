@@ -7,6 +7,7 @@ namespace ET.Client
     /// 音效Cue Spec
     /// 播放音效
     /// </summary>
+    [EnableClass]
     public class SoundCueSpec : GameplayCueSpec
     {
         // ============ 动态数据 ============

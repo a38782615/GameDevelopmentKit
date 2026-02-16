@@ -2,7 +2,7 @@ using System;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 自定义端口 - 监听连接和断开事件

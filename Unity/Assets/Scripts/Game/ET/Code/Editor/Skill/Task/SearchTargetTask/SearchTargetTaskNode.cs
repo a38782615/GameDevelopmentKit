@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 搜索目标任务节点 - 搜索范围内的目标并遍历执行

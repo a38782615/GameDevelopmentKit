@@ -7,7 +7,7 @@ using MiniExcelLibs;
 using UnityEditor;
 using UnityEngine;
 
-namespace ET.Editor.Tools
+namespace ET.Client.Editor
 {
     /// <summary>
     /// Luban Excel 导入到 SkillAsset 工具
@@ -15,7 +15,6 @@ namespace ET.Editor.Tools
     /// </summary>
     public class LubanToSkillAssetImporter : EditorWindow
     {
-        private const string SKILL_ASSET_PATH = "Assets/Unity/Resources/ScriptObject/SkillAsset";
         private const string EXCEL_PATH = "Luban/MiniTemplate/Datas/#SkillGraph.xlsx";
         private const int DATA_START_ROW = 5; // 数据从第5行开始
 
@@ -214,7 +213,7 @@ namespace ET.Editor.Tools
             EditorGUILayout.SelectableLabel(excelPath, EditorStyles.textField, GUILayout.Height(20));
 
             EditorGUILayout.LabelField("输出路径:", EditorStyles.boldLabel);
-            EditorGUILayout.SelectableLabel(SKILL_ASSET_PATH, EditorStyles.textField, GUILayout.Height(20));
+            EditorGUILayout.SelectableLabel(SkillAssetTreeView.RootPath, EditorStyles.textField, GUILayout.Height(20));
         }
 
         private void ImportSelectedSkills()
@@ -394,7 +393,7 @@ namespace ET.Editor.Tools
         /// </summary>
         private static void ImportSkill(SkillImportData skillData)
         {
-            var assetPath = $"{SKILL_ASSET_PATH}/{skillData.Name}.asset";
+            var assetPath = $"{SkillAssetTreeView.RootPath}/{skillData.Name}.asset";
 
             // 检查是否已存在
             var existingAsset = AssetDatabase.LoadAssetAtPath<SkillGraphData>(assetPath);
@@ -417,9 +416,9 @@ namespace ET.Editor.Tools
                 newAsset.connections = skillData.Connections;
 
                 // 确保目录存在
-                if (!AssetDatabase.IsValidFolder(SKILL_ASSET_PATH))
+                if (!AssetDatabase.IsValidFolder(SkillAssetTreeView.RootPath))
                 {
-                    var folders = SKILL_ASSET_PATH.Split('/');
+                    var folders = SkillAssetTreeView.RootPath.Split('/');
                     var currentPath = folders[0];
                     for (int i = 1; i < folders.Length; i++)
                     {
@@ -443,7 +442,7 @@ namespace ET.Editor.Tools
         private static bool CheckAssetExists(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
-            var assetPath = $"{SKILL_ASSET_PATH}/{name}.asset";
+            var assetPath = $"{SkillAssetTreeView.RootPath}/{name}.asset";
             return AssetDatabase.LoadAssetAtPath<SkillGraphData>(assetPath) != null;
         }
 

@@ -1,6 +1,6 @@
 using UnityEngine.UIElements;
 
-namespace ET.Editor
+namespace ET.Client.Editor
 {
     /// <summary>
     /// 通用效果节点Inspector - 无额外字段，全部由基类处理

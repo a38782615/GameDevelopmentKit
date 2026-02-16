@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    [EnableClass]
     public class CameraManager : MonoBehaviour
     {
         public static CameraManager Instance { get; private set; }
