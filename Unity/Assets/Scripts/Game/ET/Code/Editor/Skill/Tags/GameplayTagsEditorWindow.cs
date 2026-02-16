@@ -12,7 +12,7 @@ namespace ET.Client.Editor
     /// </summary>
     public class GameplayTagsEditorWindow : EditorWindow
     {
-        private const string ASSET_PATH = "Assets/Res/Editor/Skill/Resources/TagAsset/GameplayTagsAsset.asset";
+        private const string ASSET_PATH = "Assets/Res/Editor/Skill/TagAsset/GameplayTagsAsset.asset";
 
         private GameplayTagsAsset _asset;
         private VisualElement _treeContainer;

@@ -1,0 +1,146 @@
+
+SP_Zhanshi.png
+size: 827,526
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+20250410-161914
+  rotate: false
+  xy: 293, 9
+  size: 93, 39
+  orig: 93, 39
+  offset: 0, 0
+  index: -1
+Cloth/ZS_0013_jiangbang2
+  rotate: false
+  xy: 298, 374
+  size: 68, 69
+  orig: 68, 69
+  offset: 0, 0
+  index: -1
+Cloth/ZS_0013_shenti
+  rotate: false
+  xy: 298, 252
+  size: 143, 97
+  orig: 143, 97
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_lian
+  rotate: false
+  xy: 443, 236
+  size: 115, 113
+  orig: 115, 113
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_tou3
+  rotate: true
+  xy: 298, 445
+  size: 79, 181
+  orig: 79, 181
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_toufa1
+  rotate: true
+  xy: 571, 58
+  size: 211, 246
+  orig: 211, 246
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_toufa2
+  rotate: true
+  xy: 293, 50
+  size: 159, 276
+  orig: 159, 276
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_toukui 1
+  rotate: false
+  xy: 2, 211
+  size: 294, 313
+  orig: 294, 313
+  offset: 0, 0
+  index: -1
+Head/ZS_0013_yan2
+  rotate: true
+  xy: 481, 351
+  size: 173, 76
+  orig: 173, 76
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_guang1
+  rotate: false
+  xy: 483, 6
+  size: 41, 42
+  orig: 41, 42
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_guang2
+  rotate: false
+  xy: 526, 7
+  size: 41, 41
+  orig: 41, 41
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_shou1
+  rotate: false
+  xy: 607, 21
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_shou2
+  rotate: false
+  xy: 644, 21
+  size: 35, 35
+  orig: 35, 35
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_wuqi1
+  rotate: false
+  xy: 2, 2
+  size: 289, 207
+  orig: 289, 207
+  offset: 0, 0
+  index: -1
+Weapon/ZS_0013_wuqi2
+  rotate: false
+  xy: 571, 271
+  size: 254, 253
+  orig: 254, 253
+  offset: 0, 0
+  index: -1
+Weapon/shou1
+  rotate: true
+  xy: 569, 11
+  size: 37, 36
+  orig: 37, 36
+  offset: 0, 0
+  index: -1
+aidayan
+  rotate: false
+  xy: 681, 23
+  size: 33, 33
+  orig: 33, 33
+  offset: 0, 0
+  index: -1
+jiao1
+  rotate: false
+  xy: 716, 25
+  size: 31, 31
+  orig: 31, 31
+  offset: 0, 0
+  index: -1
+jiao2
+  rotate: false
+  xy: 749, 23
+  size: 29, 33
+  orig: 29, 33
+  offset: 0, 0
+  index: -1
+yinying
+  rotate: false
+  xy: 388, 9
+  size: 93, 39
+  orig: 93, 39
+  offset: 0, 0
+  index: -1

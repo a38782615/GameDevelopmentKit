@@ -14,6 +14,7 @@ namespace ET.Client.Editor
 
         public event Action<SkillNodeBase> OnNodeSelected;
         public event Action OnGraphModified;
+        public static string RootPath = "Assets/Res/Editor/Skill/SkillGraphViewStyle.uss";
 
         public SkillGraphView()
         {
@@ -25,7 +26,8 @@ namespace ET.Client.Editor
 
             style.backgroundColor = new Color(157f / 255f, 210f / 255f, 236f / 255f, 0.5F);
 
-            styleSheets.Add(Resources.Load<StyleSheet>("SkillGraphViewStyle"));
+            var asset = AssetDatabase.LoadAssetAtPath<StyleSheet>(RootPath);
+            styleSheets.Add(asset);
 
             this.AddManipulator(CreateContextualMenu());
 

@@ -10,7 +10,7 @@ namespace ET.Client.Editor
 {
     public class SkillAssetTreeView : TreeView
     {
-        public static string RootPath = "Assets/Res/Editor/Skill/Resources/SkillAsset";
+        public static string RootPath = "Assets/Res/Editor/Skill/SkillAsset";
         public event Action<string> OnFileSelected;
 
         private Dictionary<int, string> idToPathMap = new Dictionary<int, string>();
