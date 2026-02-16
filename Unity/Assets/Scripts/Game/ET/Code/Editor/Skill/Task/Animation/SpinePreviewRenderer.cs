@@ -1,11 +1,10 @@
 #if Spine
 using UnityEngine;
 using UnityEditor;
-using Spine;
-using Spine.Unity;
-using Spine.Unity.Editor;
 using System;
 using System.Collections.Generic;
+using Spine.Unity;
+using Spine.Unity.Editor;
 
 namespace ET.Client.Editor
 {

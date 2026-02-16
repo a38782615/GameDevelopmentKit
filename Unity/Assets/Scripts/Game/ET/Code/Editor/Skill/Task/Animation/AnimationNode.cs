@@ -6,7 +6,6 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-using ET.SkillData;
 using Spine.Unity;
 
 namespace ET.Client.Editor

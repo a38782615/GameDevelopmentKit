@@ -15,7 +15,7 @@ namespace ET.Client.Editor
     /// </summary>
     public class LubanToSkillAssetImporter : EditorWindow
     {
-        private const string EXCEL_PATH = "Luban/MiniTemplate/Datas/#SkillGraph.xlsx";
+        private const string EXCEL_PATH = "/../Design/Excel/ET/Datas/Game/SkillGraph.xlsx";
         private const int DATA_START_ROW = 5; // 数据从第5行开始
 
         // NodeType → Type 映射

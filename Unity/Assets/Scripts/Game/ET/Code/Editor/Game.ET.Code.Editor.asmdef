@@ -10,7 +10,9 @@
         "Game.ET.Code.HotfixView",
         "Game.ET.Code.Model",
         "Game.ET.Code.ModelView",
-        "Unity.Mathematics"
+        "Unity.Mathematics",
+        "spine-unity",
+        "spine-unity-editor"
     ],
     "includePlatforms": [
         "Editor"
