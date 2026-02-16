@@ -18,7 +18,7 @@ namespace ET.Client.Editor
     /// </summary>
     public class SkillAssetToLubanExporter : EditorWindow
     {
-        private const string EXCEL_PATH = "Luban/MiniTemplate/Datas/SkillGraph.xlsx";
+        public const string EXCEL_PATH = "Design/Excel/ET/Datas/Game/SkillGraph.xlsx";
         private const int DATA_START_ROW = 5; // 数据从第5行开始
 
         private Vector2 _scrollPosition;
@@ -121,8 +121,7 @@ namespace ET.Client.Editor
             GUI.backgroundColor = Color.white;
 
             EditorGUILayout.Space(5);
-
-            var outputPath = Path.Combine(Application.dataPath, "..", EXCEL_PATH);
+            var outputPath = GetExcelPath();
             EditorGUILayout.LabelField("输出路径:", EditorStyles.boldLabel);
             EditorGUILayout.SelectableLabel(outputPath, EditorStyles.textField, GUILayout.Height(20));
 
@@ -131,6 +130,12 @@ namespace ET.Client.Editor
                 if (File.Exists(outputPath))
                     System.Diagnostics.Process.Start(outputPath);
             }
+        }
+
+        public static string GetExcelPath()
+        {
+            var outputPath = Path.Combine(Application.dataPath, "..", "..", EXCEL_PATH);
+            return outputPath;
         }
 
         private void ExportSelectedSkills()
@@ -159,7 +164,7 @@ namespace ET.Client.Editor
         {
             try
             {
-                var excelPath = Path.Combine(Application.dataPath, "..", EXCEL_PATH);
+                var excelPath = GetExcelPath();
 
                 // 生成数据行
                 var dataRows = new List<string[]>();

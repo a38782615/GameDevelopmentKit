@@ -15,7 +15,6 @@ namespace ET.Client.Editor
     /// </summary>
     public class LubanToSkillAssetImporter : EditorWindow
     {
-        private const string EXCEL_PATH = "/../Design/Excel/ET/Datas/Game/SkillGraph.xlsx";
         private const int DATA_START_ROW = 5; // 数据从第5行开始
 
         // NodeType → Type 映射
@@ -208,14 +207,13 @@ namespace ET.Client.Editor
             EditorGUILayout.Space(5);
 
             // 路径信息
-            var excelPath = Path.Combine(Application.dataPath, "..", EXCEL_PATH);
+            var excelPath = SkillAssetToLubanExporter.GetExcelPath();
             EditorGUILayout.LabelField("Excel 路径:", EditorStyles.boldLabel);
             EditorGUILayout.SelectableLabel(excelPath, EditorStyles.textField, GUILayout.Height(20));
 
             EditorGUILayout.LabelField("输出路径:", EditorStyles.boldLabel);
             EditorGUILayout.SelectableLabel(SkillAssetTreeView.RootPath, EditorStyles.textField, GUILayout.Height(20));
         }
-
         private void ImportSelectedSkills()
         {
             int imported = 0;
@@ -267,7 +265,7 @@ namespace ET.Client.Editor
         private static List<SkillImportData> ParseExcelData()
         {
             var result = new List<SkillImportData>();
-            var excelPath = Path.Combine(Application.dataPath, "..", EXCEL_PATH);
+            var excelPath = SkillAssetToLubanExporter.GetExcelPath();
 
             if (!File.Exists(excelPath))
             {
