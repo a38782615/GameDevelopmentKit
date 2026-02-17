@@ -16,6 +16,17 @@ namespace ET.Client.Editor
     public class LubanToSkillAssetImporter : EditorWindow
     {
         private const int DATA_START_ROW = 5; // 数据从第5行开始
+        private const int HEADER_ROW = 0;     // 第1行：主字段名
+        private const int SUB_HEADER_ROW = 2; // 第3行：子字段名
+
+        // Excel 列头名称常量 —— 与 SkillGraph.xlsx 表头对应
+        private const string COL_ID = "Id";                         // B列 - 主键ID
+        private const string COL_NAME = "Name";                     // C列 - 技能名称
+        private const string COL_DESCRIPTION = "Description";       // D列 - 技能描述
+        private const string COL_NODES_JSON = "*NodesJsons";        // E列 - 节点列表（复合字段父列）
+        private const string COL_NODE_TYPE = "nodeType";            // E列 - 节点类型（子字段）
+        private const string COL_NODE_CONTENT = "content";          // F列 - 节点数据JSON（子字段）
+        private const string COL_CONNECTIONS_JSON = "*ConnectionsJson"; // G列 - 连接数据JSON
 
         // NodeType → Type 映射
         private static readonly Dictionary<int, Type> NodeTypeMap = new Dictionary<int, Type>
@@ -258,6 +269,57 @@ namespace ET.Client.Editor
         }
 
         /// <summary>
+        /// 从表头行构建 列头名称 → 列字母 的映射
+        /// Luban Excel 结构：第1行主字段名，第3行子字段名
+        /// </summary>
+        private static Dictionary<string, string> BuildColumnMap(IList<dynamic> rows)
+        {
+            var columnMap = new Dictionary<string, string>();
+
+            // 第1行（索引0）：主字段名 —— Id, Name, Description, *NodesJsons, *ConnectionsJson
+            var headerRow = rows[HEADER_ROW] as IDictionary<string, object>;
+            if (headerRow != null)
+            {
+                foreach (var kvp in headerRow)
+                {
+                    var headerName = kvp.Value?.ToString();
+                    if (!string.IsNullOrEmpty(headerName) && !headerName.StartsWith("##"))
+                    {
+                        columnMap[headerName] = kvp.Key;
+                    }
+                }
+            }
+
+            // 第3行（索引2）：子字段名 —— nodeType, content（*NodesJsons 的子列）
+            var subHeaderRow = rows[SUB_HEADER_ROW] as IDictionary<string, object>;
+            if (subHeaderRow != null)
+            {
+                foreach (var kvp in subHeaderRow)
+                {
+                    var subName = kvp.Value?.ToString();
+                    if (!string.IsNullOrEmpty(subName) && !subName.StartsWith("##"))
+                    {
+                        columnMap[subName] = kvp.Key;
+                    }
+                }
+            }
+
+            return columnMap;
+        }
+
+        /// <summary>
+        /// 通过列头名称获取单元格值
+        /// </summary>
+        private static string GetCellByHeader(IDictionary<string, object> row, Dictionary<string, string> columnMap, string headerName)
+        {
+            if (columnMap.TryGetValue(headerName, out var colLetter))
+            {
+                return GetCellValue(row, colLetter);
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 解析 Excel 数据
         /// </summary>
         private static List<SkillImportData> ParseExcelData()
@@ -277,6 +339,24 @@ namespace ET.Client.Editor
                 {
                     var rows = MiniExcel.Query(stream, useHeaderRow: false, sheetName: "Sheet1").ToList();
 
+                    if (rows.Count < DATA_START_ROW)
+                    {
+                        Debug.LogError("[SkillImporter] Excel 行数不足，缺少表头或数据");
+                        return result;
+                    }
+
+                    // 从表头行构建列映射
+                    var columnMap = BuildColumnMap(rows);
+
+                    // 验证必要的列头是否存在
+                    var requiredHeaders = new[] { COL_ID, COL_NAME, COL_NODE_TYPE, COL_NODE_CONTENT, COL_CONNECTIONS_JSON };
+                    var missingHeaders = requiredHeaders.Where(h => !columnMap.ContainsKey(h)).ToList();
+                    if (missingHeaders.Count > 0)
+                    {
+                        Debug.LogError($"[SkillImporter] Excel 缺少必要列头: {string.Join(", ", missingHeaders)}");
+                        return result;
+                    }
+
                     SkillImportData currentSkill = null;
 
                     // 从第5行开始（索引4）
@@ -285,8 +365,8 @@ namespace ET.Client.Editor
                         var row = rows[i] as IDictionary<string, object>;
                         if (row == null) continue;
 
-                        // 检查是否是新技能（B列有Id）
-                        var idValue = GetCellValue(row, "B");
+                        // 检查是否是新技能（Id 列有值）
+                        var idValue = GetCellByHeader(row, columnMap, COL_ID);
                         if (!string.IsNullOrEmpty(idValue) && int.TryParse(idValue, out int id))
                         {
                             // 保存上一个技能
@@ -295,21 +375,23 @@ namespace ET.Client.Editor
                                 result.Add(currentSkill);
                             }
 
+                            var skillName = GetCellByHeader(row, columnMap, COL_NAME) ?? "";
+
                             // 创建新技能
                             currentSkill = new SkillImportData
                             {
                                 Id = id,
-                                Name = GetCellValue(row, "C") ?? "",
-                                Description = GetCellValue(row, "D") ?? "",
-                                Exists = CheckAssetExists(GetCellValue(row, "C"))
+                                Name = skillName,
+                                Description = GetCellByHeader(row, columnMap, COL_DESCRIPTION) ?? "",
+                                Exists = CheckAssetExists(skillName)
                             };
                         }
 
                         if (currentSkill == null) continue;
 
-                        // 解析节点数据 (E: nodeType, F: content)
-                        var nodeTypeStr = GetCellValue(row, "E");
-                        var nodeContent = GetCellValue(row, "F");
+                        // 解析节点数据（nodeType + content 子字段）
+                        var nodeTypeStr = GetCellByHeader(row, columnMap, COL_NODE_TYPE);
+                        var nodeContent = GetCellByHeader(row, columnMap, COL_NODE_CONTENT);
 
                         if (!string.IsNullOrEmpty(nodeTypeStr) && !string.IsNullOrEmpty(nodeContent))
                         {
@@ -327,8 +409,8 @@ namespace ET.Client.Editor
                             }
                         }
 
-                        // 解析连接数据 (G: ConnectionsJson)
-                        var connectionJson = GetCellValue(row, "G");
+                        // 解析连接数据（*ConnectionsJson 列）
+                        var connectionJson = GetCellByHeader(row, columnMap, COL_CONNECTIONS_JSON);
                         if (!string.IsNullOrEmpty(connectionJson))
                         {
                             try
