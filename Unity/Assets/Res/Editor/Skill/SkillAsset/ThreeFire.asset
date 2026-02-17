@@ -77,7 +77,9 @@ MonoBehaviour:
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
-        position: {x: -746.6666, y: -2405.3333}
+        position:
+          x: -746.6666
+          y: -2405.3333
         targetType: 1
         skillId: 1008
         assetTags:
@@ -106,7 +108,9 @@ MonoBehaviour:
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
         nodeType: 20
-        position: {x: -238.66666, y: -2405.3333}
+        position:
+          x: -238.66666
+          y: -2405.3333
         targetType: 1
         skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
           type: 2}
@@ -124,7 +128,9 @@ MonoBehaviour:
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
-        position: {x: -1144, y: -2405.3333}
+        position:
+          x: -1144
+          y: -2405.3333
         targetType: 1
         assetTags:
           _tags: []
@@ -167,7 +173,9 @@ MonoBehaviour:
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
-        position: {x: -1067.3334, y: -2188.6665}
+        position:
+          x: -1067.3334
+          y: -2188.6665
         targetType: 1
         assetTags:
           _tags: []
@@ -208,7 +216,9 @@ MonoBehaviour:
       data:
         guid: c353e286-8ef0-460a-b917-887f2aeb390a
         nodeType: 14
-        position: {x: 1677.3334, y: -2239.3333}
+        position:
+          x: 1677.3334
+          y: -2239.3333
         targetType: 1
         requiredTags:
           _tags: []
@@ -233,7 +243,9 @@ MonoBehaviour:
       data:
         guid: f8947676-1084-4228-b991-1509cc7fe851
         nodeType: 1
-        position: {x: 1452.6667, y: -2239.3333}
+        position:
+          x: 1452.6667
+          y: -2239.3333
         targetType: 0
         assetTags:
           _tags: []
@@ -277,7 +289,9 @@ MonoBehaviour:
       data:
         guid: 2cfdacd2-0186-49dd-b177-4eb8c0ad87bd
         nodeType: 7
-        position: {x: 1052.6667, y: -2551.3333}
+        position:
+          x: 1052.6667
+          y: -2551.3333
         targetType: 1
         endType: 0
     - rid: 4684207789798588430
@@ -285,7 +299,9 @@ MonoBehaviour:
       data:
         guid: ce857360-de7e-4457-b348-9c124ce98879
         nodeType: 8
-        position: {x: 1040.6667, y: -2305.3333}
+        position:
+          x: 1040.6667
+          y: -2305.3333
         targetType: 2
         assetTags:
           _tags: []
@@ -332,15 +348,19 @@ MonoBehaviour:
         collisionExcludeTags:
           _tags: []
         isBouncing: 0
+        bounceTargetMode: 0
         maxBounceCount: 3
         bounceSearchRadius: 10
         canBounceToSameTarget: 0
+        bounceAngleOffset: 0
     - rid: 4684207789798588431
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d897a922-5756-42cf-ac65-90a48c1e5a17
         nodeType: 8
-        position: {x: 1022.66675, y: -1978}
+        position:
+          x: 1022.66675
+          y: -1978
         targetType: 2
         assetTags:
           _tags: []
@@ -387,15 +407,19 @@ MonoBehaviour:
         collisionExcludeTags:
           _tags: []
         isBouncing: 0
+        bounceTargetMode: 0
         maxBounceCount: 3
         bounceSearchRadius: 10
         canBounceToSameTarget: 0
+        bounceAngleOffset: 0
     - rid: 4684207789798588432
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9a695e91-e218-425e-82ed-1e157bf1b014
         nodeType: 8
-        position: {x: 1022.66675, y: -2131.3333}
+        position:
+          x: 1022.66675
+          y: -2131.3333
         targetType: 2
         assetTags:
           _tags: []
@@ -442,6 +466,8 @@ MonoBehaviour:
         collisionExcludeTags:
           _tags: []
         isBouncing: 0
+        bounceTargetMode: 0
         maxBounceCount: 3
         bounceSearchRadius: 10
         canBounceToSameTarget: 0
+        bounceAngleOffset: 0

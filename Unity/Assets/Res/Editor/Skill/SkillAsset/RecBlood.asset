@@ -54,7 +54,9 @@ MonoBehaviour:
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
-        position: {x: -1186.4, y: -2019.2}
+        position:
+          x: -1186.4
+          y: -2019.2
         targetType: 1
         assetTags:
           _tags: []
@@ -97,7 +99,9 @@ MonoBehaviour:
       data:
         guid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
         nodeType: 2
-        position: {x: -571.2, y: -1987.2}
+        position:
+          x: -571.2
+          y: -1987.2
         targetType: 1
         assetTags:
           _tags: []
@@ -140,7 +144,9 @@ MonoBehaviour:
       data:
         guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
         nodeType: 7
-        position: {x: -333.6, y: -1780}
+        position:
+          x: -333.6
+          y: -1780
         targetType: 1
         endType: 0
     - rid: 661027767992713492
@@ -148,7 +154,9 @@ MonoBehaviour:
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
-        position: {x: -1223.2, y: -1826.4}
+        position:
+          x: -1223.2
+          y: -1826.4
         targetType: 1
         assetTags:
           _tags: []
@@ -189,7 +197,9 @@ MonoBehaviour:
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
-        position: {x: -902.4, y: -1844}
+        position:
+          x: -902.4
+          y: -1844
         targetType: 1
         skillId: 1007
         assetTags:
@@ -218,7 +228,9 @@ MonoBehaviour:
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
         nodeType: 12
-        position: {x: -304, y: -2072}
+        position:
+          x: -304
+          y: -2072
         targetType: 1
         requiredTags:
           _tags: []
@@ -238,7 +250,9 @@ MonoBehaviour:
       data:
         guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
         nodeType: 14
-        position: {x: -313.6, y: -1951.2}
+        position:
+          x: -313.6
+          y: -1951.2
         targetType: 1
         requiredTags:
           _tags: []

@@ -44,7 +44,9 @@ MonoBehaviour:
       data:
         guid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
         nodeType: 2
-        position: {x: 933.3334, y: 226.66667}
+        position:
+          x: 933.3334
+          y: 226.66667
         targetType: 1
         assetTags:
           _tags: []
@@ -87,7 +89,9 @@ MonoBehaviour:
       data:
         guid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
         nodeType: 14
-        position: {x: 1148.6667, y: 208.00002}
+        position:
+          x: 1148.6667
+          y: 208.00002
         targetType: 1
         requiredTags:
           _tags: []
@@ -112,7 +116,9 @@ MonoBehaviour:
       data:
         guid: d5809887-df6e-4604-bd09-36cef191ce83
         nodeType: 0
-        position: {x: 210.66669, y: 114.66667}
+        position:
+          x: 210.66669
+          y: 114.66667
         targetType: 1
         skillId: 2001
         assetTags:
@@ -137,7 +143,9 @@ MonoBehaviour:
       data:
         guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
         nodeType: 10
-        position: {x: 370.66666, y: 484.66666}
+        position:
+          x: 370.66666
+          y: 484.66666
         targetType: 1
         assetTags:
           _tags: []
@@ -178,7 +186,9 @@ MonoBehaviour:
       data:
         guid: 426755b7-c39a-4524-9cb5-960a31a19c10
         nodeType: 11
-        position: {x: 587.3334, y: 114.66667}
+        position:
+          x: 587.3334
+          y: 114.66667
         targetType: 1
         assetTags:
           _tags: []
