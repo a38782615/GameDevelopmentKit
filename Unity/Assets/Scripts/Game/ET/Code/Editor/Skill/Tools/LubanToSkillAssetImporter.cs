@@ -52,7 +52,6 @@ namespace ET.Client.Editor
         private class SkillImportData
         {
             public int Id;
-            public string SkillId;
             public string Name;
             public string Description;
             public List<NodeData> Nodes = new List<NodeData>();
@@ -113,7 +112,7 @@ namespace ET.Client.Editor
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Excel 导入 SkillAsset 工具", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("从 #SkillGraph.xlsx 导入技能数据到 SkillAsset", MessageType.Info);
+            EditorGUILayout.HelpBox("从 SkillGraph.xlsx 导入技能数据到 SkillAsset", MessageType.Info);
             EditorGUILayout.Space(5);
 
             if (GUILayout.Button("刷新 Excel 数据", GUILayout.Height(25)))
@@ -162,7 +161,6 @@ namespace ET.Client.Editor
                 }
 
                 EditorGUILayout.LabelField(skill.Name, GUILayout.Width(120));
-                EditorGUILayout.LabelField(skill.SkillId, GUILayout.Width(150));
                 EditorGUILayout.LabelField($"节点:{skill.Nodes.Count} 连接:{skill.Connections.Count}", GUILayout.Width(120));
 
                 if (skill.Exists)
@@ -301,18 +299,17 @@ namespace ET.Client.Editor
                             currentSkill = new SkillImportData
                             {
                                 Id = id,
-                                SkillId = GetCellValue(row, "C") ?? "",
-                                Name = GetCellValue(row, "D") ?? "",
-                                Description = GetCellValue(row, "E") ?? "",
-                                Exists = CheckAssetExists(GetCellValue(row, "D"))
+                                Name = GetCellValue(row, "C") ?? "",
+                                Description = GetCellValue(row, "D") ?? "",
+                                Exists = CheckAssetExists(GetCellValue(row, "C"))
                             };
                         }
 
                         if (currentSkill == null) continue;
 
-                        // 解析节点数据 (F: nodeType, G: content)
-                        var nodeTypeStr = GetCellValue(row, "F");
-                        var nodeContent = GetCellValue(row, "G");
+                        // 解析节点数据 (E: nodeType, F: content)
+                        var nodeTypeStr = GetCellValue(row, "E");
+                        var nodeContent = GetCellValue(row, "F");
 
                         if (!string.IsNullOrEmpty(nodeTypeStr) && !string.IsNullOrEmpty(nodeContent))
                         {
@@ -330,8 +327,8 @@ namespace ET.Client.Editor
                             }
                         }
 
-                        // 解析连接数据 (H: ConnectionsJson)
-                        var connectionJson = GetCellValue(row, "H");
+                        // 解析连接数据 (G: ConnectionsJson)
+                        var connectionJson = GetCellValue(row, "G");
                         if (!string.IsNullOrEmpty(connectionJson))
                         {
                             try
@@ -399,7 +396,7 @@ namespace ET.Client.Editor
             if (existingAsset != null)
             {
                 // 更新现有资源
-                existingAsset.SkillId = skillData.SkillId;
+                existingAsset.SkillId = skillData.Id.ToString();
                 existingAsset.nodes = skillData.Nodes;
                 existingAsset.connections = skillData.Connections;
                 EditorUtility.SetDirty(existingAsset);
@@ -409,7 +406,7 @@ namespace ET.Client.Editor
             {
                 // 创建新资源
                 var newAsset = ScriptableObject.CreateInstance<SkillGraphData>();
-                newAsset.SkillId = skillData.SkillId;
+                newAsset.SkillId = skillData.Id.ToString();
                 newAsset.nodes = skillData.Nodes;
                 newAsset.connections = skillData.Connections;
 

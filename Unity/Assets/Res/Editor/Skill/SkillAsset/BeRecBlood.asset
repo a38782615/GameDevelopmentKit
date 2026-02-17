@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 2001
   nodes:
-  - rid: 661027767992713456
-  - rid: 661027767992713457
-  - rid: 661027767992713459
-  - rid: 661027767992713460
-  - rid: 661027767992713458
+  - rid: 661027877190631689
+  - rid: 661027877190631690
+  - rid: 661027877190631691
+  - rid: 661027877190631692
+  - rid: 661027877190631693
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     outputPortName: "\u6BCF\u5468\u671F\u6267\u884C"
@@ -39,7 +39,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 661027767992713456
+    - rid: 661027877190631689
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
@@ -84,7 +84,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 661027767992713457
+    - rid: 661027877190631690
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
@@ -111,34 +111,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 661027767992713458
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: d5809887-df6e-4604-bd09-36cef191ce83
-        nodeType: 0
-        position:
-          x: 210.66669
-          y: 114.66667
-        targetType: 1
-        skillId: 2001
-        assetTags:
-          _tags: []
-        cancelAbilitiesWithTags:
-          _tags: []
-        blockAbilitiesWithTags:
-          _tags: []
-        activationOwnedTags:
-          _tags: []
-        activationRequiredTags:
-          _tags: []
-        activationBlockedTags:
-          _tags: []
-        ongoingBlockedTags:
-          _tags: []
-        eventOutputPorts:
-        - eventType: 2
-          customEventTag: 
-    - rid: 661027767992713459
+    - rid: 661027877190631691
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
@@ -181,7 +154,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 661027767992713460
+    - rid: 661027877190631692
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 426755b7-c39a-4524-9cb5-960a31a19c10
@@ -222,3 +195,30 @@ MonoBehaviour:
             - CD
         cancelOnAbilityEnd: 1
         buffId: 0
+    - rid: 661027877190631693
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: d5809887-df6e-4604-bd09-36cef191ce83
+        nodeType: 0
+        position:
+          x: 210.66669
+          y: 114.66667
+        targetType: 1
+        skillId: 2001
+        assetTags:
+          _tags: []
+        cancelAbilitiesWithTags:
+          _tags: []
+        blockAbilitiesWithTags:
+          _tags: []
+        activationOwnedTags:
+          _tags: []
+        activationRequiredTags:
+          _tags: []
+        activationBlockedTags:
+          _tags: []
+        ongoingBlockedTags:
+          _tags: []
+        eventOutputPorts:
+        - eventType: 2
+          customEventTag: 
