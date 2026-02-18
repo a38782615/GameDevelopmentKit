@@ -1,3 +1,5 @@
+using Unity.Mathematics;
+
 namespace ET.Client
 {
     /// <summary>
@@ -27,16 +29,30 @@ namespace ET.Client
                     compareValue = baseValue.Value * (compareValue / 100f);
             }
 
-            return nodeData.compareOperator switch
+            bool ret = false;
+            switch (nodeData.compareOperator)
             {
-                CompareOperator.Equal => System.Math.Abs(attrValue.Value - compareValue) < 0.0001f,
-                CompareOperator.NotEqual => System.Math.Abs(attrValue.Value - compareValue) >= 0.0001f,
-                CompareOperator.Greater => attrValue.Value > compareValue,
-                CompareOperator.GreaterOrEqual => attrValue.Value >= compareValue,
-                CompareOperator.Less => attrValue.Value < compareValue,
-                CompareOperator.LessOrEqual => attrValue.Value <= compareValue,
-                _ => false
-            };
+                case CompareOperator.Equal:
+                    ret = math.abs(attrValue.Value - compareValue) < 0.0001f;
+                    break;
+                case CompareOperator.NotEqual:
+                    ret = math.abs(attrValue.Value - compareValue) >= 0.0001f;
+                    break;
+                case CompareOperator.Greater:
+                    ret = attrValue.Value > compareValue;
+                    break;
+                case CompareOperator.GreaterOrEqual:
+                    ret = attrValue.Value >= compareValue;
+                    break;
+                case CompareOperator.Less:
+                    ret = attrValue.Value < compareValue;
+                    break;
+                case CompareOperator.LessOrEqual:
+                    ret = attrValue.Value <= compareValue;
+                    break;
+            }
+            return ret;
         }
+
     }
 }

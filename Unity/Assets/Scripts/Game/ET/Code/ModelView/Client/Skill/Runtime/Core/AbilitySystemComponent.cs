@@ -111,18 +111,6 @@ namespace ET.Client
 
             return Abilities.GrantAbility(abilityData);
         }
-
-        /// <summary>
-        /// 授予技能并设置技能ID
-        /// </summary>
-        public GameplayAbilitySpec GrantAbility(SkillData abilityData, int skillId)
-        {
-            if (abilityData == null)
-                return null;
-
-            return Abilities.GrantAbility(abilityData, skillId);
-        }
-
         /// <summary>
         /// 移除技能
         /// </summary>

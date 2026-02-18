@@ -67,7 +67,7 @@ namespace ET.Client
                     continue;
                 }
                 var graphData = SkillDataCenter.Instance.GetSkillGraph(skillData.Id.ToString());
-                ownerASC.GrantAbility(graphData, skillId);
+                ownerASC.GrantAbility(graphData);
             }
         }
     }
