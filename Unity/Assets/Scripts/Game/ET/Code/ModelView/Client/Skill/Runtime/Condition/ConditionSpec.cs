@@ -14,7 +14,7 @@ namespace ET.Client
         /// <summary>
         /// 执行上下文所属的 AbilitySpec Entity Id
         /// </summary>
-        public EntityRef<SpecExecutionContext> Context;
+        public SpecExecutionContext Context;
 
         /// <summary>
         /// 施法者 ASC Entity Id

@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-
-
 namespace ET.Client
 {
     /// <summary>
@@ -46,10 +43,6 @@ namespace ET.Client
                 StackCount = Spec.StackCount  // 传递 Buff 的堆叠层数
             };
         }
-        public override void OnInitialize()
-        {
-            Spec.OnInitialize();
-        }
         public override void Execute()
         {
             Spec.Execute();
@@ -66,6 +59,9 @@ namespace ET.Client
         public override void Reset()
         {
             Spec.ResetEffect();
+        }
+        public override void OnInitialize()
+        {
         }
         public override void OnInitialHook(AbilitySystemComponent target)
         {

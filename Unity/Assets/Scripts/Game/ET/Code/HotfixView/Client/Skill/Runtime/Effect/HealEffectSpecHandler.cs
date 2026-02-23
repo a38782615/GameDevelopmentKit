@@ -2,10 +2,11 @@
 
 namespace ET.Client
 {
+    /// <summary>
+    /// 治疗效果Spec（瞬时效果）
+    /// </summary>
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
-    [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]/// <summary>
-                                                             /// 治疗效果Spec（瞬时效果）
-                                                             /// </summary>
+    [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     public partial class HealEffectSpecHandler : AEffectHandler
     {
         public HealEffectSpec SelfSpec()

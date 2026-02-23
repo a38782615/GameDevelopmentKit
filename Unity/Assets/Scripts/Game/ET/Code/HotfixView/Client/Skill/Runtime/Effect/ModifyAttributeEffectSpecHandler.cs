@@ -8,52 +8,59 @@ namespace ET.Client
     /// </summary>
     public partial class ModifyAttributeEffectSpecHandler : AEffectHandler
     {
+        public ModifyAttributeEffectSpec SelfSpec()
+        {
+            var selfSpec = Spec.GetComponent<ModifyAttributeEffectSpec>();
+            return selfSpec;
+        }
+        public ModifyAttributeEffectNodeData GetNode()
+        {
+            var nodeData = NodeData as ModifyAttributeEffectNodeData;
+            return nodeData;
+        }
+        public override SpecExecutionContext GetContext()
+        {
+            return Spec.GetContext();
+        }
         public override void Cancel()
         {
+            Spec.CancelEffect();
         }
 
         public override void Execute()
         {
-        }
-
-        public override SpecExecutionContext GetContext()
-        {
-            throw new System.NotImplementedException();
+            Spec.Execute();
         }
 
         public override SpecExecutionContext GetExecutionContext()
         {
-            throw new System.NotImplementedException();
+            return GetContext();
         }
 
         public override void OnCompleteHook()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void OnInitialHook(AbilitySystemComponent target)
         {
-            throw new System.NotImplementedException();
         }
 
         public override void OnInitialize()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void OnPeriodicHook()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void Reset()
         {
-            throw new System.NotImplementedException();
+            Spec.ResetEffect();
         }
 
         public override void Tick(float deltaTime)
         {
-            throw new System.NotImplementedException();
+            Spec.TickEffect(deltaTime);
         }
     }
 }

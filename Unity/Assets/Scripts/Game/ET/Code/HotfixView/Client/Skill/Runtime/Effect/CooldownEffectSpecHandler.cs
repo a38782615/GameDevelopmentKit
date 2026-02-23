@@ -210,6 +210,7 @@ namespace ET.Client
 
         public override void Cancel()
         {
+            Spec.CancelEffect();
         }
         public override void OnInitialHook(AbilitySystemComponent target)
         {
