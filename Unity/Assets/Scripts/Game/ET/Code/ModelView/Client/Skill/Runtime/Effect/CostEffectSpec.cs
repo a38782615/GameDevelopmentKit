@@ -4,10 +4,9 @@ namespace ET.Client
 {
     /// <summary>
     /// 消耗效果Spec（瞬时效果）
-    /// </summary>
-    [EnableClass]
-    public class CostEffectSpec : GameplayEffectSpec
+    /// </summary>namespace ET.Client
+    [ComponentOf(typeof(GameplayEffectSpec))]
+    public partial class CostEffectSpec : Entity, IAwake
     {
-        private CostEffectNodeData CostNodeData => NodeData as CostEffectNodeData;
     }
 }

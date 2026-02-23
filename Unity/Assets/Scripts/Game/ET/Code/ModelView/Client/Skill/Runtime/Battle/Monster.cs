@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 namespace ET.Client
@@ -12,12 +11,14 @@ namespace ET.Client
 
         void Start()
         {
-            ownerASC.OwnedTags.AddTag(new GameplayTag("unitType.monster"));
+            var asc = GetASC();
+            if (asc != null)
+                asc.OwnedTags.AddTag(new GameplayTag("unitType.monster"));
 
             var unitData = Tables.Instance.DTUnit.GetOrDefault(id);
-            if (unitData != null && unitData.ActiveSkill.Length > 0)
+            if (unitData != null && unitData.ActiveSkill.Length > 0 && asc != null)
             {
-                _normalAttackSpec = ownerASC.Abilities.FindAbilityById(unitData.ActiveSkill[0]);
+                _normalAttackSpec = asc.Abilities?.FindAbilityById(unitData.ActiveSkill[0]);
             }
         }
 
@@ -35,11 +36,13 @@ namespace ET.Client
 
         private void TryNormalAttack()
         {
-            if (_normalAttackSpec == null || target == null) return;
+            var asc = GetASC();
+            if (_normalAttackSpec == null || target == null || asc == null) return;
 
             if (!_normalAttackSpec.IsRunning && !AnimationComponent._isStunned)
             {
-                bool success = ownerASC.TryActivateAbility(_normalAttackSpec, target.ownerASC);
+                var targetASC = target.GetASC();
+                bool success = asc.TryActivateAbility(_normalAttackSpec, targetASC);
 
                 if (!success)
                 {

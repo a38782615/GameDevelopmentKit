@@ -59,7 +59,7 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
 
 ### 阶段一：核心 Entity 转换
 
-- [ ] 1. **AbilitySystemComponent → ET Component**
+- [x] 1. **AbilitySystemComponent → ET Component**
   - 改为继承 `Entity, IAwake<Unit>, IUpdate, IDestroy`
   - 添加 `[ComponentOf(typeof(Unit))]`
   - 移除构造函数，改用 `IAwake` 初始化
@@ -68,13 +68,13 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
   - `Attributes`、`OwnedTags` 保持为普通类成员
   - 事件（OnAbilityActivated 等）保持 C# event
 
-- [ ] 2. **AbilityContainer → AbilityContainerComponent**
+- [x] 2. **AbilityContainer → AbilityContainerComponent**
   - 改为继承 `Entity, IAwake, IUpdate, IDestroy`
   - 添加 `[ComponentOf(typeof(AbilitySystemComponent))]`
   - `_grantedAbilities` 和 `_activeAbilities` 改为管理子Entity
   - 移除构造函数中的 `_owner` 参数，通过 `this.Parent` 获取 ASC
 
-- [ ] 3. **GameplayAbilitySpec → ET Entity**
+- [x] 3. **GameplayAbilitySpec → ET Entity**
   - 改为继承 `Entity, IAwake<SkillData, AbilitySystemComponent>, IUpdate, IDestroy`
   - 添加 `[ChildOf(typeof(AbilityContainerComponent))]`
   - `SpecId` 改用 `Entity.Id`
@@ -82,13 +82,13 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
   - `_timeEffects` 和 `_timeCues` 改为子Component
   - `_runningEffects` 保持为 List（引用其他Entity）
 
-- [ ] 4. **GameplayEffectContainer → GameplayEffectContainerComponent**
+- [x] 4. **GameplayEffectContainer → GameplayEffectContainerComponent**
   - 改为继承 `Entity, IAwake, IUpdate, IDestroy`
   - 添加 `[ComponentOf(typeof(AbilitySystemComponent))]`
   - `_activeEffects` 改为管理子Entity
   - 通过 `this.Parent` 获取 ASC
 
-- [ ] 5. **GameplayEffectSpec → ET Entity**
+- [x] 5. **GameplayEffectSpec → ET Entity**
   - 改为继承 `Entity, IAwake<string, string, SpecExecutionContext>, IUpdate, IDestroy`
   - 添加 `[ChildOf(typeof(GameplayEffectContainerComponent))]`
   - `SpecId` 改用 `Entity.Id`
@@ -96,7 +96,7 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
 
 ### 阶段二：执行上下文与Cue转换
 
-- [ ] 6. **SpecExecutionContext → ET Component**
+- [x] 6. **SpecExecutionContext → ET Component**
   - 改为继承 `Entity, IAwake, IDestroy`
   - 添加 `[ComponentOf(typeof(GameplayAbilitySpec))]`
   - 目标管理方法（SetTargets/AddTarget/ClearTargets）保留
@@ -105,7 +105,7 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
   - `CreateWithParentInput` 改为创建新的 Component 实例
   - `ProjectileObject`、`PlacementObject` 保持 GameObject 引用（View层对象）
 
-- [ ] 7. **GameplayCueSpec → ET Entity**
+- [x] 7. **GameplayCueSpec → ET Entity**
   - 改为继承 `Entity, IAwake<string, string, SpecExecutionContext>, IUpdate, IDestroy`
   - 添加 `[ChildOf(typeof(GameplayCueContainerComponent))]`（新增Cue容器）
   - `SpecId` 改用 `Entity.Id`
@@ -113,13 +113,13 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
   - `Execute`/`Tick`/`Cancel`/`Stop` 生命周期方法保留
   - 子类（ParticleCueSpec、SoundCueSpec、FloatingTextCueSpec）同步修改
 
-- [ ] 8. **新增 GameplayCueContainerComponent**
+- [x] 8. **新增 GameplayCueContainerComponent**
   - 继承 `Entity, IAwake, IUpdate, IDestroy`
   - 添加 `[ComponentOf(typeof(AbilitySystemComponent))]`
   - 管理所有运行中的 CueSpec 子Entity
   - 替代原来分散在 Effect/TimeCue 中的 Cue 管理逻辑
 
-- [ ] 9. **ConditionSpec → Dispatcher + Handler 模式（参考 AIDispatcherComponent）**
+- [x] 9. **ConditionSpec → Dispatcher + Handler 模式（参考 AIDispatcherComponent）**
   - 新增 `ConditionHandlerAttribute : BaseAttribute` 标记条件Handler类
   - 新增 `AConditionHandler : HandlerObject` 抽象基类
     - `abstract bool Evaluate(ConditionSpec conditionSpec, AbilitySystemComponent target)` 
@@ -137,7 +137,7 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
 
 ### 阶段三：辅助组件创建
 
-- [ ] 10. **新增 TimeCueRuntimeComponent**
+- [x] 10. **新增 TimeCueRuntimeComponent**
   - 继承 `Entity, IAwake, IDestroy`
   - 添加 `[ComponentOf(typeof(GameplayAbilitySpec))]`
   - 内部持有 `List<TimeCueRuntime>` 管理所有时间Cue数据
@@ -145,7 +145,7 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
   - 提供 Reset/Check 等方法，原 GameplayAbilitySpec 中的 `_timeCues` 相关逻辑迁移到此组件
   - `TriggeredCueSpecs` 改为存 Entity Id 列表（引用 CueSpec Entity）
 
-- [ ] 11. **新增 TimeEffectRuntimeComponent**
+- [x] 11. **新增 TimeEffectRuntimeComponent**
   - 继承 `Entity, IAwake, IDestroy`
   - 添加 `[ComponentOf(typeof(GameplayAbilitySpec))]`
   - 内部持有 `List<TimeEffectRuntime>` 管理所有时间效果数据
@@ -154,27 +154,27 @@ ConditionDispatcherComponent [Singleton]                   ← 条件分发器�
 
 ### 阶段四：System 类创建（HotfixView）
 
-- [ ] 12. **AbilitySystemComponentSystem** - ASC 的 Awake/Update/Destroy 逻辑
-- [ ] 13. **AbilityContainerComponentSystem** - 技能容器的生命周期和管理逻辑
-- [ ] 14. **GameplayAbilitySpecSystem** - 技能实例的激活/Tick/结束逻辑
-- [ ] 15. **GameplayEffectContainerComponentSystem** - 效果容器的管理逻辑
-- [ ] 16. **GameplayEffectSpecSystem** - 效果实例的执行/Tick/移除逻辑
-- [ ] 17. **SpecExecutionContextSystem** - 上下文的创建/销毁逻辑
-- [ ] 18. **GameplayCueSpecSystem** - Cue的Execute/Tick/Cancel逻辑
-- [ ] 19. **GameplayCueContainerComponentSystem** - Cue容器的管理和Tick逻辑
-- [ ] 20. **ConditionSpecSystem** - 条件Entity的Awake/Destroy逻辑
-- [ ] 21. **ConditionDispatcherComponentSystem** - Dispatcher的Awake收集Handler逻辑
-- [ ] 22. **TimeCueRuntimeComponentSystem** - 时间Cue的触发逻辑
-- [ ] 23. **TimeEffectRuntimeComponentSystem** - 时间效果的触发逻辑
+- [x] 12. **AbilitySystemComponentSystem** - ASC 的 Awake/Update/Destroy 逻辑
+- [x] 13. **AbilityContainerComponentSystem** - 技能容器的生命周期和管理逻辑
+- [x] 14. **GameplayAbilitySpecSystem** - 技能实例的激活/Tick/结束逻辑
+- [x] 15. **GameplayEffectContainerComponentSystem** - 效果容器的管理逻辑
+- [x] 16. **GameplayEffectSpecSystem** - 效果实例的执行/Tick/移除逻辑
+- [x] 17. **SpecExecutionContextSystem** - 上下文的创建/销毁逻辑
+- [x] 18. **GameplayCueSpecSystem** - Cue的Execute/Tick/Cancel逻辑
+- [x] 19. **GameplayCueContainerComponentSystem** - Cue容器的管理和Tick逻辑
+- [x] 20. **ConditionSpecSystem** - 条件Entity的Awake/Destroy逻辑
+- [x] 21. **ConditionDispatcherComponentSystem** - Dispatcher的Awake收集Handler逻辑
+- [x] 22. **TimeCueRuntimeComponentSystem** - 时间Cue的触发逻辑
+- [x] 23. **TimeEffectRuntimeComponentSystem** - 时间效果的触发逻辑
 
 ### 阶段五：适配与清理
 
-- [ ] 24. **移除 GASHost** - 不再需要 MonoBehaviour 驱动
-- [ ] 25. **修改 SkillUnit** - 改为通过 ET 的 Unit 创建 ASC Component
-- [ ] 26. **修改 SpecExecutor** - 适配新的 Entity 创建方式（AddChild 替代 new），条件节点改为通过 ConditionDispatcher 执行
-- [ ] 27. **修改 SpecFactory** - 移除 `CreateConditionSpec`，条件创建改由 Dispatcher 处理
-- [ ] 28. **修改 GameplayCueManager** - 适配 CueSpec Entity 的生命周期管理
-- [ ] 29. **修改 Battle 相关类** - Player、Monster 等适配新 ASC
+- [x] 24. **移除 GASHost** - 标记为 Obsolete，保留空壳避免编译错误
+- [x] 25. **修改 SkillUnit** - 改为通过 ET 的 Unit 创建 ASC Component
+- [x] 26. **修改 SpecExecutor** - 适配新的 Entity 创建方式（AddChild 替代 new），条件节点改为通过 ConditionDispatcher 执行
+- [x] 27. **修改 SpecFactory** - 移除 `CreateConditionSpec`，Effect/Cue 改为通过容器 AddChild 创建 Entity
+- [x] 28. **修改 GameplayCueManager** - 更新注释，保持 View 层资源管理不变
+- [x] 29. **修改 Battle 相关类** - Player、Monster 适配新 ASC 访问方式
 
 ## 技术考量
 

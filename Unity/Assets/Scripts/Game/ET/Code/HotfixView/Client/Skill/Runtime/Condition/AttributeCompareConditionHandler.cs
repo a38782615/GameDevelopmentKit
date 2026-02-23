@@ -3,16 +3,15 @@ using Unity.Mathematics;
 namespace ET.Client
 {
     /// <summary>
-    /// 属性比较条件Spec
-    /// </summary>
-    [EnableClass]
-    public class AttributeCompareConditionSpec : ConditionSpec
-    {
-        private AttributeCompareConditionNodeData CompareNodeData => NodeData as AttributeCompareConditionNodeData;
+    /// 属性比较条件Handler - 参考 AIDispatcherComponent 的 Handler 模式
+    /// </summary> 
+    [FriendOf(typeof(AbilitySystemComponent))]
 
-        protected override bool Evaluate(AbilitySystemComponent target)
+    public class AttributeCompareConditionHandler : AConditionHandler
+    {
+        public override bool Evaluate(AbilitySystemComponent target)
         {
-            var nodeData = CompareNodeData;
+            var nodeData = ConditionSpec.NodeData as AttributeCompareConditionNodeData;
 
             if (target?.Attributes == null || nodeData == null)
                 return false;
@@ -53,6 +52,5 @@ namespace ET.Client
             }
             return ret;
         }
-
     }
 }

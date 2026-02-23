@@ -1,69 +1,15 @@
-
-
 namespace ET.Client
 {
     /// <summary>
-    /// Spec工厂 - 根据节点类型创建对应的Spec实例
-    /// 重构后支持 Effect、Task、Condition 三种类型
+    /// Spec工厂 - 适配 ET Entity 架构
+    /// Effect 和 Cue 通过 AddChild 创建 Entity
+    /// Task 保持原有方式（瞬时执行，不需要 Entity）
+    /// Condition 改由 ConditionDispatcher 处理，不再在此创建
     /// </summary>
     public static class SpecFactory
     {
         /// <summary>
-        /// 创建效果Spec
-        /// </summary>
-        public static GameplayEffectSpec CreateEffectSpec(NodeType nodeType)
-        {
-            switch (nodeType)
-            {
-                // ============ 瞬时效果 (Instant) ============
-
-                // 伤害/治疗
-                case NodeType.DamageEffect:
-                    return new DamageEffectSpec();
-                case NodeType.HealEffect:
-                    return new HealEffectSpec();
-
-                // 消耗
-                case NodeType.CostEffect:
-                    return new CostEffectSpec();
-
-                // 属性修改
-                case NodeType.ModifyAttributeEffect:
-                    return new ModifyAttributeEffectSpec();
-
-                // 通用效果
-                case NodeType.GenericEffect:
-                    return new GenericEffectSpec();
-
-                // 投射物
-                case NodeType.ProjectileEffect:
-                    return new ProjectileEffectSpec();
-
-                // 放置物
-                case NodeType.PlacementEffect:
-                    return new PlacementEffectSpec();
-
-                // 位移
-                case NodeType.DisplaceEffect:
-                    return new DisplaceEffectSpec();
-
-                // ============ 持续效果 (Duration) ============
-
-                // 冷却
-                case NodeType.CooldownEffect:
-                    return new CooldownEffectSpec();
-
-                // Buff效果
-                case NodeType.BuffEffect:
-                    return new BuffEffectSpec();
-
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// 创建任务Spec
+        /// 创建任务Spec（保持原有方式，瞬时执行不需要Entity）
         /// </summary>
         public static TaskSpec CreateTaskSpec(NodeType nodeType)
         {
@@ -71,46 +17,8 @@ namespace ET.Client
             {
                 case NodeType.SearchTargetTask:
                     return new SearchTargetTaskSpec();
-
                 case NodeType.EndAbilityTask:
                     return new EndAbilityTaskSpec();
-
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// 创建条件Spec
-        /// </summary>
-        public static ConditionSpec CreateConditionSpec(NodeType nodeType)
-        {
-            switch (nodeType)
-            {
-                case NodeType.AttributeCompareCondition:
-                    return new AttributeCompareConditionSpec();
-
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
-        /// 创建Cue Spec
-        /// </summary>
-        public static GameplayCueSpec CreateCueSpec(NodeType nodeType)
-        {
-            switch (nodeType)
-            {
-                case NodeType.ParticleCue:
-                    return new ParticleCueSpec();
-
-                case NodeType.SoundCue:
-                    return new SoundCueSpec();
-
-                case NodeType.FloatingTextCue:
-                    return new FloatingTextCueSpec();
-
                 default:
                     return null;
             }
