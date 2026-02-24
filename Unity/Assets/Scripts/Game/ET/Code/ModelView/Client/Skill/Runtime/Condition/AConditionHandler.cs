@@ -13,7 +13,7 @@ namespace ET.Client
     [ConditionHandler]
     public abstract class AConditionHandler : HandlerObject
     {
-        public ConditionSpec ConditionSpec;
+        public ConditionSpec Spec;
         /// <summary>
         /// 执行条件判断
         /// </summary>

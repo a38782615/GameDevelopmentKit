@@ -11,7 +11,7 @@ namespace ET.Client
     {
         public override bool Evaluate(AbilitySystemComponent target)
         {
-            var nodeData = ConditionSpec.NodeData as AttributeCompareConditionNodeData;
+            var nodeData = Spec.NodeData as AttributeCompareConditionNodeData;
 
             if (target?.Attributes == null || nodeData == null)
                 return false;
