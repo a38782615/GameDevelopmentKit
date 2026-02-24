@@ -9,22 +9,6 @@ namespace ET.Client
     public static class SpecFactory
     {
         /// <summary>
-        /// 创建任务Spec（保持原有方式，瞬时执行不需要Entity）
-        /// </summary>
-        public static TaskSpec CreateTaskSpec(NodeType nodeType)
-        {
-            switch (nodeType)
-            {
-                case NodeType.SearchTargetTask:
-                    return new SearchTargetTaskSpec();
-                case NodeType.EndAbilityTask:
-                    return new EndAbilityTaskSpec();
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
         /// 判断节点类型是否为瞬时效果
         /// </summary>
         public static bool IsInstantEffect(NodeType nodeType)
