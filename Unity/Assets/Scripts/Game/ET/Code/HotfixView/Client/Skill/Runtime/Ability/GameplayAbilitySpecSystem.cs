@@ -467,9 +467,9 @@ namespace ET.Client
             var asc = self.GetASC;
             if (asc?.Owner == null || string.IsNullOrEmpty(name)) return;
 
-            var animator = asc.Owner.GetComponent<AnimationComponent>();
-            if (animator != null)
-                animator.PlayAnimation(name, loop);
+            // var animator = asc.Owner.GetComponent<AnimationComponent>();
+            // if (animator != null)
+            //     animator.PlayAnimation(name, loop);
         }
 
         private static TimeCueRuntimeComponent GetTimeCueRuntime(this GameplayAbilitySpec self)

@@ -14,7 +14,7 @@ namespace ET.Client
         {
             var nodeData = EndAbilityNodeData;
             bool endAsCancelled = nodeData?.endType == EndAbilityType.Cancel;
-            Context?.AbilitySpec?.End(endAsCancelled);
+            Context?.AbilitySpec.As()?.End(endAsCancelled);
         }
     }
 }

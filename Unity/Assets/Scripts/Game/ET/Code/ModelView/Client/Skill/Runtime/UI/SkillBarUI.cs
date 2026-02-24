@@ -1,86 +1,86 @@
-using System.Collections.Generic;
+// using System.Collections.Generic;
 
-using UnityEngine;
-using UnityEngine.UI;
+// using UnityEngine;
+// using UnityEngine.UI;
 
-namespace ET.Client
-{
+// namespace ET.Client
+// {
 
-    /// <summary>
-    /// 技能栏管理器 - 使用UGUI
-    /// </summary>
-    [EnableClass]
-    public class SkillBarUI : MonoBehaviour
-    {
-        [Header("引用")]
-        public Player player;
+//     /// <summary>
+//     /// 技能栏管理器 - 使用UGUI
+//     /// </summary>
+//     [EnableClass]
+//     public class SkillBarUI : MonoBehaviour
+//     {
+//         [Header("引用")]
+//         public Player player;
 
-        [Header("UI引用")]
-        [Tooltip("技能槽预制体")]
-        public GameObject skillSlotPrefab;
+//         [Header("UI引用")]
+//         [Tooltip("技能槽预制体")]
+//         public GameObject skillSlotPrefab;
 
-        [Tooltip("技能槽父物体")]
-        public Transform slotContainer;
+//         [Tooltip("技能槽父物体")]
+//         public Transform slotContainer;
 
-        private List<SkillSlotUI> _skillSlots = new List<SkillSlotUI>();
+//         private List<SkillSlotUI> _skillSlots = new List<SkillSlotUI>();
 
-        void Start()
-        {
-            skillSlotPrefab.gameObject.SetActive(false);
-            CreateSkillSlots();
-        }
+//         void Start()
+//         {
+//             skillSlotPrefab.gameObject.SetActive(false);
+//             CreateSkillSlots();
+//         }
 
-        private void CreateSkillSlots()
-        {
-            if (skillSlotPrefab == null || slotContainer == null || player == null) return;
+//         private void CreateSkillSlots()
+//         {
+//             if (skillSlotPrefab == null || slotContainer == null || player == null) return;
 
-            var tables = Tables.Instance;
-            var unitData = tables.DTUnit.GetOrDefault(player.id);
-            if (unitData == null) return;
+//             var tables = Tables.Instance;
+//             var unitData = tables.DTUnit.GetOrDefault(player.id);
+//             if (unitData == null) return;
 
-            var tbSkill = tables.DTSkill;
+//             var tbSkill = tables.DTSkill;
 
-            foreach (var skillId in unitData.ActiveSkill)
-            {
-                CreateSlot(skillId, tbSkill);
-            }
+//             foreach (var skillId in unitData.ActiveSkill)
+//             {
+//                 CreateSlot(skillId, tbSkill);
+//             }
 
-            foreach (var skillId in unitData.PassiveSkill)
-            {
-                CreateSlot(skillId, tbSkill);
-            }
-        }
+//             foreach (var skillId in unitData.PassiveSkill)
+//             {
+//                 CreateSlot(skillId, tbSkill);
+//             }
+//         }
 
-        private void CreateSlot(int skillId, DTSkill tbSkill)
-        {
-            var skillData = tbSkill.GetOrDefault(skillId);
-            if (skillData == null) return;
+//         private void CreateSlot(int skillId, DTSkill tbSkill)
+//         {
+//             var skillData = tbSkill.GetOrDefault(skillId);
+//             if (skillData == null) return;
 
-            Sprite icon = Resources.Load<Sprite>(skillData.IconPath);
+//             Sprite icon = Resources.Load<Sprite>(skillData.IconPath);
 
-            GameObject slotObj = Instantiate(skillSlotPrefab, slotContainer);
-            slotObj.gameObject.SetActive(true);
-            var slotUI = slotObj.GetComponent<SkillSlotUI>();
+//             GameObject slotObj = Instantiate(skillSlotPrefab, slotContainer);
+//             slotObj.gameObject.SetActive(true);
+//             var slotUI = slotObj.GetComponent<SkillSlotUI>();
 
-            if (slotUI == null)
-            {
-                slotUI = slotObj.AddComponent<SkillSlotUI>();
-            }
+//             if (slotUI == null)
+//             {
+//                 slotUI = slotObj.AddComponent<SkillSlotUI>();
+//             }
 
-            slotUI.Initialize(skillId, skillData.Name, icon, this);
-            _skillSlots.Add(slotUI);
+//             slotUI.Initialize(skillId, skillData.Name, icon, this);
+//             _skillSlots.Add(slotUI);
 
-            if (player.ownerASC != null)
-            {
-                slotUI.AbilitySpec = player.ownerASC.Abilities.FindAbilityById(skillId);
-            }
-        }
+//             if (player.ownerASC != null)
+//             {
+//                 slotUI.AbilitySpec = player.ownerASC.Abilities.FindAbilityById(skillId);
+//             }
+//         }
 
-        public bool TryActivateSkill(SkillSlotUI slot)
-        {
-            if (player?.ownerASC == null || slot.AbilitySpec == null) return false;
+//         public bool TryActivateSkill(SkillSlotUI slot)
+//         {
+//             if (player?.ownerASC == null || slot.AbilitySpec == null) return false;
 
-            return player.ownerASC.TryActivateAbility(slot.AbilitySpec, player.target.ownerASC);
-        }
-    }
-}
+//             return player.ownerASC.TryActivateAbility(slot.AbilitySpec, player.target.ownerASC);
+//         }
+//     }
+// }

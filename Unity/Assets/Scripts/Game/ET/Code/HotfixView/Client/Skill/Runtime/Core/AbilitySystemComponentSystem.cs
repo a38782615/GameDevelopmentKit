@@ -23,7 +23,7 @@ namespace ET.Client
                 {
                     if (after < before)
                     {
-                        self.FireGameplayEvent(GameplayEventType.OnTakeDamage);
+                        // self.FireGameplayEvent(GameplayEventType.OnTakeDamage);
                     }
                 }
             };
@@ -63,8 +63,8 @@ namespace ET.Client
             bool success = self.Abilities?.TryActivateAbility(self, spec, target) ?? false;
             if (success)
             {
-                self.FireAbilityActivated(spec);
-                spec.OnEnded += (s, wasCancelled) => self.FireAbilityEnded(s, wasCancelled);
+                // self.FireAbilityActivated(spec);
+                // spec.OnEnded += (s, wasCancelled) => self.FireAbilityEnded(s, wasCancelled);
             }
             return success;
         }

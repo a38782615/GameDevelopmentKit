@@ -39,7 +39,8 @@ namespace ET.Client
             var nodeData = SearchNodeData;
             if (nodeData == null)
             {
-                SpecExecutor.ExecuteConnectedNodes(SkillId, NodeGuid, "无目标", GetExecutionContext());
+                var context = GetExecutionContext();
+                context.ExecuteConnectedNodes(SkillId, NodeGuid, "无目标");
                 return;
             }
 
@@ -204,11 +205,11 @@ namespace ET.Client
 
             // 尝试从GameObject获取Unit，再获取ASC
             var unit = collider.GetComponent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC;
 
             // 尝试从父对象获取
             unit = collider.GetComponentInParent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC;
 
             return null;
         }
