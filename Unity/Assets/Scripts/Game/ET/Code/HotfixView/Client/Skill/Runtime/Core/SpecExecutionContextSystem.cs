@@ -251,7 +251,9 @@ namespace ET.Client
                 {
                     var cueSpec = self.ExecuteCueNodeAndReturn(skillId, nodeData);
                     if (cueSpec != null)
+                    {
                         triggeredCues.Add(cueSpec);
+                    }
                 }
                 else
                 {
@@ -325,7 +327,7 @@ namespace ET.Client
         /// </summary>
         private static void ExecuteTaskNode(this SpecExecutionContext self, string skillId, NodeData nodeData)
         {
-            var taskSpec = SpecFactory.CreateTaskSpec(nodeData.nodeType);
+            var taskSpec = self.GetCaster().GetComponent<TaskSpec>();
             if (taskSpec == null) return;
 
             taskSpec.Initialize(skillId, nodeData.guid, self);

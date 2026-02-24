@@ -24,7 +24,11 @@ namespace ET.Client
             self.SkillId = skillId;
             self.NodeGuid = nodeGuid;
             self.Context = context;
-            self.Source = context.Caster; 
+            self.Source = context.Caster;
+
+            var taskSpec = TaskSpecDispatcherComponent.Instance.Get(self.NodeData.GetType().Name);
+            taskSpec.NodeData = self.NodeData as TaskNodeData;
+            taskSpec.Spec = self;
         }
 
         // ============ 辅助方法 ============
@@ -32,6 +36,12 @@ namespace ET.Client
         {
             var nodeData = self.NodeData;
             return nodeData == null ? self.Context?.MainTarget : self.Context.GetTargetByType(nodeData.targetType);
+        }
+
+        public static void Execute(this TaskSpec self)
+        {
+            var taskSpec = TaskSpecDispatcherComponent.Instance.Get(self.NodeData.GetType().Name);
+            taskSpec.Execute();
         }
     }
 }

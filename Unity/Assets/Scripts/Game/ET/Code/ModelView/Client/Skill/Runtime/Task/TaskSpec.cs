@@ -7,7 +7,8 @@ namespace ET.Client
     /// 任务Spec基类 - 用于执行特定任务的节点
     /// 特点：瞬时执行、无属性修改、无堆叠、无持续时间
     /// </summary>
-    public partial class TaskSpec : Entity, IAwake,IDestroy
+    [ComponentOf(typeof(AbilitySystemComponent))]
+    public partial class TaskSpec : Entity, IAwake, IDestroy
     {
         // ============ 基础标识 ============
         public string SpecId;

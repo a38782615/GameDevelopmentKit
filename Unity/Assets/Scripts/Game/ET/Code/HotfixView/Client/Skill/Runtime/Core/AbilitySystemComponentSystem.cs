@@ -15,6 +15,7 @@ namespace ET.Client
             self.AddComponent<AbilityContainerComponent>();
             self.AddComponent<GameplayEffectContainerComponent>();
             self.AddComponent<GameplayCueContainerComponent>();
+            self.AddComponent<TaskSpec>();
 
             // 订阅属性变化事件
             self.Attributes.OnAnyAttributeChanged += (attribute, before, after) =>
