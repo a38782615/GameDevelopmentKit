@@ -12,27 +12,27 @@ namespace ET.Client
 
         public static AbilitySystemComponent GetCaster(this SpecExecutionContext self)
         {
-            return self.Caster;
+            return self.Caster.As();
         }
 
         public static AbilitySystemComponent GetMainTarget(this SpecExecutionContext self)
         {
-            return self.MainTarget;
+            return self.MainTarget.As();
         }
 
         public static AbilitySystemComponent GetParentInputTarget(this SpecExecutionContext self)
         {
-            return self.ParentInputTarget;
+            return self.ParentInputTarget.As();
         }
 
         public static GameplayAbilitySpec GetAbilitySpec(this SpecExecutionContext self)
         {
-            return self.AbilitySpec;
+            return self.AbilitySpec.As();
         }
 
         public static GameplayEffectSpec GetOwnerEffectSpec(this SpecExecutionContext self)
         {
-            return self.OwnerEffectSpec;
+            return self.OwnerEffectSpec.As();
         }
 
         // ============ 目标管理 ============
@@ -70,6 +70,11 @@ namespace ET.Client
             }
         }
 
+        public static AbilitySystemComponent GetTarget(this SpecExecutionContext self, TargetType targetType)
+        {
+            return self.GetTargetByType(targetType);
+        }
+
         public static List<AbilitySystemComponent> GetTargetsByType(this SpecExecutionContext self, TargetType targetType)
         {
             var result = new List<AbilitySystemComponent>();
@@ -90,11 +95,20 @@ namespace ET.Client
                 default:
                     foreach (var e in self.Targets)
                     {
-                        result.Add(e);
+                        var target = e.As();
+                        if (target != null)
+                        {
+                            result.Add(target);
+                        }
                     }
                     break;
             }
             return result;
+        }
+
+        public static List<AbilitySystemComponent> GetTargets(this SpecExecutionContext self, TargetType targetType)
+        {
+            return self.GetTargetsByType(targetType);
         }
 
         // ============ 自定义数据 ============
@@ -135,6 +149,7 @@ namespace ET.Client
             newContext.PlacementObject = self.PlacementObject;
             newContext.AbilityLevel = self.AbilityLevel;
             newContext.StackCount = self.StackCount;
+            newContext.Targets.AddRange(self.Targets);
 
             foreach (var kvp in self.CustomData)
                 newContext.CustomData[kvp.Key] = kvp.Value;
@@ -212,9 +227,8 @@ namespace ET.Client
         }
 
 
-        /// <summary>
-        /// 执行指定端口连接的所有节点
-        /// </summary>
+        // ============ 执行链路（原 SpecExecutor 已合并至此） ============
+
         public static void ExecuteConnectedNodes(this SpecExecutionContext self, string skillId, string nodeGuid, string outputPortName)
         {
             if (string.IsNullOrEmpty(skillId) || string.IsNullOrEmpty(nodeGuid))
@@ -320,21 +334,21 @@ namespace ET.Client
             }
         }
 
-        /// <summary>
-        /// 执行任务节点 - Task 保持原有方式（瞬时执行）
-        /// </summary>
         private static void ExecuteTaskNode(this SpecExecutionContext self, string skillId, NodeData nodeData)
         {
-            var taskSpec = SpecFactory.CreateTaskSpec(nodeData.nodeType);
-            if (taskSpec == null) return;
+            if (self == null) return;
 
-            taskSpec.Initialize(skillId, nodeData.guid, self);
+            var caster = self.GetCaster();
+            if (caster == null) return;
+
+            var taskSpec = caster.AddChild<TaskSpec>();
+            taskSpec.InitTask(skillId, nodeData.guid, self);
             taskSpec.Execute();
+
+            if (!taskSpec.IsDisposed)
+                taskSpec.Dispose();
         }
 
-        /// <summary>
-        /// 执行条件节点 - 通过 ConditionDispatcher 查找 Handler
-        /// </summary>
         private static void ExecuteConditionNode(this SpecExecutionContext self, string skillId, NodeData nodeData)
         {
             if (self == null) return;
@@ -342,14 +356,12 @@ namespace ET.Client
             var caster = self.GetCaster();
             if (caster == null) return;
 
-            // 创建临时 ConditionSpec Entity
             var conditionSpec = caster.AddChild<ConditionSpec>();
             conditionSpec.InitCondition(skillId, nodeData.guid, self);
+            bool result = conditionSpec.Evaluate();
 
-            // 通过 Dispatcher 执行
-            conditionSpec.Execute(self);
+            self.ExecuteConnectedNodes(skillId, nodeData.guid, result ? "是" : "否");
 
-            // 瞬时执行完毕，Dispose
             if (!conditionSpec.IsDisposed)
                 conditionSpec.Dispose();
         }

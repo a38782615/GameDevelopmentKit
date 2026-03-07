@@ -2,123 +2,148 @@
 
 namespace ET.Client
 {
-    /// <summary>
-    /// Spec工厂 - 根据节点类型创建对应的Spec实例
-    /// 重构后支持 Effect、Task、Condition 三种类型
-    /// </summary>
+    [FriendOf(typeof(GameplayEffectSpec))]
+    [FriendOf(typeof(TaskSpec))]
+    [FriendOf(typeof(ConditionSpec))]
+    [FriendOf(typeof(GameplayCueSpec))]
     public static class SpecFactory
     {
-        /// <summary>
-        /// 创建效果Spec
-        /// </summary>
-        public static GameplayEffectSpec CreateEffectSpec(NodeType nodeType)
+        public static void AttachEffectComponent(GameplayEffectSpec spec, NodeType nodeType)
         {
+            if (spec == null) return;
+
             switch (nodeType)
             {
-                // ============ 瞬时效果 (Instant) ============
-
-                // 伤害/治疗
                 case NodeType.DamageEffect:
-                    return new DamageEffectSpec();
+                    spec.HandName = "DamageEffectSpecHandler";
+                    EnsureEffectComponent<DamageEffectSpec>(spec);
+                    return;
                 case NodeType.HealEffect:
-                    return new HealEffectSpec();
-
-                // 消耗
+                    spec.HandName = "HealEffectSpecHandler";
+                    EnsureEffectComponent<HealEffectSpec>(spec);
+                    return;
                 case NodeType.CostEffect:
-                    return new CostEffectSpec();
-
-                // 属性修改
+                    spec.HandName = "CostEffectSpecHandler";
+                    EnsureEffectComponent<CostEffectSpec>(spec);
+                    return;
                 case NodeType.ModifyAttributeEffect:
-                    return new ModifyAttributeEffectSpec();
-
-                // 通用效果
+                    spec.HandName = "ModifyAttributeEffectSpecHandler";
+                    EnsureEffectComponent<ModifyAttributeEffectSpec>(spec);
+                    return;
                 case NodeType.GenericEffect:
-                    return new GenericEffectSpec();
-
-                // 投射物
+                    spec.HandName = "GenericEffectSpecHandler";
+                    EnsureEffectComponent<GenericEffectSpec>(spec);
+                    return;
                 case NodeType.ProjectileEffect:
-                    return new ProjectileEffectSpec();
-
-                // 放置物
+                    spec.HandName = "ProjectileEffectSpecHandler";
+                    EnsureEffectComponent<ProjectileEffectSpec>(spec);
+                    return;
                 case NodeType.PlacementEffect:
-                    return new PlacementEffectSpec();
-
-                // 位移
+                    spec.HandName = "PlacementEffectSpecHandler";
+                    EnsureEffectComponent<PlacementEffectSpec>(spec);
+                    return;
                 case NodeType.DisplaceEffect:
-                    return new DisplaceEffectSpec();
-
-                // ============ 持续效果 (Duration) ============
-
-                // 冷却
+                    spec.HandName = "DisplaceEffectSpecHandler";
+                    EnsureEffectComponent<DisplaceEffectSpec>(spec);
+                    return;
                 case NodeType.CooldownEffect:
-                    return new CooldownEffectSpec();
-
-                // Buff效果
+                    spec.HandName = "CooldownEffectSpecHandler";
+                    EnsureEffectComponent<CooldownEffectSpec>(spec);
+                    return;
                 case NodeType.BuffEffect:
-                    return new BuffEffectSpec();
-
+                    spec.HandName = "BuffEffectSpecHandler";
+                    EnsureEffectComponent<BuffEffectSpec>(spec);
+                    return;
                 default:
-                    return null;
+                    spec.HandName = string.Empty;
+                    return;
             }
         }
 
-        /// <summary>
-        /// 创建任务Spec
-        /// </summary>
-        public static TaskSpec CreateTaskSpec(NodeType nodeType)
+        public static void AttachTaskComponent(TaskSpec spec, NodeType nodeType)
         {
+            if (spec == null) return;
+
             switch (nodeType)
             {
                 case NodeType.SearchTargetTask:
-                    return new SearchTargetTaskSpec();
-
+                    spec.HandName = "SearchTargetTaskSpecHandler";
+                    EnsureTaskComponent<SearchTargetTaskSpec>(spec);
+                    return;
                 case NodeType.EndAbilityTask:
-                    return new EndAbilityTaskSpec();
-
+                    spec.HandName = "EndAbilityTaskSpecHandler";
+                    EnsureTaskComponent<EndAbilityTaskSpec>(spec);
+                    return;
                 default:
-                    return null;
+                    spec.HandName = string.Empty;
+                    return;
             }
         }
 
-        /// <summary>
-        /// 创建条件Spec
-        /// </summary>
-        public static ConditionSpec CreateConditionSpec(NodeType nodeType)
+        public static void AttachConditionComponent(ConditionSpec spec, NodeType nodeType)
         {
+            if (spec == null) return;
+
             switch (nodeType)
             {
                 case NodeType.AttributeCompareCondition:
-                    return new AttributeCompareConditionSpec();
-
+                    spec.HandName = "AttributeCompareConditionHandler";
+                    EnsureConditionComponent<AttributeCompareConditionSpec>(spec);
+                    return;
                 default:
-                    return null;
+                    spec.HandName = string.Empty;
+                    return;
             }
         }
 
-        /// <summary>
-        /// 创建Cue Spec
-        /// </summary>
-        public static GameplayCueSpec CreateCueSpec(NodeType nodeType)
+        public static void AttachCueComponent(GameplayCueSpec spec, NodeType nodeType)
         {
+            if (spec == null) return;
+
             switch (nodeType)
             {
                 case NodeType.ParticleCue:
-                    return new ParticleCueSpec();
-
+                    spec.HandName = "ParticleCueSpecHandler";
+                    EnsureCueComponent<ParticleCueSpec>(spec);
+                    return;
                 case NodeType.SoundCue:
-                    return new SoundCueSpec();
-
+                    spec.HandName = "SoundCueSpecHandler";
+                    EnsureCueComponent<SoundCueSpec>(spec);
+                    return;
                 case NodeType.FloatingTextCue:
-                    return new FloatingTextCueSpec();
-
+                    spec.HandName = "FloatingTextCueSpecHandler";
+                    EnsureCueComponent<FloatingTextCueSpec>(spec);
+                    return;
                 default:
-                    return null;
+                    spec.HandName = string.Empty;
+                    return;
             }
         }
 
-        /// <summary>
-        /// 判断节点类型是否为瞬时效果
-        /// </summary>
+        private static void EnsureEffectComponent<T>(GameplayEffectSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
+        }
+
+        private static void EnsureTaskComponent<T>(TaskSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
+        }
+
+        private static void EnsureConditionComponent<T>(ConditionSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
+        }
+
+        private static void EnsureCueComponent<T>(GameplayCueSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
+        }
+
         public static bool IsInstantEffect(NodeType nodeType)
         {
             switch (nodeType)
@@ -134,9 +159,6 @@ namespace ET.Client
             }
         }
 
-        /// <summary>
-        /// 判断节点类型是否为持续效果
-        /// </summary>
         public static bool IsDurationEffect(NodeType nodeType)
         {
             switch (nodeType)
@@ -151,9 +173,6 @@ namespace ET.Client
             }
         }
 
-        /// <summary>
-        /// 判断节点类型是否为任务节点
-        /// </summary>
         public static bool IsTaskNode(NodeType nodeType)
         {
             switch (nodeType)
@@ -166,9 +185,6 @@ namespace ET.Client
             }
         }
 
-        /// <summary>
-        /// 判断节点类型是否为条件节点
-        /// </summary>
         public static bool IsConditionNode(NodeType nodeType)
         {
             switch (nodeType)

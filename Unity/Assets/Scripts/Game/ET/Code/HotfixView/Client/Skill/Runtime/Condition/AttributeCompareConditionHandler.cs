@@ -2,16 +2,18 @@ using Unity.Mathematics;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 属性比较条件Handler - 参考 AIDispatcherComponent 的 Handler 模式
-    /// </summary> 
     [FriendOf(typeof(AbilitySystemComponent))]
-
+    [FriendOf(typeof(ConditionSpec))]
     public class AttributeCompareConditionHandler : AConditionHandler
     {
+        public override SpecExecutionContext GetContext()
+        {
+            return this.Spec?.GetContext();
+        }
+
         public override bool Evaluate(AbilitySystemComponent target)
         {
-            var nodeData = ConditionSpec.NodeData as AttributeCompareConditionNodeData;
+            var nodeData = this.NodeData as AttributeCompareConditionNodeData;
 
             if (target?.Attributes == null || nodeData == null)
                 return false;

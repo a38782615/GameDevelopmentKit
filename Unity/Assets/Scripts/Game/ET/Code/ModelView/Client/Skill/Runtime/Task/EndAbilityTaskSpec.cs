@@ -1,20 +1,8 @@
 
-
 namespace ET.Client
 {
-    /// <summary>
-    /// 结束技能任务Spec
-    /// </summary>
-    [EnableClass]
-    public class EndAbilityTaskSpec : TaskSpec
+    [ComponentOf(typeof(TaskSpec))]
+    public class EndAbilityTaskSpec : Entity, IAwake
     {
-        private EndAbilityTaskNodeData EndAbilityNodeData => NodeData as EndAbilityTaskNodeData;
-
-        protected override void OnExecute(AbilitySystemComponent target)
-        {
-            var nodeData = EndAbilityNodeData;
-            bool endAsCancelled = nodeData?.endType == EndAbilityType.Cancel;
-            Context?.AbilitySpec.As()?.End(endAsCancelled);
-        }
     }
 }

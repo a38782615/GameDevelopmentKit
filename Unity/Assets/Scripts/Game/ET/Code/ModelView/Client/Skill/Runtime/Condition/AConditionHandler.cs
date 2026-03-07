@@ -13,13 +13,11 @@ namespace ET.Client
     [ConditionHandler]
     public abstract class AConditionHandler : HandlerObject
     {
-        public ConditionSpec ConditionSpec;
-        /// <summary>
-        /// 执行条件判断
-        /// </summary>
-        /// <param name="conditionSpec">条件Spec Entity</param>
-        /// <param name="target">目标ASC</param>
-        /// <returns>条件是否满足</returns>
+        public ConditionSpec Spec;
+        public ConditionNodeData NodeData;
+
         public abstract bool Evaluate(AbilitySystemComponent target);
+
+        public abstract SpecExecutionContext GetContext();
     }
 }

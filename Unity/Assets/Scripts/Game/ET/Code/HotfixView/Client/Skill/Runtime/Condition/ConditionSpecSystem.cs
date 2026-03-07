@@ -2,8 +2,6 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(ConditionSpec))]
     [FriendOf(typeof(ConditionSpec))]
-    [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
-
     public static partial class ConditionSpecSystem
     {
         [EntitySystem]
@@ -24,46 +22,66 @@ namespace ET.Client
             self.NodeGuid = nodeGuid;
             self.Context = context;
             self.Source = context.Caster;
+
+            var nodeData = self.ConditionNodeData;
+            if (nodeData != null)
+                SpecFactory.AttachConditionComponent(self, nodeData.nodeType);
         }
 
-        // ============ 执行 ============
-
-        /// <summary>
-        /// 执行条件判断，通过 Dispatcher 查找 Handler 执行 Evaluate
-        /// </summary>
-        public static void Execute(this ConditionSpec self, SpecExecutionContext context)
+        public static bool Evaluate(this ConditionSpec self)
         {
-            if (context == null) return;
+            if (self.Context == null) return false;
 
-            var nodeData = self.NodeData;
-            if (nodeData == null) return;
+            var nodeData = self.ConditionNodeData;
+            if (nodeData == null) return false;
 
-            // 通过 Dispatcher 查找 Handler
-            var handler = ConditionDispatcherComponent.Instance.Get(nodeData.GetType().Name);
-            handler.ConditionSpec = self;
+            var handler = self.GetHandler();
             if (handler == null)
             {
                 Log.Error($"ConditionHandler not found for NodeType: {nodeData.nodeType}");
-                return;
+                return false;
             }
 
-            // 获取目标
-            var target = self.GetConditionTarget(context);
-
-            // 执行条件判断
-            bool result = handler.Evaluate(target);
-
-            // 根据结果执行对应分支
-            context.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, result ? "是" : "否");
+            var target = self.GetConditionTarget();
+            return handler.Evaluate(target);
         }
 
-        // ============ 辅助方法 ============
-
-        private static AbilitySystemComponent GetConditionTarget(this ConditionSpec self, SpecExecutionContext context)
+        public static SpecExecutionContext GetContext(this ConditionSpec self)
         {
+            return self.Context;
+        }
+
+        public static AbilitySystemComponent GetConditionTarget(this ConditionSpec self)
+        {
+            var context = self.Context;
             var nodeData = self.NodeData;
-            if (nodeData == null) return context?.GetMainTarget();
-            return context?.GetTargetByType(nodeData.targetType);
+            if (context == null)
+                return null;
+
+            var targetType = nodeData?.targetType ?? TargetType.MainTarget;
+            switch (targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster.As();
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget.As();
+                default:
+                    return context.MainTarget.As();
+            }
+        }
+
+        private static AConditionHandler GetHandler(this ConditionSpec self)
+        {
+            if (string.IsNullOrEmpty(self.HandName))
+                return null;
+
+            var handler = ConditionDispatcherComponent.Instance.Get(self.HandName);
+            if (handler == null)
+                return null;
+
+            handler.Spec = self;
+            handler.NodeData = self.ConditionNodeData;
+            return handler;
         }
     }
 }
