@@ -66,3 +66,5 @@ Unity/ProjectSettings/EditorBuildSettings.asset
 Unity/ProjectSettings/EditorBuildSettings.asset
 
 /Unity/Assets/StreamingAssets/*
+Unity/Packages/AIBridge
+Unity/Packages/com.unity.ide.cursor

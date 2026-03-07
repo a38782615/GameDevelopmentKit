@@ -2,7 +2,7 @@ using System;
 
 namespace ET
 {
-    public struct EntityRef<T> where T: Entity
+    public struct EntityRef<T> where T : Entity
     {
         private readonly long instanceId;
         private T entity;
@@ -18,7 +18,7 @@ namespace ET
             this.instanceId = t.InstanceId;
             this.entity = t;
         }
-        
+
         private T UnWrap
         {
             get
@@ -35,7 +35,7 @@ namespace ET
                 return this.entity;
             }
         }
-        
+
         public static implicit operator EntityRef<T>(T t)
         {
             return new EntityRef<T>(t);
@@ -45,10 +45,15 @@ namespace ET
         {
             return v.UnWrap;
         }
+
+        public T As()
+        {
+            return UnWrap;
+        }
     }
-    
-    
-    public struct EntityWeakRef<T> where T: Entity
+
+
+    public struct EntityWeakRef<T> where T : Entity
     {
         private long instanceId;
         // 使用WeakReference，这样不会导致entity dispose了却无法gc的问题
@@ -66,7 +71,7 @@ namespace ET
             this.instanceId = t.InstanceId;
             this.weakRef = new WeakReference<T>(t);
         }
-        
+
         private T UnWrap
         {
             get
@@ -90,7 +95,7 @@ namespace ET
                 return entity;
             }
         }
-        
+
         public static implicit operator EntityWeakRef<T>(T t)
         {
             return new EntityWeakRef<T>(t);
