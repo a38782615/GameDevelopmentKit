@@ -10,7 +10,7 @@ namespace ET.Client
         public Vector2 LaunchPosition;
         public Vector2 TargetPosition;
         public Vector2 Direction;
-        public AbilitySystemComponent TargetUnit;
+        public EntityRef<AbilitySystemComponent> TargetUnit;
         public ProjectileTargetType TargetType;
         public bool FlyOver;
         public float CurveHeight;
@@ -25,7 +25,7 @@ namespace ET.Client
         public string SkillId;
         public string NodeGuid;
         public SpecExecutionContext Context;
-        public AbilitySystemComponent SourceASC;
+        public EntityRef<AbilitySystemComponent> SourceASC;
 
         // 反弹设置
         public bool IsBouncing;

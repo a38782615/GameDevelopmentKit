@@ -40,7 +40,7 @@ namespace ET.Client
 
             // 通过 Dispatcher 查找 Handler
             var handler = ConditionDispatcherComponent.Instance.Get(nodeData.GetType().Name);
-            handler.ConditionSpec = self;
+            handler.Spec = self;
             if (handler == null)
             {
                 Log.Error($"ConditionHandler not found for NodeType: {nodeData.nodeType}");

@@ -12,6 +12,7 @@ namespace ET.Client
     /// 支持进入/离开/停留三种事件
     /// </summary>
     [EnableClass]
+    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     public class PlacementController : MonoBehaviour
     {
         // ============ 事件 ============
@@ -125,10 +126,10 @@ namespace ET.Client
             if (collider == null) return null;
 
             var unit = collider.GetComponent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC.As();
 
             unit = collider.GetComponentInParent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC.As();
 
             return null;
         }
@@ -139,13 +140,14 @@ namespace ET.Client
         private bool IsValidTarget(AbilitySystemComponent target)
         {
             if (target == null) return false;
+            if (target.OwnedTags == null) return false;
 
             // 检查目标标签（必须拥有）
-            if (!_data.CollisionTargetTags.IsEmpty && !target.HasAnyTags(_data.CollisionTargetTags))
+            if (!_data.CollisionTargetTags.IsEmpty && !target.OwnedTags.HasAnyTags(_data.CollisionTargetTags))
                 return false;
 
             // 检查排除标签
-            if (!_data.CollisionExcludeTags.IsEmpty && target.HasAnyTags(_data.CollisionExcludeTags))
+            if (!_data.CollisionExcludeTags.IsEmpty && target.OwnedTags.HasAnyTags(_data.CollisionExcludeTags))
                 return false;
 
             return true;
