@@ -5,9 +5,14 @@ using UnityEngine;
 namespace ET.Client
 {
     /// <summary>
-    /// Cue管理器 - 管理所有激活的Cue
-    /// 负责Cue的播放、更新和清理
+    /// Cue管理器 - 管理所有激活的ActiveGameplayCue（View层资源）
+    /// 负责粒子、音效等底层资源的播放、更新和清理
+    /// 注意：GameplayCueSpec 的生命周期由 GameplayCueContainerComponent 管理
+    /// 此类只管理 ActiveGameplayCue 实例（粒子对象、音效源等）
+    /// Tick 由 GameplayCueContainerComponent 或外部驱动
     /// </summary>
+
+    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     public class GameplayCueManager : Singleton<GameplayCueManager>
     {
 
@@ -20,11 +25,6 @@ namespace ET.Client
         /// 待移除的Cue列表
         /// </summary>
         private List<ActiveGameplayCue> _pendingRemoval = new List<ActiveGameplayCue>();
-
-        /// <summary>
-        /// 资源加载器（项目需要实现）
-        /// </summary>
-        public ICueResourceLoader ResourceLoader { get; set; }
 
         // ============ 公共方法 ============
 

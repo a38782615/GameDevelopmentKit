@@ -10,6 +10,7 @@ namespace ET.Client
     /// 挂在投射物GameObject上，负责飞行逻辑和碰撞检测
     /// </summary>
     [EnableClass]
+    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     public class ProjectileController : MonoBehaviour
     {
         // ============ 事件 ============
@@ -340,10 +341,10 @@ namespace ET.Client
             if (collider == null) return null;
 
             var unit = collider.GetComponent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC;
 
             unit = collider.GetComponentInParent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
+            if (unit != null) return unit.ASC;
 
             return null;
         }
