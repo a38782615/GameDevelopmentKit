@@ -6,6 +6,9 @@ namespace ET.Client
     [EntitySystemOf(typeof(GameplayEffectSpec))]
     [FriendOf(typeof(GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOfAttribute(typeof(ET.Client.ConditionSpec))]
+    [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
+    [FriendOfAttribute(typeof(ET.Client.GameplayEffectContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
 
@@ -98,7 +101,7 @@ namespace ET.Client
             else
             {
                 var container = target.EffectContainer;
-                var existingEffect = container?.FindStackableEffect(self);
+                var existingEffect = self.FindStackableEffect(container);
 
                 if (existingEffect != null)
                 {
@@ -109,7 +112,7 @@ namespace ET.Client
                     {
                         var overflowPolicy = existingData?.stackOverflowPolicy ?? StackOverflowPolicy.DenyApplication;
                         if (overflowPolicy == StackOverflowPolicy.AllowOverflowEffect)
-                            context.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "溢出");
+                            self.ExecuteConnectedNodesDirect(context, "溢出");
                         if (overflowPolicy == StackOverflowPolicy.DenyApplication)
                         {
                             existingEffect.RefreshEffect();
@@ -134,7 +137,7 @@ namespace ET.Client
                     }
                     else
                     {
-                        container?.AddEffect(self);
+                        self.AddEffectToContainer(container);
                         self.Target = target;
                         self.IsApplied = true;
                         self.ActivationTime = UnityEngine.Time.time;
@@ -142,7 +145,7 @@ namespace ET.Client
                         if (!self.Tags.GrantedTags.IsEmpty)
                             target.OwnedTags.AddTags(self.Tags.GrantedTags);
                         if (!self.Tags.RemoveGameplayEffectsWithTags.IsEmpty)
-                            target.RemoveActiveEffectsWithTags(self.Tags.RemoveGameplayEffectsWithTags);
+                            self.RemoveEffectsWithTags(target.EffectContainer, self.Tags.RemoveGameplayEffectsWithTags);
 
                         self.RegisterTagListener();
 
@@ -186,17 +189,17 @@ namespace ET.Client
                 }
             }
 
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "初始效果");
+            self.ExecuteConnectedNodesDirect(ctx, "初始效果");
         }
 
         private static void ExecutePeriodicFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "每周期执行");
+            self.ExecuteConnectedNodesDirect(ctx, "每周期执行");
         }
 
         private static void ExecuteCompleteFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "完成效果");
+            self.ExecuteConnectedNodesDirect(ctx, "完成效果");
         }
 
         // ============ Tick ============
@@ -238,7 +241,7 @@ namespace ET.Client
 
             self.WasRefreshed = true;
             var ctx = self.GetContext();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "刷新时");
+            self.ExecuteConnectedNodesDirect(ctx, "刷新时");
         }
 
         // ============ 过期和移除 ============
@@ -324,7 +327,7 @@ namespace ET.Client
             self.UnregisterTagListener();
 
             var ctx = self.GetContext();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
+            self.ExecuteConnectedNodesDirect(ctx, "全部移除后");
             self.ExecuteCompleteFlow(ctx);
 
             self.IsExpired = true;
@@ -371,7 +374,7 @@ namespace ET.Client
                 target.OwnedTags.RemoveTags(self.Tags.GrantedTags);
 
             var ctx = self.GetContext();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
+            self.ExecuteConnectedNodesDirect(ctx, "全部移除后");
 
             self.IsExpired = true;
         }
@@ -462,16 +465,333 @@ namespace ET.Client
         private static AbilitySystemComponent GetEffectTarget(this GameplayEffectSpec self, SpecExecutionContext context)
         {
             var nodeData = self.NodeData;
-            if (nodeData == null) return context?.GetMainTarget();
-            return context?.GetTargetByType(nodeData.targetType);
+            if (context == null)
+            {
+                return null;
+            }
+
+            if (nodeData == null)
+            {
+                return context.MainTarget;
+            }
+
+            switch (nodeData.targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster;
+                case TargetType.MainTarget:
+                    return context.MainTarget;
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget;
+                default:
+                    return context.MainTarget;
+            }
         }
 
         public static bool CanApplyTo(this GameplayEffectSpec self, AbilitySystemComponent target)
         {
             if (target == null) return false;
-            if (!self.Tags.ApplicationRequiredTags.IsEmpty && !target.HasAllTags(self.Tags.ApplicationRequiredTags)) return false;
-            if (!self.Tags.ApplicationImmunityTags.IsEmpty && target.HasAnyTags(self.Tags.ApplicationImmunityTags)) return false;
+
+            var ownedTags = target.OwnedTags;
+            if (!self.Tags.ApplicationRequiredTags.IsEmpty)
+            {
+                if (ownedTags == null || !ownedTags.HasAllTags(self.Tags.ApplicationRequiredTags))
+                {
+                    return false;
+                }
+            }
+
+            if (!self.Tags.ApplicationImmunityTags.IsEmpty)
+            {
+                if (ownedTags != null && ownedTags.HasAnyTags(self.Tags.ApplicationImmunityTags))
+                {
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+        private static GameplayEffectSpec FindStackableEffect(this GameplayEffectSpec self, GameplayEffectContainerComponent container)
+        {
+            if (container == null)
+            {
+                return null;
+            }
+
+            var stackType = self.EffectNodeData?.stackType ?? StackType.None;
+            if (stackType == StackType.None)
+            {
+                return null;
+            }
+
+            foreach (var effectRef in container.ActiveEffects)
+            {
+                var effect = effectRef.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
+                if (effect.EffectNodeData?.nodeType != self.EffectNodeData?.nodeType)
+                {
+                    continue;
+                }
+
+                if (!effect.Tags.AssetTags.Equals(self.Tags.AssetTags))
+                {
+                    continue;
+                }
+
+                switch (stackType)
+                {
+                    case StackType.AggregateByTarget:
+                        return effect;
+                    case StackType.AggregateBySource:
+                        if (effect.Source.As() == self.Source.As())
+                        {
+                            return effect;
+                        }
+                        break;
+                }
+            }
+
+            return null;
+        }
+
+        private static void AddEffectToContainer(this GameplayEffectSpec self, GameplayEffectContainerComponent container)
+        {
+            if (container == null || container.ActiveEffects.Contains(self))
+            {
+                return;
+            }
+
+            container.ActiveEffects.Add(self);
+        }
+
+        private static int RemoveEffectsWithTags(this GameplayEffectSpec self, GameplayEffectContainerComponent container, GameplayTagSet tags)
+        {
+            if (container == null || tags.IsEmpty)
+            {
+                return 0;
+            }
+
+            int removedCount = 0;
+            for (int i = container.ActiveEffects.Count - 1; i >= 0; i--)
+            {
+                var effectRef = container.ActiveEffects[i];
+                var effect = effectRef.As();
+                if (effect == null || !effect.Tags.AssetTags.HasAnyTags(tags))
+                {
+                    continue;
+                }
+
+                if (container.IsUpdating)
+                {
+                    if (!container.PendingRemove.Contains(effectRef))
+                    {
+                        container.PendingRemove.Add(effectRef);
+                    }
+                }
+                else
+                {
+                    effect.RemoveEffect();
+                    container.ActiveEffects.RemoveAt(i);
+                    if (!effect.IsDisposed)
+                    {
+                        effect.Dispose();
+                    }
+                }
+
+                removedCount++;
+            }
+
+            return removedCount;
+        }
+
+        private static void ExecuteConnectedNodesDirect(this GameplayEffectSpec self, SpecExecutionContext context, string outputPortName)
+        {
+            if (context == null || string.IsNullOrEmpty(self.SkillId) || string.IsNullOrEmpty(self.NodeGuid))
+            {
+                return;
+            }
+
+            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(self.SkillId, self.NodeGuid, outputPortName);
+            if (connectedNodes == null || connectedNodes.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var nodeData in connectedNodes)
+            {
+                self.ExecuteNodeDirect(context, self.SkillId, nodeData);
+            }
+        }
+
+        private static void ExecuteNodeDirect(this GameplayEffectSpec self, SpecExecutionContext context, string skillId, NodeData nodeData)
+        {
+            if (nodeData == null)
+            {
+                return;
+            }
+
+            switch (GetNodeCategory(nodeData.nodeType))
+            {
+                case NodeCategory.Effect:
+                    self.ExecuteEffectNodeDirect(context, skillId, nodeData);
+                    break;
+                case NodeCategory.Task:
+                    self.ExecuteTaskNodeDirect(context, skillId, nodeData);
+                    break;
+                case NodeCategory.Condition:
+                    self.ExecuteConditionNodeDirect(context, skillId, nodeData);
+                    break;
+                case NodeCategory.Cue:
+                    self.ExecuteCueNodeDirect(context, skillId, nodeData);
+                    break;
+            }
+        }
+
+        private static void ExecuteEffectNodeDirect(this GameplayEffectSpec self, SpecExecutionContext context, string skillId, NodeData nodeData)
+        {
+            var caster = context.Caster.As();
+            if (caster == null)
+            {
+                return;
+            }
+
+            var target = GetContextTargetByType(context, nodeData.targetType);
+            var container = (target ?? caster).EffectContainer;
+            if (container == null)
+            {
+                return;
+            }
+
+            var effectSpec = container.AddChild<GameplayEffectSpec>();
+            effectSpec.InitEffect(skillId, nodeData.guid, context);
+            effectSpec.Execute();
+
+            if (effectSpec.IsRunning && effectSpec.EffectNodeData?.durationType != EffectDurationType.Instant)
+            {
+                var abilitySpec = context.AbilitySpec.As();
+                if (abilitySpec != null && abilitySpec.IsRunning && effectSpec.EffectNodeData.cancelOnAbilityEnd && !abilitySpec.RunningEffects.Contains(effectSpec))
+                {
+                    abilitySpec.RunningEffects.Add(effectSpec);
+                }
+            }
+            else if (!effectSpec.IsRunning && !effectSpec.IsApplied && !effectSpec.IsDisposed)
+            {
+                effectSpec.Dispose();
+            }
+        }
+
+        private static void ExecuteTaskNodeDirect(this GameplayEffectSpec self, SpecExecutionContext context, string skillId, NodeData nodeData)
+        {
+            var caster = context.Caster.As();
+            var taskSpec = caster?.GetComponent<TaskSpec>();
+            if (taskSpec == null)
+            {
+                return;
+            }
+
+            taskSpec.Initialize(skillId, nodeData.guid, context);
+            taskSpec.Execute();
+        }
+
+        private static void ExecuteConditionNodeDirect(this GameplayEffectSpec self, SpecExecutionContext context, string skillId, NodeData nodeData)
+        {
+            var caster = context.Caster.As();
+            if (caster == null)
+            {
+                return;
+            }
+
+            var conditionSpec = caster.AddChild<ConditionSpec>();
+            conditionSpec.SkillId = skillId;
+            conditionSpec.NodeGuid = nodeData.guid;
+            conditionSpec.Context = context;
+            conditionSpec.Source = context.Caster;
+
+            var handler = ConditionDispatcherComponent.Instance.Get(nodeData.GetType().Name);
+            if (handler == null)
+            {
+                Log.Error($"ConditionHandler not found for NodeType: {nodeData.nodeType}");
+            }
+            else
+            {
+                handler.Spec = conditionSpec;
+                var target = GetContextTargetByType(context, nodeData.targetType);
+                bool result = handler.Evaluate(target);
+                self.ExecuteConnectedNodesDirect(context, result ? "是" : "否");
+            }
+
+            if (!conditionSpec.IsDisposed)
+            {
+                conditionSpec.Dispose();
+            }
+        }
+
+        private static void ExecuteCueNodeDirect(this GameplayEffectSpec self, SpecExecutionContext context, string skillId, NodeData nodeData)
+        {
+            var caster = context.Caster.As();
+            if (caster == null)
+            {
+                return;
+            }
+
+            var cueContainer = caster.GetComponent<GameplayCueContainerComponent>();
+            if (cueContainer == null)
+            {
+                return;
+            }
+
+            var cueSpec = cueContainer.AddChild<GameplayCueSpec>();
+            cueSpec.InitCue(skillId, nodeData.guid, context.AbilitySpec.As(), nodeData.GetType().Name);
+            cueSpec.ExecuteCue();
+
+            if (!cueSpec.IsRunning)
+            {
+                return;
+            }
+
+            cueContainer.AddCue(cueSpec);
+            if (cueSpec.DestroyWithNode)
+            {
+                self.RegisterTriggeredCue(cueSpec.Id);
+            }
+        }
+
+        private static AbilitySystemComponent GetContextTargetByType(SpecExecutionContext context, TargetType targetType)
+        {
+            switch (targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster;
+                case TargetType.MainTarget:
+                    return context.MainTarget;
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget;
+                default:
+                    return context.MainTarget;
+            }
+        }
+
+        private static NodeCategory GetNodeCategory(NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.SearchTargetTask:
+                case NodeType.EndAbilityTask:
+                    return NodeCategory.Task;
+                case NodeType.AttributeCompareCondition:
+                    return NodeCategory.Condition;
+                case NodeType.ParticleCue:
+                case NodeType.SoundCue:
+                case NodeType.FloatingTextCue:
+                    return NodeCategory.Cue;
+                default:
+                    return NodeCategory.Effect;
+            }
         }
 
         public static ModifierCalculationContext CreateCalculationContext(this GameplayEffectSpec self, AbilitySystemComponent target)

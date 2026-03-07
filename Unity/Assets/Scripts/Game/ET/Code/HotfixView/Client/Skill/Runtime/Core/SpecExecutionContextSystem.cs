@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    [FriendOfAttribute(typeof(ET.Client.ConditionSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
@@ -346,14 +347,52 @@ namespace ET.Client
 
             // 创建临时 ConditionSpec Entity
             var conditionSpec = caster.AddChild<ConditionSpec>();
-            conditionSpec.InitCondition(skillId, nodeData.guid, self);
+            conditionSpec.SkillId = skillId;
+            conditionSpec.NodeGuid = nodeData.guid;
+            conditionSpec.Context = self;
+            conditionSpec.Source = self.Caster;
 
-            // 通过 Dispatcher 执行
-            conditionSpec.Execute(self);
+            var handler = ConditionDispatcherComponent.Instance.Get(nodeData.GetType().Name);
+            if (handler == null)
+            {
+                Log.Error($"ConditionHandler not found for NodeType: {nodeData.nodeType}");
+            }
+            else
+            {
+                handler.Spec = conditionSpec;
+                var target = GetConditionTarget(self, nodeData);
+                bool result = handler.Evaluate(target);
+                self.ExecuteConnectedNodes(skillId, nodeData.guid, result ? "是" : "否");
+            }
 
             // 瞬时执行完毕，Dispose
             if (!conditionSpec.IsDisposed)
                 conditionSpec.Dispose();
+        }
+
+        private static AbilitySystemComponent GetConditionTarget(SpecExecutionContext context, NodeData nodeData)
+        {
+            if (context == null)
+            {
+                return null;
+            }
+
+            if (nodeData == null)
+            {
+                return context.MainTarget;
+            }
+
+            switch (nodeData.targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster;
+                case TargetType.MainTarget:
+                    return context.MainTarget;
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget;
+                default:
+                    return context.MainTarget;
+            }
         }
 
         /// <summary>
@@ -398,7 +437,10 @@ namespace ET.Client
             var abilitySpec = self.GetAbilitySpec();
             if (abilitySpec != null && abilitySpec.IsRunning && effectSpec.EffectNodeData.cancelOnAbilityEnd)
             {
-                abilitySpec.RegisterRunningEffect(effectSpec);
+                if (!abilitySpec.RunningEffects.Contains(effectSpec))
+                {
+                    abilitySpec.RunningEffects.Add(effectSpec);
+                }
             }
         }
 

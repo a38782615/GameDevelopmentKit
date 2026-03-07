@@ -5,7 +5,9 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(GameplayAbilitySpec))]
     [FriendOf(typeof(GameplayAbilitySpec))]
+    [FriendOfAttribute(typeof(ET.Client.AbilityContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOfAttribute(typeof(ET.Client.GameplayEffectContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.TimeEffectRuntimeComponent))]
     [FriendOfAttribute(typeof(ET.Client.TimeCueRuntimeComponent))]
@@ -156,15 +158,17 @@ namespace ET.Client
             var asc = self.GetASC;
             if (asc == null) return false;
 
+            var ownedTags = asc.OwnedTags;
+
             if (!self.Tags.ActivationRequiredTags.IsEmpty)
             {
-                if (!asc.HasAllTags(self.Tags.ActivationRequiredTags))
+                if (ownedTags == null || !ownedTags.HasAllTags(self.Tags.ActivationRequiredTags))
                     return false;
             }
 
             if (!self.Tags.ActivationBlockedTags.IsEmpty)
             {
-                if (asc.HasAnyTags(self.Tags.ActivationBlockedTags))
+                if (ownedTags != null && ownedTags.HasAnyTags(self.Tags.ActivationBlockedTags))
                     return false;
             }
 
@@ -206,7 +210,7 @@ namespace ET.Client
             if (!cooldownTag.IsEmpty)
             {
                 var asc = self.GetASC;
-                return asc != null && asc.HasTag(cooldownTag);
+                return asc?.OwnedTags != null && asc.OwnedTags.HasTag(cooldownTag);
             }
             return false;
         }
@@ -215,7 +219,22 @@ namespace ET.Client
         {
             if (string.IsNullOrEmpty(self.CooldownNodeGuid)) return null;
             var asc = self.GetASC;
-            return asc?.EffectContainer?.FindEffectByNodeGuid(self.CooldownNodeGuid);
+            var container = asc?.EffectContainer;
+            if (container == null)
+            {
+                return null;
+            }
+
+            foreach (var effectRef in container.ActiveEffects)
+            {
+                var effect = effectRef.As();
+                if (effect?.NodeGuid == self.CooldownNodeGuid)
+                {
+                    return effect;
+                }
+            }
+
+            return null;
         }
 
         private static GameplayTag GetCooldownTag(this GameplayAbilitySpec self)
@@ -280,7 +299,7 @@ namespace ET.Client
 
             // 取消带有指定标签的其他技能
             if (!self.Tags.CancelAbilitiesWithTags.IsEmpty)
-                asc.Abilities.CancelAbilitiesWithTags(self.Tags.CancelAbilitiesWithTags);
+                self.CancelSiblingAbilitiesWithTags(asc.Abilities, self.Tags.CancelAbilitiesWithTags);
 
             // 创建执行上下文
             self.Context = new SpecExecutionContext();
@@ -290,12 +309,15 @@ namespace ET.Client
             if (target != null)
             {
                 self.Context.MainTarget = target;
-                self.Context.AddTarget(target);
+                if (!self.Context.Targets.Contains(target))
+                {
+                    self.Context.Targets.Add(target);
+                }
             }
 
             // 重置播放时间和时间效果/Cue状态
             self.CurrentPlayTime = 0f;
-            self.GetTimeEffectRuntime()?.ResetAll();
+            self.ResetTimeEffectRuntime();
             self.GetTimeCueRuntime()?.ResetAll();
 
             // 播放动画
@@ -338,8 +360,8 @@ namespace ET.Client
                 var e = effect.As();
                 if (e == null) continue;
                 var effectTarget = e.GetTarget();
-                if (effectTarget != null)
-                    effectTarget.EffectContainer?.RemoveEffect(effect);
+                if (effectTarget?.EffectContainer != null)
+                    self.RemoveEffectFromContainer(effectTarget.EffectContainer, effect);
                 else
                     e.RemoveEffect();
             }
@@ -411,7 +433,7 @@ namespace ET.Client
             var context = self.Context;
 
             // 检查时间效果触发
-            self.GetTimeEffectRuntime()?.CheckTriggers(self.SkillId, self.AnimationNodeGuid, self.CurrentPlayTime, context);
+            self.CheckTimeEffectTriggers(self.SkillId, self.AnimationNodeGuid, self.CurrentPlayTime, context);
 
             // 检查时间Cue触发
             self.GetTimeCueRuntime()?.CheckTriggers(self.SkillId, self.AnimationNodeGuid, self.CurrentPlayTime, self.AnimationDuration, context);
@@ -458,6 +480,113 @@ namespace ET.Client
             if (!self.IsActive || self.Tags.BlockAbilitiesWithTags.IsEmpty)
                 return false;
             return abilityTags.HasAnyTags(self.Tags.BlockAbilitiesWithTags);
+        }
+
+        private static int CancelSiblingAbilitiesWithTags(this GameplayAbilitySpec self, AbilityContainerComponent container, GameplayTagSet tags)
+        {
+            if (container == null || tags.IsEmpty)
+            {
+                return 0;
+            }
+
+            int cancelledCount = 0;
+            for (int i = container.ActiveAbilities.Count - 1; i >= 0; i--)
+            {
+                var abilityRef = container.ActiveAbilities[i];
+                var ability = abilityRef.As();
+                if (ability == null || ability == self)
+                {
+                    continue;
+                }
+
+                if (!ability.Tags.AssetTags.HasAnyTags(tags))
+                {
+                    continue;
+                }
+
+                ability.CancelAbility();
+
+                if (container.IsUpdating)
+                {
+                    if (!container.PendingRemove.Contains(abilityRef))
+                    {
+                        container.PendingRemove.Add(abilityRef);
+                    }
+                }
+                else
+                {
+                    container.ActiveAbilities.RemoveAt(i);
+                }
+
+                cancelledCount++;
+            }
+
+            return cancelledCount;
+        }
+
+        private static void ResetTimeEffectRuntime(this GameplayAbilitySpec self)
+        {
+            var timeEffectRuntime = self.GetTimeEffectRuntime();
+            if (timeEffectRuntime == null)
+            {
+                return;
+            }
+
+            foreach (var timeEffect in timeEffectRuntime.TimeEffects)
+            {
+                timeEffect.HasTriggered = false;
+            }
+        }
+
+        private static void CheckTimeEffectTriggers(this GameplayAbilitySpec self, string skillId, string animationNodeGuid, float currentPlayTime, SpecExecutionContext context)
+        {
+            if (context == null)
+            {
+                return;
+            }
+
+            var timeEffectRuntime = self.GetTimeEffectRuntime();
+            if (timeEffectRuntime == null)
+            {
+                return;
+            }
+
+            foreach (var timeEffect in timeEffectRuntime.TimeEffects)
+            {
+                if (!timeEffect.HasTriggered && currentPlayTime >= timeEffect.TriggerTime)
+                {
+                    timeEffect.HasTriggered = true;
+                    context.ExecuteConnectedNodes(skillId, animationNodeGuid, timeEffect.PortId);
+                }
+            }
+        }
+
+        private static bool RemoveEffectFromContainer(this GameplayAbilitySpec self, GameplayEffectContainerComponent container, EntityRef<GameplayEffectSpec> effectRef)
+        {
+            if (container == null || !container.ActiveEffects.Contains(effectRef))
+            {
+                return false;
+            }
+
+            if (container.IsUpdating)
+            {
+                if (!container.PendingRemove.Contains(effectRef))
+                {
+                    container.PendingRemove.Add(effectRef);
+                }
+
+                return true;
+            }
+
+            var effect = effectRef.As();
+            effect?.RemoveEffect();
+            container.ActiveEffects.Remove(effectRef);
+            if (effect != null && !effect.IsDisposed)
+            {
+                effect.Dispose();
+            }
+
+            return true;
         }
 
         // ============ 动画 ============

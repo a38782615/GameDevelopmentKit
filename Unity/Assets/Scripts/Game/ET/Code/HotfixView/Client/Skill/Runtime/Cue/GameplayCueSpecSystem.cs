@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace ET.Client
 {
+    [FriendOf(typeof(AbilitySystemComponent))]
     [EntitySystemOf(typeof(GameplayCueSpec))]
     [FriendOf(typeof(GameplayCueSpec))]
     [FriendOf(typeof(SpecExecutionContext))]
@@ -103,15 +104,21 @@ namespace ET.Client
         {
             if (target == null) return true; // 无目标时允许播放（世界空间Cue）
 
+            var ownedTags = target.OwnedTags;
+            if (ownedTags == null)
+            {
+                return self.Tags.RequiredTags.IsEmpty;
+            }
+
             if (!self.Tags.RequiredTags.IsEmpty)
             {
-                if (!target.HasAllTags(self.Tags.RequiredTags))
+                if (!ownedTags.HasAllTags(self.Tags.RequiredTags))
                     return false;
             }
 
             if (!self.Tags.ImmunityTags.IsEmpty)
             {
-                if (target.HasAnyTags(self.Tags.ImmunityTags))
+                if (ownedTags.HasAnyTags(self.Tags.ImmunityTags))
                     return false;
             }
 
@@ -124,24 +131,37 @@ namespace ET.Client
         {
             var context = self.GetContext();
             var nodeData = self.NodeData;
-            if (nodeData == null) return context?.GetMainTarget();
-            return context?.GetTargetByType(nodeData.targetType);
+            if (context == null)
+            {
+                return null;
+            }
+
+            return GetTargetByType(context, nodeData == null ? TargetType.MainTarget : nodeData.targetType);
         }
 
         public static List<AbilitySystemComponent> GetCueTargets(this GameplayCueSpec self, SpecExecutionContext context)
         {
+            if (context == null)
+            {
+                return null;
+            }
+
             var nodeData = self.NodeData;
             if (nodeData == null)
             {
                 var result = new List<AbilitySystemComponent>();
                 foreach (var id in context.Targets)
                 {
-                    var asc = context.GetTargetByType(TargetType.MainTarget);
-                    if (asc != null) result.Add(asc);
+                    var asc = id.As();
+                    if (asc != null)
+                    {
+                        result.Add(asc);
+                    }
                 }
                 return result;
             }
-            return context?.GetTargetsByType(nodeData.targetType);
+
+            return GetTargetsByType(context, nodeData.targetType);
         }
 
         public static UnityEngine.Transform GetTargetTransform(this GameplayCueSpec self, AbilitySystemComponent target)
@@ -173,6 +193,59 @@ namespace ET.Client
             var cue = CueDispatcherComponent.Instance.Get(self.HandName);
             cue.Spec = self;
             return cue;
+        }
+
+        private static AbilitySystemComponent GetTargetByType(SpecExecutionContext context, TargetType targetType)
+        {
+            switch (targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster;
+                case TargetType.MainTarget:
+                    return context.MainTarget;
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget;
+                default:
+                    return context.MainTarget;
+            }
+        }
+
+        private static List<AbilitySystemComponent> GetTargetsByType(SpecExecutionContext context, TargetType targetType)
+        {
+            var result = new List<AbilitySystemComponent>();
+            switch (targetType)
+            {
+                case TargetType.Caster:
+                    if (context.Caster.As() != null)
+                    {
+                        result.Add(context.Caster);
+                    }
+                    break;
+                case TargetType.MainTarget:
+                    if (context.MainTarget.As() != null)
+                    {
+                        result.Add(context.MainTarget);
+                    }
+                    break;
+                case TargetType.ParentInput:
+                    if (context.ParentInputTarget.As() != null)
+                    {
+                        result.Add(context.ParentInputTarget);
+                    }
+                    break;
+                default:
+                    foreach (var target in context.Targets)
+                    {
+                        var asc = target.As();
+                        if (asc != null)
+                        {
+                            result.Add(asc);
+                        }
+                    }
+                    break;
+            }
+
+            return result;
         }
     }
 }

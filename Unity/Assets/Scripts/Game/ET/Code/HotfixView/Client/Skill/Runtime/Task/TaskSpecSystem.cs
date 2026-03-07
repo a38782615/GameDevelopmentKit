@@ -35,7 +35,28 @@ namespace ET.Client
         public static AbilitySystemComponent GetTarget(this TaskSpec self)
         {
             var nodeData = self.NodeData;
-            return nodeData == null ? self.Context?.MainTarget : self.Context.GetTargetByType(nodeData.targetType);
+            var context = self.Context;
+            if (context == null)
+            {
+                return null;
+            }
+
+            if (nodeData == null)
+            {
+                return context.MainTarget;
+            }
+
+            switch (nodeData.targetType)
+            {
+                case TargetType.Caster:
+                    return context.Caster;
+                case TargetType.MainTarget:
+                    return context.MainTarget;
+                case TargetType.ParentInput:
+                    return context.ParentInputTarget;
+                default:
+                    return context.MainTarget;
+            }
         }
 
         public static void Execute(this TaskSpec self)
