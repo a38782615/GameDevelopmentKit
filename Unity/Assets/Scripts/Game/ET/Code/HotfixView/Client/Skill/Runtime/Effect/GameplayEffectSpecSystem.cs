@@ -7,6 +7,7 @@ namespace ET.Client
     [FriendOf(typeof(GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
+    [FriendOfAttribute(typeof(ET.Client.GameplayEffectContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
 
     public static partial class GameplayEffectSpecSystem
@@ -98,7 +99,7 @@ namespace ET.Client
             else
             {
                 var container = target.EffectContainer;
-                var existingEffect = container?.FindStackableEffect(self);
+                var existingEffect = self.FindStackableEffect(container);
 
                 if (existingEffect != null)
                 {
@@ -134,7 +135,10 @@ namespace ET.Client
                     }
                     else
                     {
-                        container?.AddEffect(self);
+                        if (!container.ActiveEffects.Contains(self))
+                        {
+                            container.ActiveEffects.Add(self);
+                        }
                         self.Target = target;
                         self.IsApplied = true;
                         self.ActivationTime = UnityEngine.Time.time;
@@ -142,7 +146,7 @@ namespace ET.Client
                         if (!self.Tags.GrantedTags.IsEmpty)
                             target.OwnedTags.AddTags(self.Tags.GrantedTags);
                         if (!self.Tags.RemoveGameplayEffectsWithTags.IsEmpty)
-                            target.RemoveActiveEffectsWithTags(self.Tags.RemoveGameplayEffectsWithTags);
+                            self.RemoveEffectsWithTags(target, self.Tags.RemoveGameplayEffectsWithTags);
 
                         self.RegisterTagListener();
 
@@ -296,7 +300,7 @@ namespace ET.Client
                     {
                         var cue = cueContainer.GetChild<GameplayCueSpec>(cueId);
                         if (cue != null && cue.IsRunning)
-                            cue.CancelCue();
+                            self.StopTriggeredCue(cue);
                     }
                 }
                 self.TriggeredCueIds.Clear();
@@ -347,7 +351,7 @@ namespace ET.Client
                 {
                     var cue = cueContainer.GetChild<GameplayCueSpec>(cueId);
                     if (cue != null && cue.IsRunning)
-                        cue.CancelCue();
+                        self.StopTriggeredCue(cue);
                 }
                 self.TriggeredCueIds.Clear();
             }
@@ -466,11 +470,97 @@ namespace ET.Client
             return context?.GetTargetByType(nodeData.targetType);
         }
 
+        private static GameplayEffectSpec FindStackableEffect(this GameplayEffectSpec self, GameplayEffectContainerComponent container)
+        {
+            if (container == null)
+            {
+                return null;
+            }
+
+            var stackType = self.EffectNodeData?.stackType ?? StackType.None;
+            if (stackType == StackType.None)
+            {
+                return null;
+            }
+
+            foreach (var effectRef in container.ActiveEffects)
+            {
+                var effect = effectRef.As();
+                if (effect == null || effect.EffectNodeData?.nodeType != self.EffectNodeData?.nodeType)
+                {
+                    continue;
+                }
+
+                if (!effect.Tags.AssetTags.Equals(self.Tags.AssetTags))
+                {
+                    continue;
+                }
+
+                switch (stackType)
+                {
+                    case StackType.AggregateByTarget:
+                        return effect;
+                    case StackType.AggregateBySource:
+                        if (effect.Source.As() == self.Source.As())
+                        {
+                            return effect;
+                        }
+                        break;
+                }
+            }
+
+            return null;
+        }
+
+        private static void RemoveEffectsWithTags(this GameplayEffectSpec self, AbilitySystemComponent target, GameplayTagSet tags)
+        {
+            var effectContainer = target?.EffectContainer;
+            if (effectContainer == null || tags.IsEmpty)
+            {
+                return;
+            }
+
+            for (int i = effectContainer.ActiveEffects.Count - 1; i >= 0; i--)
+            {
+                var effect = effectContainer.ActiveEffects[i].As();
+                if (effect != null && effect.Tags.AssetTags.HasAnyTags(tags))
+                {
+                    effect.RemoveEffect();
+                    effectContainer.ActiveEffects.Remove(effect);
+                    if (!effect.IsDisposed)
+                    {
+                        effect.Dispose();
+                    }
+                }
+            }
+        }
+
+        private static void StopTriggeredCue(this GameplayEffectSpec self, GameplayCueSpec cueSpec)
+        {
+            if (cueSpec == null || string.IsNullOrEmpty(cueSpec.HandName))
+            {
+                return;
+            }
+
+            var handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
+            if (handler == null)
+            {
+                Log.Error($"CueHandler not found: {cueSpec.HandName}");
+                return;
+            }
+
+            handler.Spec = cueSpec;
+            handler.NodeData = cueSpec.CueNodeData;
+            cueSpec.IsCancelled = true;
+            cueSpec.IsRunning = false;
+            handler.StopCue();
+        }
+
         public static bool CanApplyTo(this GameplayEffectSpec self, AbilitySystemComponent target)
         {
             if (target == null) return false;
-            if (!self.Tags.ApplicationRequiredTags.IsEmpty && !target.HasAllTags(self.Tags.ApplicationRequiredTags)) return false;
-            if (!self.Tags.ApplicationImmunityTags.IsEmpty && target.HasAnyTags(self.Tags.ApplicationImmunityTags)) return false;
+            if (!self.Tags.ApplicationRequiredTags.IsEmpty && !target.OwnedTags.HasAllTags(self.Tags.ApplicationRequiredTags)) return false;
+            if (!self.Tags.ApplicationImmunityTags.IsEmpty && target.OwnedTags.HasAnyTags(self.Tags.ApplicationImmunityTags)) return false;
             return true;
         }
 

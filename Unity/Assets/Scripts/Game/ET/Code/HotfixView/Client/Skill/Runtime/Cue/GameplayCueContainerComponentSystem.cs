@@ -53,7 +53,7 @@ namespace ET.Client
         private static void RemoveCueInternal(this GameplayCueContainerComponent self, GameplayCueSpec cue)
         {
             if (cue.IsRunning)
-                cue.CancelCue();
+                self.StopCue(cue, true);
             self.ActiveCues.Remove(cue);
             if (!cue.IsDisposed)
                 cue.Dispose();
@@ -70,7 +70,7 @@ namespace ET.Client
                 var cue = self.ActiveCues[i].As();
                 if (cue == null) continue;
 
-                cue.TickCue(deltaTime);
+                self.TickCue(cue);
 
                 if (!cue.IsRunning && !self.PendingRemove.Contains(cue))
                     self.PendingRemove.Add(cue);
@@ -92,6 +92,41 @@ namespace ET.Client
                 self.RemoveCueInternal(self.ActiveCues[i]);
             self.ActiveCues.Clear();
             self.PendingRemove.Clear();
+        }
+
+        private static void TickCue(this GameplayCueContainerComponent self, GameplayCueSpec cueSpec)
+        {
+            if (!cueSpec.IsRunning || cueSpec.ActiveCue == null)
+            {
+                return;
+            }
+
+            if (cueSpec.ActiveCue.IsExpired)
+            {
+                cueSpec.IsRunning = false;
+                cueSpec.ActiveCue = null;
+            }
+        }
+
+        private static void StopCue(this GameplayCueContainerComponent self, GameplayCueSpec cueSpec, bool cancelled)
+        {
+            if (cueSpec == null || string.IsNullOrEmpty(cueSpec.HandName))
+            {
+                return;
+            }
+
+            var handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
+            if (handler == null)
+            {
+                Log.Error($"CueHandler not found: {cueSpec.HandName}");
+                return;
+            }
+
+            handler.Spec = cueSpec;
+            handler.NodeData = cueSpec.CueNodeData;
+            cueSpec.IsCancelled = cancelled;
+            cueSpec.IsRunning = false;
+            handler.StopCue();
         }
     }
 }

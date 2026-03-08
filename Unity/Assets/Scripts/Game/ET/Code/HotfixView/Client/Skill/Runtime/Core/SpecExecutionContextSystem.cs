@@ -6,6 +6,8 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
+    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOfAttribute(typeof(ET.Client.GameplayCueContainerComponent))]
     public static partial class SpecExecutionContextSystem
     {
         // ============ ASC 获取 ============
@@ -318,8 +320,18 @@ namespace ET.Client
             if (container == null) return;
 
             var effectSpec = container.AddChild<GameplayEffectSpec>();
-            effectSpec.InitEffect(skillId, nodeData.guid, self);
-            effectSpec.Execute();
+            self.InitializeEffectSpec(effectSpec, skillId, nodeData);
+            var handler = effectSpec.GetEffectHandler();
+            if (handler == null)
+            {
+                if (!effectSpec.IsDisposed)
+                {
+                    effectSpec.Dispose();
+                }
+                return;
+            }
+
+            handler.Execute();
 
             // 如果是持续/周期效果且正在运行，注册到对应的Owner
             if (effectSpec.IsRunning && effectSpec.EffectNodeData?.durationType != EffectDurationType.Instant)
@@ -392,8 +404,23 @@ namespace ET.Client
             if (cueContainer == null) return null;
 
             var cueSpec = cueContainer.AddChild<GameplayCueSpec>();
-            cueSpec.InitCue(skillId, nodeData.guid, self.AbilitySpec, nodeData.GetType().Name);
-            cueSpec.ExecuteCue();
+            self.InitializeCueSpec(cueSpec, skillId, nodeData);
+
+            var handler = cueSpec.GetCueHandler();
+            if (handler == null)
+            {
+                if (!cueSpec.IsDisposed)
+                {
+                    cueSpec.Dispose();
+                }
+                return null;
+            }
+
+            var target = nodeData == null ? self.GetMainTarget() : self.GetTargetByType(nodeData.targetType);
+            if (self.CanPlayCueOnTarget(cueSpec, target))
+            {
+                handler.PlayCue(target);
+            }
 
             return cueSpec;
         }
@@ -408,7 +435,10 @@ namespace ET.Client
             var abilitySpec = self.GetAbilitySpec();
             if (abilitySpec != null && abilitySpec.IsRunning && effectSpec.EffectNodeData.cancelOnAbilityEnd)
             {
-                abilitySpec.RegisterRunningEffect(effectSpec);
+                if (!abilitySpec.RunningEffects.Contains(effectSpec))
+                {
+                    abilitySpec.RunningEffects.Add(effectSpec);
+                }
             }
         }
 
@@ -422,14 +452,145 @@ namespace ET.Client
             // 注册到 CueContainer
             var caster = self.GetCaster();
             var cueContainer = caster?.GetComponent<GameplayCueContainerComponent>();
-            cueContainer?.AddCue(cueSpec);
+            if (cueContainer != null && !cueContainer.ActiveCues.Contains(cueSpec))
+            {
+                cueContainer.ActiveCues.Add(cueSpec);
+            }
 
             // 如果是Effect触发的Cue，注册到Effect
             if (self.OwnerEffectSpec.As() != null && cueSpec.DestroyWithNode)
             {
                 var ownerEffect = self.GetOwnerEffectSpec();
-                ownerEffect?.RegisterTriggeredCue(cueSpec.Id);
+                if (ownerEffect != null && !ownerEffect.TriggeredCueIds.Contains(cueSpec.Id))
+                {
+                    ownerEffect.TriggeredCueIds.Add(cueSpec.Id);
+                }
             }
+        }
+
+        private static void InitializeEffectSpec(this SpecExecutionContext self, GameplayEffectSpec effectSpec, string skillId, NodeData nodeData)
+        {
+            effectSpec.SkillId = skillId;
+            effectSpec.NodeGuid = nodeData.guid;
+            effectSpec.Context = self;
+            effectSpec.Source = self.Caster;
+            effectSpec.Level = self.AbilityLevel;
+            effectSpec.IsRunning = false;
+            effectSpec.IsCancelled = false;
+            effectSpec.IsApplied = false;
+            effectSpec.IsExpired = false;
+            effectSpec.WasRefreshed = false;
+            effectSpec.ElapsedTime = 0f;
+            effectSpec.PeriodTimer = 0f;
+            effectSpec.StackCount = 1;
+            effectSpec.TriggeredCueIds.Clear();
+            effectSpec.Modifiers.Clear();
+            effectSpec.SetByCallerValues.Clear();
+            effectSpec.SnapshotValues.Clear();
+
+            var effectData = effectSpec.EffectNodeData;
+            if (effectData != null)
+            {
+                effectSpec.Tags = new EffectTagContainer(effectData);
+            }
+
+            var source = self.GetCaster();
+            if (source?.Attributes != null)
+            {
+                effectSpec.SnapshotValues = source.Attributes.CreateSnapshot();
+            }
+
+            effectSpec.Duration = FormulaEvaluator.EvaluateSimple(effectData?.duration, 0f);
+            effectSpec.Period = FormulaEvaluator.EvaluateSimple(effectData?.period, 1f);
+
+            if (effectData?.attributeModifiers != null)
+            {
+                foreach (var modData in effectData.attributeModifiers)
+                {
+                    effectSpec.Modifiers.Add(AttributeModifier.FromData(modData));
+                }
+            }
+
+            SpecFactory.AttachEffectComponent(effectSpec, nodeData.nodeType);
+            effectSpec.GetEffectHandler()?.OnInitialize();
+        }
+
+        private static AEffectHandler GetEffectHandler(this GameplayEffectSpec effectSpec)
+        {
+            if (effectSpec == null || string.IsNullOrEmpty(effectSpec.HandName))
+            {
+                return null;
+            }
+
+            var handler = EffectDispatcherComponent.Instance.Get(effectSpec.HandName);
+            if (handler == null)
+            {
+                Log.Error($"EffectHandler not found: {effectSpec.HandName}");
+                return null;
+            }
+
+            handler.Spec = effectSpec;
+            handler.NodeData = effectSpec.EffectNodeData;
+            return handler;
+        }
+
+        private static void InitializeCueSpec(this SpecExecutionContext self, GameplayCueSpec cueSpec, string skillId, NodeData nodeData)
+        {
+            cueSpec.SkillId = skillId;
+            cueSpec.NodeGuid = nodeData.guid;
+            cueSpec.ContextOwner = self.AbilitySpec;
+            cueSpec.IsRunning = false;
+            cueSpec.IsCancelled = false;
+            cueSpec.ActiveCue = null;
+
+            SpecFactory.AttachCueComponent(cueSpec, nodeData.nodeType);
+
+            var cueData = cueSpec.CueNodeData;
+            if (cueData != null)
+            {
+                cueSpec.Tags = new CueTagContainer(cueData);
+            }
+
+            cueSpec.GetCueHandler()?.OnInitialize();
+        }
+
+        private static ACueHandler GetCueHandler(this GameplayCueSpec cueSpec)
+        {
+            if (cueSpec == null || string.IsNullOrEmpty(cueSpec.HandName))
+            {
+                return null;
+            }
+
+            var handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
+            if (handler == null)
+            {
+                Log.Error($"CueHandler not found: {cueSpec.HandName}");
+                return null;
+            }
+
+            handler.Spec = cueSpec;
+            handler.NodeData = cueSpec.CueNodeData;
+            return handler;
+        }
+
+        private static bool CanPlayCueOnTarget(this SpecExecutionContext self, GameplayCueSpec cueSpec, AbilitySystemComponent target)
+        {
+            if (cueSpec == null || target == null)
+            {
+                return true;
+            }
+
+            if (!cueSpec.Tags.RequiredTags.IsEmpty && !target.OwnedTags.HasAllTags(cueSpec.Tags.RequiredTags))
+            {
+                return false;
+            }
+
+            if (!cueSpec.Tags.ImmunityTags.IsEmpty && target.OwnedTags.HasAnyTags(cueSpec.Tags.ImmunityTags))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

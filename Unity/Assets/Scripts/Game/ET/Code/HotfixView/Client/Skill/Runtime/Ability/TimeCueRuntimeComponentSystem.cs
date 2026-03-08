@@ -74,7 +74,7 @@ namespace ET.Client
         {
             foreach (var cueSpec in timeCue.TriggeredCueSpecs)
             {
-                cueSpec?.StopCuePublic();
+                self.StopCue(cueSpec);
             }
             timeCue.TriggeredCueSpecs.Clear();
         }
@@ -89,6 +89,26 @@ namespace ET.Client
                     tc.HasEnded = true;
                 }
             }
+        }
+
+        private static void StopCue(this TimeCueRuntimeComponent self, GameplayCueSpec cueSpec)
+        {
+            if (cueSpec == null || string.IsNullOrEmpty(cueSpec.HandName))
+            {
+                return;
+            }
+
+            var handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
+            if (handler == null)
+            {
+                Log.Error($"CueHandler not found: {cueSpec.HandName}");
+                return;
+            }
+
+            handler.Spec = cueSpec;
+            handler.NodeData = cueSpec.CueNodeData;
+            cueSpec.IsRunning = false;
+            handler.StopCue();
         }
     }
 }

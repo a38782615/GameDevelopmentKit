@@ -5,6 +5,7 @@ namespace ET.Client
     [EntitySystemOf(typeof(GameplayCueSpec))]
     [FriendOf(typeof(GameplayCueSpec))]
     [FriendOf(typeof(SpecExecutionContext))]
+    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
     public static partial class GameplayCueSpecSystem
     {
@@ -105,13 +106,13 @@ namespace ET.Client
 
             if (!self.Tags.RequiredTags.IsEmpty)
             {
-                if (!target.HasAllTags(self.Tags.RequiredTags))
+                if (!target.OwnedTags.HasAllTags(self.Tags.RequiredTags))
                     return false;
             }
 
             if (!self.Tags.ImmunityTags.IsEmpty)
             {
-                if (target.HasAnyTags(self.Tags.ImmunityTags))
+                if (target.OwnedTags.HasAnyTags(self.Tags.ImmunityTags))
                     return false;
             }
 

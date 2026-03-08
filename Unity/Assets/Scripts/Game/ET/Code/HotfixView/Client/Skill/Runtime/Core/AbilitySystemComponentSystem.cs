@@ -2,6 +2,8 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(AbilitySystemComponent))]
     [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(GameplayEffectContainerComponent))]
+    [FriendOf(typeof(GameplayEffectSpec))]
     public static partial class AbilitySystemComponentSystem
     {
         [EntitySystem]
@@ -17,16 +19,21 @@ namespace ET.Client
             self.AddComponent<GameplayCueContainerComponent>();
 
             // 订阅属性变化事件
-            self.Attributes.OnAnyAttributeChanged += (attribute, before, after) =>
+            self.Attributes.OnAnyAttributeChanged += self.OnAnyAttributeChanged;
+        }
+
+        public static void OnAnyAttributeChanged(this AbilitySystemComponent self, Attribute attribute, float before, float after)
+        {
+            if (attribute.AttrType == AttrType.Health)
             {
-                if (attribute.AttrType == AttrType.Health)
+                if (after < before)
                 {
-                    if (after < before)
+                    EventSystem.Instance.Invoke(new AbilitySystemComponent.OnTGameplayEvent()
                     {
-                        // self.FireGameplayEvent(GameplayEventType.OnTakeDamage);
-                    }
+                        GameplayEventType = GameplayEventType.OnTakeDamage
+                    });
                 }
-            };
+            }
         }
 
         [EntitySystem]
@@ -63,8 +70,10 @@ namespace ET.Client
             bool success = self.Abilities?.TryActivateAbility(self, spec, target) ?? false;
             if (success)
             {
-                // self.FireAbilityActivated(spec);
-                // spec.OnEnded += (s, wasCancelled) => self.FireAbilityEnded(s, wasCancelled);
+                EventSystem.Instance.Invoke(new AbilitySystemComponent.OnAbilityActivated()
+                {
+                    Spec = spec
+                });
             }
             return success;
         }
@@ -77,18 +86,65 @@ namespace ET.Client
         public static void EndAbility(this AbilitySystemComponent self, GameplayAbilitySpec spec, bool wasCancelled = false)
         {
             self.Abilities?.EndAbility(spec, wasCancelled);
+            EventSystem.Instance.Invoke(new AbilitySystemComponent.OnAbilityEnded()
+            {
+                Spec = spec,
+                End = wasCancelled
+            });
         }
 
         // ============ 效果相关 ============
 
         public static bool RemoveActiveEffect(this AbilitySystemComponent self, GameplayEffectSpec effectSpec)
         {
-            return self.EffectContainer?.RemoveEffect(effectSpec) ?? false;
+            var container = self.EffectContainer;
+            if (container == null || effectSpec == null || !container.ActiveEffects.Contains(effectSpec))
+            {
+                return false;
+            }
+
+            if (container.IsUpdating)
+            {
+                if (!container.PendingRemove.Contains(effectSpec))
+                {
+                    container.PendingRemove.Add(effectSpec);
+                }
+            }
+            else
+            {
+                effectSpec.RemoveEffect();
+                container.ActiveEffects.Remove(effectSpec);
+                if (!effectSpec.IsDisposed)
+                {
+                    effectSpec.Dispose();
+                }
+            }
+
+            return true;
         }
 
         public static int RemoveActiveEffectsWithTags(this AbilitySystemComponent self, GameplayTagSet tags)
         {
-            return self.EffectContainer?.RemoveEffectsWithTags(tags) ?? 0;
+            var container = self.EffectContainer;
+            if (container == null || tags.IsEmpty)
+            {
+                return 0;
+            }
+
+            int removedCount = 0;
+            for (int i = container.ActiveEffects.Count - 1; i >= 0; i--)
+            {
+                var effect = container.ActiveEffects[i].As();
+                if (effect != null && effect.Tags.AssetTags.HasAnyTags(tags))
+                {
+                    if (self.RemoveActiveEffect(effect))
+                    {
+                        removedCount++;
+                    }
+                }
+            }
+
+            return removedCount;
         }
 
         // ============ 标签相关 ============
