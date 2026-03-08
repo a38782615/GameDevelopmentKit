@@ -11,74 +11,74 @@ using Luban;
 
 namespace Game
 {
-    public partial class TablesComponent
+public partial class TablesComponent
+{
+    public DTUIForm DTUIForm { private set; get; }
+    public DTEntity DTEntity { private set; get; }
+    public DTScene DTScene { private set; get; }
+    public DTSound DTSound { private set; get; }
+    public DTUISound DTUISound { private set; get; }
+    public DTMusic DTMusic { private set; get; }
+    public DTUIEntity DTUIEntity { private set; get; }
+    private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
+    public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
+    public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
+
+    public async Cysharp.Threading.Tasks.UniTask LoadAsync(System.Func<string, Cysharp.Threading.Tasks.UniTask<ByteBuf>> loader)
     {
-        public DTUIForm DTUIForm { private set; get; }
-        public DTEntity DTEntity { private set; get; }
-        public DTScene DTScene { private set; get; }
-        public DTSound DTSound { private set; get; }
-        public DTUISound DTUISound { private set; get; }
-        public DTMusic DTMusic { private set; get; }
-        public DTUIEntity DTUIEntity { private set; get; }
-        private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
-        public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
-        public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
+        TablesMemory.BeginRecord();
 
-        public async Cysharp.Threading.Tasks.UniTask LoadAsync(System.Func<string, Cysharp.Threading.Tasks.UniTask<ByteBuf>> loader)
-        {
-            TablesMemory.BeginRecord();
+        _tables = new System.Collections.Generic.Dictionary<string, IDataTable>();
+        var loadTasks = new System.Collections.Generic.List<Cysharp.Threading.Tasks.UniTask>();
 
-            _tables = new System.Collections.Generic.Dictionary<string, IDataTable>();
-            var loadTasks = new System.Collections.Generic.List<Cysharp.Threading.Tasks.UniTask>();
+        DTUIForm = new DTUIForm(() => loader("dtuiform"));
+        loadTasks.Add(DTUIForm.LoadAsync());
+        _tables.Add("DTUIForm", DTUIForm);
+        DTEntity = new DTEntity(() => loader("dtentity"));
+        loadTasks.Add(DTEntity.LoadAsync());
+        _tables.Add("DTEntity", DTEntity);
+        DTScene = new DTScene(() => loader("dtscene"));
+        loadTasks.Add(DTScene.LoadAsync());
+        _tables.Add("DTScene", DTScene);
+        DTSound = new DTSound(() => loader("dtsound"));
+        loadTasks.Add(DTSound.LoadAsync());
+        _tables.Add("DTSound", DTSound);
+        DTUISound = new DTUISound(() => loader("dtuisound"));
+        loadTasks.Add(DTUISound.LoadAsync());
+        _tables.Add("DTUISound", DTUISound);
+        DTMusic = new DTMusic(() => loader("dtmusic"));
+        loadTasks.Add(DTMusic.LoadAsync());
+        _tables.Add("DTMusic", DTMusic);
+        DTUIEntity = new DTUIEntity(() => loader("dtuientity"));
+        loadTasks.Add(DTUIEntity.LoadAsync());
+        _tables.Add("DTUIEntity", DTUIEntity);
 
-            DTUIForm = new DTUIForm(() => loader("dtuiform"));
-            loadTasks.Add(DTUIForm.LoadAsync());
-            _tables.Add("DTUIForm", DTUIForm);
-            DTEntity = new DTEntity(() => loader("dtentity"));
-            loadTasks.Add(DTEntity.LoadAsync());
-            _tables.Add("DTEntity", DTEntity);
-            DTScene = new DTScene(() => loader("dtscene"));
-            loadTasks.Add(DTScene.LoadAsync());
-            _tables.Add("DTScene", DTScene);
-            DTSound = new DTSound(() => loader("dtsound"));
-            loadTasks.Add(DTSound.LoadAsync());
-            _tables.Add("DTSound", DTSound);
-            DTUISound = new DTUISound(() => loader("dtuisound"));
-            loadTasks.Add(DTUISound.LoadAsync());
-            _tables.Add("DTUISound", DTUISound);
-            DTMusic = new DTMusic(() => loader("dtmusic"));
-            loadTasks.Add(DTMusic.LoadAsync());
-            _tables.Add("DTMusic", DTMusic);
-            DTUIEntity = new DTUIEntity(() => loader("dtuientity"));
-            loadTasks.Add(DTUIEntity.LoadAsync());
-            _tables.Add("DTUIEntity", DTUIEntity);
+        await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
-            await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
+        Refresh();
 
-            Refresh();
-
-            TablesMemory.EndRecord();
-        }
-
-        private void ResolveRef()
-        {
-            DTUIForm.ResolveRef(this);
-            DTEntity.ResolveRef(this);
-            DTScene.ResolveRef(this);
-            DTSound.ResolveRef(this);
-            DTUISound.ResolveRef(this);
-            DTMusic.ResolveRef(this);
-            DTUIEntity.ResolveRef(this);
-            PostResolveRef();
-        }
-
-        public void Refresh()
-        {
-            PostInit();
-            ResolveRef();
-        }
-
-        partial void PostInit();
-        partial void PostResolveRef();
+        TablesMemory.EndRecord();
     }
+
+    private void ResolveRef()
+    {
+        DTUIForm.ResolveRef(this);
+        DTEntity.ResolveRef(this);
+        DTScene.ResolveRef(this);
+        DTSound.ResolveRef(this);
+        DTUISound.ResolveRef(this);
+        DTMusic.ResolveRef(this);
+        DTUIEntity.ResolveRef(this);
+        PostResolveRef();
+    }
+
+    public void Refresh()
+    {
+        PostInit();
+        ResolveRef();
+    }
+
+    partial void PostInit();
+    partial void PostResolveRef();
+}
 }

@@ -14,6 +14,11 @@ namespace Game.Hot
         public const string Key_apple = "/apple";
 
         /// <summary>
+        /// 苹果
+        /// </summary>
+        public const string Key_apple_bad = "/apple_bad";
+
+        /// <summary>
         /// 1测试
         /// </summary>
         public const string Key_1test = "1test";

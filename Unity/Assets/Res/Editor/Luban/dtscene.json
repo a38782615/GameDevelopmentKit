@@ -12,5 +12,12 @@
     "Desc": "战斗场景",
     "AssetName": "Main",
     "BackgroundMusicId": 2
+  },
+  {
+    "Id": 3,
+    "CSName": "Map2d",
+    "Desc": "2战斗",
+    "AssetName": "Map2d",
+    "BackgroundMusicId": 2
   }
 ]

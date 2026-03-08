@@ -18,5 +18,10 @@ namespace ET.Client
         /// 战斗场景
         /// </summary>
         public const int Main = 2;
+
+        /// <summary>
+        /// 2战斗
+        /// </summary>
+        public const int Map2d = 3;
     }
 }
