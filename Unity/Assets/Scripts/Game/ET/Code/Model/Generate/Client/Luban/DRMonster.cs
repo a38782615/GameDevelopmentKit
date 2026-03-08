@@ -11,11 +11,14 @@ using Luban;
 
 namespace ET
 {
-public sealed partial class DRUnit : Luban.BeanBase
+public sealed partial class DRMonster : Luban.BeanBase
 {
-    public DRUnit(ByteBuf _buf) 
+    public DRMonster(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
+        UnitConfigId = _buf.ReadInt();
+        UnitConfigId_Ref = null;
+        EntityId = _buf.ReadInt();
         Name = _buf.ReadString();
         {int __n0 = _buf.ReadSize(); ActiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); ActiveSkill[__index0] = __e0;}}
         {int __n0 = _buf.ReadSize(); PassiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); PassiveSkill[__index0] = __e0;}}
@@ -23,12 +26,15 @@ public sealed partial class DRUnit : Luban.BeanBase
         PostInit();
     }
 
-    public static DRUnit DeserializeDRUnit(ByteBuf _buf)
+    public static DRMonster DeserializeDRMonster(ByteBuf _buf)
     {
-        return new DRUnit(_buf);
+        return new DRMonster(_buf);
     }
 
     public readonly int Id;
+    public readonly int UnitConfigId;
+    public DRUnitConfig UnitConfigId_Ref { private set; get; }
+    public readonly int EntityId;
     public readonly string Name;
     /// <summary>
     /// 主动技能
@@ -42,11 +48,12 @@ public sealed partial class DRUnit : Luban.BeanBase
     /// 初始属性
     /// </summary>
     public readonly (int,int)[] InitialAttribute;
-    public const int __ID__ = 2025152306;
+    public const int __ID__ = 1429977964;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
     {
+        UnitConfigId_Ref = tables.DTUnitConfig.GetOrDefault(UnitConfigId);
         PostResolveRef();
     }
 
@@ -54,6 +61,8 @@ public sealed partial class DRUnit : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "UnitConfigId:" + UnitConfigId + ","
+        + "EntityId:" + EntityId + ","
         + "Name:" + Name + ","
         + "ActiveSkill:" + Luban.StringUtil.CollectionToString(ActiveSkill) + ","
         + "PassiveSkill:" + Luban.StringUtil.CollectionToString(PassiveSkill) + ","

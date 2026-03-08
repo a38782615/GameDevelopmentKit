@@ -11,13 +11,13 @@ using Luban;
 
 namespace ET
 {
-public partial class DTUnit : IDataTable
+public partial class DTMonster : IDataTable
 {
-    private System.Collections.Generic.Dictionary<int, DRUnit> _dataMap;
-    private System.Collections.Generic.List<DRUnit> _dataList;
+    private System.Collections.Generic.Dictionary<int, DRMonster> _dataMap;
+    private System.Collections.Generic.List<DRMonster> _dataList;
     private readonly System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> _loadFunc;
 
-    public DTUnit(System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> loadFunc)
+    public DTMonster(System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> loadFunc)
     {
         _loadFunc = loadFunc;
     }
@@ -28,8 +28,8 @@ public partial class DTUnit : IDataTable
         int n = _buf.ReadSize();
         if(_dataMap == null)
         {
-            _dataMap = new System.Collections.Generic.Dictionary<int, DRUnit>(n);
-            _dataList = new System.Collections.Generic.List<DRUnit>(n);
+            _dataMap = new System.Collections.Generic.Dictionary<int, DRMonster>(n);
+            _dataList = new System.Collections.Generic.List<DRMonster>(n);
         }
         else
         {
@@ -38,19 +38,19 @@ public partial class DTUnit : IDataTable
         }
         for(int i = n ; i > 0 ; --i)
         {
-            DRUnit _v;
-            _v = global::ET.DRUnit.DeserializeDRUnit(_buf);
+            DRMonster _v;
+            _v = global::ET.DRMonster.DeserializeDRMonster(_buf);
             _dataList.Add(_v);
             _dataMap.Add(_v.Id, _v);
         }
         PostInit();
     }
 
-    public System.Collections.Generic.IReadOnlyDictionary<int, DRUnit> DataMap => _dataMap;
-    public System.Collections.Generic.IReadOnlyList<DRUnit> DataList => _dataList;
-    public DRUnit GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
-    public DRUnit Get(int key) => _dataMap[key];
-    public DRUnit this[int key] => _dataMap[key];
+    public System.Collections.Generic.IReadOnlyDictionary<int, DRMonster> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<DRMonster> DataList => _dataList;
+    public DRMonster GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
+    public DRMonster Get(int key) => _dataMap[key];
+    public DRMonster this[int key] => _dataMap[key];
 
     public void ResolveRef(Tables tables)
     {

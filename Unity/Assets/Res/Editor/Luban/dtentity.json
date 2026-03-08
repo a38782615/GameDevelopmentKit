@@ -110,5 +110,21 @@
     "AssetName": "AsteroidExplosion",
     "EntityGroupName": "Effect",
     "Priority": 80
+  },
+  {
+    "Id": 1000001,
+    "CSName": "",
+    "Desc": "",
+    "AssetName": "Hero/Hero1000001",
+    "EntityGroupName": "Hero",
+    "Priority": 90
+  },
+  {
+    "Id": 2000001,
+    "CSName": "",
+    "Desc": "",
+    "AssetName": "Monster/Monster2000001",
+    "EntityGroupName": "Monster",
+    "Priority": 90
   }
 ]

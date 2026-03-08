@@ -151,6 +151,8 @@
       <Resource Name="Res/Prefab/Effect/Effectmaterial/Vfx/UITexture/T_Guangdian_Ljh_20" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Effect/Effectmaterial/Vfx/UITexture/T_noise_016" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Effect/Effectmaterial/Vfx/UITexture/T_Object_tsg_023" LoadType="0" Packed="False" />
+      <Resource Name="Res/Prefab/Hero/Hero1000001" LoadType="0" Packed="False" />
+      <Resource Name="Res/Prefab/Monster/Monster2000001" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Materials/skeleton_D" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Skeleton" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/SkeletonController" LoadType="0" Packed="False" />
@@ -329,6 +331,7 @@
       <Asset Guid="6bd5badd6531c384082aa69d2524bb95" ResourceName="UI.UXTool" />
       <Asset Guid="6cbc2c323b77f804fb958fa4eca33998" ResourceName="Res/UI/UISprite/Common" />
       <Asset Guid="6d51a7bff799de24eaf771981bc6127d" ResourceName="UI.UXTool" />
+      <Asset Guid="6eca472c5c60d144fbf7e4fcb0c21398" ResourceName="Res/Prefab/Hero/Hero1000001" />
       <Asset Guid="6f4f01fb0f74a674196c817368818daf" ResourceName="ET.ClientServer" />
       <Asset Guid="6fc0da2a4efae454ba85d25d8aa13740" ResourceName="UI.UXTool" />
       <Asset Guid="70253711d0c59c941bcd50f929b1c04c" ResourceName="UI.UXTool" />
@@ -415,6 +418,7 @@
       <Asset Guid="a153474772d300042a4710f1761d11ba" ResourceName="Res/Prefab/Effect/Effectmaterial/Vfx/Material/Mat_T_ci_xxc_001_shj01" />
       <Asset Guid="a2fbdfc3ad91b06459d0ec1387c01179" ResourceName="Res/Prefab/Effect/Effectmaterial/Res/Effect/Vfx/Modle/fx_yuanzhu_008" />
       <Asset Guid="a374e20de4e473c4a81c13d67f1df0fa" ResourceName="Res/Prefab/Effect/Effectmaterial/Vfx/UITexture/T_Object_tsg_023" />
+      <Asset Guid="a51728ee4e21fb442a3d24b312ebd6be" ResourceName="Res/Prefab/Monster/Monster2000001" />
       <Asset Guid="a5294483f20f40d449699101bb428cda" ResourceName="Res/Scene/Map1" />
       <Asset Guid="a57e4a78fa2c235448cc55f4f05671a2" ResourceName="UI.UXTool" />
       <Asset Guid="a5d9d0e22ef24e54f889295f42c5fc22" ResourceName="UI.UXTool" />

@@ -17,10 +17,26 @@ namespace ET.Client
             var asc = self.ASC.As();
             if (asc == null) return;
 
-            var data = Tables.Instance.DTUnit.GetOrDefault(self.Unit.As().ConfigId);
+            var data = Tables.Instance.DTHero.GetOrDefault(self.Unit.As().ConfigId);
+            if (data == null) return;
+
+            self.InitUnitTypeTags(asc);
             self.InitAttributes(asc, data.InitialAttribute);
             self.GrantSkills(asc, data.ActiveSkill);
             self.GrantSkills(asc, data.PassiveSkill);
+        }
+
+        private static void InitUnitTypeTags(this SkillUnit self, AbilitySystemComponent asc)
+        {
+            switch ((UnitType)self.Unit.As().Config().Type)
+            {
+                case UnitType.Player:
+                    asc.OwnedTags.AddTag(GameplayTagLibrary.unitType_hero);
+                    break;
+                case UnitType.Monster:
+                    asc.OwnedTags.AddTag(GameplayTagLibrary.unitType_monster);
+                    break;
+            }
         }
 
         private static void InitAttributes(this SkillUnit self, AbilitySystemComponent asc, (int, int)[] attributes)
