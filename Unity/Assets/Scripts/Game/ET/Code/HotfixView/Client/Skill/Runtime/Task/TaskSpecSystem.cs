@@ -23,7 +23,7 @@ namespace ET.Client
 
             var nodeData = self.TaskNodeData;
             if (nodeData != null)
-                SpecFactory.AttachTaskComponent(self, nodeData.nodeType);
+                self.AttachTaskComponent(nodeData.nodeType);
         }
 
         public static void Execute(this TaskSpec self)
@@ -75,6 +75,30 @@ namespace ET.Client
             handler.Spec = self;
             handler.NodeData = self.TaskNodeData;
             return handler;
+        }
+
+        private static void AttachTaskComponent(this TaskSpec self, NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.SearchTargetTask:
+                    self.HandName = "SearchTargetTaskSpecHandler";
+                    self.EnsureTaskComponent<SearchTargetTaskSpec>();
+                    return;
+                case NodeType.EndAbilityTask:
+                    self.HandName = "EndAbilityTaskSpecHandler";
+                    self.EnsureTaskComponent<EndAbilityTaskSpec>();
+                    return;
+                default:
+                    self.HandName = string.Empty;
+                    return;
+            }
+        }
+
+        private static void EnsureTaskComponent<T>(this TaskSpec self) where T : Entity, IAwake, new()
+        {
+            if (self.GetComponent<T>() == null)
+                self.AddComponent<T>();
         }
     }
 }

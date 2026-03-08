@@ -149,18 +149,7 @@ namespace ET.Client
 
         private AbilitySystemComponent GetASCFromCollider(Collider2D collider)
         {
-            if (collider == null)
-                return null;
-
-            SkillUnit unit = collider.GetComponent<SkillUnit>();
-            if (unit != null)
-                return unit.ASC.As();
-
-            unit = collider.GetComponentInParent<SkillUnit>();
-            if (unit != null)
-                return unit.ASC.As();
-
-            return null;
+            return Collider2DRegistry.GetASC(collider);
         }
 
         private Vector2 RotateVector2(Vector2 vector, float degrees)

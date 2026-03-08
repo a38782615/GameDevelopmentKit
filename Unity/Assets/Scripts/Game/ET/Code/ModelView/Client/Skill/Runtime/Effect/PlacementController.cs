@@ -123,15 +123,7 @@ namespace ET.Client
         /// </summary>
         private AbilitySystemComponent GetASCFromCollider(Collider2D collider)
         {
-            if (collider == null) return null;
-
-            var unit = collider.GetComponent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
-
-            unit = collider.GetComponentInParent<SkillUnit>();
-            if (unit != null) return unit.ownerASC;
-
-            return null;
+            return Collider2DRegistry.GetASC(collider);
         }
 
         /// <summary>

@@ -17,6 +17,8 @@ namespace ET.Client
             GameObject go = UnityEngine.Object.Instantiate(unitGo);
             go.transform.position = unit.Position;
             unit.AddComponent<GameObjectComponent>().GameObject = go;
+            AbilitySystemComponent asc = unit.GetComponent<SkillUnit>()?.ASC.As();
+            unit.AddComponent<Collider2DComponent>().Bind(go, asc);
             unit.AddComponent<AnimatorComponent>();
             await UniTask.CompletedTask;
         }

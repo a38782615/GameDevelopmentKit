@@ -25,7 +25,7 @@ namespace ET.Client
 
             var nodeData = self.ConditionNodeData;
             if (nodeData != null)
-                SpecFactory.AttachConditionComponent(self, nodeData.nodeType);
+                self.AttachConditionComponent(nodeData.nodeType);
         }
 
         public static bool Evaluate(this ConditionSpec self)
@@ -82,6 +82,26 @@ namespace ET.Client
             handler.Spec = self;
             handler.NodeData = self.ConditionNodeData;
             return handler;
+        }
+
+        private static void AttachConditionComponent(this ConditionSpec self, NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.AttributeCompareCondition:
+                    self.HandName = "AttributeCompareConditionHandler";
+                    self.EnsureConditionComponent<AttributeCompareConditionSpec>();
+                    return;
+                default:
+                    self.HandName = string.Empty;
+                    return;
+            }
+        }
+
+        private static void EnsureConditionComponent<T>(this ConditionSpec self) where T : Entity, IAwake, new()
+        {
+            if (self.GetComponent<T>() == null)
+                self.AddComponent<T>();
         }
     }
 }

@@ -511,7 +511,7 @@ namespace ET.Client
                 }
             }
 
-            SpecFactory.AttachEffectComponent(effectSpec, nodeData.nodeType);
+            effectSpec.AttachEffectComponent(nodeData.nodeType);
             effectSpec.GetEffectHandler()?.OnInitialize();
         }
 
@@ -543,7 +543,7 @@ namespace ET.Client
             cueSpec.IsCancelled = false;
             cueSpec.ActiveCue = null;
 
-            SpecFactory.AttachCueComponent(cueSpec, nodeData.nodeType);
+            cueSpec.AttachCueComponent(nodeData.nodeType);
 
             var cueData = cueSpec.CueNodeData;
             if (cueData != null)
@@ -591,6 +591,90 @@ namespace ET.Client
             }
 
             return true;
+        }
+
+        private static void AttachEffectComponent(this GameplayEffectSpec spec, NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.DamageEffect:
+                    spec.HandName = "DamageEffectSpecHandler";
+                    spec.EnsureEffectComponent<DamageEffectSpec>();
+                    return;
+                case NodeType.HealEffect:
+                    spec.HandName = "HealEffectSpecHandler";
+                    spec.EnsureEffectComponent<HealEffectSpec>();
+                    return;
+                case NodeType.CostEffect:
+                    spec.HandName = "CostEffectSpecHandler";
+                    spec.EnsureEffectComponent<CostEffectSpec>();
+                    return;
+                case NodeType.ModifyAttributeEffect:
+                    spec.HandName = "ModifyAttributeEffectSpecHandler";
+                    spec.EnsureEffectComponent<ModifyAttributeEffectSpec>();
+                    return;
+                case NodeType.GenericEffect:
+                    spec.HandName = "GenericEffectSpecHandler";
+                    spec.EnsureEffectComponent<GenericEffectSpec>();
+                    return;
+                case NodeType.ProjectileEffect:
+                    spec.HandName = "ProjectileEffectSpecHandler";
+                    spec.EnsureEffectComponent<ProjectileEffectSpec>();
+                    return;
+                case NodeType.PlacementEffect:
+                    spec.HandName = "PlacementEffectSpecHandler";
+                    spec.EnsureEffectComponent<PlacementEffectSpec>();
+                    return;
+                case NodeType.DisplaceEffect:
+                    spec.HandName = "DisplaceEffectSpecHandler";
+                    spec.EnsureEffectComponent<DisplaceEffectSpec>();
+                    return;
+                case NodeType.CooldownEffect:
+                    spec.HandName = "CooldownEffectSpecHandler";
+                    spec.EnsureEffectComponent<CooldownEffectSpec>();
+                    return;
+                case NodeType.BuffEffect:
+                    spec.HandName = "BuffEffectSpecHandler";
+                    spec.EnsureEffectComponent<BuffEffectSpec>();
+                    return;
+                default:
+                    spec.HandName = string.Empty;
+                    return;
+            }
+        }
+
+        private static void AttachCueComponent(this GameplayCueSpec spec, NodeType nodeType)
+        {
+            switch (nodeType)
+            {
+                case NodeType.ParticleCue:
+                    spec.HandName = "ParticleCueSpecHandler";
+                    spec.EnsureCueComponent<ParticleCueSpec>();
+                    return;
+                case NodeType.SoundCue:
+                    spec.HandName = "SoundCueSpecHandler";
+                    spec.EnsureCueComponent<SoundCueSpec>();
+                    return;
+                case NodeType.FloatingTextCue:
+                    spec.HandName = "FloatingTextCueSpecHandler";
+                    spec.EnsureCueComponent<FloatingTextCueSpec>();
+                    return;
+                default:
+                    spec.HandName = string.Empty;
+                    return;
+            }
+        }
+
+        private static void EnsureEffectComponent<T>(this GameplayEffectSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
+        }
+
+        private static void EnsureCueComponent<T>(this GameplayCueSpec spec) where T : Entity, IAwake, new()
+        {
+            if (spec.GetComponent<T>() == null)
+                spec.AddComponent<T>();
         }
 
         /// <summary>
