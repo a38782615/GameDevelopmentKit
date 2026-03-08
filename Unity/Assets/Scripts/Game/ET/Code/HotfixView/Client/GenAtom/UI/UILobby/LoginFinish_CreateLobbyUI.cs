@@ -3,11 +3,11 @@
 namespace ET.Client
 {
 	[Event(SceneType.GenAtom)]
-	public class LoginFinish_CreateLobbyUI: AEvent<Scene, LoginFinish>
+	public class LoginFinish_CreateLobbyUI : AEvent<Scene, LoginFinish>
 	{
 		protected override async UniTask Run(Scene scene, LoginFinish args)
 		{
-			await scene.GetComponent<UIComponent>().AddUIFormComponentAsync<UIFormLobbyComponent>(UGFUIFormId.UILobby);
+			// await scene.GetComponent<UIComponent>().AddUIFormComponentAsync<UIFormLobbyComponent>(UGFUIFormId.UILobby);
 		}
 	}
 }

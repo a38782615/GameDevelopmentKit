@@ -6,12 +6,13 @@ namespace ET.Client
     {
         public static async UniTask Login(Scene root, string account, string password)
         {
-            root.RemoveComponent<ClientSenderComponent>();
-            ClientSenderComponent clientSenderComponent = root.AddComponent<ClientSenderComponent>();
-            long playerId = await clientSenderComponent.LoginAsync(account, password);
+            // root.RemoveComponent<ClientSenderComponent>();
+            // ClientSenderComponent clientSenderComponent = root.AddComponent<ClientSenderComponent>();
+            // long playerId = await clientSenderComponent.LoginAsync(account, password);
 
-            root.GetComponent<PlayerComponent>().MyId = playerId;
+            // root.GetComponent<PlayerComponent>().MyId = playerId;
             await EventSystem.Instance.PublishAsync(root, new LoginFinish());
+            await EventSystem.Instance.PublishAsync(root, new GoMap2d());
         }
     }
 }
