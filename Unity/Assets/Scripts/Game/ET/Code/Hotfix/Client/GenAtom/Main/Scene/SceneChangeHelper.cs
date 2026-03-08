@@ -41,32 +41,36 @@ namespace ET.Client
 
             // 可以订阅这个事件中创建Loading界面
             EventSystem.Instance.Publish(root, new SceneChangeStart());
-            CreateLocalUnitsFromTables(root, currentScene);
+            await CreateLocalUnitsFromTables(root, currentScene);
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());
             root.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());
-
-            await UniTask.CompletedTask;
         }
 
-        private static void CreateLocalUnitsFromTables(Scene root, Scene currentScene)
+        private static async UniTask CreateLocalUnitsFromTables(Scene root, Scene currentScene)
         {
-            var dTHero = Tables.Instance.DTHero;
-            for (int i = 0; i < dTHero.DataList.Count; i++)
+            var configs = Tables.Instance.DTUnitConfig;
+            var unis = new UniTask[configs.DataList.Count];
+            for (int i = 0; i < configs.DataList.Count; i++)
             {
-                var hero = dTHero.DataList[i];
-                UnitInfo unitInfo = CreateHeroUnitInfo(hero, i);
+                var config = configs.DataList[i];
+                UnitInfo unitInfo = CreateUnitInfo(config, i);
                 Unit unit = UnitFactory.Create(currentScene, unitInfo);
+                var t = EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
+                unis[i] = t;
             }
+
+            await UniTask.WhenAll(unis);
         }
 
-        private static UnitInfo CreateHeroUnitInfo(DRHero hero, int index)
+
+        private static UnitInfo CreateUnitInfo(DRUnitConfig config, int index)
         {
             UnitInfo unitInfo = UnitInfo.Create();
             unitInfo.UnitId = IdGenerater.Instance.GenerateInstanceId();
-            unitInfo.ConfigId = hero.UnitConfigId;
-            unitInfo.Type = hero.UnitConfigId_Ref.Type;
-            unitInfo.Position = GetLocalUnitPosition((UnitType)hero.UnitConfigId_Ref.Type, 0);
-            unitInfo.Forward = GetLocalUnitForward((UnitType)hero.UnitConfigId_Ref.Type);
+            unitInfo.ConfigId = config.Id;
+            unitInfo.Type = config.Type;
+            unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
+            unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
             return unitInfo;
         }
 
