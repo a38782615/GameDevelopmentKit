@@ -18,7 +18,6 @@ public sealed partial class DRMonster : Luban.BeanBase
         Id = _buf.ReadInt();
         UnitConfigId = _buf.ReadInt();
         UnitConfigId_Ref = null;
-        EntityId = _buf.ReadInt();
         Name = _buf.ReadString();
         {int __n0 = _buf.ReadSize(); ActiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); ActiveSkill[__index0] = __e0;}}
         {int __n0 = _buf.ReadSize(); PassiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); PassiveSkill[__index0] = __e0;}}
@@ -34,7 +33,6 @@ public sealed partial class DRMonster : Luban.BeanBase
     public readonly int Id;
     public readonly int UnitConfigId;
     public DRUnitConfig UnitConfigId_Ref { private set; get; }
-    public readonly int EntityId;
     public readonly string Name;
     /// <summary>
     /// 主动技能
@@ -62,7 +60,6 @@ public sealed partial class DRMonster : Luban.BeanBase
         return "{ "
         + "Id:" + Id + ","
         + "UnitConfigId:" + UnitConfigId + ","
-        + "EntityId:" + EntityId + ","
         + "Name:" + Name + ","
         + "ActiveSkill:" + Luban.StringUtil.CollectionToString(ActiveSkill) + ","
         + "PassiveSkill:" + Luban.StringUtil.CollectionToString(PassiveSkill) + ","

@@ -16,6 +16,7 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
     public DRUnitConfig(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
+        EntityId = _buf.ReadInt();
         Type = _buf.ReadInt();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
@@ -33,6 +34,7 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
     /// Id
     /// </summary>
     public readonly int Id;
+    public readonly int EntityId;
     /// <summary>
     /// Type
     /// </summary>
@@ -65,6 +67,7 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "EntityId:" + EntityId + ","
         + "Type:" + Type + ","
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","

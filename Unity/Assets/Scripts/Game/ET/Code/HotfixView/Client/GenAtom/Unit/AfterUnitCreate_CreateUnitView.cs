@@ -10,20 +10,18 @@ namespace ET.Client
         protected override async UniTask Run(Scene scene, AfterUnitCreate args)
         {
             Unit unit = args.Unit;
-            if (unit.ConfigId > 0 && unit.GetComponent<SkillUnit>() == null)
-            {
-                unit.AddComponent<SkillUnit>();
-            }
-
+            var skillUnit = unit.AddComponent<SkillUnit>();
             // Unit View层
             // 这里资源需要卸载，Demo就不搞了
-            GameObject unitGo = await UGFComponent.Instance.LoadAssetAsync<GameObject>(AssetUtility.GetPrefabAsset("Skeleton/Skeleton"));
+            // GameObject unitGo = await UGFComponent.Instance.LoadAssetAsync<GameObject>(AssetUtility.GetPrefabAsset("Skeleton/Skeleton"));
 
-            GameObject go = UnityEngine.Object.Instantiate(unitGo);
-            go.transform.position = unit.Position;
-            unit.AddComponent<GameObjectComponent>().GameObject = go;
-            AbilitySystemComponent asc = unit.GetComponent<SkillUnit>()?.ASC.As();
-            unit.AddComponent<Collider2DComponent>().Bind(go, asc);
+            // GameObject go = UnityEngine.Object.Instantiate(unitGo);
+            // go.transform.position = unit.Position;
+            // unit.AddComponent<GameObjectComponent>().GameObject = go;
+            var entiyId = unit.Config().EntityId;
+            var transform = await UGFComponent.Instance.ShowEntityAsync(entiyId);
+            AbilitySystemComponent asc = skillUnit?.ASC.As();
+            unit.AddComponent<Collider2DComponent>().Bind(transform.gameObject, asc);
             await UniTask.CompletedTask;
         }
     }
