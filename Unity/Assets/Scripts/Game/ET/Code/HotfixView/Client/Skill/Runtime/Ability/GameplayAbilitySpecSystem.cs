@@ -18,6 +18,9 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this GameplayAbilitySpec self)
         {
+            // 添加时间运行时组件
+            self.AddComponent<TimeEffectRuntimeComponent>();
+            self.AddComponent<TimeCueRuntimeComponent>();
         }
 
         [EntitySystem]
@@ -52,10 +55,6 @@ namespace ET.Client
             {
                 self.Tags = new AbilityTagContainer(self.AbilityNodeData);
             }
-
-            // 添加时间运行时组件
-            self.AddComponent<TimeEffectRuntimeComponent>();
-            self.AddComponent<TimeCueRuntimeComponent>();
         }
 
         // ============ 节点查找 ============

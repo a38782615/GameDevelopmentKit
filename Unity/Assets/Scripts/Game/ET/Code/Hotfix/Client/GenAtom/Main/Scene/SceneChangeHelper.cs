@@ -55,6 +55,7 @@ namespace ET.Client
                 var config = configs.DataList[i];
                 UnitInfo unitInfo = CreateUnitInfo(config, i);
                 Unit unit = UnitFactory.Create(currentScene, unitInfo);
+
                 var t = EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
                 unis[i] = t;
             }

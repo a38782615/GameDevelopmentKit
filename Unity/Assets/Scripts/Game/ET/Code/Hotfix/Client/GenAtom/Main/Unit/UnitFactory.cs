@@ -20,7 +20,7 @@ namespace ET.Client
                 numericComponent.Set(kv.Key, kv.Value);
             }
 
-            unit.AddComponent<MoveComponent>();
+            // unit.AddComponent<MoveComponent>();
             if (unitInfo.MoveInfo != null)
             {
                 if (unitInfo.MoveInfo.Points.Count > 0)
@@ -32,9 +32,9 @@ namespace ET.Client
 
             unit.AddComponent<ObjectWait>();
 
-            unit.AddComponent<XunLuoPathComponent>();
+            // unit.AddComponent<XunLuoPathComponent>();
 
-            EventSystem.Instance.Publish(unit.Scene(), new AfterUnitCreate() { Unit = unit });
+            // EventSystem.Instance.Publish(unit.Scene(), new AfterUnitCreate() { Unit = unit });
             return unit;
         }
     }

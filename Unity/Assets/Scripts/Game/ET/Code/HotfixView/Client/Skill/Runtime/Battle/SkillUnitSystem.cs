@@ -14,16 +14,88 @@ namespace ET.Client
 
         public static void InitFromTable(this SkillUnit self)
         {
+            var unit = self.Unit.As();
+            if (unit == null) return;
+
             var asc = self.ASC.As();
             if (asc == null) return;
 
-            var data = Tables.Instance.DTHero.GetOrDefault(self.Unit.As().ConfigId);
-            if (data == null) return;
+            var unitType = (UnitType)unit.Config().Type;
 
             self.InitUnitTypeTags(asc);
-            self.InitAttributes(asc, data.InitialAttribute);
-            self.GrantSkills(asc, data.ActiveSkill);
-            self.GrantSkills(asc, data.PassiveSkill);
+
+            switch (unitType)
+            {
+                case UnitType.Player:
+                {
+                    var heroData = self.GetHeroData(unit.ConfigId);
+                    if (heroData == null)
+                    {
+                        Log.Warning($"[Unit] 英雄表中找不到 UnitConfigId: {unit.ConfigId}");
+                        return;
+                    }
+
+                    self.InitAttributes(asc, heroData.InitialAttribute);
+                    self.GrantSkills(asc, heroData.ActiveSkill);
+                    self.GrantSkills(asc, heroData.PassiveSkill);
+                    return;
+                }
+                case UnitType.Monster:
+                {
+                    var monsterData = self.GetMonsterData(unit.ConfigId);
+                    if (monsterData == null)
+                    {
+                        Log.Warning($"[Unit] 怪物表中找不到 UnitConfigId: {unit.ConfigId}");
+                        return;
+                    }
+
+                    self.InitAttributes(asc, monsterData.InitialAttribute);
+                    self.GrantSkills(asc, monsterData.ActiveSkill);
+                    self.GrantSkills(asc, monsterData.PassiveSkill);
+                    return;
+                }
+                default:
+                    Log.Warning($"[Unit] 不支持的单位类型: {(byte)unitType}, UnitConfigId: {unit.ConfigId}");
+                    return;
+            }
+        }
+
+        private static global::ET.DRHero GetHeroData(this SkillUnit self, int unitConfigId)
+        {
+            var heroTable = Tables.Instance.DTHero;
+            if (heroTable?.DataList == null)
+            {
+                return null;
+            }
+
+            foreach (var heroData in heroTable.DataList)
+            {
+                if (heroData.UnitConfigId == unitConfigId)
+                {
+                    return heroData;
+                }
+            }
+
+            return null;
+        }
+
+        private static global::ET.DRMonster GetMonsterData(this SkillUnit self, int unitConfigId)
+        {
+            var monsterTable = Tables.Instance.DTMonster;
+            if (monsterTable?.DataList == null)
+            {
+                return null;
+            }
+
+            foreach (var monsterData in monsterTable.DataList)
+            {
+                if (monsterData.UnitConfigId == unitConfigId)
+                {
+                    return monsterData;
+                }
+            }
+
+            return null;
         }
 
         private static void InitUnitTypeTags(this SkillUnit self, AbilitySystemComponent asc)
@@ -56,6 +128,13 @@ namespace ET.Client
             if (skillIds == null) return;
 
             var tbSkill = Tables.Instance.DTSkill;
+            var skillDataCenter = SkillDataCenter.Instance;
+            if (skillDataCenter == null)
+            {
+                Log.Warning("[Unit] SkillDataCenter 未初始化，无法授予技能");
+                return;
+            }
+
             foreach (var skillId in skillIds)
             {
                 var skillData = tbSkill.GetOrDefault(skillId);
@@ -64,7 +143,14 @@ namespace ET.Client
                     Log.Warning($"[Unit] 技能表中找不到ID: {skillId}");
                     continue;
                 }
-                var graphData = SkillDataCenter.Instance.GetSkillGraph(skillData.Id.ToString());
+
+                var graphData = skillDataCenter.GetSkillGraph(skillData.Id.ToString());
+                if (graphData == null)
+                {
+                    Log.Warning($"[Unit] 技能图未注册，技能ID: {skillId}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
+                    continue;
+                }
+
                 asc.GrantAbility(graphData);
             }
         }

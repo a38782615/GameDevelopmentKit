@@ -6,7 +6,8 @@ namespace ET.Client
     /// 技能静态数据中心 - 集中管理所有技能图表数据
     /// 提供节点查询和连接关系查询功能
     /// </summary>
-    public class SkillDataCenter : Singleton<SkillDataCenter>
+    [Code]
+    public class SkillDataCenter : Singleton<SkillDataCenter>, ISingletonAwake
     {
         /// <summary>
         /// 已注册的技能图表数据 (skillId -> SkillData)
@@ -27,6 +28,44 @@ namespace ET.Client
         /// Ability节点缓存 (skillId -> AbilityNodeData)
         /// </summary>
         private readonly Dictionary<string, AbilityNodeData> _abilityNodeCache = new Dictionary<string, AbilityNodeData>();
+
+        private bool _loadedFromTables;
+        private bool _loadingFromTables;
+
+        public void Awake()
+        {
+        }
+
+        private void EnsureLoaded()
+        {
+            if (_loadedFromTables || _loadingFromTables)
+            {
+                return;
+            }
+
+            var tables = Tables.Instance;
+            if (tables == null)
+            {
+                return;
+            }
+
+            var skillGraphTable = tables.DTSkillGraph;
+            if (skillGraphTable?.DataList == null)
+            {
+                return;
+            }
+
+            _loadingFromTables = true;
+            try
+            {
+                SkillDataConverter.ConvertAndRegisterAll(skillGraphTable);
+                _loadedFromTables = true;
+            }
+            finally
+            {
+                _loadingFromTables = false;
+            }
+        }
 
         // ============ 注册/注销 ============
 
@@ -149,6 +188,7 @@ namespace ET.Client
         /// </summary>
         public SkillData GetSkillGraph(string skillId)
         {
+            EnsureLoaded();
             return _skillGraphs.TryGetValue(skillId, out var graph) ? graph : null;
         }
 
@@ -157,6 +197,7 @@ namespace ET.Client
         /// </summary>
         public NodeData GetNodeData(string skillId, string nodeGuid)
         {
+            EnsureLoaded();
             string key = GetNodeKey(skillId, nodeGuid);
             return _nodeCache.TryGetValue(key, out var node) ? node : null;
         }
@@ -174,6 +215,7 @@ namespace ET.Client
         /// </summary>
         public AbilityNodeData GetAbilityNodeData(string skillId)
         {
+            EnsureLoaded();
             return _abilityNodeCache.TryGetValue(skillId, out var node) ? node : null;
         }
 
@@ -182,6 +224,7 @@ namespace ET.Client
         /// </summary>
         public List<NodeData> GetConnectedNodes(string skillId, string nodeGuid, string outputPortName)
         {
+            EnsureLoaded();
             var result = new List<NodeData>();
             string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
 
@@ -205,6 +248,7 @@ namespace ET.Client
         /// </summary>
         public List<ConnectionData> GetConnections(string skillId, string nodeGuid, string outputPortName)
         {
+            EnsureLoaded();
             string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
             return _connectionCache.TryGetValue(connectionKey, out var connections)
                 ? new List<ConnectionData>(connections)
@@ -216,6 +260,7 @@ namespace ET.Client
         /// </summary>
         public bool HasConnection(string skillId, string nodeGuid, string outputPortName)
         {
+            EnsureLoaded();
             string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
             return _connectionCache.TryGetValue(connectionKey, out var connections) && connections.Count > 0;
         }
@@ -241,6 +286,8 @@ namespace ET.Client
             _nodeCache.Clear();
             _connectionCache.Clear();
             _abilityNodeCache.Clear();
+            _loadedFromTables = false;
+            _loadingFromTables = false;
         }
 
         /// <summary>

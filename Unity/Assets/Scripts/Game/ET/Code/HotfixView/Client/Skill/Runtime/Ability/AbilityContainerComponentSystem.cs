@@ -35,11 +35,11 @@ namespace ET.Client
 
         public static void FireAbilityGranted(this AbilityContainerComponent self, GameplayAbilitySpec spec)
         {
-            EventSystem.Instance.Invoke<AbilityContainerComponent.OnAbilityGranted>(new AbilityContainerComponent.OnAbilityGranted(spec));
+            EventSystem.Instance.Publish(self.Root(), new AbilityContainerComponent.OnAbilityGranted(spec));
         }
         public static void FireAbilityRemoved(this AbilityContainerComponent self, GameplayAbilitySpec spec)
         {
-            EventSystem.Instance.Invoke<AbilityContainerComponent.OnAbilityRemoved>(new AbilityContainerComponent.OnAbilityRemoved(spec));
+            EventSystem.Instance.Publish(self.Root(), new AbilityContainerComponent.OnAbilityRemoved(spec));
         }
 
         // ============ 技能管理 ============

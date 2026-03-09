@@ -18,10 +18,20 @@ namespace ET.Client
             // GameObject go = UnityEngine.Object.Instantiate(unitGo);
             // go.transform.position = unit.Position;
             // unit.AddComponent<GameObjectComponent>().GameObject = go;
-            var entiyId = unit.Config().EntityId;
-            var transform = await UGFComponent.Instance.ShowEntityAsync(entiyId);
+            var config = unit.Config();
+            var entiyId = config.EntityId;
+            var type = config.Type;
+            UGFEntity a = null;
+            if ((UnitType)type == UnitType.Player)
+            {
+                a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<Hero>(entiyId);
+            }
+            else if ((UnitType)type == UnitType.Monster)
+            {
+                a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<Monster>(entiyId);
+            }
             AbilitySystemComponent asc = skillUnit?.ASC.As();
-            unit.AddComponent<Collider2DComponent>().Bind(transform.gameObject, asc);
+            unit.AddComponent<Collider2DComponent>().Bind(a.CachedTransform.gameObject, asc);
             await UniTask.CompletedTask;
         }
     }
