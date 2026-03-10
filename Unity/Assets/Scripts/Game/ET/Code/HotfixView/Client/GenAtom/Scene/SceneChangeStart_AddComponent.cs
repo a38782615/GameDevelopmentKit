@@ -12,12 +12,10 @@ namespace ET.Client
             try
             {
                 Scene currentScene = root.CurrentScene();
-                currentScene.AddComponent<GFEntityComponent>();
                 // 切换到map场景
                 await UGFComponent.Instance.UnloadAllScenesAsync();
                 await UGFComponent.Instance.LoadSceneAsync(AssetUtility.GetSceneAsset(currentScene.Name));
-
-                currentScene.AddComponent<OperaComponent>();
+                // currentScene.AddComponent<OperaComponent>();
             }
             catch (Exception e)
             {

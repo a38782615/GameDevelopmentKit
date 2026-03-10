@@ -41,8 +41,13 @@ namespace ET.Client
 
             // 可以订阅这个事件中创建Loading界面
             EventSystem.Instance.Publish(root, new SceneChangeStart());
+
+            //创建units
             await CreateLocalUnitsFromTables(root, currentScene);
+
+            //加载个ui
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());
+            // 通知等待场景切换的协程
             root.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());
         }
 
