@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "cn.lys.aibridge": {
-      "version": "file:AIBridge",
+      "version": "file:cn.lys.aibridge",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
