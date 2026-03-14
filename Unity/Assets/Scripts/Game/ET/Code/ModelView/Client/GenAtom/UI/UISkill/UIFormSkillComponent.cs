@@ -3,10 +3,11 @@ using System.Collections.Generic;
 namespace ET.Client
 {
     [ComponentOf(typeof(UIComponent))]
-    public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnClose
+    public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnClose, IUGFUIFormOnUpdate
     {
         public readonly List<EntityRef<GameplayAbilitySpec>> SkillSpecs = new List<EntityRef<GameplayAbilitySpec>>();
-        public float RefreshLeftTime;
+        public readonly Dictionary<int, EntityRef<SkillCellComponent>> SkillCellMap = new Dictionary<int, EntityRef<SkillCellComponent>>();
+        public float ListSyncLeftTime;
 #if UNITY_EDITOR
         public int EditorSmokeRunId;
         public bool EditorSmokeTriggered;

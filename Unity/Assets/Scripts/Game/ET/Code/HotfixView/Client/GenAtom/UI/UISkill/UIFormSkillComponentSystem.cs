@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
 
@@ -23,10 +24,11 @@ namespace ET.Client
                 self.View.SkillLoopCommonLoopScrollRect.itemRenderer = self.RenderSkillItem;
             }
 
-            self.RefreshLeftTime = 0f;
-            self.RefreshSkillList();
+            self.ListSyncLeftTime = 0f;
+            self.SyncSkillList();
 #if UNITY_EDITOR
-            self.EditorSmokeRunId = 0;
+            SkillDiagFileLogger.Log($"[DiagUISkill] open runId={self.EditorSmokeRunId + 1} visible={self.SkillSpecs.Count}");
+            self.EditorSmokeRunId++;
             self.EditorSmokeTriggered = false;
             self.EditorSmokeReportLeftTime = -1f;
             self.EditorSmokeResultLogged = false;
@@ -34,6 +36,7 @@ namespace ET.Client
             self.EditorSmokeStateOverrideText = null;
             self.EditorSmokeStateOverrideLeftTime = 0f;
             self.EditorSmokeSpec = default;
+            self.TryStartEditorSmokeAfterOpenAsync().Forget();
 #endif
         }
 
@@ -45,7 +48,27 @@ namespace ET.Client
                 self.View.SkillLoopCommonLoopScrollRect.itemRenderer = null;
             }
 
+            self.DisposeSkillCells();
             self.SkillSpecs.Clear();
+        }
+
+        [UGFUIFormSystem]
+        private static void UGFUIFormOnUpdate(this UIFormSkillComponent self, float elapseSeconds, float realElapseSeconds)
+        {
+            self.ListSyncLeftTime -= elapseSeconds;
+            if (self.ListSyncLeftTime <= 0f)
+            {
+                self.ListSyncLeftTime = RefreshInterval;
+                self.SyncSkillList();
+#if UNITY_EDITOR
+                self.TryStartEditorSmokeTest();
+#endif
+            }
+
+#if UNITY_EDITOR
+            self.UpdateEditorSmokeStateOverride(elapseSeconds);
+            self.TryReportEditorSmokeResult(elapseSeconds);
+#endif
         }
 
         private static void OnClickCloseButton(this UIFormSkillComponent self)
@@ -53,14 +76,17 @@ namespace ET.Client
             self.Dispose();
         }
 
-        private static void RefreshSkillList(this UIFormSkillComponent self)
+        private static void SyncSkillList(this UIFormSkillComponent self)
         {
-            int previousCount = self.SkillSpecs.Count;
-            self.SkillSpecs.Clear();
-
             Unit unit = UnitHelper.GetMyUnitFromCurrentScene(self.Scene());
             AbilitySystemComponent asc = unit?.GetComponent<SkillUnit>()?.ASC.As();
             var grantedAbilities = asc?.Abilities?.GetGrantedAbilities();
+            if (!self.IsSkillListChanged(grantedAbilities))
+            {
+                return;
+            }
+
+            self.SkillSpecs.Clear();
             if (grantedAbilities != null)
             {
                 foreach (EntityRef<GameplayAbilitySpec> abilityRef in grantedAbilities)
@@ -80,13 +106,32 @@ namespace ET.Client
                 return;
             }
 
-            if (previousCount != self.SkillSpecs.Count)
+            self.View.SkillLoopCommonLoopScrollRect.numItems = self.SkillSpecs.Count;
+        }
+
+        private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
+        {
+            int visibleIndex = 0;
+            if (grantedAbilities != null)
             {
-                self.View.SkillLoopCommonLoopScrollRect.numItems = self.SkillSpecs.Count;
-                return;
+                foreach (EntityRef<GameplayAbilitySpec> abilityRef in grantedAbilities)
+                {
+                    GameplayAbilitySpec spec = abilityRef.As();
+                    if (spec == null || !self.CanDisplaySkill(spec))
+                    {
+                        continue;
+                    }
+
+                    if (visibleIndex >= self.SkillSpecs.Count || self.SkillSpecs[visibleIndex].As() != spec)
+                    {
+                        return true;
+                    }
+
+                    ++visibleIndex;
+                }
             }
 
-            self.View.SkillLoopCommonLoopScrollRect.Refresh();
+            return visibleIndex != self.SkillSpecs.Count;
         }
 
         private static bool CanDisplaySkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
@@ -119,42 +164,81 @@ namespace ET.Client
                 return;
             }
 
-            global::ET.DRSkill skillData = self.GetSkillData(spec);
-            if (item.NameText != null)
-            {
-                item.NameText.text = skillData?.Name ?? spec.SkillId;
-            }
-
-            item.SetIcon(skillData?.IconPath);
-            self.RefreshSkillItemState(item, spec);
-            item.CastButton?.Set(() => self.OnClickSkillItem(index));
-        }
-
-        private static void OnClickSkillItem(this UIFormSkillComponent self, int index)
-        {
-            self.TryCastSkillAtIndex(index);
+            SkillCellComponent cell = self.GetOrCreateSkillCell(item);
+            cell.Bind(spec);
         }
 
         private static bool TryCastSkillAtIndex(this UIFormSkillComponent self, int index)
         {
             if (index < 0 || index >= self.SkillSpecs.Count)
             {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagUISkill] cast skipped invalid-index={index} visible={self.SkillSpecs.Count}");
+#endif
                 return false;
             }
 
             GameplayAbilitySpec spec = self.SkillSpecs[index].As();
+            return self.TryCastSkill(spec);
+        }
+
+        public static bool TryCastSkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
+        {
             AbilitySystemComponent asc = spec?.GetASC;
             if (spec == null || asc == null)
             {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagUISkill] cast skipped null-spec specNull={(spec == null)} ascNull={(asc == null)}");
+#endif
                 return false;
             }
 
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagUISkill] cast begin skillId={spec.SkillId} state={self.GetEditorDebugState(spec)}");
+#endif
             bool success = asc.TryActivateAbility(spec);
-            self.View?.SkillLoopCommonLoopScrollRect?.Refresh();
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagUISkill] cast end skillId={spec.SkillId} success={success} state={self.GetEditorDebugState(spec)}");
+#endif
             return success;
         }
 
 #if UNITY_EDITOR
+        private static async UniTaskVoid TryStartEditorSmokeAfterOpenAsync(this UIFormSkillComponent self)
+        {
+            int runId = self.EditorSmokeRunId;
+            SkillDiagFileLogger.Log($"[DiagUISkill] smoke task start runId={runId}");
+            for (int i = 0; i < 60; ++i)
+            {
+                if (self.IsDisposed || self.EditorSmokeRunId != runId)
+                {
+                    SkillDiagFileLogger.Log($"[DiagUISkill] smoke task stop runId={runId} disposed={self.IsDisposed} currentRunId={self.EditorSmokeRunId}");
+                    return;
+                }
+
+                self.SyncSkillList();
+                if (self.SkillSpecs.Count > 0)
+                {
+                    SkillDiagFileLogger.Log($"[DiagUISkill] smoke task ready runId={runId} visible={self.SkillSpecs.Count}");
+                    self.TryStartEditorSmokeTest();
+                    await UniTask.DelayFrame(60);
+                    if (!self.IsDisposed && self.EditorSmokeRunId == runId)
+                    {
+                        self.TryReportEditorSmokeResult(1f);
+                    }
+                    return;
+                }
+
+                await UniTask.DelayFrame(1);
+            }
+
+            if (!self.IsDisposed && self.EditorSmokeRunId == runId)
+            {
+                SkillDiagFileLogger.Log($"[DiagUISkill] smoke task timeout runId={runId} visible={self.SkillSpecs.Count}");
+                Log.Warning($"[UISkillSmoke:{runId}] timeout-empty");
+            }
+        }
+
         private static void TryStartEditorSmokeTest(this UIFormSkillComponent self)
         {
             if (self.EditorSmokeTriggered)
@@ -204,7 +288,6 @@ namespace ET.Client
             }
 
             self.EditorSmokeStateOverrideText = null;
-            self.View?.SkillLoopCommonLoopScrollRect?.Refresh();
         }
 
         private static void TryReportEditorSmokeResult(this UIFormSkillComponent self, float elapseSeconds)
@@ -223,6 +306,7 @@ namespace ET.Client
             self.EditorSmokeResultLogged = true;
             GameplayAbilitySpec spec = self.EditorSmokeSpec.As();
             string finalState = self.GetEditorDebugState(spec);
+            SkillDiagFileLogger.Log($"[DiagUISkill] smoke result runId={self.EditorSmokeRunId} skill={self.EditorSmokeSkillLabel} final={finalState}");
             Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] result skill={self.EditorSmokeSkillLabel} final={finalState}");
         }
 
@@ -253,58 +337,37 @@ namespace ET.Client
         }
 #endif
 
-        private static void RefreshSkillItemState(this UIFormSkillComponent self, MonoUISkillItem item, GameplayAbilitySpec spec)
+        private static SkillCellComponent GetOrCreateSkillCell(this UIFormSkillComponent self, MonoUISkillItem item)
         {
-#if UNITY_EDITOR
-            if (self.EditorSmokeStateOverrideLeftTime > 0f && self.EditorSmokeSpec.As() == spec && !string.IsNullOrEmpty(self.EditorSmokeStateOverrideText))
+            int instanceId = item.gameObject.GetInstanceID();
+            if (self.SkillCellMap.TryGetValue(instanceId, out EntityRef<SkillCellComponent> cellRef))
             {
-                if (item.CastButton != null)
+                SkillCellComponent current = cellRef.As();
+                if (current != null)
                 {
-                    item.CastButton.interactable = true;
+                    return current;
+                }
+            }
+
+            SkillCellComponent cell = self.AddChild<SkillCellComponent, MonoUISkillItem>(item);
+            self.SkillCellMap[instanceId] = cell;
+            return cell;
+        }
+
+        private static void DisposeSkillCells(this UIFormSkillComponent self)
+        {
+            foreach (EntityRef<SkillCellComponent> cellRef in self.SkillCellMap.Values)
+            {
+                SkillCellComponent cell = cellRef.As();
+                if (cell == null)
+                {
+                    continue;
                 }
 
-                if (item.StateText != null)
-                {
-                    item.StateText.text = self.EditorSmokeStateOverrideText;
-                }
-
-                return;
-            }
-#endif
-            SkillCooldownInfo cooldownInfo = spec.GetCooldownInfo();
-            bool canCast = !spec.IsActive && !cooldownInfo.IsOnCooldown && spec.CanAffordCost();
-
-            if (item.CastButton != null)
-            {
-                item.CastButton.interactable = canCast;
+                cell.Dispose();
             }
 
-            if (item.StateText == null)
-            {
-                return;
-            }
-
-            if (spec.IsActive)
-            {
-                item.StateText.text = "Casting";
-                return;
-            }
-
-            if (cooldownInfo.IsOnCooldown)
-            {
-                if (cooldownInfo.IsChargeCooldown)
-                {
-                    item.StateText.text = $"{cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
-                }
-                else
-                {
-                    item.StateText.text = $"CD {cooldownInfo.RemainingTime:0.0}";
-                }
-
-                return;
-            }
-
-            item.StateText.text = "Ready";
+            self.SkillCellMap.Clear();
         }
 
         private static global::ET.DRSkill GetSkillData(this UIFormSkillComponent self, GameplayAbilitySpec spec)
