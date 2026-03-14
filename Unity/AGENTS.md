@@ -51,6 +51,7 @@
 - 修改 UI / Entity / Scene / 配置相关功能时，同时检查 `Assets/Res/` 下对应资源与命名是否匹配。
 - 涉及 `MonoCodeBind`、`*.Bind.cs`、UI 绑定字段、组件引用变更时，必须先在 Unity 里调用 **Generate Bind Code** 生成绑定代码，再消费生成出的属性；不要自己写 `transform.Find`、`GetComponent`、`GetComponentsInChildren` 一类方法去补绑定。
 - 如果生成了新的 `*.Bind.cs`，业务代码必须以生成结果为准；字段名、组件类型、滚动列表类型都不要靠猜。
+- 像 `MonoUISkillItem` 这类 ET UI 列表项，如果参考 `MonoUIWidgetTest` 走 widget 开发模式，必须使用 `AETMonoUGFUIWidget + MonoCodeBind`，节点命名遵循 CodeBind 分隔规则，并优先复用 `Mono` 上已有的 `UGFUIWidget` 关联，不要重复 `AddUIWidget`。
 - 遇到 `Game/Generate/`、`Hot/Code/Generate/`、`*.Bind.cs`、Luban / Proto 文件时，先判断它是不是生成产物，并追溯上游来源。
 - 运行时代码放在运行时目录；编辑器工具、构建流程、导出工具放在 `*/Editor/`。
 - 新业务代码默认一个文件只放一个类；只有项目既有模式或生成代码明确要求时，才允许一个文件内放多个类。

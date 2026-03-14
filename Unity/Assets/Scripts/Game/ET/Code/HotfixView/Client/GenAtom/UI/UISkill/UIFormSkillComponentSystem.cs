@@ -349,8 +349,17 @@ namespace ET.Client
                 }
             }
 
-            SkillCellComponent cell = self.AddChild<SkillCellComponent, MonoUISkillItem>(item);
+            SkillCellComponent attachedCell = item.UGFUIWidget as SkillCellComponent;
+            if (attachedCell != null)
+            {
+                self.SkillCellMap[instanceId] = attachedCell;
+                attachedCell.TryDynamicOpen();
+                return attachedCell;
+            }
+
+            SkillCellComponent cell = self.AddChildUIWidgetWithId<SkillCellComponent>(item, instanceId);
             self.SkillCellMap[instanceId] = cell;
+            cell.TryDynamicOpen();
             return cell;
         }
 

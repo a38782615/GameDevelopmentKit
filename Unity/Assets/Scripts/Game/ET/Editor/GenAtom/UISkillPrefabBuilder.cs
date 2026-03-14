@@ -117,7 +117,7 @@ namespace ET.Editor
         private static void CreateCloseButton(RectTransform parent)
         {
             GameObject buttonObject = DefaultControls.CreateButton(new DefaultControls.Resources());
-            buttonObject.name = "CloseButton";
+            buttonObject.name = "Close_Button";
             buttonObject.transform.SetParent(parent, false);
 
             RectTransform rectTransform = buttonObject.GetComponent<RectTransform>();
@@ -142,7 +142,7 @@ namespace ET.Editor
         private static void CreateSkillLoopScrollRect(RectTransform parent)
         {
             GameObject scrollObject = DefaultControls.CreateScrollView(new DefaultControls.Resources());
-            scrollObject.name = "SkillLoopScrollRect";
+            scrollObject.name = "SkillLoop_CommonLoopScrollRect";
             scrollObject.transform.SetParent(parent, false);
 
             RectTransform scrollRectTransform = scrollObject.GetComponent<RectTransform>();
@@ -231,12 +231,8 @@ namespace ET.Editor
             GameObject item = new GameObject(
                 "SkillItemTemplate",
                 typeof(RectTransform),
-                typeof(Image),
-                typeof(Button),
                 typeof(LayoutElement),
-                typeof(HorizontalLayoutGroup));
-
-            item.AddComponent(ResolveType(MonoUISkillItemTypeName));
+                ResolveType(MonoUISkillItemTypeName));
 
             item.transform.SetParent(parent, false);
 
@@ -246,14 +242,28 @@ namespace ET.Editor
             rectTransform.pivot = new Vector2(0.5f, 1f);
             rectTransform.sizeDelta = new Vector2(0f, 72f);
 
-            Image image = item.GetComponent<Image>();
-            image.color = new Color(0.18f, 0.22f, 0.29f, 1f);
-
             LayoutElement layoutElement = item.GetComponent<LayoutElement>();
             layoutElement.preferredHeight = 72f;
             layoutElement.minHeight = 72f;
 
-            HorizontalLayoutGroup horizontalLayoutGroup = item.GetComponent<HorizontalLayoutGroup>();
+            GameObject castButtonObject = new GameObject(
+                "Cast_Button",
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Button),
+                typeof(HorizontalLayoutGroup));
+            castButtonObject.transform.SetParent(item.transform, false);
+
+            RectTransform castButtonRect = castButtonObject.GetComponent<RectTransform>();
+            castButtonRect.anchorMin = Vector2.zero;
+            castButtonRect.anchorMax = Vector2.one;
+            castButtonRect.offsetMin = Vector2.zero;
+            castButtonRect.offsetMax = Vector2.zero;
+
+            Image castButtonImage = castButtonObject.GetComponent<Image>();
+            castButtonImage.color = new Color(0.18f, 0.22f, 0.29f, 1f);
+
+            HorizontalLayoutGroup horizontalLayoutGroup = castButtonObject.GetComponent<HorizontalLayoutGroup>();
             horizontalLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
             horizontalLayoutGroup.childControlWidth = true;
             horizontalLayoutGroup.childControlHeight = true;
@@ -262,14 +272,14 @@ namespace ET.Editor
             horizontalLayoutGroup.spacing = 12f;
             horizontalLayoutGroup.padding = new RectOffset(12, 12, 10, 10);
 
-            CreateIcon(item.transform);
-            CreateNameText(item.transform);
-            CreateStateText(item.transform);
+            CreateIcon(castButtonObject.transform);
+            CreateNameText(castButtonObject.transform);
+            CreateStateText(castButtonObject.transform);
         }
 
         private static void CreateIcon(Transform parent)
         {
-            GameObject icon = new GameObject("IconImage", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+            GameObject icon = new GameObject("Icon_Image", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
             icon.transform.SetParent(parent, false);
 
             Image image = icon.GetComponent<Image>();
@@ -285,7 +295,7 @@ namespace ET.Editor
 
         private static void CreateNameText(Transform parent)
         {
-            Text nameText = CreateText("NameText", parent, "Skill", 22, TextAnchor.MiddleLeft);
+            Text nameText = CreateText("Name_Text", parent, "Skill", 22, TextAnchor.MiddleLeft);
             LayoutElement layoutElement = nameText.gameObject.AddComponent<LayoutElement>();
             layoutElement.flexibleWidth = 1f;
             layoutElement.minWidth = 120f;
@@ -294,7 +304,7 @@ namespace ET.Editor
 
         private static void CreateStateText(Transform parent)
         {
-            Text stateText = CreateText("StateText", parent, "Ready", 20, TextAnchor.MiddleRight);
+            Text stateText = CreateText("State_Text", parent, "Ready", 20, TextAnchor.MiddleRight);
             LayoutElement layoutElement = stateText.gameObject.AddComponent<LayoutElement>();
             layoutElement.preferredWidth = 96f;
             layoutElement.minWidth = 96f;
