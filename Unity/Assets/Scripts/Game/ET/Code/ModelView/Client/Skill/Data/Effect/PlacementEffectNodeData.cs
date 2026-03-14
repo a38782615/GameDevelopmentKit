@@ -31,6 +31,7 @@ namespace ET.Client
         /// 放置物预制体
         /// </summary>
         public GameObject placementPrefab;
+        public string placementPrefabPath = "";
 
         // ============ 碰撞设置 ============
 

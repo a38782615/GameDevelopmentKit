@@ -17,6 +17,7 @@ namespace ET.Client
             root.AddComponent<UIComponent>();
             root.AddComponent<PlayerComponent>();
             root.AddComponent<CurrentScenesComponent>();
+            await SkillDataCenter.Instance.EnsureLoadedAndPreloadAsync();
             
             // 根据配置修改掉Main Fiber的SceneType
             SceneType sceneType = EnumHelper.FromString<SceneType>(globalComponent.AppType.ToString());

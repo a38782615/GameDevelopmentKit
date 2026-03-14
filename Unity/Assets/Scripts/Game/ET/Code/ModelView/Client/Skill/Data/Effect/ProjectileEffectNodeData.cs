@@ -89,6 +89,7 @@ namespace ET.Client
         /// 飞行物预制体
         /// </summary>
         public GameObject projectilePrefab;
+        public string projectilePrefabPath = "";
 
         /// <summary>
         /// 飞行速度

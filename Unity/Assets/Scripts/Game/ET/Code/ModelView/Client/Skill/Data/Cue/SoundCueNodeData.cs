@@ -10,6 +10,7 @@ namespace ET.Client
     public class SoundCueNodeData : CueNodeData
     {
         public AudioClip soundClip;
+        public string soundClipPath = "";
         public float soundVolume = 1f;
         public bool soundLoop = false;
 

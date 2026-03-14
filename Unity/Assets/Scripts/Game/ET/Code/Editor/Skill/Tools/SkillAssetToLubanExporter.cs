@@ -201,7 +201,7 @@ namespace ET.Client.Editor
                         {
                             var node = skill.nodes[i];
                             row[4] = ((int)node.nodeType).ToString();
-                            row[5] = JsonUtility.ToJson(node);
+                            row[5] = SkillNodeAssetPathUtility.CreateExportJson(node);
                         }
                         else
                         {

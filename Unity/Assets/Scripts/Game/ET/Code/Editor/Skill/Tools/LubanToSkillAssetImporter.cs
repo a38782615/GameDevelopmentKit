@@ -456,7 +456,9 @@ namespace ET.Client.Editor
 
             try
             {
-                return (NodeData)JsonUtility.FromJson(json, targetType);
+                NodeData nodeData = (NodeData)JsonUtility.FromJson(json, targetType);
+                SkillNodeAssetPathUtility.RestoreEditorAssetReferences(nodeData);
+                return nodeData;
             }
             catch (Exception e)
             {

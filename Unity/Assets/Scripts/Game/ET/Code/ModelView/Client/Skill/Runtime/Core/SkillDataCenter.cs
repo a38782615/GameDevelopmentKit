@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 namespace ET.Client
 {
@@ -31,6 +32,8 @@ namespace ET.Client
 
         private bool _loadedFromTables;
         private bool _loadingFromTables;
+        private bool _runtimeAssetsReady;
+        private bool _preloadingRuntimeAssets;
 
         public void Awake()
         {
@@ -72,6 +75,48 @@ namespace ET.Client
             finally
             {
                 _loadingFromTables = false;
+            }
+        }
+
+        public async UniTask EnsureLoadedAndPreloadAsync()
+        {
+            EnsureLoaded();
+            if (!_loadedFromTables)
+            {
+                return;
+            }
+
+            if (_runtimeAssetsReady)
+            {
+                return;
+            }
+
+            while (_preloadingRuntimeAssets)
+            {
+                await UniTask.Yield();
+                if (_runtimeAssetsReady)
+                {
+                    return;
+                }
+            }
+
+            _preloadingRuntimeAssets = true;
+            try
+            {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log(
+                    $"[DiagSkillDataCenter] EnsureLoadedAndPreloadAsync begin registered={_skillGraphs.Count} runtimeReady={_runtimeAssetsReady} newGO={CountAnonymousRootObjects()}");
+#endif
+                await SkillNodeRuntimeAssetResolver.PreloadSkillGraphsAsync(_skillGraphs.Values);
+                _runtimeAssetsReady = true;
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log(
+                    $"[DiagSkillDataCenter] EnsureLoadedAndPreloadAsync end registered={_skillGraphs.Count} runtimeReady={_runtimeAssetsReady} newGO={CountAnonymousRootObjects()}");
+#endif
+            }
+            finally
+            {
+                _preloadingRuntimeAssets = false;
             }
         }
 
@@ -301,12 +346,15 @@ namespace ET.Client
         /// </summary>
         public void Clear()
         {
+            SkillNodeRuntimeAssetResolver.ClearCache();
             _skillGraphs.Clear();
             _nodeCache.Clear();
             _connectionCache.Clear();
             _abilityNodeCache.Clear();
             _loadedFromTables = false;
             _loadingFromTables = false;
+            _runtimeAssetsReady = false;
+            _preloadingRuntimeAssets = false;
         }
 
         /// <summary>

@@ -21,6 +21,7 @@ namespace ET.Client
         /// </summary>
         public SkeletonDataAsset skeletonDataAsset;
 #endif
+        public string skeletonDataAssetPath = "";
 
         // ============ 动画配置 ============
 
