@@ -26,7 +26,7 @@ namespace ET.Client
             self.RefreshLeftTime = 0f;
             self.RefreshSkillList();
 #if UNITY_EDITOR
-            self.EditorSmokeRunId = Time.frameCount;
+            self.EditorSmokeRunId = 0;
             self.EditorSmokeTriggered = false;
             self.EditorSmokeReportLeftTime = -1f;
             self.EditorSmokeResultLogged = false;
@@ -34,25 +34,6 @@ namespace ET.Client
             self.EditorSmokeStateOverrideText = null;
             self.EditorSmokeStateOverrideLeftTime = 0f;
             self.EditorSmokeSpec = default;
-            self.TryStartEditorSmokeTest();
-#endif
-        }
-
-        [UGFUIFormSystem]
-        private static void UGFUIFormOnUpdate(this UIFormSkillComponent self, float elapseSeconds, float realElapseSeconds)
-        {
-            self.RefreshLeftTime -= elapseSeconds;
-            if (self.RefreshLeftTime > 0f)
-            {
-                return;
-            }
-
-            self.RefreshLeftTime = RefreshInterval;
-            self.RefreshSkillList();
-#if UNITY_EDITOR
-            self.TryStartEditorSmokeTest();
-            self.UpdateEditorSmokeStateOverride(elapseSeconds);
-            self.TryReportEditorSmokeResult(elapseSeconds);
 #endif
         }
 

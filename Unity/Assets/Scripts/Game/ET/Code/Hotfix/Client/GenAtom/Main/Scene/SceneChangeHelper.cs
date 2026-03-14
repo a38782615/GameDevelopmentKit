@@ -15,8 +15,8 @@ namespace ET.Client
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
             UnitComponent unitComponent = currentScene.AddComponent<UnitComponent>();
 
-            // 可以订阅这个事件中创建Loading界面
-            EventSystem.Instance.Publish(root, new SceneChangeStart());
+            // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
+            await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
             // 等待CreateMyUnit的消息
             Wait_CreateMyUnit waitCreateMyUnit = await root.GetComponent<ObjectWait>().Wait<Wait_CreateMyUnit>();
             M2C_CreateMyUnit m2CCreateMyUnit = waitCreateMyUnit.Message;
@@ -39,8 +39,8 @@ namespace ET.Client
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
             currentScene.AddComponent<UnitComponent>();
 
-            // 可以订阅这个事件中创建Loading界面
-            EventSystem.Instance.Publish(root, new SceneChangeStart());
+            // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
+            await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
 
             //创建units
             await CreateLocalUnitsFromTables(root, currentScene);

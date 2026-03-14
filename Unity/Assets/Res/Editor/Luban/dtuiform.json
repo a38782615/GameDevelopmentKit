@@ -88,5 +88,14 @@
     "UIGroupName": "Default",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": true
+  },
+  {
+    "Id": 804,
+    "CSName": "UISkill",
+    "Desc": "技能界面",
+    "AssetName": "GenAtom/UISkill",
+    "UIGroupName": "Default",
+    "AllowMultiInstance": false,
+    "PauseCoveredUIForm": false
   }
 ]

@@ -11,12 +11,7 @@ namespace ET.Client
             UIComponent uiComponent = scene.GetComponent<UIComponent>();
             uiComponent.RemoveComponent<UIFormSkillComponent>();
 
-            UIFormSkillComponent uiFormSkill = uiComponent.AddComponent<UIFormSkillComponent>();
-            await uiFormSkill.OpenUIFormAsync(
-                AssetUtility.GetUIFormAsset("GenAtom/UISkill"),
-                "Pop",
-                Constant.AssetPriority.UIFormAsset,
-                false);
+            await scene.GetComponent<UIComponent>().AddUIFormComponentAsync<UIFormSkillComponent>(UGFUIFormId.UISkill);
         }
     }
 }

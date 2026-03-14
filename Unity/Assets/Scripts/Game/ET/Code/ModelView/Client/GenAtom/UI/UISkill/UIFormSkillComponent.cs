@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace ET.Client
 {
     [ComponentOf(typeof(UIComponent))]
-    public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnUpdate, IUGFUIFormOnClose
+    public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnClose
     {
         public readonly List<EntityRef<GameplayAbilitySpec>> SkillSpecs = new List<EntityRef<GameplayAbilitySpec>>();
         public float RefreshLeftTime;

@@ -58,5 +58,10 @@ namespace ET.Client
         /// 关于
         /// </summary>
         public const int AboutForm = 102;
+
+        /// <summary>
+        /// 技能界面
+        /// </summary>
+        public const int UISkill = 804;
     }
 }
