@@ -20,16 +20,7 @@ namespace ET.Client
             // unit.AddComponent<GameObjectComponent>().GameObject = go;
             var config = unit.Config();
             var entiyId = config.EntityId;
-            var type = config.Type;
-            UGFEntity a = null;
-            if ((UnitType)type == UnitType.Player)
-            {
-                a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<Hero>(entiyId);
-            }
-            else if ((UnitType)type == UnitType.Monster)
-            {
-                a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<Monster>(entiyId);
-            }
+            UGFEntity a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<CommonUGFEntity>(entiyId);
             AbilitySystemComponent asc = skillUnit?.ASC.As();
             unit.AddComponent<Collider2DComponent>().Bind(a.CachedTransform.gameObject, asc);
             await UniTask.CompletedTask;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CodeBind;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ namespace Game
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(LoopScrollRect))]
+    [CodeBindName("CommonLoopScrollRect")]
     public sealed class CommonLoopScrollRect : MonoBehaviour, LoopScrollPrefabSource, LoopScrollDataSource
     {
         [SerializeField]
@@ -82,7 +84,7 @@ namespace Game
         {
             m_LoopScrollRect = GetComponent<LoopScrollRect>();
         }
-        
+
         [IgnoreLogMethod]
         private void OnItemTemplateChanged()
         {

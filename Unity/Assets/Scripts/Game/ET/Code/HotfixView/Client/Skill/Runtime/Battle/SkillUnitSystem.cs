@@ -27,40 +27,40 @@ namespace ET.Client
             switch (unitType)
             {
                 case UnitType.Player:
-                {
-                    var heroData = self.GetHeroData(unit.ConfigId);
-                    if (heroData == null)
                     {
-                        Log.Warning($"[Unit] 英雄表中找不到 UnitConfigId: {unit.ConfigId}");
+                        var heroData = self.GetHeroData(unit.ConfigId);
+                        if (heroData == null)
+                        {
+                            Log.Warning($"[Unit] 英雄表中找不到 UnitConfigId: {unit.ConfigId}");
+                            return;
+                        }
+
+                        self.InitAttributes(asc, heroData.InitialAttribute);
+                        self.GrantSkills(asc, heroData.ActiveSkill);
+                        self.GrantSkills(asc, heroData.PassiveSkill);
                         return;
                     }
-
-                    self.InitAttributes(asc, heroData.InitialAttribute);
-                    self.GrantSkills(asc, heroData.ActiveSkill);
-                    self.GrantSkills(asc, heroData.PassiveSkill);
-                    return;
-                }
                 case UnitType.Monster:
-                {
-                    var monsterData = self.GetMonsterData(unit.ConfigId);
-                    if (monsterData == null)
                     {
-                        Log.Warning($"[Unit] 怪物表中找不到 UnitConfigId: {unit.ConfigId}");
+                        var monsterData = self.GetMonsterData(unit.ConfigId);
+                        if (monsterData == null)
+                        {
+                            Log.Warning($"[Unit] 怪物表中找不到 UnitConfigId: {unit.ConfigId}");
+                            return;
+                        }
+
+                        self.InitAttributes(asc, monsterData.InitialAttribute);
+                        self.GrantSkills(asc, monsterData.ActiveSkill);
+                        self.GrantSkills(asc, monsterData.PassiveSkill);
                         return;
                     }
-
-                    self.InitAttributes(asc, monsterData.InitialAttribute);
-                    self.GrantSkills(asc, monsterData.ActiveSkill);
-                    self.GrantSkills(asc, monsterData.PassiveSkill);
-                    return;
-                }
                 default:
                     Log.Warning($"[Unit] 不支持的单位类型: {(byte)unitType}, UnitConfigId: {unit.ConfigId}");
                     return;
             }
         }
 
-        private static global::ET.DRHero GetHeroData(this SkillUnit self, int unitConfigId)
+        public static global::ET.DRHero GetHeroData(this SkillUnit self, int unitConfigId)
         {
             var heroTable = Tables.Instance.DTHero;
             if (heroTable?.DataList == null)
@@ -79,7 +79,7 @@ namespace ET.Client
             return null;
         }
 
-        private static global::ET.DRMonster GetMonsterData(this SkillUnit self, int unitConfigId)
+        public static global::ET.DRMonster GetMonsterData(this SkillUnit self, int unitConfigId)
         {
             var monsterTable = Tables.Instance.DTMonster;
             if (monsterTable?.DataList == null)

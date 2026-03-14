@@ -59,6 +59,10 @@ namespace ET.Client
             {
                 var config = configs.DataList[i];
                 UnitInfo unitInfo = CreateUnitInfo(config, i);
+                if (i == 0)
+                {
+                    root.GetComponent<PlayerComponent>().MyId = unitInfo.UnitId;
+                }
                 Unit unit = UnitFactory.Create(currentScene, unitInfo);
 
                 var t = EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
