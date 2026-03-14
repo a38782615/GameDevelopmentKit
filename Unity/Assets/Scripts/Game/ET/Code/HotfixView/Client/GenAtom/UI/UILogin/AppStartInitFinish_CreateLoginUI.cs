@@ -11,13 +11,13 @@ namespace ET.Client
         protected override async UniTask Run(Scene scene, AppStartInitFinish args)
         {
             await scene.GetComponent<UIComponent>().AddUIFormComponentAsync<UIFormLoginComponent>(UGFUIFormId.UILogin);
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-            {
-                Log.Info("[UISkill][Editor] 自动触发 LoginFinish 进入本地技能场景");
-                await EventSystem.Instance.PublishAsync(scene, new LoginFinish());
-            }
-#endif
+            // #if UNITY_EDITOR
+            //             if (Application.isPlaying)
+            //             {
+            //                 Log.Info("[UISkill][Editor] 自动触发 LoginFinish 进入本地技能场景");
+            //                 await EventSystem.Instance.PublishAsync(scene, new LoginFinish());
+            //             }
+            // #endif
         }
     }
 }

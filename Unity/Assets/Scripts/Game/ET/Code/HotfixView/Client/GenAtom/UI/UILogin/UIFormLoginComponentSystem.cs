@@ -9,15 +9,6 @@ namespace ET.Client
     public static partial class UIFormLoginComponentSystem
     {
         [UGFUIFormSystem]
-        private static void UGFUIFormOnInit(this UIFormLoginComponent self)
-        {
-            Log.Debug("Login界面OnInit");
-            self.LoadTest1().Forget();
-            self.LoadTest2().Forget();
-            self.LoadTest3().Forget();
-        }
-
-        [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormLoginComponent self)
         {
             self.OpenAllUIWidgets();
@@ -47,7 +38,9 @@ namespace ET.Client
             var uiWidget = await self.LoadChildUIWidgetAsync<UIWidgetTest>(UGFUIEntityId.WidgetTest);
             uiWidget.CachedRectTransform.SetParent(self.View.Test1RectTransform);
             uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            uiWidget.CachedRectTransform.localScale = Vector3.one;
+            uiWidget.CachedRectTransform.localScale =
+            Vector3.one;
+            uiWidget.Open();
         }
 
         private static async UniTaskVoid LoadTest2(this UIFormLoginComponent self)
@@ -56,6 +49,7 @@ namespace ET.Client
             uiWidget.CachedRectTransform.SetParent(self.View.Test2RectTransform);
             uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             uiWidget.CachedRectTransform.localScale = Vector3.one;
+            uiWidget.Open();
         }
 
         private static async UniTaskVoid LoadTest3(this UIFormLoginComponent self)
@@ -64,6 +58,7 @@ namespace ET.Client
             uiWidget.CachedRectTransform.SetParent(self.View.Test3RectTransform);
             uiWidget.CachedRectTransform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             uiWidget.CachedRectTransform.localScale = Vector3.one;
+            uiWidget.Open();
         }
     }
 }
