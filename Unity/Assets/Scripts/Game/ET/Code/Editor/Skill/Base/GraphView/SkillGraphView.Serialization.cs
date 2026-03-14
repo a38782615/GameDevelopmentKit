@@ -106,6 +106,7 @@ namespace ET.Client.Editor
                 if (skillNode != null)
                 {
                     var nodeData = skillNode.SaveData();
+                    SkillNodeAssetPathUtility.SyncSerializedAssetPath(nodeData);
                     graphData.nodes.Add(nodeData);
                 }
             }

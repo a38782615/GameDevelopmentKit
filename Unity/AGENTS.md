@@ -109,6 +109,7 @@
 - 异步统一使用 `UniTask` / `UniTaskVoid`，不要使用 `Task` 或 `async void`。
 - 同步方法里调用 `UniTask` 返回函数时，要补 `.Forget()`；异步方法里要么 `await`，要么显式 `.Forget()`。
 - 运行时代码记日志时，优先使用 `UnityGameFramework.Runtime.Log`，不要直接用 `UnityEngine.Debug.Log*`。
+- 涉及 `UnityEngine.Object` 或其他 `Object` 类型时，必须写完整命名空间，不要直接写裸 `Object`，避免命名冲突导致编译错误。
 - 字符串拼接优先使用 `GameFramework.Utility.Text.Format`，不要使用 `+`、`string.Format`、`string.Concat`。
 - 命名遵循分析器约束：类型 / 公有成员 / 常量首字母大写；私有 / 保护成员、局部变量首字母小写；名称不要以下划线结尾。
 - 静态字段或静态属性默认需要标记 `[StaticField]`。

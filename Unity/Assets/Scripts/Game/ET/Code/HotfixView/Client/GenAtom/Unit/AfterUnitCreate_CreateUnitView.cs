@@ -5,6 +5,7 @@ using UnityEngine;
 namespace ET.Client
 {
     [Event(SceneType.Current)]
+    [FriendOf(typeof(AbilitySystemComponent))]
     public class AfterUnitCreate_CreateUnitView : AEvent<Scene, AfterUnitCreate>
     {
         protected override async UniTask Run(Scene scene, AfterUnitCreate args)
@@ -27,8 +28,22 @@ namespace ET.Client
             var config = unit.Config();
             var entiyId = config.EntityId;
             UGFEntity a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<CommonUGFEntity>(entiyId);
+            GameObject viewGameObject = a.CachedTransform.gameObject;
+            GameObjectComponent gameObjectComponent = unit.GetComponent<GameObjectComponent>();
+            if (gameObjectComponent == null)
+            {
+                gameObjectComponent = unit.AddComponent<GameObjectComponent>();
+            }
+
+            gameObjectComponent.GameObject = viewGameObject;
+
             AbilitySystemComponent asc = skillUnit?.ASC.As();
-            unit.AddComponent<Collider2DComponent>().Bind(a.CachedTransform.gameObject, asc);
+            if (asc != null)
+            {
+                asc.Owner = viewGameObject;
+            }
+
+            unit.AddComponent<Collider2DComponent>().Bind(viewGameObject, asc);
             await UniTask.CompletedTask;
         }
 

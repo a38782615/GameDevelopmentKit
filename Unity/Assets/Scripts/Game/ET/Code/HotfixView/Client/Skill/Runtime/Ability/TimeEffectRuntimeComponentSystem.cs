@@ -36,6 +36,13 @@ namespace ET.Client
                 if (!te.HasTriggered && currentPlayTime >= te.TriggerTime)
                 {
                     te.HasTriggered = true;
+#if UNITY_EDITOR
+                    if (skillId == "1010")
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagTimeEffect] trigger skillId={skillId} animationNodeGuid={animationNodeGuid} portId={te.PortId} currentPlayTime={currentPlayTime:0.00} triggerTime={te.TriggerTime:0.00}");
+                    }
+#endif
                     context.ExecuteConnectedNodes(skillId, animationNodeGuid, te.PortId);
                 }
             }

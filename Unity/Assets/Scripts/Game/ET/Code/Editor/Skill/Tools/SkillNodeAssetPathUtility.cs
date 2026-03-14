@@ -17,9 +17,34 @@ namespace ET.Client.Editor
                 return string.Empty;
             }
 
+            SyncSerializedAssetPath(node);
             JObject jsonObject = JObject.Parse(JsonUtility.ToJson(node));
             WriteRuntimeAssetPath(node, jsonObject);
             return jsonObject.ToString(Formatting.None);
+        }
+
+        public static void SyncSerializedAssetPath(NodeData node)
+        {
+            switch (node)
+            {
+                case ParticleCueNodeData particleNode:
+                    SyncAssetPath(ref particleNode.particlePrefabPath, particleNode.particlePrefab);
+                    break;
+                case SoundCueNodeData soundNode:
+                    SyncAssetPath(ref soundNode.soundClipPath, soundNode.soundClip);
+                    break;
+                case ProjectileEffectNodeData projectileNode:
+                    SyncAssetPath(ref projectileNode.projectilePrefabPath, projectileNode.projectilePrefab);
+                    break;
+                case PlacementEffectNodeData placementNode:
+                    SyncAssetPath(ref placementNode.placementPrefabPath, placementNode.placementPrefab);
+                    break;
+                case AnimationNodeData animationNode:
+#if Spine
+                    SyncAssetPath(ref animationNode.skeletonDataAssetPath, animationNode.skeletonDataAsset);
+#endif
+                    break;
+            }
         }
 
         public static void RestoreEditorAssetReferences(NodeData node)
@@ -75,6 +100,16 @@ namespace ET.Client.Editor
         private static void RestoreAssetReference<TAsset>(ref TAsset assetField, string assetPath) where TAsset : UnityEngine.Object
         {
             assetField = string.IsNullOrWhiteSpace(assetPath) ? null : AssetDatabase.LoadAssetAtPath<TAsset>(assetPath);
+        }
+
+        private static void SyncAssetPath<TAsset>(ref string assetPathField, TAsset asset) where TAsset : UnityEngine.Object
+        {
+            if (asset == null)
+            {
+                return;
+            }
+
+            assetPathField = AssetDatabase.GetAssetPath(asset);
         }
 
         private static void SetAssetPath<TAsset>(JObject jsonObject, string objectFieldName, string pathFieldName, TAsset asset) where TAsset : UnityEngine.Object

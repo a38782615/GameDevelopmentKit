@@ -190,17 +190,39 @@ namespace ET.Client
                 }
             }
 
+            self.ResolveEffectHandler()?.OnInitialHook(target);
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "初始效果");
         }
 
         private static void ExecutePeriodicFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
+            self.ResolveEffectHandler()?.OnPeriodicHook();
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "每周期执行");
         }
 
         private static void ExecuteCompleteFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
+            self.ResolveEffectHandler()?.OnCompleteHook();
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "完成效果");
+        }
+
+        private static AEffectHandler ResolveEffectHandler(this GameplayEffectSpec self)
+        {
+            if (self == null || string.IsNullOrEmpty(self.HandName))
+            {
+                return null;
+            }
+
+            var handler = EffectDispatcherComponent.Instance.Get(self.HandName);
+            if (handler == null)
+            {
+                Log.Error($"EffectHandler not found: {self.HandName}");
+                return null;
+            }
+
+            handler.Spec = self;
+            handler.NodeData = self.EffectNodeData;
+            return handler;
         }
 
         // ============ Tick ============

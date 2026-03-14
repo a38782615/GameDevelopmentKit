@@ -474,6 +474,11 @@ namespace ET.Client.Editor
         {
             var assetPath = $"{SkillAssetTreeView.RootPath}/{skillData.Name}.asset";
 
+            foreach (NodeData node in skillData.Nodes)
+            {
+                SkillNodeAssetPathUtility.SyncSerializedAssetPath(node);
+            }
+
             // 检查是否已存在
             var existingAsset = AssetDatabase.LoadAssetAtPath<SkillGraphData>(assetPath);
 

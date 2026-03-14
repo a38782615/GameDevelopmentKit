@@ -52,23 +52,33 @@ namespace ET.Client
             switch (node)
             {
                 case ParticleCueNodeData particleNode:
-                    particleNode.particlePrefab = await LoadAssetAsync<GameObject>(particleNode.particlePrefabPath);
+                    particleNode.particlePrefab = await LoadAssetOrKeepAsync(particleNode.particlePrefab, particleNode.particlePrefabPath);
                     break;
                 case SoundCueNodeData soundNode:
-                    soundNode.soundClip = await LoadAssetAsync<AudioClip>(soundNode.soundClipPath);
+                    soundNode.soundClip = await LoadAssetOrKeepAsync(soundNode.soundClip, soundNode.soundClipPath);
                     break;
                 case ProjectileEffectNodeData projectileNode:
-                    projectileNode.projectilePrefab = await LoadAssetAsync<GameObject>(projectileNode.projectilePrefabPath);
+                    projectileNode.projectilePrefab = await LoadAssetOrKeepAsync(projectileNode.projectilePrefab, projectileNode.projectilePrefabPath);
                     break;
                 case PlacementEffectNodeData placementNode:
-                    placementNode.placementPrefab = await LoadAssetAsync<GameObject>(placementNode.placementPrefabPath);
+                    placementNode.placementPrefab = await LoadAssetOrKeepAsync(placementNode.placementPrefab, placementNode.placementPrefabPath);
                     break;
                 case AnimationNodeData animationNode:
 #if Spine
-                    animationNode.skeletonDataAsset = await LoadAssetAsync<SkeletonDataAsset>(animationNode.skeletonDataAssetPath);
+                    animationNode.skeletonDataAsset = await LoadAssetOrKeepAsync(animationNode.skeletonDataAsset, animationNode.skeletonDataAssetPath);
 #endif
                     break;
             }
+        }
+
+        private static async UniTask<TAsset> LoadAssetOrKeepAsync<TAsset>(TAsset currentAsset, string assetPath) where TAsset : UnityEngine.Object
+        {
+            if (string.IsNullOrWhiteSpace(assetPath))
+            {
+                return currentAsset;
+            }
+
+            return await LoadAssetAsync<TAsset>(assetPath);
         }
 
         private static async UniTask<TAsset> LoadAssetAsync<TAsset>(string assetPath) where TAsset : UnityEngine.Object

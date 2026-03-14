@@ -439,6 +439,13 @@ namespace ET.Client
             if (self.State != AbilityState.Active) return;
 
             self.CurrentPlayTime += deltaTime;
+#if UNITY_EDITOR
+            if (self.SkillId == "1010" && self.CurrentPlayTime <= deltaTime + 0.0001f)
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagAbilityTick] start skillId={self.SkillId} currentPlayTime={self.CurrentPlayTime:0.00} duration={self.AnimationDuration:0.00} timeEffects={self.GetTimeEffectRuntime()?.TimeEffects?.Count ?? 0}");
+            }
+#endif
 
             var context = self.Context;
 
