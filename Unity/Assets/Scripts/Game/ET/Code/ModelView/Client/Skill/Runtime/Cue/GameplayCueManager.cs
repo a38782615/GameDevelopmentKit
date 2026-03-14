@@ -5,59 +5,73 @@ using UnityEngine;
 namespace ET.Client
 {
     /// <summary>
-    /// Cue管理器 - 管理所有激活的ActiveGameplayCue（View层资源）
-    /// 负责粒子、音效等底层资源的播放、更新和清理
-    /// 注意：GameplayCueSpec 的生命周期由 GameplayCueContainerComponent 管理
-    /// 此类只管理 ActiveGameplayCue 实例（粒子对象、音效源等）
-    /// Tick 由 GameplayCueContainerComponent 或外部驱动
+    /// Cue 管理器，负责管理所有激活的 ActiveGameplayCue（View 层资源）。
+    /// 负责粒子、音效、飘字等底层资源的播放、更新和清理。
+    /// 注意：GameplayCueSpec 的生命周期由 GameplayCueContainerComponent 管理。
+    /// 此类只管理 ActiveGameplayCue 实例（粒子对象、音效源等）。
+    /// Tick 由 GameplayCueContainerComponent 或外部驱动。
     /// </summary>
-
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     public class GameplayCueManager : Singleton<GameplayCueManager>
     {
+        private int m_LastTickFrame = -1;
 
         /// <summary>
-        /// 所有激活的Cue
+        /// 所有激活的 Cue。
         /// </summary>
-        private List<ActiveGameplayCue> _activeCues = new List<ActiveGameplayCue>();
+        private readonly List<ActiveGameplayCue> m_ActiveCues = new List<ActiveGameplayCue>();
 
         /// <summary>
-        /// 待移除的Cue列表
+        /// 待移除的 Cue 列表。
         /// </summary>
-        private List<ActiveGameplayCue> _pendingRemoval = new List<ActiveGameplayCue>();
+        private readonly List<ActiveGameplayCue> m_PendingRemoval = new List<ActiveGameplayCue>();
+
+        public static GameplayCueManager GetOrCreate()
+        {
+            if (Instance != null)
+            {
+                return Instance;
+            }
+
+            GameplayCueManager manager = new GameplayCueManager();
+            World.Instance.AddSingleton(manager);
+            return manager;
+        }
 
         // ============ 公共方法 ============
 
         /// <summary>
-        /// 播放粒子Cue
+        /// 播放粒子 Cue。
         /// </summary>
         public ActiveGameplayCue PlayParticleCue(ParticleCueNodeData cueData, AbilitySystemComponent source, AbilitySystemComponent target)
         {
             if (cueData == null)
+            {
                 return null;
+            }
 
-            var activeCue = new ActiveGameplayCue();
-            activeCue.IsLooping = cueData.particleLoop;
+            ActiveGameplayCue activeCue = new ActiveGameplayCue
+            {
+                IsLooping = cueData.particleLoop
+            };
 
-            // 加载并实例化粒子特效
-            var particleObject = LoadAndInstantiateParticle(cueData, target);
+            GameObject particleObject = this.LoadAndInstantiateParticle(cueData, target);
             if (particleObject != null)
             {
                 activeCue.AttachedObject = particleObject;
 
-                // 获取所有粒子系统的最长时长
                 if (!cueData.particleLoop)
                 {
-                    activeCue.Duration = GetParticleSystemDuration(particleObject);
+                    activeCue.Duration = this.GetParticleSystemDuration(particleObject);
                 }
             }
 
-            _activeCues.Add(activeCue);
+            this.m_ActiveCues.Add(activeCue);
             return activeCue;
         }
 
         /// <summary>
-        /// 播放粒子Cue（使用位置和参数）
+        /// 按位置和参数播放粒子 Cue。
         /// </summary>
         public ActiveGameplayCue PlayParticleCue(
             GameObject prefab,
@@ -67,57 +81,61 @@ namespace ET.Client
             bool isLoop)
         {
             if (prefab == null)
+            {
                 return null;
+            }
 
-            var activeCue = new ActiveGameplayCue();
-            activeCue.IsLooping = isLoop;
+            ActiveGameplayCue activeCue = new ActiveGameplayCue
+            {
+                IsLooping = isLoop
+            };
 
-            // 实例化粒子
-            var instance = UnityEngine.Object.Instantiate(prefab, position, UnityEngine.Quaternion.identity, attachTransform);
+            GameObject instance = UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity, attachTransform);
             instance.transform.localScale = scale;
 
             activeCue.AttachedObject = instance;
 
-            // 获取所有粒子系统的最长时长
             if (!isLoop)
             {
-                activeCue.Duration = GetParticleSystemDuration(instance);
+                activeCue.Duration = this.GetParticleSystemDuration(instance);
             }
 
-            _activeCues.Add(activeCue);
+            this.m_ActiveCues.Add(activeCue);
             return activeCue;
         }
 
         /// <summary>
-        /// 播放音效Cue
+        /// 播放音效 Cue。
         /// </summary>
         public ActiveGameplayCue PlaySoundCue(SoundCueNodeData cueData, AbilitySystemComponent source, AbilitySystemComponent target)
         {
             if (cueData == null || cueData.soundClip == null)
+            {
                 return null;
+            }
 
-            var activeCue = new ActiveGameplayCue();
-            activeCue.IsLooping = cueData.soundLoop;
+            ActiveGameplayCue activeCue = new ActiveGameplayCue
+            {
+                IsLooping = cueData.soundLoop
+            };
 
-            // 加载并播放音效
-            var audioSource = PlaySound(cueData, target);
+            AudioSource audioSource = this.PlaySound(cueData, target);
             if (audioSource != null)
             {
                 activeCue.AttachedAudioSource = audioSource;
 
-                // 获取音效时长
                 if (audioSource.clip != null && !cueData.soundLoop)
                 {
                     activeCue.Duration = audioSource.clip.length;
                 }
             }
 
-            _activeCues.Add(activeCue);
+            this.m_ActiveCues.Add(activeCue);
             return activeCue;
         }
 
         /// <summary>
-        /// 播放飘字Cue
+        /// 播放飘字 Cue。
         /// </summary>
         public ActiveGameplayCue PlayFloatingTextCue(
             string text,
@@ -128,17 +146,25 @@ namespace ET.Client
             FloatingTextType textType)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return null;
+            }
 
-            var activeCue = new ActiveGameplayCue();
-            activeCue.IsLooping = false;
-            activeCue.Duration = duration;
+            ActiveGameplayCue activeCue = new ActiveGameplayCue
+            {
+                IsLooping = false,
+                Duration = duration
+            };
 
-            // 通过 FloatingTextManager 创建飘字
             if (FloatingTextManager.Instance != null)
             {
-                var floatingTextObject = FloatingTextManager.Instance.CreateFloatingText(
-                    text, worldPosition, color, fontSize, duration, textType);
+                GameObject floatingTextObject = FloatingTextManager.Instance.CreateFloatingText(
+                    text,
+                    worldPosition,
+                    color,
+                    fontSize,
+                    duration,
+                    textType);
 
                 if (floatingTextObject != null)
                 {
@@ -150,98 +176,115 @@ namespace ET.Client
                 Debug.LogWarning("[GameplayCueManager] FloatingTextManager 未初始化，请在场景中添加 FloatingTextManager 组件");
             }
 
-            _activeCues.Add(activeCue);
+            this.m_ActiveCues.Add(activeCue);
             return activeCue;
         }
 
         /// <summary>
-        /// 停止指定的Cue
+        /// 停止指定的 Cue。
         /// </summary>
         public void StopCue(ActiveGameplayCue activeCue)
         {
             if (activeCue == null)
+            {
                 return;
+            }
 
             activeCue.Stop();
-            _pendingRemoval.Add(activeCue);
+            this.m_PendingRemoval.Add(activeCue);
         }
 
         /// <summary>
-        /// 每帧更新
+        /// 每帧更新。
         /// </summary>
         public void Tick(float deltaTime)
         {
-            // 更新所有激活的Cue
-            foreach (var cue in _activeCues)
+            foreach (ActiveGameplayCue cue in this.m_ActiveCues)
             {
                 cue.Tick(deltaTime);
 
                 if (cue.IsExpired)
                 {
-                    _pendingRemoval.Add(cue);
+                    this.m_PendingRemoval.Add(cue);
                 }
             }
 
-            // 移除过期的Cue
-            if (_pendingRemoval.Count > 0)
+            if (this.m_PendingRemoval.Count > 0)
             {
-                foreach (var cue in _pendingRemoval)
+                foreach (ActiveGameplayCue cue in this.m_PendingRemoval)
                 {
                     cue.Stop();
-                    _activeCues.Remove(cue);
+                    this.m_ActiveCues.Remove(cue);
                 }
-                _pendingRemoval.Clear();
+
+                this.m_PendingRemoval.Clear();
             }
         }
 
+        public void TickOncePerFrame(float deltaTime)
+        {
+            int frameCount = Time.frameCount;
+            if (this.m_LastTickFrame == frameCount)
+            {
+                return;
+            }
+
+            this.m_LastTickFrame = frameCount;
+            this.Tick(deltaTime);
+        }
+
         /// <summary>
-        /// 清理所有Cue
+        /// 清理所有 Cue。
         /// </summary>
         public void Clear()
         {
-            foreach (var cue in _activeCues)
+            foreach (ActiveGameplayCue cue in this.m_ActiveCues)
             {
                 cue.Stop();
             }
-            _activeCues.Clear();
-            _pendingRemoval.Clear();
+
+            this.m_ActiveCues.Clear();
+            this.m_PendingRemoval.Clear();
+        }
+
+        protected override void Destroy()
+        {
+            this.Clear();
         }
 
         // ============ 私有方法 ============
 
         /// <summary>
-        /// 加载并实例化粒子特效
+        /// 加载并实例化粒子特效。
         /// </summary>
-        private UnityEngine.GameObject LoadAndInstantiateParticle(ParticleCueNodeData cueData, AbilitySystemComponent target)
+        private GameObject LoadAndInstantiateParticle(ParticleCueNodeData cueData, AbilitySystemComponent target)
         {
             if (cueData.particlePrefab == null)
+            {
                 return null;
+            }
 
-            // 确定生成位置
-            UnityEngine.Vector3 position = UnityEngine.Vector3.zero;
-            UnityEngine.Quaternion rotation = UnityEngine.Quaternion.identity;
-            UnityEngine.Transform parent = null;
+            Vector3 position = Vector3.zero;
+            Quaternion rotation = Quaternion.identity;
+            Transform parent = null;
             float facingDirection = 1f;
 
             if (target?.Owner != null)
             {
-                var targetTransform = target.Owner.transform;
+                Transform targetTransform = target.Owner.transform;
 
-                // 获取目标朝向（2D角色通过localScale.x判断朝向）
                 facingDirection = targetTransform.localScale.x >= 0 ? 1f : -1f;
 
-                // 查找绑定点
                 if (!string.IsNullOrEmpty(cueData.particleBindingName))
                 {
-                    var bindingPoint = targetTransform.Find(cueData.particleBindingName);
+                    Transform bindingPoint = targetTransform.Find(cueData.particleBindingName);
                     if (bindingPoint != null)
                     {
                         targetTransform = bindingPoint;
                     }
                 }
 
-                // 根据朝向调整偏移位置
-                var adjustedOffset = cueData.particleOffset;
+                Vector3 adjustedOffset = cueData.particleOffset;
                 adjustedOffset.x *= facingDirection;
                 position = targetTransform.position + adjustedOffset;
                 rotation = targetTransform.rotation;
@@ -252,11 +295,9 @@ namespace ET.Client
                 }
             }
 
-            // 实例化粒子
-            var instance = UnityEngine.Object.Instantiate(cueData.particlePrefab, position, rotation, parent);
+            GameObject instance = UnityEngine.Object.Instantiate(cueData.particlePrefab, position, rotation, parent);
 
-            // 根据目标朝向调整特效缩放（翻转X轴）
-            var scale = cueData.particleScale;
+            Vector3 scale = cueData.particleScale;
             scale.x *= facingDirection;
             instance.transform.localScale = scale;
 
@@ -264,30 +305,30 @@ namespace ET.Client
         }
 
         /// <summary>
-        /// 获取粒子系统的总时长（包括所有子节点）
+        /// 获取粒子系统的总时长，包括所有子节点。
         /// </summary>
-        private float GetParticleSystemDuration(UnityEngine.GameObject particleObject)
+        private float GetParticleSystemDuration(GameObject particleObject)
         {
-            // 获取所有粒子系统（包括子节点）
-            var particleSystems = particleObject.GetComponentsInChildren<UnityEngine.ParticleSystem>();
+            ParticleSystem[] particleSystems = particleObject.GetComponentsInChildren<ParticleSystem>();
             if (particleSystems == null || particleSystems.Length == 0)
+            {
                 return 0f;
+            }
 
             float maxDuration = 0f;
 
-            foreach (var ps in particleSystems)
+            foreach (ParticleSystem ps in particleSystems)
             {
-                var main = ps.main;
+                ParticleSystem.MainModule main = ps.main;
 
-                // 如果是循环的粒子系统，跳过
                 if (main.loop)
+                {
                     continue;
+                }
 
-                // 计算这个粒子系统的总时长 = 延迟 + 发射时长 + 粒子最大生命周期
                 float startDelay = main.startDelay.constantMax;
                 float duration = main.duration;
                 float startLifetime = main.startLifetime.constantMax;
-
                 float totalDuration = startDelay + duration + startLifetime;
 
                 if (totalDuration > maxDuration)
@@ -300,34 +341,24 @@ namespace ET.Client
         }
 
         /// <summary>
-        /// 播放音效
+        /// 播放音效。
         /// </summary>
-        private UnityEngine.AudioSource PlaySound(SoundCueNodeData cueData, AbilitySystemComponent target)
+        private AudioSource PlaySound(SoundCueNodeData cueData, AbilitySystemComponent target)
         {
-            // 获取音效
-            UnityEngine.AudioClip clip = cueData.soundClip;
-
+            AudioClip clip = cueData.soundClip;
             if (clip == null)
+            {
                 return null;
-
-            // 创建AudioSource
-            UnityEngine.GameObject audioObject;
-            if (target?.Owner != null)
-            {
-                audioObject = target.Owner;
-            }
-            else
-            {
-                audioObject = new UnityEngine.GameObject("CueSound");
             }
 
-            var audioSource = audioObject.GetComponent<UnityEngine.AudioSource>();
+            GameObject audioObject = target?.Owner != null ? target.Owner : new GameObject("CueSound");
+
+            AudioSource audioSource = audioObject.GetComponent<AudioSource>();
             if (audioSource == null)
             {
-                audioSource = audioObject.AddComponent<UnityEngine.AudioSource>();
+                audioSource = audioObject.AddComponent<AudioSource>();
             }
 
-            // 配置并播放
             audioSource.clip = clip;
             audioSource.volume = cueData.soundVolume;
             audioSource.loop = cueData.soundLoop;
@@ -336,6 +367,4 @@ namespace ET.Client
             return audioSource;
         }
     }
-
-
 }
