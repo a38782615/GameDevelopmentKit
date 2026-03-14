@@ -66,16 +66,28 @@ namespace Game
             {
                 throw new GameFrameworkException("Can't remove empty!");
             }
-            if (!m_UIWidgets.Remove(uiWidget))
+            if (uiWidget.Available)
+            {
+                throw new GameFrameworkException(Utility.Text.Format("Can't remove available UIWidget : '{0}'.", uiWidget.CachedRectTransform.name));
+            }
+            if (m_UIWidgets.Remove(uiWidget))
+            {
+                uiWidget.SetUIFormOwner(null);
+            }
+            else
             {
                 throw new GameFrameworkException(Utility.Text.Format("UIWidget : '{0}' not in container.", uiWidget.CachedRectTransform.name));
             }
         }
 
-        public void RemoveAllUIWidget()
+        public void RemoveAllUIWidgets()
         {
             if (m_UIWidgets.Count > 0)
             {
+                foreach (AUIWidget uiWidget in m_UIWidgets)
+                {
+                    uiWidget.SetUIFormOwner(null);
+                }
                 m_UIWidgets.Clear();
             }
         }
@@ -118,11 +130,11 @@ namespace Game
         {
             if (uiWidget == null)
             {
-                throw new GameFrameworkException("Can't open empty!");
+                throw new GameFrameworkException("Can't close empty!");
             }
             if (!m_UIWidgets.Contains(uiWidget))
             {
-                throw new GameFrameworkException(Utility.Text.Format("Can't open UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, UIFormOwner.Name));
+                throw new GameFrameworkException(Utility.Text.Format("Can't close UIWidget, UIWidget '{0}' not in the container '{1}'!", uiWidget.name, UIFormOwner.Name));
             }
             if (!uiWidget.Available)
             {

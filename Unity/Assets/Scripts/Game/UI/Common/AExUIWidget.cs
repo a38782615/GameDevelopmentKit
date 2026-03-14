@@ -10,6 +10,7 @@ namespace Game
     public abstract class AExUIWidget : AUIWidget
     {
         private AExUIWidget m_ParentUIWidget;
+        private AExUIForm m_UIForm;
         private UIWidgetContainer m_UIWidgetContainer;
         private EventContainer m_EventContainer;
         private EntityContainer m_EntityContainer;
@@ -19,6 +20,190 @@ namespace Game
         /// 父UIWidget
         /// </summary>
         public AExUIWidget ParentUIWidget => m_ParentUIWidget;
+
+        /// <summary>
+        /// 父UIForm
+        /// </summary>
+        public AExUIForm UIForm => m_UIForm;
+
+        /// <summary>
+        /// 打开所有UIWidget
+        /// </summary>
+        /// <param name="userData">userData</param>
+        public void OpenAllUIWidgets(object userData = null)
+        {
+            if (m_UIWidgetContainer == null)
+                return;
+            UGFList<AUIWidget> uiWidgets = UGFList<AUIWidget>.Create();
+            m_UIWidgetContainer.GetAllUIWidgets(uiWidgets);
+            foreach (AUIWidget uiWidget in uiWidgets)
+            {
+                if (!uiWidget.Available)
+                {
+                    m_UIWidgetContainer.OpenUIWidget(uiWidget, userData);
+                }
+            }
+            uiWidgets.Dispose();
+        }
+
+        /// <summary>
+        /// 打开
+        /// </summary>
+        /// <param name="userData">userData</param>
+        public void Open(object userData = null)
+        {
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.OpenUIWidget(this, userData);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.OpenUIWidget(this, userData);
+                return;
+            }
+
+            throw new GameFrameworkException("UI widget is invalid.");
+        }
+
+        /// <summary>
+        /// 尝试打开
+        /// </summary>
+        /// <param name="userData">userData</param>
+        public void TryOpen(object userData = null)
+        {
+            if (Available)
+                return;
+
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.OpenUIWidget(this, userData);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.OpenUIWidget(this, userData);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// 动态打开
+        /// </summary>
+        /// <param name="userData">userData</param>
+        public void DynamicOpen(object userData = null)
+        {
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.DynamicOpenUIWidget(this, userData);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.DynamicOpenUIWidget(this, userData);
+                return;
+            }
+
+            throw new GameFrameworkException("UI widget is invalid.");
+        }
+
+        /// <summary>
+        /// 尝试动态打开
+        /// </summary>
+        /// <param name="userData">userData</param>
+        public void TryDynamicOpen(object userData = null)
+        {
+            if (Available)
+                return;
+
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.DynamicOpenUIWidget(this, userData);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.DynamicOpenUIWidget(this, userData);
+                return;
+            }
+        }
+
+        public override void SetUIFormOwner(AUIForm uiForm)
+        {
+            base.SetUIFormOwner(uiForm);
+            m_UIForm = uiForm as AExUIForm;
+        }
+
+        public void Close()
+        {
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.CloseUIWidget(this);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.CloseUIWidget(this);
+                return;
+            }
+
+            throw new GameFrameworkException("UI widget is invalid.");
+        }
+
+        public void TryClose()
+        {
+            if (!Available)
+                return;
+
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.CloseUIWidget(this);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.CloseUIWidget(this);
+                return;
+            }
+        }
+
+        public bool Has()
+        {
+            if (m_ParentUIWidget != null)
+            {
+                return m_ParentUIWidget.HasUIWidget(this);
+            }
+
+            if (m_UIForm != null)
+            {
+                return m_UIForm.HasUIWidget(this);
+            }
+
+            return false;
+        }
+
+        public void Remove()
+        {
+            if (m_ParentUIWidget != null)
+            {
+                m_ParentUIWidget.RemoveUIWidget(this);
+                return;
+            }
+
+            if (m_UIForm != null)
+            {
+                m_UIForm.RemoveUIWidget(this);
+                return;
+            }
+
+            throw new GameFrameworkException("UI widget is invalid.");
+        }
 
         private void ClearContainer()
         {
@@ -67,25 +252,8 @@ namespace Game
 
         protected virtual void OnDestroy()
         {
-            RemoveAllUIWidget();
+            RemoveAllUIWidgets();
             ClearContainer();
-        }
-
-        protected internal override void OnOpen(object userData)
-        {
-            base.OnOpen(userData);
-            if (m_UIWidgetContainer != null)
-            {
-                UGFList<AUIWidget> uiWidgets = UGFList<AUIWidget>.Create();
-                m_UIWidgetContainer.GetAllUIWidgets(uiWidgets);
-                foreach (AUIWidget uiWidget in uiWidgets)
-                {
-                    if (uiWidget.Visible && !uiWidget.Available)
-                    {
-                        m_UIWidgetContainer.OpenUIWidget(uiWidget);
-                    }
-                }
-            }
         }
 
         protected internal override void OnClose(bool isShutdown, object userData)
@@ -97,7 +265,7 @@ namespace Game
             CloseAllUIWidgets(isShutdown, userData);
             if (isShutdown)
             {
-                RemoveAllUIWidget();
+                RemoveAllUIWidgets();
                 ClearContainer();
             }
             base.OnClose(isShutdown, userData);
@@ -157,7 +325,7 @@ namespace Game
 
         public bool HasUIWidget(AExUIWidget uiWidget)
         {
-            if(m_UIWidgetContainer == null)
+            if (m_UIWidgetContainer == null)
             {
                 return false;
             }
@@ -174,7 +342,7 @@ namespace Game
             aExUIWidget.m_ParentUIWidget = null;
         }
 
-        public void RemoveAllUIWidget()
+        public void RemoveAllUIWidgets()
         {
             if (m_UIWidgetContainer == null)
                 return;
@@ -184,7 +352,7 @@ namespace Game
                 AExUIWidget aExUIWidget = (AExUIWidget)uiWidget;
                 aExUIWidgets.Add(aExUIWidget);
             }
-            m_UIWidgetContainer.RemoveAllUIWidget();
+            m_UIWidgetContainer.RemoveAllUIWidgets();
             foreach (AExUIWidget aExUIWidget in aExUIWidgets)
             {
                 aExUIWidget.m_ParentUIWidget = null;

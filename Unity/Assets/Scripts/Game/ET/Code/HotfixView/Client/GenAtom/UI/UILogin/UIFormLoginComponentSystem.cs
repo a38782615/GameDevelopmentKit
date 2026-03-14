@@ -20,6 +20,7 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormLoginComponent self)
         {
+            self.OpenAllUIWidgets();
             self.View.LoginButton.SetAsync(self.OnLogin);
             self.LoadTest1().Forget();
             self.LoadTest2().Forget();

@@ -16,26 +16,6 @@ namespace ET
 
         public UGFUIForm UGFUIForm => m_UGFUIForm;
 
-        protected override void OnInit(object userData)
-        {
-            base.OnInit(userData);
-            ETMonoUGFUIFormData formData = (ETMonoUGFUIFormData)userData;
-            m_UGFUIForm = formData.UGFUIForm;
-            m_UGFUIForm.UGFMono = this;
-            m_UGFUIForm.CachedTransform = CachedTransform;
-            UGFSystemSingleton.Instance.UGFUIFormOnInit(m_UGFUIForm);
-
-            UGFList<AETMonoUGFUIWidget> monoUIWidgets = new UGFList<AETMonoUGFUIWidget>();
-            GetComponentsInChildren(true, monoUIWidgets);
-            foreach (AETMonoUGFUIWidget monoUIWidget in monoUIWidgets)
-            {
-                if(monoUIWidget.UIFormOwner != null || monoUIWidget.GetComponentInParent<AETMonoUGFUIForm>() != this)
-                    continue;
-                m_UGFUIForm.AddChildUIWidget(monoUIWidget, true);
-            }
-            monoUIWidgets.Dispose();
-        }
-
         protected override void OnOpen(object userData)
         {
             base.OnOpen(userData);
@@ -44,20 +24,18 @@ namespace ET
             ReferencePool.Release(formData);
             m_UGFUIForm.CachedTransform = CachedTransform;
             m_UGFUIForm.UGFMono = this;
-            UGFSystemSingleton.Instance.UGFUIFormOnOpen(m_UGFUIForm);
 
-            if (m_UIWidgetContainer != null)
+            UGFList<AETMonoUGFUIWidget> monoUIWidgets = UGFList<AETMonoUGFUIWidget>.Create();
+            GetComponentsInChildren(true, monoUIWidgets);
+            foreach (AETMonoUGFUIWidget monoUIWidget in monoUIWidgets)
             {
-                UGFList<AUIWidget> uiWidgets = UGFList<AUIWidget>.Create();
-                m_UIWidgetContainer.GetAllUIWidgets(uiWidgets);
-                foreach (AUIWidget uiWidget in uiWidgets)
-                {
-                    if (uiWidget.Visible && !uiWidget.Available)
-                    {
-                        m_UIWidgetContainer.OpenUIWidget(uiWidget);
-                    }
-                }
+                if(monoUIWidget.UIFormOwner != null || monoUIWidget.GetComponentInParent<AETMonoUGFUIForm>() != this)
+                    continue;
+                m_UGFUIForm.AddChildUIWidget(monoUIWidget, true);
             }
+            monoUIWidgets.Dispose();
+
+            UGFSystemSingleton.Instance.UGFUIFormOnOpen(m_UGFUIForm);
         }
 
         private void ClearContainer()
@@ -69,21 +47,12 @@ namespace ET
             }
         }
 
-        protected virtual void OnDestroy()
-        {
-            RemoveAllUIWidget();
-            ClearContainer();
-        }
-
         protected override void OnClose(bool isShutdown, object userData)
         {
             m_UIWidgetContainer?.OnClose(isShutdown, userData);
             UGFSystemSingleton.Instance.UGFUIFormOnClose(m_UGFUIForm, isShutdown);
-            if (isShutdown)
-            {
-                RemoveAllUIWidget();
-                ClearContainer();
-            }
+            RemoveAllUIWidgets();
+            ClearContainer();
             base.OnClose(isShutdown, userData);
         }
 
@@ -143,13 +112,13 @@ namespace ET
             m_UIWidgetContainer?.OnRecycle();
         }
 
-        internal void AddUIWidget(AUIWidget auiWidget, object userData = null)
+        internal void AddUIWidget(AUIWidget auiWidget, ETMonoUGFUIWidgetData widgetData)
         {
             if (m_UIWidgetContainer == null)
             {
                 m_UIWidgetContainer = UIWidgetContainer.Create(this);
             }
-            m_UIWidgetContainer.AddUIWidget(auiWidget, userData);
+            m_UIWidgetContainer.AddUIWidget(auiWidget, widgetData);
         }
 
         internal bool HasUIWidget(AUIWidget auiWidget)
@@ -170,11 +139,30 @@ namespace ET
             m_UIWidgetContainer.RemoveUIWidget(auiWidget);
         }
 
-        internal void RemoveAllUIWidget()
+        internal void RemoveAllUIWidgets()
         {
             if (m_UIWidgetContainer == null)
                 return;
-            m_UIWidgetContainer.RemoveAllUIWidget();
+            m_UIWidgetContainer.RemoveAllUIWidgets();
+        }
+
+        /// <summary>
+        /// 打开所有UIWidget
+        /// </summary>
+        internal void OpenAllUIWidgets()
+        {
+            if (m_UIWidgetContainer == null)
+                return;
+            UGFList<AUIWidget> uiWidgets = UGFList<AUIWidget>.Create();
+            m_UIWidgetContainer.GetAllUIWidgets(uiWidgets);
+            foreach (AUIWidget uiWidget in uiWidgets)
+            {
+                if (!uiWidget.Available)
+                {
+                    m_UIWidgetContainer.OpenUIWidget(uiWidget);
+                }
+            }
+            uiWidgets.Dispose();
         }
 
         /// <summary>
