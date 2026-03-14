@@ -28,8 +28,32 @@ namespace ET
         [BsonIgnore]
         public float3 Forward
         {
-            get => math.mul(this.Rotation, math.forward());
-            set => this.Rotation = quaternion.LookRotation(value, math.up());
+            get
+            {
+                if (global::ET.ModeDefine.Is2D)
+                {
+                    return math.mul(this.Rotation, new float3(1f, 0f, 0f));
+                }
+
+                return math.mul(this.Rotation, math.forward());
+            }
+            set
+            {
+                if (global::ET.ModeDefine.Is2D)
+                {
+                    float2 planar = new float2(value.x, value.y);
+                    if (math.lengthsq(planar) < 0.0001f)
+                    {
+                        this.Rotation = quaternion.identity;
+                        return;
+                    }
+
+                    this.Rotation = quaternion.RotateZ(math.atan2(planar.y, planar.x));
+                    return;
+                }
+
+                this.Rotation = quaternion.LookRotation(value, math.up());
+            }
         }
         
         [BsonElement]

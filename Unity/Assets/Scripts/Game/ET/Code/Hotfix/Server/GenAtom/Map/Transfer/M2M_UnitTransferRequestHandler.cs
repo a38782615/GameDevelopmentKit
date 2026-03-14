@@ -20,9 +20,9 @@ namespace ET.Server
                 unit.AddComponent(entity);
             }
 
-            unit.AddComponent<MoveComponent>();
+            unit.AddMoveComponentByMode();
             unit.AddComponent<PathfindingComponent, string>(scene.Name);
-            unit.Position = new float3(-10, 0, -10);
+            unit.Position = new float2(-10f, -10f).ToModePosition();
 
             unit.AddComponent<MailBoxComponent, MailBoxType>(MailBoxType.OrderedMessage);
 

@@ -12,6 +12,7 @@ namespace ET.Client
 
             unit.Position = unitInfo.Position;
             unit.Forward = unitInfo.Forward;
+            unit.AddMoveComponentByMode();
 
             NumericComponent numericComponent = unit.AddComponent<NumericComponent>();
 
@@ -19,8 +20,6 @@ namespace ET.Client
             {
                 numericComponent.Set(kv.Key, kv.Value);
             }
-
-            // unit.AddComponent<MoveComponent>();
             if (unitInfo.MoveInfo != null)
             {
                 if (unitInfo.MoveInfo.Points.Count > 0)

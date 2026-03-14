@@ -12,7 +12,7 @@ namespace ET.Client
         public static async UniTask<int> MoveToAsync(this Unit unit, float3 targetPos, CancellationToken token = default)
         {
             C2M_PathfindingResult msg = C2M_PathfindingResult.Create();
-            msg.Position = targetPos;
+            msg.Position = global::ET.ModeDefine.Is2D ? new float3(targetPos.x, targetPos.y, 0f) : targetPos;
             unit.Root().GetComponent<ClientSenderComponent>().Send(msg);
 
             ObjectWait objectWait = unit.GetComponent<ObjectWait>();
@@ -32,8 +32,7 @@ namespace ET.Client
         public static async UniTask MoveToAsync(this Unit unit, List<float3> path)
         {
             float speed = unit.GetComponent<NumericComponent>().GetAsFloat(NumericType.Speed);
-            MoveComponent moveComponent = unit.GetComponent<MoveComponent>();
-            await moveComponent.MoveToAsync(path, speed);
+            await unit.MoveAlongPathAsync(path, speed);
         }
     }
 }

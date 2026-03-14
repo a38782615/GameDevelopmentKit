@@ -88,9 +88,9 @@ namespace ET.Client
         {
             return unitType switch
             {
-                UnitType.Player => new float3(-6f + index * 2.5f, 0f, index * 1.5f),
-                UnitType.Monster => new float3(6f + index * 2.5f, 0f, index * 1.5f),
-                _ => new float3(index * 2.5f, 0f, -4f),
+                UnitType.Player => new float2(-6f + index * 2.5f, index * 1.5f).ToModePosition(),
+                UnitType.Monster => new float2(6f + index * 2.5f, index * 1.5f).ToModePosition(),
+                _ => new float2(index * 2.5f, -4f).ToModePosition(),
             };
         }
 
@@ -98,9 +98,9 @@ namespace ET.Client
         {
             return unitType switch
             {
-                UnitType.Player => new float3(1f, 0f, 0f),
-                UnitType.Monster => new float3(-1f, 0f, 0f),
-                _ => new float3(0f, 0f, 0f),
+                UnitType.Player => new float2(1f, 0f).ToModeDirection(),
+                UnitType.Monster => new float2(-1f, 0f).ToModeDirection(),
+                _ => float3.zero,
             };
         }
     }

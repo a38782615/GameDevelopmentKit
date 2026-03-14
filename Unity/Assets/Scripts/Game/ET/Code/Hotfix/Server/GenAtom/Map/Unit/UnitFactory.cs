@@ -13,8 +13,8 @@ namespace ET.Server
                 case UnitType.Player:
                 {
                     Unit unit = unitComponent.AddChildWithId<Unit, int>(id, 1001);
-                    unit.AddComponent<MoveComponent>();
-                    unit.Position = new float3(-10, 0, -10);
+                    unit.AddMoveComponentByMode();
+                    unit.Position = new float2(-10f, -10f).ToModePosition();
 			
                     NumericComponent numericComponent = unit.AddComponent<NumericComponent>();
                     numericComponent.Set(NumericType.Speed, 6f); // 速度是6米每秒

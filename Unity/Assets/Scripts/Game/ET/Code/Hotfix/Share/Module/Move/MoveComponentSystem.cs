@@ -78,6 +78,16 @@ namespace ET
             return true;
         }
 
+        public static void GetRemainingPath(this MoveComponent self, List<float3> results)
+        {
+            Unit unit = self.GetParent<Unit>();
+            results.Add(unit.Position);
+            for (int i = self.N; i < self.Targets.Count; ++i)
+            {
+                results.Add(self.Targets[i]);
+            }
+        }
+
         // 该方法不需要用cancelToken的方式取消，因为即使不传入cancelToken，多次调用该方法也要取消之前的移动协程,上层可以stop取消
         public static async UniTask<bool> MoveToAsync(this MoveComponent self, List<float3> target, float speed, int turnTime = 100)
         {

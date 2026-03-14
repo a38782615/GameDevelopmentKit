@@ -11,7 +11,7 @@ namespace ET.Client
 
 			float speed = unit.GetComponent<NumericComponent>().GetAsFloat(NumericType.Speed);
 
-			await unit.GetComponent<MoveComponent>().MoveToAsync(message.Points, speed);
+			await unit.MoveAlongPathAsync(message.Points, speed);
 		}
 	}
 }

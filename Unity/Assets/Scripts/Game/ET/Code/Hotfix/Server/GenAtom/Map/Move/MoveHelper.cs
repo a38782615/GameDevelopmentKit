@@ -28,9 +28,7 @@ namespace ET.Server
             m2CPathfindingResult.Id = unit.Id;
             MapMessageHelper.Broadcast(unit, m2CPathfindingResult);
 
-            MoveComponent moveComponent = unit.GetComponent<MoveComponent>();
-            
-            bool ret = await moveComponent.MoveToAsync(m2CPathfindingResult.Points, speed);
+            bool ret = await unit.MoveAlongPathAsync(m2CPathfindingResult.Points, speed);
             if (ret) // 如果返回false，说明被其它移动取消了，这时候不需要通知客户端stop
             {
                 unit.SendStop(0);
@@ -39,7 +37,7 @@ namespace ET.Server
 
         public static void Stop(this Unit unit, int error)
         {
-            unit.GetComponent<MoveComponent>().Stop(error == 0);
+            unit.StopMove(error == 0);
             unit.SendStop(error);
         }
 
