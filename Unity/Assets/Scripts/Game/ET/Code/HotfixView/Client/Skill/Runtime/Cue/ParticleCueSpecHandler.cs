@@ -20,7 +20,7 @@ namespace ET.Client
             var selfSpec = Spec.GetComponent<ParticleCueSpec>();
             if (selfSpec == null)
             {
-                Spec.AddComponent<ParticleCueSpec>();
+                selfSpec = Spec.AddComponent<ParticleCueSpec>();
             }
             return selfSpec;
         }
@@ -102,7 +102,7 @@ namespace ET.Client
             }
 
             // 播放粒子特效
-            Spec.ActiveCue = GameplayCueManager.Instance.PlayParticleCue(
+            Spec.ActiveCue = GameplayCueManager.GetOrCreate().PlayParticleCue(
                 nodeData.particlePrefab,
                 position,
                 adjustedScale,
@@ -120,7 +120,7 @@ namespace ET.Client
         {
             if (Spec.ActiveCue != null)
             {
-                GameplayCueManager.Instance.StopCue(Spec.ActiveCue);
+                GameplayCueManager.GetOrCreate().StopCue(Spec.ActiveCue);
                 Spec.ActiveCue = null;
             }
         }

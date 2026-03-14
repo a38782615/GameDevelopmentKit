@@ -20,7 +20,7 @@ namespace ET.Client
             var selfSpec = Spec.GetComponent<SoundCueSpec>();
             if (selfSpec == null)
             {
-                Spec.AddComponent<SoundCueSpec>();
+                selfSpec = Spec.AddComponent<SoundCueSpec>();
             }
             return selfSpec;
         }
@@ -55,7 +55,7 @@ namespace ET.Client
             var source = Spec.GetCueTarget();
 
             // 播放音效
-            Spec.ActiveCue = GameplayCueManager.Instance.PlaySoundCue(nodeData, source, target);
+            Spec.ActiveCue = GameplayCueManager.GetOrCreate().PlaySoundCue(nodeData, source, target);
 
             if (Spec.ActiveCue != null)
             {
@@ -67,7 +67,7 @@ namespace ET.Client
         {
             if (Spec.ActiveCue != null)
             {
-                GameplayCueManager.Instance.StopCue(Spec.ActiveCue);
+                GameplayCueManager.GetOrCreate().StopCue(Spec.ActiveCue);
                 Spec.ActiveCue = null;
             }
         }

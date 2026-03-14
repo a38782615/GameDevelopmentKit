@@ -17,6 +17,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Update(this GameplayCueContainerComponent self)
         {
+            GameplayCueManager.GetOrCreate().TickOncePerFrame(UnityEngine.Time.deltaTime);
             self.Tick(UnityEngine.Time.deltaTime);
         }
 

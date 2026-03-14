@@ -20,7 +20,7 @@ namespace ET.Client
             var selfSpec = Spec.GetComponent<FloatingTextCueSpec>();
             if (selfSpec == null)
             {
-                Spec.AddComponent<FloatingTextCueSpec>();
+                selfSpec = Spec.AddComponent<FloatingTextCueSpec>();
             }
             return selfSpec;
         }
@@ -102,7 +102,7 @@ namespace ET.Client
             worldPosition += new Vector3(floatSpec.Offset.x, floatSpec.Offset.y, 0);
 
             // 播放飘字
-            Spec.ActiveCue = GameplayCueManager.Instance.PlayFloatingTextCue(
+            Spec.ActiveCue = GameplayCueManager.GetOrCreate().PlayFloatingTextCue(
                 displayText,
                 worldPosition,
                 finalColor,
@@ -198,7 +198,7 @@ namespace ET.Client
         {
             if (Spec.ActiveCue != null)
             {
-                GameplayCueManager.Instance.StopCue(Spec.ActiveCue);
+                GameplayCueManager.GetOrCreate().StopCue(Spec.ActiveCue);
                 Spec.ActiveCue = null;
             }
         }

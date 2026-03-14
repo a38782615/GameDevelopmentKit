@@ -4,6 +4,7 @@ using CodeBind;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityGameFramework.Runtime;
 
 namespace Game
 {
@@ -73,6 +74,28 @@ namespace Game
 
         private void Awake()
         {
+            if (m_LoopScrollRect == null)
+            {
+                m_LoopScrollRect = GetComponent<LoopScrollRect>();
+            }
+
+            if (m_LoopScrollRect == null)
+            {
+                Log.Error($"LoopScrollRect is missing on '{this.name}'.");
+                return;
+            }
+
+            if (m_ItemTemplate == null && m_LoopScrollRect.content != null && m_LoopScrollRect.content.childCount > 0)
+            {
+                m_ItemTemplate = m_LoopScrollRect.content.GetChild(0).gameObject;
+            }
+
+            if (m_ItemTemplate == null)
+            {
+                Log.Error($"Item template is missing on '{this.name}'.");
+                return;
+            }
+
             m_LoopScrollRect.prefabSource = this;
             m_LoopScrollRect.dataSource = this;
             m_ItemPool.Push(m_ItemTemplate.transform);

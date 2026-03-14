@@ -70,7 +70,7 @@ namespace ET.Client
             bool success = self.Abilities?.TryActivateAbility(self, spec, target) ?? false;
             if (success)
             {
-                EventSystem.Instance.Invoke(new AbilitySystemComponent.OnAbilityActivated()
+                EventSystem.Instance.Publish(self.Root(), new AbilitySystemComponent.OnAbilityActivated()
                 {
                     Spec = spec
                 });
@@ -86,7 +86,7 @@ namespace ET.Client
         public static void EndAbility(this AbilitySystemComponent self, GameplayAbilitySpec spec, bool wasCancelled = false)
         {
             self.Abilities?.EndAbility(spec, wasCancelled);
-            EventSystem.Instance.Invoke(new AbilitySystemComponent.OnAbilityEnded()
+            EventSystem.Instance.Publish(self.Root(), new AbilitySystemComponent.OnAbilityEnded()
             {
                 Spec = spec,
                 End = wasCancelled

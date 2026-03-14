@@ -341,7 +341,7 @@ namespace ET.Client
                 self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, "激活");
             }
 
-            EventSystem.Instance.Invoke(new GameplayAbilitySpec.OnActivated()
+            EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnActivated()
             {
                 Spec = self
             });
@@ -382,7 +382,7 @@ namespace ET.Client
             if (asc != null && !self.Tags.ActivationOwnedTags.IsEmpty)
                 asc.OwnedTags.RemoveTags(self.Tags.ActivationOwnedTags);
 
-            EventSystem.Instance.Invoke(new GameplayAbilitySpec.OnEnded()
+            EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnEnded()
             {
                 Spec = self,
                 End = wasCancelled

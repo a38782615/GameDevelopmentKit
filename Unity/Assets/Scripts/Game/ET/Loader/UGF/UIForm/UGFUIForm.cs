@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Game;
 using MongoDB.Bson.Serialization.Attributes;
 using UnityEngine;
+using UnityGameFramework.Extension;
 using UnityGameFramework.Runtime;
 using GameEntry = Game.GameEntry;
 
@@ -96,6 +97,28 @@ namespace ET
             if(this.m_UIForm == null)
             {
                 throw new Exception($"UGFUIForm OpenUIFormAsync failed! uiFormTypeId:'{uiFormTypeId}'.");
+            }
+        }
+
+        public async UniTask OpenUIFormAsync(string uiFormAssetName, string uiGroupName, int priority, bool pauseCoveredUIForm)
+        {
+            if (this.m_Cts == null)
+            {
+                this.m_Cts = ObjectPool.Instance.Fetch<CancellationTokenSourcePlus>();
+            }
+
+            this.m_UIForm = await GameEntry.UI.OpenUIFormAsync(
+                uiFormAssetName,
+                uiGroupName,
+                priority,
+                pauseCoveredUIForm,
+                ETMonoUGFUIFormData.Create(this),
+                this.m_Cts.MallocToken());
+            this.m_Cts.FreeToken();
+
+            if (this.m_UIForm == null)
+            {
+                throw new Exception($"UGFUIForm OpenUIFormAsync failed! uiFormAssetName:'{uiFormAssetName}'.");
             }
         }
 
