@@ -61,7 +61,17 @@ namespace ET.Client
 
             foreach (var tableData in tbSkillGraph.DataList)
             {
+#if UNITY_EDITOR
+                int beforeConvertNewGameObjectCount = CountAnonymousRootObjects();
+#endif
                 var skillData = Convert(tableData);
+#if UNITY_EDITOR
+                int afterConvertNewGameObjectCount = CountAnonymousRootObjects();
+                if (beforeConvertNewGameObjectCount != afterConvertNewGameObjectCount)
+                {
+                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] Convert changed skillId={tableData.Id} before={beforeConvertNewGameObjectCount} after={afterConvertNewGameObjectCount}");
+                }
+#endif
                 if (skillData != null)
                 {
                     SkillDataCenter.Instance.RegisterSkillGraph(skillData);
@@ -136,7 +146,18 @@ namespace ET.Client
                 string cleanJson = Regex.Replace(nodeJson, @",?\s*""\$type""\s*:\s*""[^""]*""", "");
                 cleanJson = Regex.Replace(cleanJson, @"{\s*,", "{"); // 清理开头的逗号
 
-                return (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(cleanJson, nodeDataType);
+#if UNITY_EDITOR
+                int beforeDeserializeNewGameObjectCount = CountAnonymousRootObjects();
+#endif
+                var nodeData = (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(cleanJson, nodeDataType, CreateJsonSerializerSettings());
+#if UNITY_EDITOR
+                int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
+                if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
+                {
+                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] Deserialize changed type={typeName} before={beforeDeserializeNewGameObjectCount} after={afterDeserializeNewGameObjectCount} json={Truncate(nodeJson, 240)}");
+                }
+#endif
+                return nodeData;
             }
             catch (Exception e)
             {
@@ -175,7 +196,18 @@ namespace ET.Client
 
             try
             {
-                return (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(nodeJson, targetType);
+#if UNITY_EDITOR
+                int beforeDeserializeNewGameObjectCount = CountAnonymousRootObjects();
+#endif
+                var nodeData = (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(nodeJson, targetType, CreateJsonSerializerSettings());
+#if UNITY_EDITOR
+                int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
+                if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
+                {
+                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] DeserializeByNodeType changed nodeType={(int)nodeType} targetType={targetType.Name} before={beforeDeserializeNewGameObjectCount} after={afterDeserializeNewGameObjectCount} json={Truncate(nodeJson, 240)}");
+                }
+#endif
+                return nodeData;
             }
             catch (Exception e)
             {
@@ -212,5 +244,39 @@ namespace ET.Client
 
             return result;
         }
+
+        private static Newtonsoft.Json.JsonSerializerSettings CreateJsonSerializerSettings()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings();
+            settings.Converters.Add(new UnityObjectNullJsonConverter());
+            return settings;
+        }
+
+#if UNITY_EDITOR
+        private static int CountAnonymousRootObjects()
+        {
+            var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            int count = 0;
+            foreach (var gameObject in rootGameObjects)
+            {
+                if (gameObject != null && gameObject.name == "New Game Object")
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+            {
+                return value;
+            }
+
+            return value.Substring(0, maxLength) + "...";
+        }
+#endif
     }
 }

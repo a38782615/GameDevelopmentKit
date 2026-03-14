@@ -8,8 +8,17 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this SkillUnit self)
         {
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagSkillUnitAwake] enter newGO={CountAnonymousRootObjects()} unit={self.Unit.As()?.ConfigId ?? 0}");
+#endif
             self.AddComponent<AbilitySystemComponent>();
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagSkillUnitAwake] after ASC newGO={CountAnonymousRootObjects()} unit={self.Unit.As()?.ConfigId ?? 0}");
+#endif
             self.InitFromTable();
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagSkillUnitAwake] after InitFromTable newGO={CountAnonymousRootObjects()} unit={self.Unit.As()?.ConfigId ?? 0}");
+#endif
         }
 
         public static void InitFromTable(this SkillUnit self)
@@ -22,7 +31,13 @@ namespace ET.Client
 
             var unitType = (UnitType)unit.Config().Type;
 
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagInitFromTable] enter unit={unit.ConfigId} unitType={(byte)unitType} newGO={CountAnonymousRootObjects()}");
+#endif
             self.InitUnitTypeTags(asc);
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagInitFromTable] after InitUnitTypeTags unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
 
             switch (unitType)
             {
@@ -35,9 +50,21 @@ namespace ET.Client
                             return;
                         }
 
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] heroData unit={unit.ConfigId} attrCount={heroData.InitialAttribute?.Length ?? 0} activeCount={heroData.ActiveSkill?.Length ?? 0} passiveCount={heroData.PassiveSkill?.Length ?? 0} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.InitAttributes(asc, heroData.InitialAttribute);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after InitAttributes unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.GrantSkills(asc, heroData.ActiveSkill);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after ActiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.GrantSkills(asc, heroData.PassiveSkill);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after PassiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         return;
                     }
                 case UnitType.Monster:
@@ -49,9 +76,21 @@ namespace ET.Client
                             return;
                         }
 
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] monsterData unit={unit.ConfigId} attrCount={monsterData.InitialAttribute?.Length ?? 0} activeCount={monsterData.ActiveSkill?.Length ?? 0} passiveCount={monsterData.PassiveSkill?.Length ?? 0} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.InitAttributes(asc, monsterData.InitialAttribute);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after InitAttributes unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.GrantSkills(asc, monsterData.ActiveSkill);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after ActiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         self.GrantSkills(asc, monsterData.PassiveSkill);
+#if UNITY_EDITOR
+                        SkillDiagFileLogger.Log($"[DiagInitFromTable] after PassiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
+#endif
                         return;
                     }
                 default:
@@ -137,6 +176,9 @@ namespace ET.Client
 
             foreach (var skillId in skillIds)
             {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagGrantSkill] before GetSkill unit={self.Unit.As()?.ConfigId ?? 0} skillId={skillId} newGO={CountAnonymousRootObjects()}");
+#endif
                 var skillData = tbSkill.GetOrDefault(skillId);
                 if (skillData == null)
                 {
@@ -144,15 +186,46 @@ namespace ET.Client
                     continue;
                 }
 
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagGrantSkill] before GetSkillGraph unit={self.Unit.As()?.ConfigId ?? 0} skillId={skillId} newGO={CountAnonymousRootObjects()} registered={skillDataCenter.RegisteredCount}");
+#endif
                 var graphData = skillDataCenter.GetSkillGraph(skillData.Id.ToString());
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagGrantSkill] after GetSkillGraph unit={self.Unit.As()?.ConfigId ?? 0} skillId={skillId} newGO={CountAnonymousRootObjects()} registered={skillDataCenter.RegisteredCount} graphNull={(graphData == null)}");
+#endif
                 if (graphData == null)
                 {
                     Log.Warning($"[Unit] 技能图未注册，技能ID: {skillId}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
                     continue;
                 }
 
+#if UNITY_EDITOR
+                int beforeNewGameObjectCount = CountAnonymousRootObjects();
+                SkillDiagFileLogger.Log($"[DiagGrantSkill] before skillId={skillId} newGO={beforeNewGameObjectCount}");
+#endif
                 asc.GrantAbility(graphData);
+#if UNITY_EDITOR
+                int afterNewGameObjectCount = CountAnonymousRootObjects();
+                SkillDiagFileLogger.Log($"[DiagGrantSkill] after skillId={skillId} newGO={afterNewGameObjectCount}");
+#endif
             }
         }
+
+#if UNITY_EDITOR
+        private static int CountAnonymousRootObjects()
+        {
+            var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            int count = 0;
+            foreach (var gameObject in rootGameObjects)
+            {
+                if (gameObject != null && gameObject.name == "New Game Object")
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+#endif
     }
 }
