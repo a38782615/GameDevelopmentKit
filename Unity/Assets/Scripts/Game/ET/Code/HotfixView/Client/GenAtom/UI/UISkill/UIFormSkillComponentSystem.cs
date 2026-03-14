@@ -18,9 +18,9 @@ namespace ET.Client
                 self.View.CloseButton.Set(self.OnClickCloseButton);
             }
 
-            if (self.View.SkillLoopScrollRect != null)
+            if (self.View.SkillLoopCommonLoopScrollRect != null)
             {
-                self.View.SkillLoopScrollRect.itemRenderer = self.RenderSkillItem;
+                self.View.SkillLoopCommonLoopScrollRect.itemRenderer = self.RenderSkillItem;
             }
 
             self.RefreshLeftTime = 0f;
@@ -59,9 +59,9 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormSkillComponent self, bool isShutdown)
         {
-            if (self.View?.SkillLoopScrollRect != null)
+            if (self.View?.SkillLoopCommonLoopScrollRect != null)
             {
-                self.View.SkillLoopScrollRect.itemRenderer = null;
+                self.View.SkillLoopCommonLoopScrollRect.itemRenderer = null;
             }
 
             self.SkillSpecs.Clear();
@@ -94,18 +94,18 @@ namespace ET.Client
                 }
             }
 
-            if (self.View?.SkillLoopScrollRect == null)
+            if (self.View?.SkillLoopCommonLoopScrollRect == null)
             {
                 return;
             }
 
             if (previousCount != self.SkillSpecs.Count)
             {
-                self.View.SkillLoopScrollRect.numItems = self.SkillSpecs.Count;
+                self.View.SkillLoopCommonLoopScrollRect.numItems = self.SkillSpecs.Count;
                 return;
             }
 
-            self.View.SkillLoopScrollRect.Refresh();
+            self.View.SkillLoopCommonLoopScrollRect.Refresh();
         }
 
         private static bool CanDisplaySkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
@@ -169,7 +169,7 @@ namespace ET.Client
             }
 
             bool success = asc.TryActivateAbility(spec);
-            self.View?.SkillLoopScrollRect?.Refresh();
+            self.View?.SkillLoopCommonLoopScrollRect?.Refresh();
             return success;
         }
 
@@ -223,7 +223,7 @@ namespace ET.Client
             }
 
             self.EditorSmokeStateOverrideText = null;
-            self.View?.SkillLoopScrollRect?.Refresh();
+            self.View?.SkillLoopCommonLoopScrollRect?.Refresh();
         }
 
         private static void TryReportEditorSmokeResult(this UIFormSkillComponent self, float elapseSeconds)
