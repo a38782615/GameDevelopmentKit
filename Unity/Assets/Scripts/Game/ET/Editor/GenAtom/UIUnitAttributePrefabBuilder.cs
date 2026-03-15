@@ -17,6 +17,11 @@ namespace ET.Editor
         private const string MonoUIFormTypeName = "ET.Client.MonoUIFormUnitAttribute, Game.ET.Code.ModelView";
         private const string MonoRowTypeName = "ET.Client.MonoUIUnitAttributeRow, Game.ET.Code.ModelView";
         private const string PendingNormalizeKey = "UIUnitAttributePrefabBuilder.PendingNormalize";
+        private const string DefaultTmpFontAssetPath = "Assets/Res/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset";
+        private const string TextMeshProUGUITypeName = "TMPro.TextMeshProUGUI, Unity.TextMeshPro";
+        private const string FontStylesTypeName = "TMPro.FontStyles, Unity.TextMeshPro";
+        private const string TextAlignmentOptionsTypeName = "TMPro.TextAlignmentOptions, Unity.TextMeshPro";
+        private const string TextOverflowModesTypeName = "TMPro.TextOverflowModes, Unity.TextMeshPro";
         private static readonly Color playerAccentColor = new Color(0.29f, 0.78f, 0.47f, 1f);
         private static readonly Color monsterAccentColor = new Color(0.95f, 0.43f, 0.35f, 1f);
 
@@ -33,8 +38,6 @@ namespace ET.Editor
             try
             {
                 root = CreateRoot();
-                TryGenerateMonoCodeBind(root);
-                RefreshMonoCodeBindSerialization(root);
                 GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 if (prefab == null)
                 {
@@ -42,6 +45,7 @@ namespace ET.Editor
                 }
 
                 ScheduleSavedPrefabNormalization();
+                TryGenerateMonoCodeBind(root);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 Debug.Log($"[UIUnitAttributePrefabBuilder] Rebuilt prefab: {PrefabPath}");
@@ -133,14 +137,14 @@ namespace ET.Editor
             contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            Text titleText = CreateText($"{prefix}Title_Text", panel.transform, isPlayerPanel ? "Player" : "Monster", 24, FontStyle.Bold, TextAnchor.MiddleLeft);
-            titleText.color = accentColor;
+            Component titleText = CreateText($"{prefix}Title_Text", panel.transform, isPlayerPanel ? "Player" : "Monster", 24, "Bold", "MidlineLeft");
+            SetGraphicColor(titleText, accentColor);
             SetLayoutElement(titleText.gameObject, 34f, 0f, 0f);
 
-            Text tagsText = CreateText($"{prefix}Tags_Text", panel.transform, "Tags: None", 16, FontStyle.Normal, TextAnchor.UpperLeft);
-            tagsText.color = new Color(0.83f, 0.88f, 0.95f, 0.92f);
-            tagsText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            tagsText.verticalOverflow = VerticalWrapMode.Overflow;
+            Component tagsText = CreateText($"{prefix}Tags_Text", panel.transform, "Tags: None", 16, "Normal", "TopLeft");
+            SetGraphicColor(tagsText, new Color(0.83f, 0.88f, 0.95f, 0.92f));
+            SetObjectMember(tagsText, "enableWordWrapping", true);
+            SetEnumMember(tagsText, "overflowMode", TextOverflowModesTypeName, "Overflow");
             SetLayoutElement(tagsText.gameObject, 40f, 0f, 0f);
 
             GameObject rowsRoot = new GameObject(
@@ -164,8 +168,8 @@ namespace ET.Editor
             rowsContentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             SetLayoutElement(rowsRoot, 0f, 0f, 0f);
 
-            Text categoryTemplate = CreateText($"{prefix}CategoryTemplate_Text", rowsRoot.transform, "Category", 18, FontStyle.Bold, TextAnchor.MiddleLeft);
-            categoryTemplate.color = accentColor;
+            Component categoryTemplate = CreateText($"{prefix}CategoryTemplate_Text", rowsRoot.transform, "Category", 18, "Bold", "MidlineLeft");
+            SetGraphicColor(categoryTemplate, accentColor);
             SetLayoutElement(categoryTemplate.gameObject, 28f, 0f, 0f);
             categoryTemplate.gameObject.SetActive(false);
 
@@ -199,14 +203,14 @@ namespace ET.Editor
             RectTransform rowRect = row.GetComponent<RectTransform>();
             rowRect.localScale = Vector3.one;
 
-            Text labelText = CreateText("Label_Text", row.transform, "Label", 16, FontStyle.Normal, TextAnchor.MiddleLeft);
-            labelText.color = new Color(0.95f, 0.97f, 1f, 0.94f);
+            Component labelText = CreateText("Label_Text", row.transform, "Label", 16, "Normal", "MidlineLeft");
+            SetGraphicColor(labelText, new Color(0.95f, 0.97f, 1f, 0.94f));
             LayoutElement labelLayout = labelText.gameObject.AddComponent<LayoutElement>();
             labelLayout.preferredWidth = 150f;
             labelLayout.flexibleWidth = 1f;
 
-            Text valueText = CreateText("Value_Text", row.transform, "0", 16, FontStyle.Bold, TextAnchor.MiddleRight);
-            valueText.color = new Color(1f, 0.89f, 0.48f, 0.98f);
+            Component valueText = CreateText("Value_Text", row.transform, "0", 16, "Bold", "MidlineRight");
+            SetGraphicColor(valueText, new Color(1f, 0.89f, 0.48f, 0.98f));
             LayoutElement valueLayout = valueText.gameObject.AddComponent<LayoutElement>();
             valueLayout.preferredWidth = 110f;
             valueLayout.flexibleWidth = 0f;
@@ -214,24 +218,42 @@ namespace ET.Editor
             row.SetActive(false);
         }
 
-        private static Text CreateText(string name, Transform parent, string text, int fontSize, FontStyle fontStyle, TextAnchor anchor)
+        private static Component CreateText(
+            string name,
+            Transform parent,
+            string text,
+            int fontSize,
+            string fontStyle,
+            string anchor)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text));
+            Type textType = ResolveType(TextMeshProUGUITypeName);
+            GameObject textObject = new GameObject(name, typeof(RectTransform), textType);
             textObject.transform.SetParent(parent, false);
 
-            Text textComponent = textObject.GetComponent<Text>();
-            textComponent.text = text;
-            textComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            textComponent.fontSize = fontSize;
-            textComponent.fontStyle = fontStyle;
-            textComponent.alignment = anchor;
-            textComponent.horizontalOverflow = HorizontalWrapMode.Wrap;
-            textComponent.verticalOverflow = VerticalWrapMode.Overflow;
-            textComponent.raycastTarget = false;
+            Component textComponent = textObject.GetComponent(textType);
+            SetObjectMember(textComponent, "text", text);
+            SetObjectMember(textComponent, "font", GetDefaultTmpFontAsset());
+            SetObjectMember(textComponent, "fontSize", (float)fontSize);
+            SetEnumMember(textComponent, "fontStyle", FontStylesTypeName, fontStyle);
+            SetEnumMember(textComponent, "alignment", TextAlignmentOptionsTypeName, anchor);
+            SetObjectMember(textComponent, "enableWordWrapping", false);
+            SetEnumMember(textComponent, "overflowMode", TextOverflowModesTypeName, "Overflow");
+            SetObjectMember(textComponent, "raycastTarget", false);
 
-            RectTransform rectTransform = textComponent.rectTransform;
+            RectTransform rectTransform = ((RectTransform)textObject.transform);
             rectTransform.localScale = Vector3.one;
             return textComponent;
+        }
+
+        private static UnityEngine.Object GetDefaultTmpFontAsset()
+        {
+            UnityEngine.Object fontAsset = AssetDatabase.LoadMainAssetAtPath(DefaultTmpFontAssetPath);
+            if (fontAsset != null)
+            {
+                return fontAsset;
+            }
+
+            throw new InvalidOperationException("TMP default font asset not found.");
         }
 
         private static void SetLayoutElement(GameObject gameObject, float preferredHeight, float preferredWidth, float flexibleWidth)
@@ -353,31 +375,31 @@ namespace ET.Editor
             }
 
             RectTransform playerPanelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "PlayerPanel_RectTransform"));
-            Text playerTitleText = GetRequiredComponent<Text>(FindRequiredChild(playerPanelRectTransform, "PlayerTitle_Text"));
-            Text playerTagsText = GetRequiredComponent<Text>(FindRequiredChild(playerPanelRectTransform, "PlayerTags_Text"));
+            Component playerTitleText = GetRequiredComponent<Component>(FindRequiredChild(playerPanelRectTransform, "PlayerTitle_Text"), ResolveType(TextMeshProUGUITypeName));
+            Component playerTagsText = GetRequiredComponent<Component>(FindRequiredChild(playerPanelRectTransform, "PlayerTags_Text"), ResolveType(TextMeshProUGUITypeName));
             RectTransform playerRowsRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(playerPanelRectTransform, "PlayerRows_RectTransform"));
-            Text playerCategoryTemplateText = GetRequiredComponent<Text>(FindRequiredChild(playerRowsRectTransform, "PlayerCategoryTemplate_Text"));
+            Component playerCategoryTemplateText = GetRequiredComponent<Component>(FindRequiredChild(playerRowsRectTransform, "PlayerCategoryTemplate_Text"), ResolveType(TextMeshProUGUITypeName));
             Component playerItemTemplate = GetRequiredComponent<Component>(FindRequiredChild(playerRowsRectTransform, "PlayerItemTemplate_AttributeRowTemplate"), ResolveType(MonoRowTypeName));
 
             RectTransform monsterPanelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "MonsterPanel_RectTransform"));
-            Text monsterTitleText = GetRequiredComponent<Text>(FindRequiredChild(monsterPanelRectTransform, "MonsterTitle_Text"));
-            Text monsterTagsText = GetRequiredComponent<Text>(FindRequiredChild(monsterPanelRectTransform, "MonsterTags_Text"));
+            Component monsterTitleText = GetRequiredComponent<Component>(FindRequiredChild(monsterPanelRectTransform, "MonsterTitle_Text"), ResolveType(TextMeshProUGUITypeName));
+            Component monsterTagsText = GetRequiredComponent<Component>(FindRequiredChild(monsterPanelRectTransform, "MonsterTags_Text"), ResolveType(TextMeshProUGUITypeName));
             RectTransform monsterRowsRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(monsterPanelRectTransform, "MonsterRows_RectTransform"));
-            Text monsterCategoryTemplateText = GetRequiredComponent<Text>(FindRequiredChild(monsterRowsRectTransform, "MonsterCategoryTemplate_Text"));
+            Component monsterCategoryTemplateText = GetRequiredComponent<Component>(FindRequiredChild(monsterRowsRectTransform, "MonsterCategoryTemplate_Text"), ResolveType(TextMeshProUGUITypeName));
             Component monsterItemTemplate = GetRequiredComponent<Component>(FindRequiredChild(monsterRowsRectTransform, "MonsterItemTemplate_AttributeRowTemplate"), ResolveType(MonoRowTypeName));
 
             TrySetObjectReference(formComponent, "m_PlayerPanelRectTransform", playerPanelRectTransform);
-            TrySetObjectReference(formComponent, "m_PlayerTitleText", playerTitleText);
-            TrySetObjectReference(formComponent, "m_PlayerTagsText", playerTagsText);
+            TrySetObjectReference(formComponent, "m_PlayerTitleTextMeshProUGUI", playerTitleText);
+            TrySetObjectReference(formComponent, "m_PlayerTagsTextMeshProUGUI", playerTagsText);
             TrySetObjectReference(formComponent, "m_PlayerRowsRectTransform", playerRowsRectTransform);
-            TrySetObjectReference(formComponent, "m_PlayerCategoryTemplateText", playerCategoryTemplateText);
+            TrySetObjectReference(formComponent, "m_PlayerCategoryTemplateTextMeshProUGUI", playerCategoryTemplateText);
             TrySetObjectReference(formComponent, "m_PlayerItemTemplateAttributeRowTemplate", playerItemTemplate);
 
             TrySetObjectReference(formComponent, "m_MonsterPanelRectTransform", monsterPanelRectTransform);
-            TrySetObjectReference(formComponent, "m_MonsterTitleText", monsterTitleText);
-            TrySetObjectReference(formComponent, "m_MonsterTagsText", monsterTagsText);
+            TrySetObjectReference(formComponent, "m_MonsterTitleTextMeshProUGUI", monsterTitleText);
+            TrySetObjectReference(formComponent, "m_MonsterTagsTextMeshProUGUI", monsterTagsText);
             TrySetObjectReference(formComponent, "m_MonsterRowsRectTransform", monsterRowsRectTransform);
-            TrySetObjectReference(formComponent, "m_MonsterCategoryTemplateText", monsterCategoryTemplateText);
+            TrySetObjectReference(formComponent, "m_MonsterCategoryTemplateTextMeshProUGUI", monsterCategoryTemplateText);
             TrySetObjectReference(formComponent, "m_MonsterItemTemplateAttributeRowTemplate", monsterItemTemplate);
 
             RefreshRowBind(playerItemTemplate);
@@ -386,11 +408,11 @@ namespace ET.Editor
 
         private static void RefreshRowBind(Component rowComponent)
         {
-            Text labelText = GetRequiredComponent<Text>(FindRequiredChild(rowComponent.transform, "Label_Text"));
-            Text valueText = GetRequiredComponent<Text>(FindRequiredChild(rowComponent.transform, "Value_Text"));
+            Component labelText = GetRequiredComponent<Component>(FindRequiredChild(rowComponent.transform, "Label_Text"), ResolveType(TextMeshProUGUITypeName));
+            Component valueText = GetRequiredComponent<Component>(FindRequiredChild(rowComponent.transform, "Value_Text"), ResolveType(TextMeshProUGUITypeName));
 
-            TrySetObjectReference(rowComponent, "m_LabelText", labelText);
-            TrySetObjectReference(rowComponent, "m_ValueText", valueText);
+            TrySetObjectReference(rowComponent, "m_LabelTextMeshProUGUI", labelText);
+            TrySetObjectReference(rowComponent, "m_ValueTextMeshProUGUI", valueText);
         }
 
         private static Transform FindRequiredChild(Transform parent, string path)
@@ -398,10 +420,60 @@ namespace ET.Editor
             Transform child = parent.Find(path);
             if (child == null)
             {
+                string[] segments = path.Split('/');
+                child = FindChildRecursive(parent, segments, 0);
+            }
+
+            if (child == null)
+            {
                 throw new InvalidOperationException($"Child not found: {path}");
             }
 
             return child;
+        }
+
+        private static Transform FindChildRecursive(Transform parent, string[] segments, int index)
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < parent.childCount; ++i)
+            {
+                Transform child = parent.GetChild(i);
+                if (child.name != segments[index])
+                {
+                    continue;
+                }
+
+                if (index == segments.Length - 1)
+                {
+                    return child;
+                }
+
+                Transform nestedChild = FindChildRecursive(child, segments, index + 1);
+                if (nestedChild != null)
+                {
+                    return nestedChild;
+                }
+            }
+
+            if (index != 0)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < parent.childCount; ++i)
+            {
+                Transform nestedChild = FindChildRecursive(parent.GetChild(i), segments, index);
+                if (nestedChild != null)
+                {
+                    return nestedChild;
+                }
+            }
+
+            return null;
         }
 
         private static T GetRequiredComponent<T>(Transform transform) where T : Component
@@ -437,6 +509,43 @@ namespace ET.Editor
 
             property.objectReferenceValue = value;
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetGraphicColor(Component component, Color color)
+        {
+            Graphic graphic = component as Graphic;
+            if (graphic == null)
+            {
+                throw new InvalidOperationException($"Graphic component expected on {component?.name ?? "null"}.");
+            }
+
+            graphic.color = color;
+        }
+
+        private static void SetObjectMember(Component component, string memberName, object value)
+        {
+            PropertyInfo property = component.GetType().GetProperty(memberName, BindingFlags.Instance | BindingFlags.Public);
+            if (property != null && property.CanWrite)
+            {
+                property.SetValue(component, value);
+                return;
+            }
+
+            FieldInfo field = component.GetType().GetField(memberName, BindingFlags.Instance | BindingFlags.Public);
+            if (field != null)
+            {
+                field.SetValue(component, value);
+                return;
+            }
+
+            throw new InvalidOperationException($"Writable member not found: {component.GetType().FullName}.{memberName}");
+        }
+
+        private static void SetEnumMember(Component component, string memberName, string enumTypeName, string enumValueName)
+        {
+            Type enumType = ResolveType(enumTypeName);
+            object enumValue = Enum.Parse(enumType, enumValueName);
+            SetObjectMember(component, memberName, enumValue);
         }
 
         private static Type ResolveType(string assemblyQualifiedTypeName)

@@ -49,8 +49,8 @@ namespace ET.Client
             if (self.LayoutBuilt ||
                 view?.PlayerRowsRectTransform == null ||
                 view.MonsterRowsRectTransform == null ||
-                view.PlayerCategoryTemplateText == null ||
-                view.MonsterCategoryTemplateText == null ||
+                view.PlayerCategoryTemplateTextMeshProUGUI == null ||
+                view.MonsterCategoryTemplateTextMeshProUGUI == null ||
                 view.PlayerItemTemplateAttributeRowTemplate == null ||
                 view.MonsterItemTemplateAttributeRowTemplate == null)
             {
@@ -63,13 +63,13 @@ namespace ET.Client
 
             self.BuildPanelRows(
                 view.PlayerRowsRectTransform,
-                view.PlayerCategoryTemplateText,
+                view.PlayerCategoryTemplateTextMeshProUGUI,
                 view.PlayerItemTemplateAttributeRowTemplate,
                 self.PlayerRows,
                 true);
             self.BuildPanelRows(
                 view.MonsterRowsRectTransform,
-                view.MonsterCategoryTemplateText,
+                view.MonsterCategoryTemplateTextMeshProUGUI,
                 view.MonsterItemTemplateAttributeRowTemplate,
                 self.MonsterRows,
                 false);
@@ -80,7 +80,7 @@ namespace ET.Client
         private static void BuildPanelRows(
             this UIFormUnitAttributeComponent self,
             RectTransform rowsRoot,
-            Text categoryTemplate,
+            Component categoryTemplate,
             MonoUIUnitAttributeRow rowTemplate,
             List<MonoUIUnitAttributeRow> targetRows,
             bool recordAttrTypes)
@@ -95,9 +95,9 @@ namespace ET.Client
 
             for (int categoryIndex = 0; categoryIndex < GetCategoryCount(); ++categoryIndex)
             {
-                Text categoryText = global::UnityEngine.Object.Instantiate(categoryTemplate, rowsRoot, false);
+                Component categoryText = global::UnityEngine.Object.Instantiate(categoryTemplate, rowsRoot, false);
                 categoryText.gameObject.name = $"Category_{categoryIndex}";
-                categoryText.text = GetCategoryName(categoryIndex);
+                SetText(categoryText, GetCategoryName(categoryIndex));
                 categoryText.gameObject.SetActive(true);
 
                 int attributeCount = GetCategoryAttributeCount(categoryIndex);
@@ -106,8 +106,8 @@ namespace ET.Client
                     AttrType attrType = GetCategoryAttributeType(categoryIndex, attributeIndex);
                     MonoUIUnitAttributeRow row = global::UnityEngine.Object.Instantiate(rowTemplate, rowsRoot, false);
                     row.gameObject.name = $"Row_{categoryIndex}_{attributeIndex}";
-                    row.LabelText.text = GetAttributeName(attrType);
-                    row.ValueText.text = "--";
+                    row.LabelTextMeshProUGUI.text = GetAttributeName(attrType);
+                    row.ValueTextMeshProUGUI.text = "--";
                     row.gameObject.SetActive(true);
                     targetRows.Add(row);
 
@@ -163,15 +163,15 @@ namespace ET.Client
 
             self.RefreshPanel(
                 view.PlayerPanelRectTransform,
-                view.PlayerTitleText,
-                view.PlayerTagsText,
+                view.PlayerTitleTextMeshProUGUI,
+                view.PlayerTagsTextMeshProUGUI,
                 self.PlayerRows,
                 playerUnit,
                 "Player Attributes");
             self.RefreshPanel(
                 view.MonsterPanelRectTransform,
-                view.MonsterTitleText,
-                view.MonsterTagsText,
+                view.MonsterTitleTextMeshProUGUI,
+                view.MonsterTagsTextMeshProUGUI,
                 self.MonsterRows,
                 monsterUnit,
                 "Boss Attributes");
@@ -180,8 +180,8 @@ namespace ET.Client
         private static void RefreshPanel(
             this UIFormUnitAttributeComponent self,
             RectTransform panelRectTransform,
-            Text titleText,
-            Text tagsText,
+            Component titleText,
+            Component tagsText,
             List<MonoUIUnitAttributeRow> rows,
             Unit unit,
             string defaultTitle)
@@ -199,8 +199,8 @@ namespace ET.Client
                 return;
             }
 
-            titleText.text = defaultTitle;
-            tagsText.text = $"Tags: {GetTagsText(asc)}";
+            SetText(titleText, defaultTitle);
+            SetText(tagsText, $"Tags: {GetTagsText(asc)}");
 
             int count = rows.Count < self.OrderedAttrTypes.Count ? rows.Count : self.OrderedAttrTypes.Count;
             for (int i = 0; i < count; ++i)
@@ -211,7 +211,7 @@ namespace ET.Client
                     continue;
                 }
 
-                row.ValueText.text = GetAttributeValueText(asc, self.OrderedAttrTypes[i]);
+                row.ValueTextMeshProUGUI.text = GetAttributeValueText(asc, self.OrderedAttrTypes[i]);
             }
         }
 
@@ -290,6 +290,25 @@ namespace ET.Client
             }
 
             return tags.Count > 0 ? string.Join(", ", tags) : "None";
+        }
+
+        private static void SetText(Component textComponent, string value)
+        {
+            if (textComponent == null)
+            {
+                return;
+            }
+
+            if (textComponent is TMPro.TMP_Text tmpText)
+            {
+                tmpText.text = value;
+                return;
+            }
+
+            if (textComponent is Text text)
+            {
+                text.text = value;
+            }
         }
 
         private static string GetAttributeValueText(AbilitySystemComponent asc, AttrType attrType)

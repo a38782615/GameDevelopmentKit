@@ -10,6 +10,7 @@
         "LubanLib.Editor",
         "Game",
         "Game.Editor",
+        "Unity.TextMeshPro",
         "UniTask",
         "ToolbarExtension.Editor",
         "UnityGameFramework.Editor",

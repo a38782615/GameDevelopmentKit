@@ -5,7 +5,7 @@ namespace ET.Client
     public partial class MonoUIFormUnitAttribute
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_MonsterCategoryTemplateText;
+        private TMPro.TextMeshProUGUI m_MonsterCategoryTemplateTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIUnitAttributeRow m_MonsterItemTemplateAttributeRowTemplate;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
@@ -13,11 +13,11 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_MonsterRowsRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_MonsterTagsText;
+        private TMPro.TextMeshProUGUI m_MonsterTagsTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_MonsterTitleText;
+        private TMPro.TextMeshProUGUI m_MonsterTitleTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_PlayerCategoryTemplateText;
+        private TMPro.TextMeshProUGUI m_PlayerCategoryTemplateTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIUnitAttributeRow m_PlayerItemTemplateAttributeRowTemplate;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
@@ -25,23 +25,23 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_PlayerRowsRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_PlayerTagsText;
+        private TMPro.TextMeshProUGUI m_PlayerTagsTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_PlayerTitleText;
+        private TMPro.TextMeshProUGUI m_PlayerTitleTextMeshProUGUI;
 
 
-        public UnityEngine.UI.Text MonsterCategoryTemplateText => m_MonsterCategoryTemplateText;
+        public TMPro.TextMeshProUGUI MonsterCategoryTemplateTextMeshProUGUI => m_MonsterCategoryTemplateTextMeshProUGUI;
         public ET.Client.MonoUIUnitAttributeRow MonsterItemTemplateAttributeRowTemplate => m_MonsterItemTemplateAttributeRowTemplate;
         public UnityEngine.RectTransform MonsterPanelRectTransform => m_MonsterPanelRectTransform;
         public UnityEngine.RectTransform MonsterRowsRectTransform => m_MonsterRowsRectTransform;
-        public UnityEngine.UI.Text MonsterTagsText => m_MonsterTagsText;
-        public UnityEngine.UI.Text MonsterTitleText => m_MonsterTitleText;
-        public UnityEngine.UI.Text PlayerCategoryTemplateText => m_PlayerCategoryTemplateText;
+        public TMPro.TextMeshProUGUI MonsterTagsTextMeshProUGUI => m_MonsterTagsTextMeshProUGUI;
+        public TMPro.TextMeshProUGUI MonsterTitleTextMeshProUGUI => m_MonsterTitleTextMeshProUGUI;
+        public TMPro.TextMeshProUGUI PlayerCategoryTemplateTextMeshProUGUI => m_PlayerCategoryTemplateTextMeshProUGUI;
         public ET.Client.MonoUIUnitAttributeRow PlayerItemTemplateAttributeRowTemplate => m_PlayerItemTemplateAttributeRowTemplate;
         public UnityEngine.RectTransform PlayerPanelRectTransform => m_PlayerPanelRectTransform;
         public UnityEngine.RectTransform PlayerRowsRectTransform => m_PlayerRowsRectTransform;
-        public UnityEngine.UI.Text PlayerTagsText => m_PlayerTagsText;
-        public UnityEngine.UI.Text PlayerTitleText => m_PlayerTitleText;
+        public TMPro.TextMeshProUGUI PlayerTagsTextMeshProUGUI => m_PlayerTagsTextMeshProUGUI;
+        public TMPro.TextMeshProUGUI PlayerTitleTextMeshProUGUI => m_PlayerTitleTextMeshProUGUI;
 
 
 #if UNITY_EDITOR
@@ -52,18 +52,18 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_MonsterCategoryTemplateText == null) return true;
+            if (this.m_MonsterCategoryTemplateTextMeshProUGUI == null) return true;
             if (this.m_MonsterItemTemplateAttributeRowTemplate == null) return true;
             if (this.m_MonsterPanelRectTransform == null) return true;
             if (this.m_MonsterRowsRectTransform == null) return true;
-            if (this.m_MonsterTagsText == null) return true;
-            if (this.m_MonsterTitleText == null) return true;
-            if (this.m_PlayerCategoryTemplateText == null) return true;
+            if (this.m_MonsterTagsTextMeshProUGUI == null) return true;
+            if (this.m_MonsterTitleTextMeshProUGUI == null) return true;
+            if (this.m_PlayerCategoryTemplateTextMeshProUGUI == null) return true;
             if (this.m_PlayerItemTemplateAttributeRowTemplate == null) return true;
             if (this.m_PlayerPanelRectTransform == null) return true;
             if (this.m_PlayerRowsRectTransform == null) return true;
-            if (this.m_PlayerTagsText == null) return true;
-            if (this.m_PlayerTitleText == null) return true;
+            if (this.m_PlayerTagsTextMeshProUGUI == null) return true;
+            if (this.m_PlayerTitleTextMeshProUGUI == null) return true;
             return false;
         }
 #endif

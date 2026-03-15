@@ -5,13 +5,13 @@ namespace ET.Client
     public partial class MonoUIUnitAttributeRow
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_LabelText;
+        private TMPro.TextMeshProUGUI m_LabelTextMeshProUGUI;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Text m_ValueText;
+        private TMPro.TextMeshProUGUI m_ValueTextMeshProUGUI;
 
 
-        public UnityEngine.UI.Text LabelText => m_LabelText;
-        public UnityEngine.UI.Text ValueText => m_ValueText;
+        public TMPro.TextMeshProUGUI LabelTextMeshProUGUI => m_LabelTextMeshProUGUI;
+        public TMPro.TextMeshProUGUI ValueTextMeshProUGUI => m_ValueTextMeshProUGUI;
 
 
 #if UNITY_EDITOR
@@ -22,8 +22,8 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_LabelText == null) return true;
-            if (this.m_ValueText == null) return true;
+            if (this.m_LabelTextMeshProUGUI == null) return true;
+            if (this.m_ValueTextMeshProUGUI == null) return true;
             return false;
         }
 #endif
