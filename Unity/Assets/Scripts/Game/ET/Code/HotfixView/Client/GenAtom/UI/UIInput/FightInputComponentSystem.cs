@@ -132,6 +132,14 @@ namespace ET.Client
 
             self.PendingScreenClick = false;
             self.RefreshPointerPosition();
+            if (self.IsPointerBlockedByUI())
+            {
+#if UNITY_EDITOR
+                Log.Info(
+                    $"[FightInput] Click blocked by UI pointer=({self.PointerScreenPosition.x:0.##},{self.PointerScreenPosition.y:0.##})");
+#endif
+                return;
+            }
 #if UNITY_EDITOR
             Log.Info(
                 $"[FightInput] Publish click scene={scene.SceneType} pointer=({self.PointerScreenPosition.x:0.##},{self.PointerScreenPosition.y:0.##})");
@@ -140,6 +148,17 @@ namespace ET.Client
             {
                 ScreenPosition = new float2(self.PointerScreenPosition.x, self.PointerScreenPosition.y),
             });
+        }
+
+        private static bool IsPointerBlockedByUI(this FightInputComponent self)
+        {
+            global::UnityEngine.EventSystems.EventSystem currentEventSystem = global::UnityEngine.EventSystems.EventSystem.current;
+            if (currentEventSystem == null)
+            {
+                return false;
+            }
+
+            return currentEventSystem.IsPointerOverGameObject();
         }
     }
 }
