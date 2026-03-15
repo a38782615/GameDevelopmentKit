@@ -63,5 +63,10 @@ namespace ET.Client
         /// 技能界面
         /// </summary>
         public const int UISkill = 804;
+
+        /// <summary>
+        /// 单位属性界面
+        /// </summary>
+        public const int UIUnitAttribute = 805;
     }
 }

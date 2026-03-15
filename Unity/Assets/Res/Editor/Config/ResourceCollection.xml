@@ -165,6 +165,7 @@
       <Resource Name="Res/UI/UIForm/GenAtom/UIHelp" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILobby" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILogin" LoadType="0" Packed="False" />
+      <Resource Name="Res/UI/UIForm/GenAtom/UIUnitAttribute" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIPrefab/Button" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UISprite/Common" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UISprite/Icon" LoadType="0" Packed="False" />
@@ -413,6 +414,7 @@
       <Asset Guid="9ef39b1d990f66b41ba4e5bdf5741b1b" ResourceName="UI.UXTool" />
       <Asset Guid="9f3e288bf1162c74aaa2fc47ba9f9e51" ResourceName="Res/Prefab/Effect/Effectmaterial/Vfx/Texture/T_smoke_h_1010" />
       <Asset Guid="9f6d9adc6f537764fa0fea29671e77bf" ResourceName="Res/UI/UIForm/GenAtom/UILogin" />
+      <Asset Guid="f06355786a1d2f243b727dcd2ef74baf" ResourceName="Res/UI/UIForm/GenAtom/UIUnitAttribute" />
       <Asset Guid="9f847ec5e66e03e4ead1d3c5f7b510e8" ResourceName="Res/UI/UISprite/Common" />
       <Asset Guid="a0edf0b3f659d834aa9be07a296ddae0" ResourceName="ET.Code" />
       <Asset Guid="a153474772d300042a4710f1761d11ba" ResourceName="Res/Prefab/Effect/Effectmaterial/Vfx/Material/Mat_T_ci_xxc_001_shj01" />
