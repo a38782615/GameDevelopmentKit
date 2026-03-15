@@ -10,6 +10,7 @@ namespace ET.Client.Editor
     {
         private const string PublishScreenCenterClickMenuPath = "GenAtom/Runtime/Publish FightInput Screen Center Click";
         private const string DumpFightInputHandlersMenuPath = "GenAtom/Runtime/Dump FightInput Handlers";
+        private const string ReloadCurrentSceneMenuPath = "GenAtom/Runtime/Reload Current Scene";
 
         [MenuItem(PublishScreenCenterClickMenuPath)]
         public static void PublishScreenCenterClick()
@@ -99,6 +100,34 @@ namespace ET.Client.Editor
             }
 
             UnityEngine.Debug.LogWarning(builder.ToString());
+        }
+
+        [MenuItem(ReloadCurrentSceneMenuPath)]
+        public static void ReloadCurrentScene()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                UnityEngine.Debug.LogWarning("[FightInputDebug] Play Mode required.");
+                return;
+            }
+
+            Scene currentScene = GetCurrentClientScene();
+            if (currentScene == null || currentScene.IsDisposed)
+            {
+                UnityEngine.Debug.LogWarning("[FightInputDebug] Current scene not found.");
+                return;
+            }
+
+            Scene root = currentScene.Root();
+            if (root == null || root.IsDisposed)
+            {
+                UnityEngine.Debug.LogWarning("[FightInputDebug] Root scene not found.");
+                return;
+            }
+
+            UnityEngine.Debug.LogWarning($"[FightInputDebug] reload begin sceneName={currentScene.Name} sceneId={currentScene.Id}");
+            MethodInfo reloadMethod = typeof(SceneChangeHelper).GetMethod(nameof(SceneChangeHelper.SceneChangeTo2), BindingFlags.Public | BindingFlags.Static);
+            reloadMethod?.Invoke(null, new object[] { root, currentScene.Name, currentScene.Id });
         }
 
         private static Scene GetCurrentClientScene()

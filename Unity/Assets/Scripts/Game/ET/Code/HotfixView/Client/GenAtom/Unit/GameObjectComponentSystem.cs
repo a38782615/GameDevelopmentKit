@@ -8,7 +8,18 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this GameObjectComponent self)
         {
-            UnityEngine.Object.Destroy(self.GameObject);
+            UnityEngine.GameObject gameObject = self.GameObject;
+            if (gameObject == null)
+            {
+                return;
+            }
+
+            if (gameObject.GetComponent("UnityGameFramework.Runtime.Entity") == null)
+            {
+                UnityEngine.Object.Destroy(gameObject);
+            }
+
+            self.GameObject = null;
         }
         
         [EntitySystem]

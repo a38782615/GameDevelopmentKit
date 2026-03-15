@@ -11,7 +11,7 @@ namespace Game
     public static partial class UGuiExtension
     {
         /// <summary>
-        /// 缓存的 WaitForEndOfFrame 对象，避免每帧分配
+        /// 缓存的 WaitForEndOfFrame 对象，避免每帧分配。
         /// </summary>
         private static readonly WaitForEndOfFrame s_WaitForEndOfFrame = new WaitForEndOfFrame();
 
@@ -68,21 +68,29 @@ namespace Game
         {
             async UniTaskVoid OnClickAsync()
             {
+                string buttonName = button != null ? button.name : "DestroyedButton";
                 try
                 {
-                    button.interactable = false;
+                    if (button != null)
+                    {
+                        button.interactable = false;
+                    }
+
                     await action();
                 }
                 catch (Exception e)
                 {
                     if (!e.IsOperationCanceledException())
                     {
-                        throw new GameFrameworkException($"{button.name} click error", e);
+                        throw new GameFrameworkException($"{buttonName} click error", e);
                     }
                 }
                 finally
                 {
-                    button.interactable = true;
+                    if (button != null)
+                    {
+                        button.interactable = true;
+                    }
                 }
             }
 

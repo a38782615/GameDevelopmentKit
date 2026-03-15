@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using Game;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -31,6 +32,7 @@ namespace ET.Editor
             try
             {
                 root = CreateRoot();
+                TryGenerateMonoCodeBind(root);
                 RefreshMonoCodeBindSerialization(root);
                 GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 if (prefab == null)
@@ -95,6 +97,7 @@ namespace ET.Editor
             RectTransform panelRect = CreatePanel(root.transform);
             RectTransform skillGridRect = CreateSkillGrid(panelRect);
             CreateSkillItemTemplate(skillGridRect);
+            CreateReloadSceneButton(root.transform);
             return root;
         }
 
@@ -175,6 +178,34 @@ namespace ET.Editor
             CreateNameText(castButtonObject.transform);
             CreateStateText(castButtonObject.transform);
             item.SetActive(false);
+        }
+
+        private static void CreateReloadSceneButton(Transform parent)
+        {
+            GameObject buttonObject = new GameObject(
+                "ReloadScene_Button",
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Button));
+            buttonObject.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = buttonObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0f, 0f);
+            rectTransform.anchorMax = new Vector2(0f, 0f);
+            rectTransform.pivot = new Vector2(0f, 0f);
+            rectTransform.anchoredPosition = new Vector2(24f, 24f);
+            rectTransform.sizeDelta = new Vector2(180f, 52f);
+
+            Image image = buttonObject.GetComponent<Image>();
+            image.color = new Color(0.14f, 0.19f, 0.24f, 0.95f);
+
+            Text label = CreateText("Label", buttonObject.transform, "重新加载场景", 24, TextAnchor.MiddleCenter);
+            RectTransform labelRectTransform = label.rectTransform;
+            labelRectTransform.anchorMin = Vector2.zero;
+            labelRectTransform.anchorMax = Vector2.one;
+            labelRectTransform.offsetMin = new Vector2(10f, 6f);
+            labelRectTransform.offsetMax = new Vector2(-10f, -6f);
+            label.color = new Color(0.95f, 0.97f, 1f, 0.95f);
         }
 
         private static void CreateIcon(Transform parent)
@@ -388,6 +419,7 @@ namespace ET.Editor
             }
 
             RectTransform panelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "Panel_RectTransform"));
+            Button reloadSceneButton = GetRequiredComponent<Button>(FindRequiredChild(root.transform, "ReloadScene_Button"));
             Transform skillGrid = FindRequiredChild(panelRectTransform, "SkillGrid_RectTransform_GridLayoutGroup");
             RectTransform skillGridRectTransform = GetRequiredComponent<RectTransform>(skillGrid);
             GridLayoutGroup skillGridLayoutGroup = GetRequiredComponent<GridLayoutGroup>(skillGrid);
@@ -408,6 +440,7 @@ namespace ET.Editor
             Text stateText = GetRequiredComponent<Text>(FindRequiredChild(castButtonTransform, "State_Text"));
 
             TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);
+            TrySetObjectReference(formComponent, "m_ReloadSceneButton", reloadSceneButton);
             TrySetObjectReference(formComponent, "m_SkillGridRectTransform", skillGridRectTransform);
             TrySetObjectReference(formComponent, "m_SkillGridGridLayoutGroup", skillGridLayoutGroup);
             TrySetObjectReference(formComponent, "m_ItemTemplateSkillItemTemplate", itemComponent);
@@ -464,6 +497,36 @@ namespace ET.Editor
             }
 
             return type;
+        }
+
+        private static void TryGenerateMonoCodeBind(GameObject root)
+        {
+            MonoBehaviour monoBehaviour = root.GetComponent(ResolveType(MonoUIFormSkillTypeName)) as MonoBehaviour;
+            if (monoBehaviour == null)
+            {
+                throw new InvalidOperationException("MonoUIFormSkill MonoBehaviour not found.");
+            }
+
+            MonoScript monoScript = MonoScript.FromMonoBehaviour(monoBehaviour);
+            if (monoScript == null)
+            {
+                throw new InvalidOperationException("MonoUIFormSkill MonoScript not found.");
+            }
+
+            Type binderType = Type.GetType("CodeBind.Editor.MonoCodeBinder, CodeBind.Editor");
+            if (binderType == null)
+            {
+                throw new InvalidOperationException("CodeBind.Editor.MonoCodeBinder type not found.");
+            }
+
+            object binder = Activator.CreateInstance(binderType, monoScript, root.transform, '_');
+            MethodInfo tryGenerateBindCodeMethod = binderType.GetMethod("TryGenerateBindCode", BindingFlags.Instance | BindingFlags.Public);
+            if (tryGenerateBindCodeMethod == null)
+            {
+                throw new InvalidOperationException("MonoCodeBinder.TryGenerateBindCode not found.");
+            }
+
+            tryGenerateBindCodeMethod.Invoke(binder, null);
         }
 
         private static Sprite LoadSprite(string assetPath)

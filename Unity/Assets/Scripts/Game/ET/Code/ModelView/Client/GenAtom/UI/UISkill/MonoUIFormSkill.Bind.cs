@@ -9,6 +9,8 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_PanelRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Button m_ReloadSceneButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.GridLayoutGroup m_SkillGridGridLayoutGroup;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_SkillGridRectTransform;
@@ -16,6 +18,7 @@ namespace ET.Client
 
         public ET.Client.MonoUISkillItem ItemTemplateSkillItemTemplate => m_ItemTemplateSkillItemTemplate;
         public UnityEngine.RectTransform PanelRectTransform => m_PanelRectTransform;
+        public UnityEngine.UI.Button ReloadSceneButton => m_ReloadSceneButton;
         public UnityEngine.UI.GridLayoutGroup SkillGridGridLayoutGroup => m_SkillGridGridLayoutGroup;
         public UnityEngine.RectTransform SkillGridRectTransform => m_SkillGridRectTransform;
 
@@ -30,6 +33,7 @@ namespace ET.Client
         {
             if (this.m_ItemTemplateSkillItemTemplate == null) return true;
             if (this.m_PanelRectTransform == null) return true;
+            if (this.m_ReloadSceneButton == null) return true;
             if (this.m_SkillGridGridLayoutGroup == null) return true;
             if (this.m_SkillGridRectTransform == null) return true;
             return false;

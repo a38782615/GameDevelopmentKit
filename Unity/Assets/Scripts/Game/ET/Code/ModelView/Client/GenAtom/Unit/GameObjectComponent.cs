@@ -16,7 +16,7 @@ namespace ET.Client
             set
             {
                 this.gameObject = value;
-                this.Transform = value.transform;
+                this.Transform = value != null ? value.transform : null;
             }
         }
 

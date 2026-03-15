@@ -81,7 +81,7 @@ namespace ET.Client
             unitInfo.Type = config.Type;
             unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
             unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
-            unitInfo.KV[NumericType.Speed] = (long)(6000f);
+            unitInfo.KV[NumericType.Speed] = (long)(50 * 1000f);
             return unitInfo;
         }
 
@@ -89,8 +89,8 @@ namespace ET.Client
         {
             return unitType switch
             {
-                UnitType.Player => new float2(-6f + index * 2.5f, index * 1.5f).ToModePosition(),
-                UnitType.Monster => new float2(6f + index * 2.5f, index * 1.5f).ToModePosition(),
+                UnitType.Player => new float2(-3f + index * 2.5f, index * 1.5f).ToModePosition(),
+                UnitType.Monster => new float2(3f + index * 2.5f, index * 1.5f).ToModePosition(),
                 _ => new float2(index * 2.5f, -4f).ToModePosition(),
             };
         }

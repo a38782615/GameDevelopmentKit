@@ -23,6 +23,10 @@ namespace ET.Client
         private static void UGFUIFormOnOpen(this UIFormSkillComponent self)
         {
             self.ListSyncLeftTime = 0f;
+            if (self.View?.ReloadSceneButton != null)
+            {
+                self.View.ReloadSceneButton.SetAsync(self.ReloadCurrentSceneAsync);
+            }
             self.SyncSkillList();
             self.RefreshSkillLayout();
 #if UNITY_EDITOR
@@ -42,6 +46,10 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormSkillComponent self, bool isShutdown)
         {
+            if (self.View?.ReloadSceneButton != null)
+            {
+                self.View.ReloadSceneButton.onClick.RemoveAllListeners();
+            }
             self.DestroySkillItems();
             self.DisposeSkillCells();
             self.SkillSpecs.Clear();
@@ -95,6 +103,23 @@ namespace ET.Client
             }
 
             self.RefreshSkillItems();
+        }
+
+        private static async UniTask ReloadCurrentSceneAsync(this UIFormSkillComponent self)
+        {
+            Scene currentScene = self.Scene();
+            if (currentScene == null || currentScene.IsDisposed)
+            {
+                return;
+            }
+
+            Scene root = currentScene.Root();
+            if (root == null || root.IsDisposed)
+            {
+                return;
+            }
+
+            await SceneChangeHelper.SceneChangeTo2(root, currentScene.Name, currentScene.Id);
         }
 
         private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
