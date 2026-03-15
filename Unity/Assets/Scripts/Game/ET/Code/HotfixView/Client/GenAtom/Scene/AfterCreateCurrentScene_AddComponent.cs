@@ -7,6 +7,7 @@ namespace ET.Client
     {
         protected override async UniTask Run(Scene scene, AfterCreateCurrentScene args)
         {
+            SkillHudManager.Instance?.ClearSceneHud();
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
             scene.AddComponent<FightInputComponent>();

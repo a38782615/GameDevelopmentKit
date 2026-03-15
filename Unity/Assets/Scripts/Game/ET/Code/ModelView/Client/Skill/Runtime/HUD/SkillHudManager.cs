@@ -130,6 +130,27 @@ namespace ET.Client
             unitStates.Remove(asc.InstanceId);
         }
 
+        public void ClearSceneHud()
+        {
+            int unitCount = unitStates.Count;
+            int floatingTextCount = floatingTextStates.Count;
+
+            unitStates.Clear();
+
+            foreach (FloatingTextState state in floatingTextStates.Values)
+            {
+                ReleaseFloatingTextState(state);
+            }
+
+            floatingTextStates.Clear();
+            pendingFloatingTextRemovals.Clear();
+            backgroundInstances.Clear();
+            foregroundInstances.Clear();
+
+            UnityGameFramework.Runtime.Log.Info(
+                $"Skill HUD cleared scene data. units={unitCount} floatingTexts={floatingTextCount}");
+        }
+
         public void UpdateUnitHealth(long ascInstanceId, GameObject owner, float currentHealth, float maxHealth)
         {
             if (ascInstanceId == 0 || owner == null)
@@ -329,7 +350,7 @@ namespace ET.Client
             foreach (KeyValuePair<long, UnitHudState> pair in unitStates)
             {
                 UnitHudState state = pair.Value;
-                if (state == null || state.Owner == null)
+                if (state == null || state.Owner == null || !state.Owner.scene.IsValid() || !state.Owner.scene.isLoaded)
                 {
                     removals ??= new List<long>();
                     removals.Add(pair.Key);
