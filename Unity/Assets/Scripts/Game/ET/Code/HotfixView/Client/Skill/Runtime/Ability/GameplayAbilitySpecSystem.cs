@@ -515,13 +515,19 @@ namespace ET.Client
             var asc = self.GetASC;
             if (asc?.Owner == null || string.IsNullOrEmpty(name)) return;
 
-            var animationComponent = asc.Owner.GetComponent<AnimationComponent>();
-            if (animationComponent == null)
+            SkillUnit skillUnit = asc.GetParent<SkillUnit>();
+            Unit unit = skillUnit?.Unit.As();
+            if (unit == null)
             {
-                animationComponent = asc.Owner.AddComponent<AnimationComponent>();
+                return;
             }
 
-            animationComponent.Initialize(asc);
+            SkelenAnimationComponent animationComponent = unit.GetComponent<SkelenAnimationComponent>();
+            if (animationComponent == null)
+            {
+                animationComponent = unit.AddComponent<SkelenAnimationComponent>();
+            }
+
             animationComponent.PlayAnimation(name, loop);
 #if UNITY_EDITOR
             if (self.SkillId == "1010")

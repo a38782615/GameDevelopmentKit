@@ -29,7 +29,8 @@
         "LitMotion.Extensions",
         "LitMotion.Animation",
         "LoopScrollRect.Runtime",
-        "Game"
+        "Game",
+        "spine-unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

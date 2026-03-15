@@ -41,13 +41,13 @@ namespace ET.Client
             if (asc != null)
             {
                 asc.Owner = viewGameObject;
-                AnimationComponent animationComponent = viewGameObject.GetComponent<AnimationComponent>();
-                if (animationComponent == null)
+                SkelenAnimationComponent skelenAnimationComponent = unit.GetComponent<SkelenAnimationComponent>();
+                if (skelenAnimationComponent == null)
                 {
-                    animationComponent = viewGameObject.AddComponent<AnimationComponent>();
+                    skelenAnimationComponent = unit.AddComponent<SkelenAnimationComponent>();
                 }
 
-                animationComponent.Initialize(asc);
+                skelenAnimationComponent.Bind();
             }
 
             unit.AddComponent<Collider2DComponent>().Bind(viewGameObject, asc);
