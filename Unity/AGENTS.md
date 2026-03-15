@@ -54,6 +54,7 @@
 - 像 `MonoUISkillItem` 这类 ET UI 列表项，如果参考 `MonoUIWidgetTest` 走 widget 开发模式，必须使用 `AETMonoUGFUIWidget + MonoCodeBind`，节点命名遵循 CodeBind 分隔规则，并优先复用 `Mono` 上已有的 `UGFUIWidget` 关联，不要重复 `AddUIWidget`。
 - `UIUnitAttribute` 以及同类 UI 的字体组件统一优先使用 `TextMeshProUGUI`；后续新增或改造 UI 文本时，不要继续使用旧版 `UnityEngine.UI.Text` 字体大小默认40。
 - 调试 Skill / 技能运行时链路时，优先使用 `SkillDiagFileLogger.Log(...)` 记录专用诊断日志；日志文件默认落到 `Temp/SkillDiagLogs`，需要控制台即时可见性时再补充常规日志。
+- 做功能验证时，首先依靠日志打印确认链路、状态和触发次数；只有日志不足以定位问题时，再考虑视觉验证。
 - 遇到 `Game/Generate/`、`Hot/Code/Generate/`、`*.Bind.cs`、Luban / Proto 文件时，先判断它是不是生成产物，并追溯上游来源。
 - 运行时代码放在运行时目录；编辑器工具、构建流程、导出工具放在 `*/Editor/`。
 - 新业务代码默认一个文件只放一个类；只有项目既有模式或生成代码明确要求时，才允许一个文件内放多个类。

@@ -30,7 +30,6 @@ namespace ET.Client
             self.SyncSkillList();
             self.RefreshSkillLayout();
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log($"[DiagUISkill] open runId={self.EditorSmokeRunId + 1} visible={self.SkillSpecs.Count}");
             self.EditorSmokeRunId++;
             self.EditorSmokeTriggered = false;
             self.EditorSmokeReportLeftTime = -1f;
@@ -163,7 +162,6 @@ namespace ET.Client
             if (index < 0 || index >= self.SkillSpecs.Count)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log($"[DiagUISkill] cast skipped invalid-index={index} visible={self.SkillSpecs.Count}");
 #endif
                 return false;
             }
@@ -178,17 +176,14 @@ namespace ET.Client
             if (spec == null || asc == null)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log($"[DiagUISkill] cast skipped null-spec specNull={(spec == null)} ascNull={(asc == null)}");
 #endif
                 return false;
             }
 
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log($"[DiagUISkill] cast begin skillId={spec.SkillId} state={self.GetEditorDebugState(spec)}");
 #endif
             bool success = asc.TryActivateAbility(spec);
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log($"[DiagUISkill] cast end skillId={spec.SkillId} success={success} state={self.GetEditorDebugState(spec)}");
 #endif
             return success;
         }
@@ -197,19 +192,16 @@ namespace ET.Client
         private static async UniTaskVoid TryStartEditorSmokeAfterOpenAsync(this UIFormSkillComponent self)
         {
             int runId = self.EditorSmokeRunId;
-            SkillDiagFileLogger.Log($"[DiagUISkill] smoke task start runId={runId}");
             for (int i = 0; i < 60; ++i)
             {
                 if (self.IsDisposed || self.EditorSmokeRunId != runId)
                 {
-                    SkillDiagFileLogger.Log($"[DiagUISkill] smoke task stop runId={runId} disposed={self.IsDisposed} currentRunId={self.EditorSmokeRunId}");
                     return;
                 }
 
                 self.SyncSkillList();
                 if (self.SkillSpecs.Count > 0)
                 {
-                    SkillDiagFileLogger.Log($"[DiagUISkill] smoke task ready runId={runId} visible={self.SkillSpecs.Count}");
                     self.TryStartEditorSmokeTest();
                     await UniTask.DelayFrame(60);
                     if (!self.IsDisposed && self.EditorSmokeRunId == runId)
@@ -224,7 +216,6 @@ namespace ET.Client
 
             if (!self.IsDisposed && self.EditorSmokeRunId == runId)
             {
-                SkillDiagFileLogger.Log($"[DiagUISkill] smoke task timeout runId={runId} visible={self.SkillSpecs.Count}");
                 Log.Warning($"[UISkillSmoke:{runId}] timeout-empty");
             }
         }
@@ -296,7 +287,6 @@ namespace ET.Client
             self.EditorSmokeResultLogged = true;
             GameplayAbilitySpec spec = self.EditorSmokeSpec.As();
             string finalState = self.GetEditorDebugState(spec);
-            SkillDiagFileLogger.Log($"[DiagUISkill] smoke result runId={self.EditorSmokeRunId} skill={self.EditorSmokeSkillLabel} final={finalState}");
             Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] result skill={self.EditorSmokeSkillLabel} final={finalState}");
         }
 

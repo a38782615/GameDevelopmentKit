@@ -417,11 +417,7 @@ namespace ET.Client
         /// </summary>
         private static void ExecuteCueNode(this SpecExecutionContext self, string skillId, NodeData nodeData)
         {
-            var cueSpec = self.ExecuteCueNodeAndReturn(skillId, nodeData);
-            if (cueSpec != null && cueSpec.IsRunning)
-            {
-                self.RegisterRunningCue(cueSpec);
-            }
+            self.ExecuteCueNodeAndReturn(skillId, nodeData);
         }
 
         /// <summary>
@@ -456,6 +452,16 @@ namespace ET.Client
                 handler.PlayCue(target);
             }
 
+            if (!cueSpec.IsRunning)
+            {
+                if (!cueSpec.IsDisposed)
+                {
+                    cueSpec.Dispose();
+                }
+                return null;
+            }
+
+            self.RegisterRunningCue(cueSpec);
             return cueSpec;
         }
 

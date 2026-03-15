@@ -8,9 +8,31 @@ namespace ET.Client.Editor
 {
     public static class FightInputRuntimeDebugMenu
     {
+        private const string EnterLocalMap2dMenuPath = "GenAtom/Runtime/Enter Local Map2d";
         private const string PublishScreenCenterClickMenuPath = "GenAtom/Runtime/Publish FightInput Screen Center Click";
         private const string DumpFightInputHandlersMenuPath = "GenAtom/Runtime/Dump FightInput Handlers";
         private const string ReloadCurrentSceneMenuPath = "GenAtom/Runtime/Reload Current Scene";
+
+        [MenuItem(EnterLocalMap2dMenuPath)]
+        public static void EnterLocalMap2d()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                UnityEngine.Debug.LogWarning("[FightInputDebug] Play Mode required.");
+                return;
+            }
+
+            Scene root = GetMainRootScene();
+            if (root == null || root.IsDisposed)
+            {
+                UnityEngine.Debug.LogWarning("[FightInputDebug] Root scene not found.");
+                return;
+            }
+
+            UnityEngine.Debug.LogWarning("[FightInputDebug] enter local Map2d begin.");
+            MethodInfo reloadMethod = typeof(SceneChangeHelper).GetMethod(nameof(SceneChangeHelper.SceneChangeTo2), BindingFlags.Public | BindingFlags.Static);
+            reloadMethod?.Invoke(null, new object[] { root, "Map2d", 1000000000000000000L });
+        }
 
         [MenuItem(PublishScreenCenterClickMenuPath)]
         public static void PublishScreenCenterClick()
@@ -132,6 +154,12 @@ namespace ET.Client.Editor
 
         private static Scene GetCurrentClientScene()
         {
+            Scene root = GetMainRootScene();
+            return root?.CurrentScene();
+        }
+
+        private static Scene GetMainRootScene()
+        {
             FiberManager fiberManager = FiberManager.Instance;
             if (fiberManager == null)
             {
@@ -145,8 +173,7 @@ namespace ET.Client.Editor
             }
 
             Fiber mainFiber = getMethod.Invoke(fiberManager, new object[] { ConstFiberId.Main }) as Fiber;
-            Scene root = mainFiber?.Root;
-            return root?.CurrentScene();
+            return mainFiber?.Root;
         }
     }
 }
