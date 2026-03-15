@@ -26,6 +26,15 @@ namespace ET.Client
 
         public static void OnAnyAttributeChanged(this AbilitySystemComponent self, Attribute attribute, float before, float after)
         {
+            if (self.Owner != null && (attribute.AttrType == AttrType.Health || attribute.AttrType == AttrType.MaxHealth))
+            {
+                SkillHudManager.GetOrCreate().UpdateUnitHealth(
+                    self.InstanceId,
+                    self.Owner,
+                    self.Attributes?.GetCurrentValue(AttrType.Health) ?? 0f,
+                    self.Attributes?.GetCurrentValue(AttrType.MaxHealth) ?? 0f);
+            }
+
             if (attribute.AttrType == AttrType.Health)
             {
                 if (after < before)
@@ -94,6 +103,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this AbilitySystemComponent self)
         {
+            SkillHudManager.Instance?.UnregisterUnit(self);
             self.OwnedTags?.Clear();
             self.Attributes?.Clear();
             self.IsInitialized = false;

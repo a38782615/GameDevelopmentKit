@@ -5,25 +5,14 @@ using UnityEngine;
 namespace ET.Client
 {
     /// <summary>
-    /// Cue 管理器，负责管理所有激活的 ActiveGameplayCue（View 层资源）。
-    /// 负责粒子、音效、飘字等底层资源的播放、更新和清理。
-    /// 注意：GameplayCueSpec 的生命周期由 GameplayCueContainerComponent 管理。
-    /// 此类只管理 ActiveGameplayCue 实例（粒子对象、音效源等）。
-    /// Tick 由 GameplayCueContainerComponent 或外部驱动。
+    /// Cue 管理器，负责管理所有激活中的 ActiveGameplayCue。
     /// </summary>
-    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOf(typeof(AbilitySystemComponent))]
     public class GameplayCueManager : Singleton<GameplayCueManager>
     {
         private int m_LastTickFrame = -1;
 
-        /// <summary>
-        /// 所有激活的 Cue。
-        /// </summary>
         private readonly List<ActiveGameplayCue> m_ActiveCues = new List<ActiveGameplayCue>();
-
-        /// <summary>
-        /// 待移除的 Cue 列表。
-        /// </summary>
         private readonly List<ActiveGameplayCue> m_PendingRemoval = new List<ActiveGameplayCue>();
 
         public static GameplayCueManager GetOrCreate()
@@ -38,11 +27,6 @@ namespace ET.Client
             return manager;
         }
 
-        // ============ 公共方法 ============
-
-        /// <summary>
-        /// 播放粒子 Cue。
-        /// </summary>
         public ActiveGameplayCue PlayParticleCue(ParticleCueNodeData cueData, AbilitySystemComponent source, AbilitySystemComponent target)
         {
             if (cueData == null)
@@ -70,9 +54,6 @@ namespace ET.Client
             return activeCue;
         }
 
-        /// <summary>
-        /// 按位置和参数播放粒子 Cue。
-        /// </summary>
         public ActiveGameplayCue PlayParticleCue(
             GameObject prefab,
             Vector3 position,
@@ -90,7 +71,7 @@ namespace ET.Client
                 IsLooping = isLoop
             };
 
-            GameObject instance = UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity, attachTransform);
+            GameObject instance = global::UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity, attachTransform);
             instance.transform.localScale = scale;
 
             activeCue.AttachedObject = instance;
@@ -104,9 +85,6 @@ namespace ET.Client
             return activeCue;
         }
 
-        /// <summary>
-        /// 播放音效 Cue。
-        /// </summary>
         public ActiveGameplayCue PlaySoundCue(SoundCueNodeData cueData, AbilitySystemComponent source, AbilitySystemComponent target)
         {
             if (cueData == null || cueData.soundClip == null)
@@ -134,9 +112,6 @@ namespace ET.Client
             return activeCue;
         }
 
-        /// <summary>
-        /// 播放飘字 Cue。
-        /// </summary>
         public ActiveGameplayCue PlayFloatingTextCue(
             string text,
             Vector3 worldPosition,
@@ -150,39 +125,33 @@ namespace ET.Client
                 return null;
             }
 
+            SkillHudManager hudManager = SkillHudManager.GetOrCreate();
+            int floatingTextHandle = hudManager.AddFloatingText(
+                text,
+                worldPosition,
+                color,
+                fontSize,
+                duration,
+                textType);
+            if (floatingTextHandle <= 0)
+            {
+                return null;
+            }
+
             ActiveGameplayCue activeCue = new ActiveGameplayCue
             {
                 IsLooping = false,
                 Duration = duration
             };
-
-            if (FloatingTextManager.Instance != null)
+            activeCue.OnRemoved += () =>
             {
-                GameObject floatingTextObject = FloatingTextManager.Instance.CreateFloatingText(
-                    text,
-                    worldPosition,
-                    color,
-                    fontSize,
-                    duration,
-                    textType);
-
-                if (floatingTextObject != null)
-                {
-                    activeCue.AttachedObject = floatingTextObject;
-                }
-            }
-            else
-            {
-                Debug.LogWarning("[GameplayCueManager] FloatingTextManager 未初始化，请在场景中添加 FloatingTextManager 组件");
-            }
+                hudManager.RemoveFloatingText(floatingTextHandle);
+            };
 
             this.m_ActiveCues.Add(activeCue);
             return activeCue;
         }
 
-        /// <summary>
-        /// 停止指定的 Cue。
-        /// </summary>
         public void StopCue(ActiveGameplayCue activeCue)
         {
             if (activeCue == null)
@@ -194,9 +163,6 @@ namespace ET.Client
             this.m_PendingRemoval.Add(activeCue);
         }
 
-        /// <summary>
-        /// 每帧更新。
-        /// </summary>
         public void Tick(float deltaTime)
         {
             foreach (ActiveGameplayCue cue in this.m_ActiveCues)
@@ -209,16 +175,18 @@ namespace ET.Client
                 }
             }
 
-            if (this.m_PendingRemoval.Count > 0)
+            if (this.m_PendingRemoval.Count <= 0)
             {
-                foreach (ActiveGameplayCue cue in this.m_PendingRemoval)
-                {
-                    cue.Stop();
-                    this.m_ActiveCues.Remove(cue);
-                }
-
-                this.m_PendingRemoval.Clear();
+                return;
             }
+
+            foreach (ActiveGameplayCue cue in this.m_PendingRemoval)
+            {
+                cue.Stop();
+                this.m_ActiveCues.Remove(cue);
+            }
+
+            this.m_PendingRemoval.Clear();
         }
 
         public void TickOncePerFrame(float deltaTime)
@@ -233,9 +201,6 @@ namespace ET.Client
             this.Tick(deltaTime);
         }
 
-        /// <summary>
-        /// 清理所有 Cue。
-        /// </summary>
         public void Clear()
         {
             foreach (ActiveGameplayCue cue in this.m_ActiveCues)
@@ -252,11 +217,6 @@ namespace ET.Client
             this.Clear();
         }
 
-        // ============ 私有方法 ============
-
-        /// <summary>
-        /// 加载并实例化粒子特效。
-        /// </summary>
         private GameObject LoadAndInstantiateParticle(ParticleCueNodeData cueData, AbilitySystemComponent target)
         {
             if (cueData.particlePrefab == null)
@@ -272,7 +232,6 @@ namespace ET.Client
             if (target?.Owner != null)
             {
                 Transform targetTransform = target.Owner.transform;
-
                 facingDirection = targetTransform.localScale.x >= 0 ? 1f : -1f;
 
                 if (!string.IsNullOrEmpty(cueData.particleBindingName))
@@ -295,18 +254,13 @@ namespace ET.Client
                 }
             }
 
-            GameObject instance = UnityEngine.Object.Instantiate(cueData.particlePrefab, position, rotation, parent);
-
+            GameObject instance = global::UnityEngine.Object.Instantiate(cueData.particlePrefab, position, rotation, parent);
             Vector3 scale = cueData.particleScale;
             scale.x *= facingDirection;
             instance.transform.localScale = scale;
-
             return instance;
         }
 
-        /// <summary>
-        /// 获取粒子系统的总时长，包括所有子节点。
-        /// </summary>
         private float GetParticleSystemDuration(GameObject particleObject)
         {
             ParticleSystem[] particleSystems = particleObject.GetComponentsInChildren<ParticleSystem>();
@@ -316,21 +270,15 @@ namespace ET.Client
             }
 
             float maxDuration = 0f;
-
             foreach (ParticleSystem ps in particleSystems)
             {
                 ParticleSystem.MainModule main = ps.main;
-
                 if (main.loop)
                 {
                     continue;
                 }
 
-                float startDelay = main.startDelay.constantMax;
-                float duration = main.duration;
-                float startLifetime = main.startLifetime.constantMax;
-                float totalDuration = startDelay + duration + startLifetime;
-
+                float totalDuration = main.startDelay.constantMax + main.duration + main.startLifetime.constantMax;
                 if (totalDuration > maxDuration)
                 {
                     maxDuration = totalDuration;
@@ -340,9 +288,6 @@ namespace ET.Client
             return maxDuration;
         }
 
-        /// <summary>
-        /// 播放音效。
-        /// </summary>
         private AudioSource PlaySound(SoundCueNodeData cueData, AbilitySystemComponent target)
         {
             AudioClip clip = cueData.soundClip;
@@ -363,7 +308,6 @@ namespace ET.Client
             audioSource.volume = cueData.soundVolume;
             audioSource.loop = cueData.soundLoop;
             audioSource.Play();
-
             return audioSource;
         }
     }

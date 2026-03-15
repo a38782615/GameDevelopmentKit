@@ -43,6 +43,12 @@ namespace ET.Client
             if (asc != null)
             {
                 asc.Owner = viewGameObject;
+                SkillHudManager.GetOrCreate().RegisterUnit(
+                    asc.InstanceId,
+                    viewGameObject,
+                    (UnitType)unit.Config().Type,
+                    asc.Attributes?.GetCurrentValue(AttrType.Health) ?? 0f,
+                    asc.Attributes?.GetCurrentValue(AttrType.MaxHealth) ?? 0f);
                 SkelenAnimationComponent skelenAnimationComponent = unit.GetComponent<SkelenAnimationComponent>();
                 if (skelenAnimationComponent == null)
                 {
