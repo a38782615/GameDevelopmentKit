@@ -4,7 +4,6 @@ using TMPro;
 
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -27,8 +26,9 @@ namespace ET.Client
             public string Text;
             public Vector3 WorldPosition;
             public Color Color;
-            public TextMeshProUGUI TextComponent;
-            public RectTransform RectTransform;
+            public Mesh Mesh;
+            public Material Material;
+            public float WorldScale;
             public float FontSize;
             public float Duration;
             public float Elapsed;
@@ -59,7 +59,7 @@ namespace ET.Client
         [StaticField]
         private static readonly int HudUvRectId = Shader.PropertyToID("_HudUvRect");
         [StaticField]
-        private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int FaceColorId = Shader.PropertyToID("_FaceColor");
         [StaticField]
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         [StaticField]
@@ -70,7 +70,6 @@ namespace ET.Client
         private readonly List<int> pendingFloatingTextRemovals = new List<int>();
         private readonly List<QuadInstance> backgroundInstances = new List<QuadInstance>(128);
         private readonly List<QuadInstance> foregroundInstances = new List<QuadInstance>(128);
-        private readonly Stack<TextMeshProUGUI> floatingTextPool = new Stack<TextMeshProUGUI>();
 
         private readonly Matrix4x4[] matrixBuffer = new Matrix4x4[MaxBatchSize];
         private readonly Vector4[] colorBuffer = new Vector4[MaxBatchSize];
@@ -81,11 +80,12 @@ namespace ET.Client
         private readonly Color barBackgroundColor = new Color(0.05f, 0.07f, 0.10f, 0.82f);
 
         private MaterialPropertyBlock propertyBlock;
+        private MaterialPropertyBlock textPropertyBlock;
         private SkillHudRenderDriver driver;
         private SkillHudTextAtlas textAtlas;
+        private TextMeshPro textGenerator;
         private Mesh quadMesh;
         private Material barMaterial;
-        private Canvas floatingTextCanvas;
         private Camera cachedCamera;
         private int nextFloatingTextId = 1;
 
@@ -170,26 +170,20 @@ namespace ET.Client
             textAtlas.EnsureCharacters(text);
 
             int handle = nextFloatingTextId++;
-            TextMeshProUGUI textComponent = AcquireFloatingTextComponent();
-            if (textComponent == null)
+            float resolvedFontSize = fontSize > 0f ? fontSize : 42f;
+            if (!TryBuildFloatingTextMesh(text, resolvedFontSize, out Mesh mesh, out Material material, out float worldScale))
             {
                 return 0;
             }
-
-            float resolvedFontSize = fontSize > 0f ? fontSize : 42f;
-            textComponent.text = text;
-            textComponent.fontSize = resolvedFontSize;
-            textComponent.color = ResolveTextColor(textType, color);
-            textComponent.ForceMeshUpdate();
-            textComponent.gameObject.SetActive(true);
 
             floatingTextStates[handle] = new FloatingTextState
             {
                 Text = text,
                 WorldPosition = worldPosition,
                 Color = ResolveTextColor(textType, color),
-                TextComponent = textComponent,
-                RectTransform = textComponent.rectTransform,
+                Mesh = mesh,
+                Material = material,
+                WorldScale = worldScale,
                 FontSize = resolvedFontSize,
                 Duration = duration > 0f ? duration : DefaultTextDuration,
                 Elapsed = 0f,
@@ -212,7 +206,7 @@ namespace ET.Client
             }
 
             floatingTextStates.Remove(handle);
-            ReleaseFloatingTextComponent(state);
+            ReleaseFloatingTextState(state);
         }
 
         public void Tick(float deltaTime)
@@ -243,7 +237,7 @@ namespace ET.Client
         {
             foreach (FloatingTextState state in floatingTextStates.Values)
             {
-                ReleaseFloatingTextComponent(state);
+                ReleaseFloatingTextState(state);
             }
 
             unitStates.Clear();
@@ -251,25 +245,11 @@ namespace ET.Client
             pendingFloatingTextRemovals.Clear();
             backgroundInstances.Clear();
             foregroundInstances.Clear();
-            while (floatingTextPool.Count > 0)
-            {
-                TextMeshProUGUI textComponent = floatingTextPool.Pop();
-                if (textComponent != null)
-                {
-                    global::UnityEngine.Object.Destroy(textComponent.gameObject);
-                }
-            }
 
             if (driver != null)
             {
                 global::UnityEngine.Object.Destroy(driver.gameObject);
                 driver = null;
-            }
-
-            if (floatingTextCanvas != null)
-            {
-                global::UnityEngine.Object.Destroy(floatingTextCanvas.gameObject);
-                floatingTextCanvas = null;
             }
 
             if (barMaterial != null)
@@ -292,6 +272,11 @@ namespace ET.Client
                 propertyBlock = new MaterialPropertyBlock();
             }
 
+            if (textPropertyBlock == null)
+            {
+                textPropertyBlock = new MaterialPropertyBlock();
+            }
+
             if (quadMesh == null)
             {
                 quadMesh = BuildQuadMesh();
@@ -310,17 +295,6 @@ namespace ET.Client
                 driver = driverObject.AddComponent<SkillHudRenderDriver>();
             }
 
-            if (floatingTextCanvas == null)
-            {
-                GameObject canvasObject = new GameObject("SkillHudFloatingTextCanvas");
-                global::UnityEngine.Object.DontDestroyOnLoad(canvasObject);
-                floatingTextCanvas = canvasObject.AddComponent<Canvas>();
-                floatingTextCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                floatingTextCanvas.sortingOrder = 5000;
-                canvasObject.AddComponent<CanvasScaler>();
-                canvasObject.AddComponent<GraphicRaycaster>();
-            }
-
             Shader barShader = Shader.Find("Game/HUD/InstancedBillboard");
             if (barShader == null)
             {
@@ -336,6 +310,12 @@ namespace ET.Client
                 };
                 barMaterial.SetTexture(MainTexId, Texture2D.whiteTexture);
             }
+
+            if (textAtlas.EnsureReady())
+            {
+                EnsureTextGenerator();
+            }
+
             return barMaterial != null;
         }
 
@@ -430,7 +410,7 @@ namespace ET.Client
                 animatedPosition += right * (state.HorizontalDrift * progress);
                 animatedPosition += up * (state.VerticalRise * progress);
 
-                UpdateFloatingTextVisual(state, animatedPosition, color, scale, camera);
+                DrawFloatingText(state, animatedPosition, color, scale, rotation, camera);
             }
 
             foreach (int handle in pendingFloatingTextRemovals)
@@ -441,33 +421,39 @@ namespace ET.Client
                 }
 
                 floatingTextStates.Remove(handle);
-                ReleaseFloatingTextComponent(state);
+                ReleaseFloatingTextState(state);
             }
         }
 
-        private void UpdateFloatingTextVisual(
+        private void DrawFloatingText(
             FloatingTextState state,
             Vector3 worldPosition,
             Color color,
             float scale,
+            Quaternion rotation,
             Camera camera)
         {
-            if (state?.TextComponent == null || state.RectTransform == null || camera == null)
+            if (state?.Mesh == null || state.Material == null || camera == null)
             {
                 return;
             }
 
-            Vector3 screenPosition = camera.WorldToScreenPoint(worldPosition);
-            bool visible = screenPosition.z > 0f;
-            state.TextComponent.enabled = visible;
-            if (!visible)
-            {
-                return;
-            }
+            textPropertyBlock.Clear();
+            textPropertyBlock.SetColor(FaceColorId, color);
 
-            state.RectTransform.position = screenPosition;
-            state.TextComponent.color = color;
-            state.TextComponent.fontSize = state.FontSize * scale;
+            Graphics.DrawMesh(
+                state.Mesh,
+                Matrix4x4.TRS(worldPosition, rotation, Vector3.one * (state.WorldScale * scale)),
+                state.Material,
+                0,
+                camera,
+                0,
+                textPropertyBlock,
+                ShadowCastingMode.Off,
+                false,
+                null,
+                LightProbeUsage.Off,
+                null);
         }
 
         private void AddQuad(
@@ -559,57 +545,81 @@ namespace ET.Client
             return mesh;
         }
 
-        private TextMeshProUGUI AcquireFloatingTextComponent()
+        private void EnsureTextGenerator()
         {
-            if (textAtlas == null || !textAtlas.EnsureReady() || floatingTextCanvas == null)
-            {
-                return null;
-            }
-
-            TextMeshProUGUI textComponent = null;
-            while (floatingTextPool.Count > 0 && textComponent == null)
-            {
-                textComponent = floatingTextPool.Pop();
-            }
-
-            if (textComponent == null)
-            {
-                GameObject textObject = new GameObject("SkillHudFloatingText");
-                RectTransform rectTransform = textObject.AddComponent<RectTransform>();
-                rectTransform.SetParent(floatingTextCanvas.transform, false);
-                rectTransform.anchorMin = new Vector2(0f, 0f);
-                rectTransform.anchorMax = new Vector2(0f, 0f);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                rectTransform.sizeDelta = new Vector2(240f, 80f);
-                textComponent = textObject.AddComponent<TextMeshProUGUI>();
-                textComponent.font = textAtlas.FontAsset;
-                textComponent.fontSharedMaterial = textAtlas.FontAsset.material;
-                textComponent.alignment = TextAlignmentOptions.Center;
-                textComponent.enableWordWrapping = false;
-                textComponent.overflowMode = TextOverflowModes.Overflow;
-                textComponent.raycastTarget = false;
-                textComponent.richText = false;
-                textComponent.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                textComponent.verticalAlignment = VerticalAlignmentOptions.Middle;
-            }
-
-            return textComponent;
-        }
-
-        private void ReleaseFloatingTextComponent(FloatingTextState state)
-        {
-            if (state?.TextComponent == null)
+            if (textGenerator != null || driver == null || textAtlas == null || !textAtlas.EnsureReady())
             {
                 return;
             }
 
-            TextMeshProUGUI textComponent = state.TextComponent;
-            state.TextComponent = null;
-            state.RectTransform = null;
-            textComponent.text = string.Empty;
-            textComponent.enabled = true;
-            textComponent.gameObject.SetActive(false);
-            floatingTextPool.Push(textComponent);
+            GameObject generatorObject = new GameObject("SkillHudTextGenerator");
+            generatorObject.hideFlags = HideFlags.HideAndDontSave;
+            generatorObject.transform.SetParent(driver.transform, false);
+
+            textGenerator = generatorObject.AddComponent<TextMeshPro>();
+            textGenerator.font = textAtlas.FontAsset;
+            textGenerator.fontSharedMaterial = textAtlas.FontAsset.material;
+            textGenerator.alignment = TextAlignmentOptions.Center;
+            textGenerator.enableWordWrapping = false;
+            textGenerator.overflowMode = TextOverflowModes.Overflow;
+            textGenerator.richText = false;
+            textGenerator.text = string.Empty;
+
+            MeshRenderer meshRenderer = textGenerator.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+            {
+                meshRenderer.enabled = false;
+                meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+                meshRenderer.receiveShadows = false;
+                meshRenderer.lightProbeUsage = LightProbeUsage.Off;
+                meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            }
+        }
+
+        private bool TryBuildFloatingTextMesh(string text, float fontSize, out Mesh mesh, out Material material, out float worldScale)
+        {
+            mesh = null;
+            material = null;
+            worldScale = 0f;
+            if (textGenerator == null || textAtlas == null || !textAtlas.EnsureReady() || string.IsNullOrEmpty(text))
+            {
+                return false;
+            }
+
+            textGenerator.font = textAtlas.FontAsset;
+            textGenerator.fontSharedMaterial = textAtlas.FontAsset.material;
+            textGenerator.text = text;
+            textGenerator.fontSize = fontSize;
+            textGenerator.color = Color.white;
+            textGenerator.ForceMeshUpdate(true, true);
+
+            Mesh sourceMesh = textGenerator.mesh;
+            if (sourceMesh == null || sourceMesh.vertexCount <= 0)
+            {
+                return false;
+            }
+
+            mesh = global::UnityEngine.Object.Instantiate(sourceMesh);
+            mesh.name = "SkillHudFloatingTextMesh";
+            mesh.RecalculateBounds();
+
+            Bounds bounds = mesh.bounds;
+            float meshHeight = Mathf.Max(bounds.size.y, 0.0001f);
+            float targetHeight = Mathf.Max(textAtlas.GetLineHeight(fontSize), 0.01f);
+            worldScale = targetHeight / meshHeight;
+            material = textGenerator.fontSharedMaterial;
+            return material != null;
+        }
+
+        private static void ReleaseFloatingTextState(FloatingTextState state)
+        {
+            if (state?.Mesh != null)
+            {
+                global::UnityEngine.Object.Destroy(state.Mesh);
+                state.Mesh = null;
+            }
+
+            state.Material = null;
         }
 
         private static float CalculateHeadOffset(GameObject owner)
