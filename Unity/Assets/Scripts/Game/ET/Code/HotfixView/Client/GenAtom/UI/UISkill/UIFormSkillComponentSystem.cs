@@ -38,7 +38,7 @@ namespace ET.Client
             self.EditorSmokeStateOverrideText = null;
             self.EditorSmokeStateOverrideLeftTime = 0f;
             self.EditorSmokeSpec = default;
-            self.TryStartEditorSmokeAfterOpenAsync().Forget();
+            // self.TryStartEditorSmokeAfterOpenAsync().Forget();
 #endif
         }
 
@@ -63,7 +63,7 @@ namespace ET.Client
                 self.ListSyncLeftTime = RefreshInterval;
                 self.SyncSkillList();
 #if UNITY_EDITOR
-                self.TryStartEditorSmokeTest();
+                // self.TryStartEditorSmokeTest();
 #endif
             }
 
@@ -216,7 +216,7 @@ namespace ET.Client
 
             if (!self.IsDisposed && self.EditorSmokeRunId == runId)
             {
-                Log.Warning($"[UISkillSmoke:{runId}] timeout-empty");
+                SkillDiagFileLogger.Log($"[UISkillSmoke:{runId}] timeout-empty");
             }
         }
 
@@ -233,10 +233,10 @@ namespace ET.Client
             }
 
             self.EditorSmokeTriggered = true;
-            Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] visible={self.SkillSpecs.Count}");
+            SkillDiagFileLogger.Log($"[UISkillSmoke:{self.EditorSmokeRunId}] visible={self.SkillSpecs.Count}");
             if (self.SkillSpecs.Count <= 0)
             {
-                Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] skipped-empty");
+                SkillDiagFileLogger.Log($"[UISkillSmoke:{self.EditorSmokeRunId}] skipped-empty");
                 return;
             }
 
@@ -252,7 +252,7 @@ namespace ET.Client
             self.EditorSmokeStateOverrideText = success ? $"Smoke {immediateState}" : "Smoke Fail";
             self.EditorSmokeStateOverrideLeftTime = 2f;
 
-            Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] activate skill={self.EditorSmokeSkillLabel} success={success} before={beforeState} immediate={immediateState}");
+            SkillDiagFileLogger.Log($"[UISkillSmoke:{self.EditorSmokeRunId}] activate skill={self.EditorSmokeSkillLabel} success={success} before={beforeState} immediate={immediateState}");
         }
 
         private static void UpdateEditorSmokeStateOverride(this UIFormSkillComponent self, float elapseSeconds)
@@ -287,7 +287,7 @@ namespace ET.Client
             self.EditorSmokeResultLogged = true;
             GameplayAbilitySpec spec = self.EditorSmokeSpec.As();
             string finalState = self.GetEditorDebugState(spec);
-            Log.Warning($"[UISkillSmoke:{self.EditorSmokeRunId}] result skill={self.EditorSmokeSkillLabel} final={finalState}");
+            SkillDiagFileLogger.Log($"[UISkillSmoke:{self.EditorSmokeRunId}] result skill={self.EditorSmokeSkillLabel} final={finalState}");
         }
 
         private static string GetEditorDebugState(this UIFormSkillComponent self, GameplayAbilitySpec spec)

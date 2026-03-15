@@ -14,6 +14,7 @@
         public const int AITimer = 202;
         public const int SessionAcceptTimeout = 203;
         public const int Move2DTimer = 204;
+        public const int GameAITimer = 205;
         
         public const int RoomUpdate = 301;
     }

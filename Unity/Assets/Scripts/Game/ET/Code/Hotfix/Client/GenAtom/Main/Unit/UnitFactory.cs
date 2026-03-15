@@ -31,6 +31,13 @@ namespace ET.Client
 
             unit.AddComponent<ObjectWait>();
 
+            if ((UnitType)unit.Config().Type == UnitType.Monster
+                && Tables.Instance.DTGameAI.GameAIs.ContainsKey(unit.ConfigId)
+                && unit.GetComponent<GameAIComponent>() == null)
+            {
+                unit.AddComponent<GameAIComponent, int>(unit.ConfigId);
+            }
+
             // unit.AddComponent<XunLuoPathComponent>();
 
             // EventSystem.Instance.Publish(unit.Scene(), new AfterUnitCreate() { Unit = unit });

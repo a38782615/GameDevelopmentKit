@@ -17,6 +17,7 @@ public sealed partial class DRGameAI : Luban.BeanBase
     {
         Id = _buf.ReadInt();
         AIConfigId = _buf.ReadInt();
+        AIConfigId_Ref = null;
         Order = _buf.ReadInt();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
@@ -37,6 +38,7 @@ public sealed partial class DRGameAI : Luban.BeanBase
     /// 所属ai
     /// </summary>
     public readonly int AIConfigId;
+    public DRUnitConfig AIConfigId_Ref { private set; get; }
     /// <summary>
     /// 此ai中的顺序
     /// </summary>
@@ -58,6 +60,7 @@ public sealed partial class DRGameAI : Luban.BeanBase
 
     public  void ResolveRef(Tables tables)
     {
+        AIConfigId_Ref = tables.DTUnitConfig.GetOrDefault(AIConfigId);
         PostResolveRef();
     }
 

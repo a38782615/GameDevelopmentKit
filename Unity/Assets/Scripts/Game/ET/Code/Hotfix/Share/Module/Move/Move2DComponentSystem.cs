@@ -112,6 +112,11 @@ namespace ET
         private static void MoveForward(this Move2DComponent self, bool ret)
         {
             Unit unit = self.GetParent<Unit>();
+            if (unit == null || unit.IsDisposed || unit.IScene == null)
+            {
+                self.MoveFinish(false);
+                return;
+            }
 
             long timeNow = TimeInfo.Instance.ClientNow();
             long moveTime = timeNow - self.StartTime;
@@ -257,7 +262,9 @@ namespace ET
             self.TurnTime = 0;
             self.From = quaternion.identity;
             self.To = quaternion.identity;
-            self.Root().GetComponent<TimerComponent>()?.Remove(ref self.MoveTimer);
+
+            Scene root = self.IScene?.Fiber?.Root;
+            root?.GetComponent<TimerComponent>()?.Remove(ref self.MoveTimer);
 
             if (self.tcs != null)
             {
