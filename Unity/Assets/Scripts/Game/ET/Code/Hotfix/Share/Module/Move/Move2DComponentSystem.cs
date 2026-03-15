@@ -10,7 +10,7 @@ namespace ET
     public static partial class Move2DComponentSystem
     {
         [Invoke(TimerInvokeType.Move2DTimer)]
-        public class MoveTimer: ATimer<Move2DComponent>
+        public class MoveTimer : ATimer<Move2DComponent>
         {
             protected override void Run(Move2DComponent self)
             {

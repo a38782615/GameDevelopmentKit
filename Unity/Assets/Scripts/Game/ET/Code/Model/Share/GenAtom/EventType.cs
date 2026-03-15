@@ -1,4 +1,6 @@
-﻿namespace ET.Client
+using Unity.Mathematics;
+
+namespace ET.Client
 {
     public struct SceneChangeStart
     {
@@ -35,5 +37,10 @@
 
     public struct GoMap2d
     {
+    }
+
+    public struct FightInputScreenClick
+    {
+        public float2 ScreenPosition;
     }
 }

@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,6 +28,7 @@ namespace ET.Client
 
             self.MoveValue = self.InputControls.rpg.Move.ReadValue<Vector2>();
             self.RefreshPointerPosition();
+            self.PublishPendingScreenClick();
         }
 
         [EntitySystem]
@@ -40,6 +42,7 @@ namespace ET.Client
             self.FirePressed = false;
             self.CancelPressed = false;
             self.RotateRPressed = false;
+            self.PendingScreenClick = false;
             self.FireTriggeredFrame = -1;
             self.CancelTriggeredFrame = -1;
             self.RotateRTriggeredFrame = -1;
@@ -80,6 +83,7 @@ namespace ET.Client
             self.FirePressed = false;
             self.CancelPressed = false;
             self.RotateRPressed = false;
+            self.PendingScreenClick = false;
             self.FireTriggeredFrame = -1;
             self.CancelTriggeredFrame = -1;
             self.RotateRTriggeredFrame = -1;
@@ -111,6 +115,31 @@ namespace ET.Client
             }
 
             self.PointerScreenPosition = mouse.position.ReadValue();
+        }
+
+        private static void PublishPendingScreenClick(this FightInputComponent self)
+        {
+            if (self == null || self.IsDisposed || !self.Enabled || !self.PendingScreenClick)
+            {
+                return;
+            }
+
+            Scene scene = self.GetParent<Scene>();
+            if (scene == null || scene.IsDisposed)
+            {
+                return;
+            }
+
+            self.PendingScreenClick = false;
+            self.RefreshPointerPosition();
+#if UNITY_EDITOR
+            Log.Info(
+                $"[FightInput] Publish click scene={scene.SceneType} pointer=({self.PointerScreenPosition.x:0.##},{self.PointerScreenPosition.y:0.##})");
+#endif
+            EventSystem.Instance.Publish(scene, new FightInputScreenClick
+            {
+                ScreenPosition = new float2(self.PointerScreenPosition.x, self.PointerScreenPosition.y),
+            });
         }
     }
 }

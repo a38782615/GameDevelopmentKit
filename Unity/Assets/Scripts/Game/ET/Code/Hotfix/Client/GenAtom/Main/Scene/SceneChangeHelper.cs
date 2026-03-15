@@ -81,6 +81,7 @@ namespace ET.Client
             unitInfo.Type = config.Type;
             unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
             unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
+            unitInfo.KV[NumericType.Speed] = (long)(6f);
             return unitInfo;
         }
 

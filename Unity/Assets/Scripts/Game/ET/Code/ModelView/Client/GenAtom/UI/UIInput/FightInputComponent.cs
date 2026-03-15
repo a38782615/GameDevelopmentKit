@@ -12,6 +12,7 @@ namespace ET.Client
         public bool FirePressed;
         public bool CancelPressed;
         public bool RotateRPressed;
+        public bool PendingScreenClick;
         public int FireTriggeredFrame = -1;
         public int CancelTriggeredFrame = -1;
         public int RotateRTriggeredFrame = -1;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UGFLog = UnityGameFramework.Runtime.Log;
 
 namespace ET.Client
 {
@@ -37,6 +38,11 @@ namespace ET.Client
             if (context.performed)
             {
                 self.FireTriggeredFrame = Time.frameCount;
+                self.PendingScreenClick = true;
+#if UNITY_EDITOR
+                UGFLog.Info(
+                    $"[FightInput] Fire performed frame={Time.frameCount} pointer=({self.PointerScreenPosition.x:0.##},{self.PointerScreenPosition.y:0.##})");
+#endif
             }
         }
 
