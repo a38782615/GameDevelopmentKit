@@ -172,7 +172,19 @@ namespace ET.Client
                     if (connection == null)
                         continue;
 
-                    string connectionKey = GetConnectionKey(skillId, connection.outputNodeGuid, connection.outputPortName);
+                    NodeData outputNode = GetNodeData(skillId, connection.outputNodeGuid);
+                    if (outputNode == null)
+                    {
+                        continue;
+                    }
+
+                    int outputPortId = connection.GetOutputPortId(outputNode.nodeType);
+                    if (outputPortId <= SkillPortId.Invalid)
+                    {
+                        continue;
+                    }
+
+                    string connectionKey = GetConnectionKey(skillId, connection.outputNodeGuid, outputPortId);
 
                     if (!_connectionCache.TryGetValue(connectionKey, out var connections))
                     {
@@ -259,11 +271,11 @@ namespace ET.Client
         /// <summary>
         /// 获取指定端口连接的所有节点数据
         /// </summary>
-        public List<NodeData> GetConnectedNodes(string skillId, string nodeGuid, string outputPortName)
+        public List<NodeData> GetConnectedNodes(string skillId, string nodeGuid, int outputPortId)
         {
             EnsureLoaded();
             var result = new List<NodeData>();
-            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
+            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortId);
 
             if (!_connectionCache.TryGetValue(connectionKey, out var connections))
                 return result;
@@ -283,10 +295,10 @@ namespace ET.Client
         /// <summary>
         /// 获取指定端口的连接数据
         /// </summary>
-        public List<ConnectionData> GetConnections(string skillId, string nodeGuid, string outputPortName)
+        public List<ConnectionData> GetConnections(string skillId, string nodeGuid, int outputPortId)
         {
             EnsureLoaded();
-            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
+            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortId);
             return _connectionCache.TryGetValue(connectionKey, out var connections)
                 ? new List<ConnectionData>(connections)
                 : new List<ConnectionData>();
@@ -295,10 +307,10 @@ namespace ET.Client
         /// <summary>
         /// 检查是否有指定端口的连接
         /// </summary>
-        public bool HasConnection(string skillId, string nodeGuid, string outputPortName)
+        public bool HasConnection(string skillId, string nodeGuid, int outputPortId)
         {
             EnsureLoaded();
-            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortName);
+            string connectionKey = GetConnectionKey(skillId, nodeGuid, outputPortId);
             return _connectionCache.TryGetValue(connectionKey, out var connections) && connections.Count > 0;
         }
 
@@ -309,9 +321,9 @@ namespace ET.Client
             return $"{skillId}:{nodeGuid}";
         }
 
-        private string GetConnectionKey(string skillId, string nodeGuid, string portName)
+        private string GetConnectionKey(string skillId, string nodeGuid, int portId)
         {
-            return $"{skillId}:{nodeGuid}:{portName ?? "output"}";
+            return $"{skillId}:{nodeGuid}:{portId}";
         }
 
         /// <summary>

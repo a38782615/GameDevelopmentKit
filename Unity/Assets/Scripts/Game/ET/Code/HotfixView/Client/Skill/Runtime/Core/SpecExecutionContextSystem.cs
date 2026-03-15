@@ -265,12 +265,12 @@ namespace ET.Client
 
         // ============ 执行链路（原 SpecExecutor 已合并至此） ============
 
-        public static void ExecuteConnectedNodes(this SpecExecutionContext self, string skillId, string nodeGuid, string outputPortName)
+        public static void ExecuteConnectedNodes(this SpecExecutionContext self, string skillId, string nodeGuid, int outputPortId)
         {
             if (string.IsNullOrEmpty(skillId) || string.IsNullOrEmpty(nodeGuid))
                 return;
 
-            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortName);
+            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortId);
             if (connectedNodes == null || connectedNodes.Count == 0)
                 return;
 
@@ -283,14 +283,14 @@ namespace ET.Client
         /// <summary>
         /// 执行指定端口连接的Cue节点，并返回触发的CueSpec列表
         /// </summary>
-        public static List<GameplayCueSpec> ExecuteConnectedCueNodes(this SpecExecutionContext self, string skillId, string nodeGuid, string outputPortName)
+        public static List<GameplayCueSpec> ExecuteConnectedCueNodes(this SpecExecutionContext self, string skillId, string nodeGuid, int outputPortId)
         {
             var triggeredCues = new List<GameplayCueSpec>();
 
             if (string.IsNullOrEmpty(skillId) || string.IsNullOrEmpty(nodeGuid))
                 return triggeredCues;
 
-            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortName);
+            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortId);
             if (connectedNodes == null || connectedNodes.Count == 0)
                 return triggeredCues;
 
@@ -406,7 +406,7 @@ namespace ET.Client
             conditionSpec.InitCondition(skillId, nodeData.guid, self);
             bool result = conditionSpec.Evaluate();
 
-            self.ExecuteConnectedNodes(skillId, nodeData.guid, result ? "是" : "否");
+            self.ExecuteConnectedNodes(skillId, nodeData.guid, result ? SkillPortId.Condition.True : SkillPortId.Condition.False);
 
             if (!conditionSpec.IsDisposed)
                 conditionSpec.Dispose();

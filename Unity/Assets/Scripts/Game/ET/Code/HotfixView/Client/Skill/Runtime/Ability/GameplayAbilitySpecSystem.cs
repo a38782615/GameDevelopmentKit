@@ -86,7 +86,7 @@ namespace ET.Client
 
             if (string.IsNullOrEmpty(self.AbilityNodeGuid)) return;
 
-            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(self.SkillId, self.AbilityNodeGuid, "动画");
+            var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Animation);
             if (connectedNodes == null) return;
 
             foreach (var node in connectedNodes)
@@ -106,7 +106,7 @@ namespace ET.Client
                             timeEffectComp.TimeEffects.Add(new TimeEffectRuntime
                             {
                                 TriggerTime = SkillConstants.FramesToSeconds(te.triggerTime),
-                                PortId = te.portId,
+                                PortId = te.PortId,
                                 HasTriggered = false
                             });
                         }
@@ -120,7 +120,7 @@ namespace ET.Client
                             {
                                 StartTime = SkillConstants.FramesToSeconds(tc.startTime),
                                 EndTime = tc.endTime < 0 ? -1f : SkillConstants.FramesToSeconds(tc.endTime),
-                                PortId = tc.portId,
+                                PortId = tc.PortId,
                                 HasStarted = false,
                                 HasEnded = false
                             });
@@ -141,9 +141,10 @@ namespace ET.Client
             {
                 if (conn.outputNodeGuid != self.AbilityNodeData.guid) continue;
 
-                if (conn.outputPortName == "消耗")
+                int outputPortId = conn.GetOutputPortId(NodeType.Ability);
+                if (outputPortId == SkillPortId.Ability.Cost)
                     self.CostNodeGuid = conn.inputNodeGuid;
-                else if (conn.outputPortName == "冷却")
+                else if (outputPortId == SkillPortId.Ability.Cooldown)
                     self.CooldownNodeGuid = conn.inputNodeGuid;
             }
         }
@@ -336,9 +337,9 @@ namespace ET.Client
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
             {
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, "消耗");
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, "冷却");
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, "激活");
+                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
+                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
+                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
             }
 
             EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnActivated()

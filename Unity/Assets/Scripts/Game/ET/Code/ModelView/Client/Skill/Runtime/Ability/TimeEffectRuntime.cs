@@ -6,7 +6,7 @@ namespace ET.Client
     public class TimeEffectRuntime : Object
     {
         public float TriggerTime { get; set; }
-        public string PortId { get; set; }
+        public int PortId { get; set; }
         public bool HasTriggered { get; set; }
     }
 }

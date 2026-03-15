@@ -16,7 +16,7 @@ namespace ET.Client.Editor
         protected VisualElement TrackContent;
         protected VisualElement PortArea;
 
-        public string PortId { get; protected set; }
+        public int PortId { get; protected set; }
 
         // 事件
         public event Action OnRemoveRequested;

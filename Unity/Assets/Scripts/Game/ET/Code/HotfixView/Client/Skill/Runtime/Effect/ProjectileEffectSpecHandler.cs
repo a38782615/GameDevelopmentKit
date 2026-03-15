@@ -214,7 +214,7 @@ namespace ET.Client
             hitContext.ProjectileObject = selfSpec._projectileObject;
 
             // 执行碰撞时端口
-            hitContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "碰撞时");
+            hitContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnHit);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace ET.Client
             ctx.ProjectileObject = selfSpec._projectileObject;
 
             // 执行到达目标位置端口
-            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "到达目标位置");
+            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace ET.Client
             bounceContext.ProjectileObject = selfSpec._projectileObject;
 
             // 执行反弹时端口
-            bounceContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "反弹时");
+            bounceContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnBounce);
         }
 
         /// <summary>

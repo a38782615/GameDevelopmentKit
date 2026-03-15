@@ -51,7 +51,7 @@ namespace ET.Client.Editor
             if (skills.Count > 0)
             {
                 ExportToExcel(skills);
-                EditorUtility.DisplayDialog("导出成功", $"已导出 {skills.Count} 个技能到 Excel", "确定");
+                // EditorUtility.DisplayDialog("导出成功", $"已导出 {skills.Count} 个技能到 Excel", "确定");
             }
             else
             {
@@ -149,12 +149,12 @@ namespace ET.Client.Editor
 
             if (selectedSkills.Count == 0)
             {
-                EditorUtility.DisplayDialog("提示", "请至少选择一个技能", "确定");
+                //EditorUtility.DisplayDialog("提示", "请至少选择一个技能", "确定");
                 return;
             }
 
             ExportToExcel(selectedSkills);
-            EditorUtility.DisplayDialog("导出成功", $"已导出 {selectedSkills.Count} 个技能到 Excel", "确定");
+            //EditorUtility.DisplayDialog("导出成功", $"已导出 {selectedSkills.Count} 个技能到 Excel", "确定");
         }
 
         /// <summary>
@@ -171,6 +171,13 @@ namespace ET.Client.Editor
 
                 foreach (var skill in skills)
                 {
+                    bool nodePortChanged = SkillConnectionPortIdUtility.NormalizeNodePortIds(skill.nodes);
+                    bool connectionChanged = SkillConnectionPortIdUtility.NormalizeConnections(skill.nodes, skill.connections);
+                    if (nodePortChanged || connectionChanged)
+                    {
+                        EditorUtility.SetDirty(skill);
+                    }
+
                     int nodeCount = skill.nodes?.Count ?? 0;
                     int connCount = skill.connections?.Count ?? 0;
                     int maxRows = Math.Max(Math.Max(nodeCount, connCount), 1);

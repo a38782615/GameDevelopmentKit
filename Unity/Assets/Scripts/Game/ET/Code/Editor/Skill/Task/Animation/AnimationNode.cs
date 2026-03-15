@@ -567,15 +567,15 @@ namespace ET.Client.Editor
         /// <summary>
         /// 根据端口标识符查找输出端口（支持普通端口和Timeline端口）
         /// </summary>
-        public override Port FindOutputPortByIdentifier(string portIdentifier)
+        public override Port FindOutputPortByIdentifier(int portId)
         {
             if (_timelineView != null)
             {
-                var port = _timelineView.FindPortByIdentifier(portIdentifier);
+                var port = _timelineView.FindPortByIdentifier(portId);
                 if (port != null) return port;
             }
 
-            return base.FindOutputPortByIdentifier(portIdentifier);
+            return base.FindOutputPortByIdentifier(portId);
         }
 
         #endregion

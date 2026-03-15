@@ -126,7 +126,7 @@ namespace ET.Client
             executionContext.SetCustomData("Heal", actualHeal);
 #if UNITY_EDITOR
 #endif
-            executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "治疗");
+            executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.Effect.Initial);
 
         }
 

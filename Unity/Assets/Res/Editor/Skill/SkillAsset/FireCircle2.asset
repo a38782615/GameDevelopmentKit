@@ -14,47 +14,61 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1010
   nodes:
-  - rid: 661027877190631614
-  - rid: 661027877190631615
-  - rid: 661027877190631616
-  - rid: 661027877190631617
-  - rid: 661027877190631618
-  - rid: 661027877190631619
-  - rid: 661027877190631620
-  - rid: 661027877190631621
+  - rid: 8915324422656098314
+  - rid: 8915324422656098315
+  - rid: 8915324422656098316
+  - rid: 8915324422656098317
+  - rid: 8915324422656098318
+  - rid: 8915324422656098319
+  - rid: 8915324422656098320
+  - rid: 8915324422656098321
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u52A8\u753B"
+    outputPortId: 1002
+    legacyOutputPortName: "\u52A8\u753B"
     inputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u51B7\u5374"
+    outputPortId: 1004
+    legacyOutputPortName: "\u51B7\u5374"
     inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u6D88\u8017"
+    outputPortId: 1003
+    legacyOutputPortName: "\u6D88\u8017"
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: de0ba361-3aba-4ef0-bb07-9b418fcae591
+    outputPortId: 2315086
+    legacyOutputPortName: de0ba361-3aba-4ef0-bb07-9b418fcae591
     inputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
-    outputPortName: "\u78B0\u649E\u65F6"
+    outputPortId: 5001
+    legacyOutputPortName: "\u78B0\u649E\u65F6"
     inputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
-    outputPortName: "\u5B8C\u6210\u6548\u679C"
+    outputPortId: 3004
+    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
+    outputPortId: 2715463
+    legacyOutputPortName: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
     inputNodeGuid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   references:
     version: 2
     RefIds:
-    - rid: 661027877190631614
+    - rid: 8915324422656098314
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -99,7 +113,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 661027877190631615
+    - rid: 8915324422656098315
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
@@ -145,7 +159,7 @@ MonoBehaviour:
         damageMMCUseSnapshot: 1
         damageMultiplyByStackCount: 0
         damageCalculationType: 0
-    - rid: 661027877190631616
+    - rid: 8915324422656098316
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
@@ -172,7 +186,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 661027877190631617
+    - rid: 8915324422656098317
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
@@ -182,7 +196,7 @@ MonoBehaviour:
           y: -1987.3334
         targetType: 1
         endType: 0
-    - rid: 661027877190631618
+    - rid: 8915324422656098318
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -193,16 +207,19 @@ MonoBehaviour:
         targetType: 1
         skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
           type: 2}
+        skeletonDataAssetPath: Assets/Res/Spine/SP_Zhanshi/SP_Zhanshi_SkeletonData.asset
         animationName: Attack_01
         animationDuration: 18
         isAnimationLooping: 0
         timeEffects:
         - triggerTime: 11
-          portId: de0ba361-3aba-4ef0-bb07-9b418fcae591
+          portIdValue: 2315086
+          legacyPortId: de0ba361-3aba-4ef0-bb07-9b418fcae591
         - triggerTime: 24
-          portId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
+          portIdValue: 2715463
+          legacyPortId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
         timeCues: []
-    - rid: 661027877190631619
+    - rid: 8915324422656098319
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -245,7 +262,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 661027877190631620
+    - rid: 8915324422656098320
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -276,7 +293,7 @@ MonoBehaviour:
         ongoingBlockedTags:
           _tags: []
         eventOutputPorts: []
-    - rid: 661027877190631621
+    - rid: 8915324422656098321
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
@@ -320,6 +337,7 @@ MonoBehaviour:
         curveHeight: 0
         projectilePrefab: {fileID: 7929333103632110889, guid: 238de9af254672643bf9dfb3907eb776,
           type: 3}
+        projectilePrefabPath: Assets/Res/Prefab/Effect/ef_fashi_gandian_buff.prefab
         speed: 3
         maxDistance: 10
         collisionRadius: 0.5

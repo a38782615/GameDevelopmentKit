@@ -1,159 +1,133 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 时间效果数据 - 只有触发时间，没有结束时间
-    /// </summary>
     [Serializable]
     public class TimeEffectData : Object
     {
-        /// <summary>
-        /// 触发帧
-        /// </summary>
         public int triggerTime = 0;
-
-        /// <summary>
-        /// 端口唯一标识（用于连线恢复）
-        /// </summary>
-        public string portId;
+        public int portIdValue;
+        [FormerlySerializedAs("portId")]
+        public string legacyPortId;
 
         public TimeEffectData()
         {
-            portId = Guid.NewGuid().ToString();
+            this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(Guid.NewGuid().ToString());
         }
-    }
 
-    /// <summary>
-    /// 时间Cue数据 - 有开始时间和结束时间，用于控制Cue的生命周期
-    /// </summary>
-    [Serializable]
-    public class TimeCueData : Object
-    {
-        /// <summary>
-        /// 开始帧
-        /// </summary>
-        public int startTime = 0;
-
-        /// <summary>
-        /// 结束帧，-1表示动画结束时自动结束
-        /// </summary>
-        public int endTime = 5;
-
-        /// <summary>
-        /// 端口唯一标识（用于连线恢复）
-        /// </summary>
-        public string portId;
-
-        public TimeCueData()
-        {
-            portId = Guid.NewGuid().ToString();
-        }
-    }
-
-    /// <summary>
-    /// 技能节点数据 - 对应 GameplayAbility
-    /// </summary>
-    [Serializable]
-    public class AbilityNodeData : NodeData
-    {
-        /// <summary>
-        /// 技能ID（用于查找和标识）
-        /// </summary>
-        public int skillId = 0;
-
-        // ============ 技能标签配置 ============
-
-        /// <summary>
-        /// 技能自身标签 - 用于标识此技能
-        /// </summary>
-        public GameplayTagSet assetTags;
-
-        /// <summary>
-        /// 取消带有这些标签的技能
-        /// </summary>
-        public GameplayTagSet cancelAbilitiesWithTags;
-
-        /// <summary>
-        /// 阻止带有这些标签的技能激活
-        /// </summary>
-        public GameplayTagSet blockAbilitiesWithTags;
-
-        /// <summary>
-        /// 激活时授予的标签
-        /// </summary>
-        public GameplayTagSet activationOwnedTags;
-
-        /// <summary>
-        /// 激活所需标签 - 拥有者必须拥有这些标签才能激活
-        /// </summary>
-        public GameplayTagSet activationRequiredTags;
-
-        /// <summary>
-        /// 激活阻止标签 - 拥有者拥有这些标签时阻止激活
-        /// </summary>
-        public GameplayTagSet activationBlockedTags;
-
-        /// <summary>
-        /// 运行时阻止标签 - 技能运行期间如果获得这些标签，技能被取消
-        /// 用于眩晕、沉默等控制效果打断技能
-        /// </summary>
-        public GameplayTagSet ongoingBlockedTags;
-
-        // ============ 事件监听配置 ============
-
-        /// <summary>
-        /// 事件输出端口（用于被动技能等事件监听）
-        /// </summary>
-        public List<AbilityEventPortData> eventOutputPorts = new List<AbilityEventPortData>();
-    }
-
-    /// <summary>
-    /// 技能事件端口数据 - 用于被动技能等事件监听
-    /// </summary>
-    [Serializable]
-public class AbilityEventPortData : Object
-    {
-        public GameplayEventType eventType = GameplayEventType.OnHit;
-        public string portId;
-        public string customEventTag = "";  // 当eventType为Custom时使用
-
-        public string PortId
+        public int PortId
         {
             get
             {
-                if (!string.IsNullOrEmpty(this.portId))
+                if (!string.IsNullOrEmpty(this.legacyPortId))
                 {
-                    return this.portId;
+                    this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(this.legacyPortId);
+                    return this.portIdValue;
                 }
 
-                return GetFallbackPortId();
+                if (this.portIdValue > SkillPortId.Invalid)
+                {
+                    return this.portIdValue;
+                }
+
+                this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(Guid.NewGuid().ToString());
+                return this.portIdValue;
             }
             set
             {
-                this.portId = value;
+                this.portIdValue = value;
+                this.legacyPortId = null;
             }
         }
+    }
 
-        private string GetFallbackPortId()
+    [Serializable]
+    public class TimeCueData : Object
+    {
+        public int startTime = 0;
+        public int endTime = 5;
+        public int portIdValue;
+        [FormerlySerializedAs("portId")]
+        public string legacyPortId;
+
+        public TimeCueData()
         {
-            switch (this.eventType)
+            this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(Guid.NewGuid().ToString());
+        }
+
+        public int PortId
+        {
+            get
             {
-                case GameplayEventType.OnHit:
-                    return "受击时";
-                case GameplayEventType.OnDealDamage:
-                    return "造成伤害时";
-                case GameplayEventType.OnTakeDamage:
-                    return "受到伤害时";
-                case GameplayEventType.OnDeath:
-                    return "死亡时";
-                case GameplayEventType.OnKill:
-                    return "击杀时";
-                case GameplayEventType.Custom:
-                    return string.IsNullOrEmpty(this.customEventTag) ? "自定义事件" : this.customEventTag;
-                default:
-                    return "事件";
+                if (!string.IsNullOrEmpty(this.legacyPortId))
+                {
+                    this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(this.legacyPortId);
+                    return this.portIdValue;
+                }
+
+                if (this.portIdValue > SkillPortId.Invalid)
+                {
+                    return this.portIdValue;
+                }
+
+                this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(Guid.NewGuid().ToString());
+                return this.portIdValue;
+            }
+            set
+            {
+                this.portIdValue = value;
+                this.legacyPortId = null;
+            }
+        }
+    }
+
+    [Serializable]
+    public class AbilityNodeData : NodeData
+    {
+        public int skillId = 0;
+        public GameplayTagSet assetTags;
+        public GameplayTagSet cancelAbilitiesWithTags;
+        public GameplayTagSet blockAbilitiesWithTags;
+        public GameplayTagSet activationOwnedTags;
+        public GameplayTagSet activationRequiredTags;
+        public GameplayTagSet activationBlockedTags;
+        public GameplayTagSet ongoingBlockedTags;
+        public List<AbilityEventPortData> eventOutputPorts = new List<AbilityEventPortData>();
+    }
+
+    [Serializable]
+    public class AbilityEventPortData : Object
+    {
+        public GameplayEventType eventType = GameplayEventType.OnHit;
+        public int portIdValue;
+        [FormerlySerializedAs("portId")]
+        public string legacyPortId;
+        public string customEventTag = "";
+
+        public int PortId
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(this.legacyPortId))
+                {
+                    this.portIdValue = SkillPortIdUtility.ResolveAbilityEventPortId(this.legacyPortId);
+                    return this.portIdValue;
+                }
+
+                if (this.portIdValue > SkillPortId.Invalid)
+                {
+                    return this.portIdValue;
+                }
+
+                this.portIdValue = SkillPortIdUtility.ResolveAbilityEventPortId(this.eventType, this.customEventTag);
+                return this.portIdValue;
+            }
+            set
+            {
+                this.portIdValue = value;
+                this.legacyPortId = null;
             }
         }
     }
@@ -170,13 +144,13 @@ public class AbilityEventPortData : Object
 
         public AbilityTagContainer(AbilityNodeData data)
         {
-            AssetTags = data.assetTags;
-            CancelAbilitiesWithTags = data.cancelAbilitiesWithTags;
-            BlockAbilitiesWithTags = data.blockAbilitiesWithTags;
-            ActivationOwnedTags = data.activationOwnedTags;
-            ActivationRequiredTags = data.activationRequiredTags;
-            ActivationBlockedTags = data.activationBlockedTags;
-            OngoingBlockedTags = data.ongoingBlockedTags;
+            this.AssetTags = data.assetTags;
+            this.CancelAbilitiesWithTags = data.cancelAbilitiesWithTags;
+            this.BlockAbilitiesWithTags = data.blockAbilitiesWithTags;
+            this.ActivationOwnedTags = data.activationOwnedTags;
+            this.ActivationRequiredTags = data.activationRequiredTags;
+            this.ActivationBlockedTags = data.activationBlockedTags;
+            this.OngoingBlockedTags = data.ongoingBlockedTags;
         }
 
         public AbilityTagContainer(
@@ -188,13 +162,13 @@ public class AbilityEventPortData : Object
             GameplayTagSet activationBlockedTags,
             GameplayTagSet ongoingBlockedTags)
         {
-            AssetTags = assetTags;
-            CancelAbilitiesWithTags = cancelAbilityTags;
-            BlockAbilitiesWithTags = blockAbilityTags;
-            ActivationOwnedTags = activationOwnedTags;
-            ActivationRequiredTags = activationRequiredTags;
-            ActivationBlockedTags = activationBlockedTags;
-            OngoingBlockedTags = ongoingBlockedTags;
+            this.AssetTags = assetTags;
+            this.CancelAbilitiesWithTags = cancelAbilityTags;
+            this.BlockAbilitiesWithTags = blockAbilityTags;
+            this.ActivationOwnedTags = activationOwnedTags;
+            this.ActivationRequiredTags = activationRequiredTags;
+            this.ActivationBlockedTags = activationBlockedTags;
+            this.OngoingBlockedTags = ongoingBlockedTags;
         }
     }
 }

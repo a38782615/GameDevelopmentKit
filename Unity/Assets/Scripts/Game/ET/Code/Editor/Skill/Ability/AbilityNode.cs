@@ -1,65 +1,54 @@
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
-
 
 namespace ET.Client.Editor
 {
-    /// <summary>
-    /// 技能节点 - 对应 GameplayAbility
-    /// </summary>
     public class AbilityNode : SkillNodeBase<AbilityNodeData>
     {
-        // 右侧输出端口
         private Port activatePort;
         private Port animationPort;
-
-        // 左侧输出端口（消耗、冷却）
         private Port costPort;
         private Port cooldownPort;
-
-        // 事件输出端口
-        private List<Port> eventOutputPorts = new List<Port>();
+        private readonly List<Port> eventOutputPorts = new List<Port>();
         private VisualElement eventPortsContainer;
 
-        public AbilityNode(Vector2 position) : base(NodeType.Ability, position) { }
+        public AbilityNode(Vector2 position) : base(NodeType.Ability, position)
+        {
+        }
 
         protected override string GetNodeTitle() => "技能";
-        protected override float GetNodeWidth() => 310;
-        // 技能节点没有输入端口
+
+        protected override float GetNodeWidth() => 310f;
+
         protected override bool HasDefaultInputPort => false;
 
         protected override void CreateContent()
         {
-            // 右侧输出端口
-            activatePort = CreateOutputPort("激活");
-            animationPort = CreateOutputPort("动画");
+            this.activatePort = CreateOutputPort(SkillPortId.Ability.Activate, "激活");
+            this.animationPort = CreateOutputPort(SkillPortId.Ability.Animation, "动画");
 
-            // 左侧输出端口（消耗、冷却放在左边，视觉上更清晰）
-            costPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            costPort.portName = "消耗";
-            inputContainer.Add(costPort);
+            this.costPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            ConfigureOutputPort(this.costPort, SkillPortId.Ability.Cost, "消耗");
+            inputContainer.Add(this.costPort);
 
-            cooldownPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            cooldownPort.portName = "冷却";
-            inputContainer.Add(cooldownPort);
+            this.cooldownPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            ConfigureOutputPort(this.cooldownPort, SkillPortId.Ability.Cooldown, "冷却");
+            inputContainer.Add(this.cooldownPort);
 
-            // 创建事件监听端口区域
             CreateEventPortsSection();
         }
 
         private void UpdateTitle()
         {
-            var skillId = TypedData?.skillId ?? 0;
-            title = skillId > 0 ? $"技能 [{skillId}]" : "技能";
+            int skillId = TypedData?.skillId ?? 0;
+            title = skillId > 0 ? $"技能[{skillId}]" : "技能";
         }
-
-        #region 事件监听端口
 
         private void CreateEventPortsSection()
         {
-            eventPortsContainer = new VisualElement
+            this.eventPortsContainer = new VisualElement
             {
                 style =
                 {
@@ -105,22 +94,19 @@ namespace ET.Client.Editor
 
             headerContainer.Add(titleLabel);
             headerContainer.Add(addButton);
-            eventPortsContainer.Add(headerContainer);
-
-            // 事件端口列表容器
-            var portsListContainer = new VisualElement { name = "EventPortsListContainer" };
-            eventPortsContainer.Add(portsListContainer);
-
-            outputContainer.Add(eventPortsContainer);
+            this.eventPortsContainer.Add(headerContainer);
+            this.eventPortsContainer.Add(new VisualElement { name = "EventPortsListContainer" });
+            outputContainer.Add(this.eventPortsContainer);
         }
 
         private void AddEventOutputPort(AbilityEventPortData eventData = null)
         {
-            if (TypedData == null) return;
-            if (TypedData.eventOutputPorts == null)
-                TypedData.eventOutputPorts = new List<AbilityEventPortData>();
+            if (TypedData == null)
+            {
+                return;
+            }
 
-            // 如果没有传入数据，创建新的
+            TypedData.eventOutputPorts ??= new List<AbilityEventPortData>();
             if (eventData == null)
             {
                 eventData = new AbilityEventPortData();
@@ -129,15 +115,17 @@ namespace ET.Client.Editor
             }
 
             int index = TypedData.eventOutputPorts.IndexOf(eventData);
-            if (index < 0) index = TypedData.eventOutputPorts.Count - 1;
+            if (index < 0)
+            {
+                index = TypedData.eventOutputPorts.Count - 1;
+            }
 
-            // 创建端口
+            eventData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(eventData.eventType, eventData.customEventTag);
+
             var port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            port.portName = GetEventPortName(eventData);
-            eventData.PortId = port.portName;
-            port.portColor = new Color(0.3f, 0.7f, 0.9f); // 浅蓝色区分事件端口
+            ConfigureOutputPort(port, eventData.PortId, GetEventPortName(eventData));
+            port.portColor = new Color(0.3f, 0.7f, 0.9f);
 
-            // 创建端口行容器
             var portRowContainer = new VisualElement
             {
                 style =
@@ -148,101 +136,104 @@ namespace ET.Client.Editor
                 }
             };
 
-            // 事件类型下拉框
             var eventTypeField = new EnumField(eventData.eventType);
             eventTypeField.style.width = 100;
             eventTypeField.style.marginRight = 4;
             ApplyFieldStyle(eventTypeField);
 
-            // 自定义标签输入框（仅Custom时显示）
-            var customTagField = new TextField { value = eventData.customEventTag ?? "" };
+            var customTagField = new TextField { value = eventData.customEventTag ?? string.Empty };
             customTagField.style.width = 60;
             customTagField.style.marginRight = 4;
             customTagField.style.display = eventData.eventType == GameplayEventType.Custom ? DisplayStyle.Flex : DisplayStyle.None;
             ApplyFieldStyle(customTagField);
 
-            // 删除按钮
-            var deleteButton = new Button { text = "×" };
+            var deleteButton = new Button { text = "X" };
             deleteButton.style.width = 20;
             deleteButton.style.height = 20;
             ApplyButtonStyle(deleteButton);
 
-            // 事件绑定
             int currentIndex = index;
             eventTypeField.RegisterValueChangedCallback(evt =>
             {
-                var newType = (GameplayEventType)evt.newValue;
-                if (TypedData != null && currentIndex < TypedData.eventOutputPorts.Count)
+                GameplayEventType newType = (GameplayEventType)evt.newValue;
+                if (TypedData == null || currentIndex >= TypedData.eventOutputPorts.Count)
                 {
-                    TypedData.eventOutputPorts[currentIndex].eventType = newType;
-                    port.portName = GetEventPortName(TypedData.eventOutputPorts[currentIndex]);
-                    TypedData.eventOutputPorts[currentIndex].PortId = port.portName;
-                    customTagField.style.display = newType == GameplayEventType.Custom ? DisplayStyle.Flex : DisplayStyle.None;
-                    NotifyDataChanged();
+                    return;
                 }
+
+                AbilityEventPortData currentData = TypedData.eventOutputPorts[currentIndex];
+                currentData.eventType = newType;
+                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(newType, currentData.customEventTag);
+                ConfigureOutputPort(port, currentData.PortId, GetEventPortName(currentData));
+                customTagField.style.display = newType == GameplayEventType.Custom ? DisplayStyle.Flex : DisplayStyle.None;
+                NotifyDataChanged();
             });
 
             customTagField.RegisterValueChangedCallback(evt =>
             {
-                if (TypedData != null && currentIndex < TypedData.eventOutputPorts.Count)
+                if (TypedData == null || currentIndex >= TypedData.eventOutputPorts.Count)
                 {
-                    TypedData.eventOutputPorts[currentIndex].customEventTag = evt.newValue;
-                    port.portName = GetEventPortName(TypedData.eventOutputPorts[currentIndex]);
-                    TypedData.eventOutputPorts[currentIndex].PortId = port.portName;
-                    NotifyDataChanged();
+                    return;
                 }
+
+                AbilityEventPortData currentData = TypedData.eventOutputPorts[currentIndex];
+                currentData.customEventTag = evt.newValue;
+                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(currentData.eventType, evt.newValue);
+                ConfigureOutputPort(port, currentData.PortId, GetEventPortName(currentData));
+                NotifyDataChanged();
             });
 
-            deleteButton.clicked += () =>
-            {
-                RemoveEventOutputPort(currentIndex, port, portRowContainer);
-            };
+            deleteButton.clicked += () => RemoveEventOutputPort(currentIndex, port, portRowContainer);
 
             portRowContainer.Add(eventTypeField);
             portRowContainer.Add(customTagField);
             portRowContainer.Add(port);
             portRowContainer.Add(deleteButton);
 
-            var portsListContainer = eventPortsContainer.Q("EventPortsListContainer");
+            VisualElement portsListContainer = this.eventPortsContainer.Q("EventPortsListContainer");
             portsListContainer?.Add(portRowContainer);
 
-            eventOutputPorts.Add(port);
+            this.eventOutputPorts.Add(port);
             RefreshPorts();
         }
 
         private void RemoveEventOutputPort(int index, Port port, VisualElement portRowContainer)
         {
-            if (TypedData == null || TypedData.eventOutputPorts == null) return;
-            if (index < 0 || index >= TypedData.eventOutputPorts.Count) return;
+            if (TypedData == null || TypedData.eventOutputPorts == null)
+            {
+                return;
+            }
+
+            if (index < 0 || index >= TypedData.eventOutputPorts.Count)
+            {
+                return;
+            }
 
             TypedData.eventOutputPorts.RemoveAt(index);
-            eventOutputPorts.Remove(port);
+            this.eventOutputPorts.Remove(port);
             portRowContainer.RemoveFromHierarchy();
             NotifyDataChanged();
-
-            // 重建端口列表以更新索引
             RefreshEventPortsList();
         }
 
         private void RefreshEventPortsList()
         {
-            // 清除旧的端口
-            foreach (var port in eventOutputPorts)
+            foreach (Port port in this.eventOutputPorts)
             {
                 port.RemoveFromHierarchy();
             }
-            eventOutputPorts.Clear();
 
-            var portsListContainer = eventPortsContainer?.Q("EventPortsListContainer");
-            if (portsListContainer != null)
-                portsListContainer.Clear();
+            this.eventOutputPorts.Clear();
+            VisualElement portsListContainer = this.eventPortsContainer?.Q("EventPortsListContainer");
+            portsListContainer?.Clear();
 
-            if (TypedData == null) return;
-            if (TypedData.eventOutputPorts == null)
-                TypedData.eventOutputPorts = new List<AbilityEventPortData>();
+            if (TypedData == null)
+            {
+                return;
+            }
 
-            // 重新创建所有事件端口
-            foreach (var eventData in TypedData.eventOutputPorts)
+            TypedData.eventOutputPorts ??= new List<AbilityEventPortData>();
+            foreach (AbilityEventPortData eventData in TypedData.eventOutputPorts)
             {
                 AddEventOutputPort(eventData);
             }
@@ -281,35 +272,23 @@ namespace ET.Client.Editor
             button.style.borderBottomRightRadius = 4;
         }
 
-        #endregion
-
-        #region 端口查找
-
-        /// <summary>
-        /// 根据端口标识符查找输出端口（支持普通端口和事件端口）
-        /// </summary>
-        public override Port FindOutputPortByIdentifier(string portIdentifier)
+        public override Port FindOutputPortByIdentifier(int portId)
         {
-            // 1. 先查找普通输出端口（激活、消耗、冷却、动画）
-            if (activatePort?.portName == portIdentifier) return activatePort;
-            if (costPort?.portName == portIdentifier) return costPort;
-            if (cooldownPort?.portName == portIdentifier) return cooldownPort;
-            if (animationPort?.portName == portIdentifier) return animationPort;
+            if (SkillNodeBase.GetPortId(this.activatePort) == portId) return this.activatePort;
+            if (SkillNodeBase.GetPortId(this.costPort) == portId) return this.costPort;
+            if (SkillNodeBase.GetPortId(this.cooldownPort) == portId) return this.cooldownPort;
+            if (SkillNodeBase.GetPortId(this.animationPort) == portId) return this.animationPort;
 
-            // 2. 查找事件输出端口
-            foreach (var port in eventOutputPorts)
+            foreach (Port port in this.eventOutputPorts)
             {
-                if (port.portName == portIdentifier)
+                if (SkillNodeBase.GetPortId(port) == portId)
+                {
                     return port;
+                }
             }
 
-            // 3. 回退到基类实现
-            return base.FindOutputPortByIdentifier(portIdentifier);
+            return base.FindOutputPortByIdentifier(portId);
         }
-
-        #endregion
-
-        #region 数据加载/保存
 
         public override void LoadData(NodeData data)
         {
@@ -321,13 +300,13 @@ namespace ET.Client.Editor
         public override void SyncUIFromData()
         {
             base.SyncUIFromData();
-            if (TypedData == null) return;
-            UpdateTitle();
+            if (TypedData == null)
+            {
+                return;
+            }
 
-            // 刷新事件端口列表
+            UpdateTitle();
             RefreshEventPortsList();
         }
-
-        #endregion
     }
 }

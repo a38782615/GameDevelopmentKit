@@ -532,11 +532,11 @@ namespace ET.Client.Editor
         /// <summary>
         /// 根据端口标识符查找端口
         /// </summary>
-        public Port FindPortByIdentifier(string portIdentifier)
+        public Port FindPortByIdentifier(int portId)
         {
             foreach (var track in _tracks)
             {
-                if (track.PortId == portIdentifier)
+                if (track.PortId == portId)
                 {
                     return track.GetOutputPort();
                 }

@@ -1,8 +1,7 @@
-using UnityEditor.Experimental.GraphView;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
-
 
 namespace ET.Client.Editor
 {
@@ -12,86 +11,97 @@ namespace ET.Client.Editor
         {
             ClearGraph();
 
-            // 1. 先创建所有节点
             var nodeMap = new Dictionary<string, SkillNodeBase>();
-            foreach (var nodeData in graphData.nodes)
+            foreach (NodeData nodeData in graphData.nodes)
             {
-                var node = NodeFactory.CreateNodeFromData(nodeData);
-                if (node != null)
+                SkillNodeBase node = NodeFactory.CreateNodeFromData(nodeData);
+                if (node == null)
                 {
-                    AddElement(node);
-                    nodeMap[node.Guid] = node;
+                    continue;
                 }
+
+                AddElement(node);
+                nodeMap[node.Guid] = node;
             }
 
-            // 2. 再恢复所有连接
-            foreach (var conn in graphData.connections)
+            foreach (ConnectionData connection in graphData.connections)
             {
-                // 跳过无效的连接数据
-                if (string.IsNullOrEmpty(conn.outputNodeGuid) || string.IsNullOrEmpty(conn.inputNodeGuid))
+                if (string.IsNullOrEmpty(connection.outputNodeGuid) || string.IsNullOrEmpty(connection.inputNodeGuid))
                 {
-                    UnityEngine.Debug.LogWarning($"跳过无效连接数据: outputNodeGuid={conn.outputNodeGuid}, inputNodeGuid={conn.inputNodeGuid}");
+                    UnityEngine.Debug.LogWarning($"Skip invalid connection: outputNodeGuid={connection.outputNodeGuid}, inputNodeGuid={connection.inputNodeGuid}");
                     continue;
                 }
 
-                if (string.IsNullOrEmpty(conn.outputPortName) || string.IsNullOrEmpty(conn.inputPortName))
+                if (!nodeMap.TryGetValue(connection.outputNodeGuid, out SkillNodeBase outputNode))
                 {
-                    UnityEngine.Debug.LogWarning($"跳过无效连接数据: outputPortName={conn.outputPortName}, inputPortName={conn.inputPortName}");
+                    UnityEngine.Debug.LogWarning($"Output node not found: {connection.outputNodeGuid}");
                     continue;
                 }
 
-                if (!nodeMap.TryGetValue(conn.outputNodeGuid, out var outputNode))
+                if (!nodeMap.TryGetValue(connection.inputNodeGuid, out SkillNodeBase inputNode))
                 {
-                    UnityEngine.Debug.LogWarning($"找不到输出节点: {conn.outputNodeGuid}");
+                    UnityEngine.Debug.LogWarning($"Input node not found: {connection.inputNodeGuid}");
                     continue;
                 }
 
-                if (!nodeMap.TryGetValue(conn.inputNodeGuid, out var inputNode))
+                int outputPortId = connection.GetOutputPortId(outputNode.NodeType);
+                int inputPortId = connection.GetInputPortId();
+                if (outputPortId <= SkillPortId.Invalid || inputPortId <= SkillPortId.Invalid)
                 {
-                    UnityEngine.Debug.LogWarning($"找不到输入节点: {conn.inputNodeGuid}");
+                    UnityEngine.Debug.LogWarning(
+                        $"Skip invalid connection ids: outputPortId={outputPortId}, inputPortId={inputPortId}, inputPortName={connection.inputPortName}");
                     continue;
                 }
 
-                // 查找输出端口（优先通过portId查找，再通过portName查找）
-                var outputPort = FindOutputPort(outputNode, conn.outputPortName);
+                Port outputPort = FindOutputPort(outputNode, outputPortId);
                 if (outputPort == null)
                 {
-                    UnityEngine.Debug.LogWarning($"找不到输出端口: 节点={outputNode.Guid}, 端口={conn.outputPortName}");
+                    UnityEngine.Debug.LogWarning($"Output port not found: node={outputNode.Guid}, portId={outputPortId}");
                     continue;
                 }
 
-                // 查找输入端口
-                var inputPort = inputNode.inputContainer
-                    .Query<Port>()
-                    .ToList()
-                    .FirstOrDefault(p => p.portName == conn.inputPortName);
-
+                Port inputPort = FindInputPort(inputNode, inputPortId, connection.inputPortName);
                 if (inputPort == null)
                 {
-                    UnityEngine.Debug.LogWarning($"找不到输入端口: 节点={inputNode.Guid}, 端口={conn.inputPortName}");
+                    UnityEngine.Debug.LogWarning(
+                        $"Input port not found: node={inputNode.Guid}, inputPortId={inputPortId}, inputPortName={connection.inputPortName}");
                     continue;
                 }
 
-                var edge = outputPort.ConnectTo(inputPort);
+                Edge edge = outputPort.ConnectTo(inputPort);
                 AddElement(edge);
             }
         }
 
-        /// <summary>
-        /// 查找输出端口（支持普通端口和Cue端口）
-        /// </summary>
-        private Port FindOutputPort(SkillNodeBase node, string portIdentifier)
+        private Port FindOutputPort(SkillNodeBase node, int portId)
         {
-            // 优先使用节点自己的查找方法（支持自定义端口如TimeEffect/TimeCue）
-            var port = node.FindOutputPortByIdentifier(portIdentifier);
-            if (port != null) return port;
+            Port port = node.FindOutputPortByIdentifier(portId);
+            if (port != null)
+            {
+                return port;
+            }
 
-            // 回退：通过name属性在整个节点中查找（用于Cue端口，name存储的是portId）
-            port = node.Query<Port>()
+            return node.Query<Port>()
                 .ToList()
-                .FirstOrDefault(p => p.name == portIdentifier && p.direction == Direction.Output);
+                .FirstOrDefault(candidate => candidate.direction == Direction.Output && SkillNodeBase.GetPortId(candidate) == portId);
+        }
 
-            return port;
+        private Port FindInputPort(SkillNodeBase node, int portId, string portName)
+        {
+            Port port = node.inputContainer
+                .Query<Port>()
+                .ToList()
+                .FirstOrDefault(candidate => SkillNodeBase.GetPortId(candidate) == portId);
+
+            if (port != null)
+            {
+                return port;
+            }
+
+            return node.inputContainer
+                .Query<Port>()
+                .ToList()
+                .FirstOrDefault(candidate => candidate.portName == portName);
         }
 
         public SkillGraphData SaveGraph(SkillGraphData graphData)
@@ -99,73 +109,63 @@ namespace ET.Client.Editor
             graphData.nodes.Clear();
             graphData.connections.Clear();
 
-            // 1. 保存所有节点
-            foreach (var node in nodes)
+            foreach (GraphElement node in nodes)
             {
-                var skillNode = node as SkillNodeBase;
-                if (skillNode != null)
+                if (node is not SkillNodeBase skillNode)
                 {
-                    var nodeData = skillNode.SaveData();
-                    SkillNodeAssetPathUtility.SyncSerializedAssetPath(nodeData);
-                    graphData.nodes.Add(nodeData);
+                    continue;
                 }
+
+                NodeData nodeData = skillNode.SaveData();
+                SkillNodeAssetPathUtility.SyncSerializedAssetPath(nodeData);
+                graphData.nodes.Add(nodeData);
             }
 
-            // 2. 保存所有连接
-            foreach (var edge in edges)
+            foreach (Edge edge in edges)
             {
-                if (edge?.output == null || edge?.input == null)
-                    continue;
-
-                var outputNode = edge.output.node as SkillNodeBase;
-                var inputNode = edge.input.node as SkillNodeBase;
-
-                if (outputNode == null || inputNode == null)
-                    continue;
-
-                // 获取端口标识符（Cue端口使用name/portId，普通端口使用portName）
-                var outputPortIdentifier = GetPortIdentifier(edge.output);
-                var inputPortIdentifier = edge.input.portName;
-
-                // 跳过无效的端口标识符
-                if (string.IsNullOrEmpty(outputPortIdentifier) || string.IsNullOrEmpty(inputPortIdentifier))
+                if (edge?.output == null || edge.input == null)
                 {
-                    UnityEngine.Debug.LogWarning($"跳过无效连接: {outputNode.Guid} -> {inputNode.Guid}, outputPort={outputPortIdentifier}, inputPort={inputPortIdentifier}");
+                    continue;
+                }
+
+                if (edge.output.node is not SkillNodeBase outputNode || edge.input.node is not SkillNodeBase inputNode)
+                {
+                    continue;
+                }
+
+                int outputPortId = GetPortIdentifier(edge.output);
+                int inputPortId = GetPortIdentifier(edge.input);
+                string inputPortName = edge.input.portName;
+                if (outputPortId <= SkillPortId.Invalid || inputPortId <= SkillPortId.Invalid || string.IsNullOrEmpty(inputPortName))
+                {
+                    UnityEngine.Debug.LogWarning(
+                        $"Skip invalid edge: {outputNode.Guid}->{inputNode.Guid}, outputPortId={outputPortId}, inputPortId={inputPortId}, inputPortName={inputPortName}");
                     continue;
                 }
 
                 graphData.connections.Add(new ConnectionData
                 {
                     outputNodeGuid = outputNode.Guid,
-                    outputPortName = outputPortIdentifier,
+                    outputPortId = outputPortId,
                     inputNodeGuid = inputNode.Guid,
-                    inputPortName = inputPortIdentifier
+                    inputPortId = inputPortId,
+                    inputPortName = inputPortName
                 });
             }
 
             return graphData;
         }
 
-        /// <summary>
-        /// 获取端口标识符（Cue端口返回name/portId，普通端口返回portName）
-        /// </summary>
-        private string GetPortIdentifier(Port port)
+        private int GetPortIdentifier(Port port)
         {
-            // 优先使用 portName
-            if (!string.IsNullOrEmpty(port.portName))
+            int portId = SkillNodeBase.GetPortId(port);
+            if (portId > SkillPortId.Invalid)
             {
-                return port.portName;
+                return portId;
             }
 
-            // 如果 portName 为空，尝试使用 name（用于 Cue 端口）
-            if (!string.IsNullOrEmpty(port.name))
-            {
-                return port.name;
-            }
-
-            // 都为空，记录警告
-            UnityEngine.Debug.LogWarning($"端口标识符为空: port.portName={port.portName}, port.name={port.name}");
-            return "";
+            UnityEngine.Debug.LogWarning($"Invalid port identifier: portName={port.portName}, name={port.name}");
+            return SkillPortId.Invalid;
         }
     }
 }

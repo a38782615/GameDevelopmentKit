@@ -75,6 +75,7 @@ namespace ET.Client.Editor
             {
                 defaultInputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
                 defaultInputPort.portName = "输入";
+                ConfigureInputPort(defaultInputPort, SkillPortIdUtility.ResolveLegacyInputPortId("\u8F93\u5165"), "\u8F93\u5165");
                 inputContainer.Add(defaultInputPort);
             }
         }
@@ -165,12 +166,57 @@ namespace ET.Client.Editor
             return field;
         }
 
-        protected Port CreateOutputPort(string portName)
+        protected Port CreateOutputPort(int portId, string portName)
         {
             var port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            port.portName = portName;
+            ConfigureOutputPort(port, portId, portName);
             outputContainer.Add(port);
             return port;
+        }
+
+        protected Port CreateOutputPort(string portName)
+        {
+            int portId = SkillPortIdUtility.ResolveLegacyOutputPortId(this.NodeType, portName);
+            return CreateOutputPort(portId, portName);
+        }
+
+        protected void ConfigureOutputPort(Port port, int portId, string portName)
+        {
+            if (port == null)
+            {
+                return;
+            }
+
+            port.portName = portName;
+            port.name = portId.ToString();
+            port.userData = portId;
+        }
+
+        protected void ConfigureInputPort(Port port, int portId, string portName)
+        {
+            if (port == null)
+            {
+                return;
+            }
+
+            port.portName = portName;
+            port.name = portId.ToString();
+            port.userData = portId;
+        }
+
+        public static int GetPortId(Port port)
+        {
+            if (port == null)
+            {
+                return SkillPortId.Invalid;
+            }
+
+            if (port.userData is int portId)
+            {
+                return portId;
+            }
+
+            return int.TryParse(port.name, out portId) ? portId : SkillPortId.Invalid;
         }
 
         /// <summary>
@@ -241,13 +287,13 @@ namespace ET.Client.Editor
         /// </summary>
         /// <param name="portIdentifier">端口标识符（portName 或 portId）</param>
         /// <returns>找到的端口，未找到返回 null</returns>
-        public virtual Port FindOutputPortByIdentifier(string portIdentifier)
+        public virtual Port FindOutputPortByIdentifier(int portId)
         {
             // 默认实现：在 outputContainer 中通过 portName 查找
             return outputContainer
                 .Query<Port>()
                 .ToList()
-                .Find(p => p.portName == portIdentifier);
+                .Find(p => GetPortId(p) == portId);
         }
     }
 

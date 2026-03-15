@@ -111,7 +111,7 @@ namespace ET.Client
                     {
                         var overflowPolicy = existingData?.stackOverflowPolicy ?? StackOverflowPolicy.DenyApplication;
                         if (overflowPolicy == StackOverflowPolicy.AllowOverflowEffect)
-                            context.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "溢出");
+                            context.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Overflow);
                         if (overflowPolicy == StackOverflowPolicy.DenyApplication)
                         {
                             existingEffect.RefreshEffect();
@@ -195,7 +195,7 @@ namespace ET.Client
             }
 
             handler?.OnInitialHook(target);
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "初始效果");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Initial);
         }
 
         private static void ExecutePeriodicFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
@@ -204,7 +204,7 @@ namespace ET.Client
             ctx = handler?.GetExecutionContext() ?? ctx;
 
             handler?.OnPeriodicHook();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "每周期执行");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Periodic);
         }
 
         private static void ExecuteCompleteFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
@@ -213,7 +213,7 @@ namespace ET.Client
             ctx = handler?.GetExecutionContext() ?? ctx;
 
             handler?.OnCompleteHook();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "完成效果");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Complete);
         }
 
         private static AEffectHandler ResolveEffectHandler(this GameplayEffectSpec self)
@@ -281,7 +281,7 @@ namespace ET.Client
 
             self.WasRefreshed = true;
             var ctx = self.GetContext();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "刷新时");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Refresh);
         }
 
         // ============ 过期和移除 ============
@@ -383,7 +383,7 @@ namespace ET.Client
                 self.IsRunning = false;
                 return;
             }
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.RemoveAll);
             self.ExecuteCompleteFlow(ctx);
 
             self.IsApplied = false;
@@ -441,7 +441,7 @@ namespace ET.Client
                 self.IsRemoved = true;
                 return;
             }
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
+            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.RemoveAll);
 
             self.IsApplied = false;
             self.IsExpired = true;

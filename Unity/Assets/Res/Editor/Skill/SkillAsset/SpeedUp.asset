@@ -14,37 +14,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1009
   nodes:
-  - rid: 661027877190631632
-  - rid: 661027877190631633
-  - rid: 661027877190631634
-  - rid: 661027877190631635
-  - rid: 661027877190631636
-  - rid: 661027877190631637
+  - rid: 8915324422656098332
+  - rid: 8915324422656098333
+  - rid: 8915324422656098334
+  - rid: 8915324422656098335
+  - rid: 8915324422656098336
+  - rid: 8915324422656098337
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u52A8\u753B"
+    outputPortId: 1002
+    legacyOutputPortName: "\u52A8\u753B"
     inputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u51B7\u5374"
+    outputPortId: 1004
+    legacyOutputPortName: "\u51B7\u5374"
     inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u6D88\u8017"
+    outputPortId: 1003
+    legacyOutputPortName: "\u6D88\u8017"
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: f41c85e0-7f26-494e-9ffc-4a06c980f811
+    outputPortId: 2000539
+    legacyOutputPortName: f41c85e0-7f26-494e-9ffc-4a06c980f811
     inputNodeGuid: f73ba91e-a76b-456c-b19c-a5176809d5f5
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u6FC0\u6D3B"
+    outputPortId: 1001
+    legacyOutputPortName: "\u6FC0\u6D3B"
     inputNodeGuid: 632c75e2-152b-4376-8e9e-62c0e74f92d0
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   references:
     version: 2
     RefIds:
-    - rid: 661027877190631632
+    - rid: 8915324422656098332
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -89,7 +99,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 661027877190631633
+    - rid: 8915324422656098333
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
@@ -99,7 +109,7 @@ MonoBehaviour:
           y: -1856.6667
         targetType: 1
         endType: 0
-    - rid: 661027877190631634
+    - rid: 8915324422656098334
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -110,14 +120,16 @@ MonoBehaviour:
         targetType: 1
         skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
           type: 2}
+        skeletonDataAssetPath: Assets/Res/Spine/SP_Zhanshi/SP_Zhanshi_SkeletonData.asset
         animationName: Stand
         animationDuration: 24
         isAnimationLooping: 0
         timeEffects:
         - triggerTime: 25
-          portId: f41c85e0-7f26-494e-9ffc-4a06c980f811
+          portIdValue: 2000539
+          legacyPortId: f41c85e0-7f26-494e-9ffc-4a06c980f811
         timeCues: []
-    - rid: 661027877190631635
+    - rid: 8915324422656098335
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -160,7 +172,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 661027877190631636
+    - rid: 8915324422656098336
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 632c75e2-152b-4376-8e9e-62c0e74f92d0
@@ -206,7 +218,7 @@ MonoBehaviour:
           _tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
-    - rid: 661027877190631637
+    - rid: 8915324422656098337
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330

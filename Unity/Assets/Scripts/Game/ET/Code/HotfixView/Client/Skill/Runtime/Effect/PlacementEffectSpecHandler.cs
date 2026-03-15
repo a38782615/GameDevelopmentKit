@@ -128,7 +128,7 @@ namespace ET.Client
             var ctx = Context.CreateWithParentInput(target);
 
             // 执行进入时端口
-            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "进入时");
+            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.PlacementEffect.OnEnter);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ET.Client
             var ctx = Context.CreateWithParentInput(target);
 
             // 执行离开时端口
-            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "离开时");
+            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.PlacementEffect.OnExit);
         }
 
 

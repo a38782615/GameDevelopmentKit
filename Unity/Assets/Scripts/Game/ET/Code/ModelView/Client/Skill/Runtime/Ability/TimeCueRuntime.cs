@@ -9,7 +9,7 @@ namespace ET.Client
     {
         public float StartTime { get; set; }
         public float EndTime { get; set; }
-        public string PortId { get; set; }
+        public int PortId { get; set; }
         public bool HasStarted { get; set; }
         public bool HasEnded { get; set; }
         /// <summary>

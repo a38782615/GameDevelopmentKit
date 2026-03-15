@@ -18,7 +18,7 @@ namespace ET.Client
             var context = this.GetContext();
             if (nodeData == null || context == null)
             {
-                context?.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, "无目标");
+                context?.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.NoTarget);
                 return;
             }
 
@@ -51,18 +51,18 @@ namespace ET.Client
 
             if (foundTargets.Count == 0)
             {
-                context.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, "无目标");
+                context.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.NoTarget);
             }
             else
             {
                 foreach (AbilitySystemComponent findTarget in foundTargets)
                 {
                     SpecExecutionContext targetContext = context.CreateWithParentInput(findTarget);
-                    targetContext.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, "对每个目标");
+                    targetContext.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.ForEachTarget);
                 }
             }
 
-            context.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, "完成效果");
+            context.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.Complete);
         }
 
         private void SearchCircle(List<AbilitySystemComponent> foundTargets, Vector2 center, float radius)

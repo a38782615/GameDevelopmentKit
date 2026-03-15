@@ -14,57 +14,75 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1002
   nodes:
-  - rid: 661027877190631646
-  - rid: 661027877190631647
-  - rid: 661027877190631648
-  - rid: 661027877190631649
-  - rid: 661027877190631650
-  - rid: 661027877190631651
-  - rid: 661027877190631652
-  - rid: 661027877190631653
-  - rid: 661027877190631654
-  - rid: 661027877190631655
+  - rid: 8915324422656098346
+  - rid: 8915324422656098347
+  - rid: 8915324422656098348
+  - rid: 8915324422656098349
+  - rid: 8915324422656098350
+  - rid: 8915324422656098351
+  - rid: 8915324422656098352
+  - rid: 8915324422656098353
+  - rid: 8915324422656098354
+  - rid: 8915324422656098355
   connections:
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: 8dea1941-c520-4f9a-aee0-40932c8542ef
+    outputPortId: 2287012
+    legacyOutputPortName: 8dea1941-c520-4f9a-aee0-40932c8542ef
     inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u52A8\u753B"
+    outputPortId: 1002
+    legacyOutputPortName: "\u52A8\u753B"
     inputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u51B7\u5374"
+    outputPortId: 1004
+    legacyOutputPortName: "\u51B7\u5374"
     inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortName: "\u6D88\u8017"
+    outputPortId: 1003
+    legacyOutputPortName: "\u6D88\u8017"
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: de0ba361-3aba-4ef0-bb07-9b418fcae591
+    outputPortId: 2315086
+    legacyOutputPortName: de0ba361-3aba-4ef0-bb07-9b418fcae591
     inputNodeGuid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: f8947676-1084-4228-b991-1509cc7fe851
-    outputPortName: "\u5B8C\u6210\u6548\u679C"
+    outputPortId: 3004
+    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: c353e286-8ef0-460a-b917-887f2aeb390a
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
-    outputPortName: "\u5BF9\u6BCF\u4E2A\u76EE\u6807"
+    outputPortId: 4001
+    legacyOutputPortName: "\u5BF9\u6BCF\u4E2A\u76EE\u6807"
     inputNodeGuid: cb1df36f-5729-423e-9d1a-287db5a433f0
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: cb1df36f-5729-423e-9d1a-287db5a433f0
-    outputPortName: "\u6BCF\u5468\u671F\u6267\u884C"
+    outputPortId: 3002
+    legacyOutputPortName: "\u6BCF\u5468\u671F\u6267\u884C"
     inputNodeGuid: f8947676-1084-4228-b991-1509cc7fe851
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortName: 97dc121c-84b7-4f94-9997-02e0e5b2ea6c
+    outputPortId: 2821173
+    legacyOutputPortName: 97dc121c-84b7-4f94-9997-02e0e5b2ea6c
     inputNodeGuid: 011aad56-e96c-41eb-9d85-e793d74a40bb
+    inputPortId: 7001
     inputPortName: "\u8F93\u5165"
   references:
     version: 2
     RefIds:
-    - rid: 661027877190631646
+    - rid: 8915324422656098346
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -81,12 +99,13 @@ MonoBehaviour:
         positionSource: 0
         particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
           type: 3}
+        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_attack_02.prefab
         particleBindingName: down
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
-    - rid: 661027877190631647
+    - rid: 8915324422656098347
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -131,7 +150,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 661027877190631648
+    - rid: 8915324422656098348
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -174,7 +193,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 661027877190631649
+    - rid: 8915324422656098349
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c353e286-8ef0-460a-b917-887f2aeb390a
@@ -201,7 +220,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 661027877190631650
+    - rid: 8915324422656098350
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
@@ -211,7 +230,7 @@ MonoBehaviour:
           y: -1879.3334
         targetType: 1
         endType: 0
-    - rid: 661027877190631651
+    - rid: 8915324422656098351
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: f8947676-1084-4228-b991-1509cc7fe851
@@ -257,7 +276,7 @@ MonoBehaviour:
         damageMMCUseSnapshot: 1
         damageMultiplyByStackCount: 1
         damageCalculationType: 0
-    - rid: 661027877190631652
+    - rid: 8915324422656098352
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cb1df36f-5729-423e-9d1a-287db5a433f0
@@ -299,7 +318,7 @@ MonoBehaviour:
           _tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
-    - rid: 661027877190631653
+    - rid: 8915324422656098353
       type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
@@ -337,7 +356,7 @@ MonoBehaviour:
             - unitType
         searchExcludeTags:
           _tags: []
-    - rid: 661027877190631654
+    - rid: 8915324422656098354
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -348,19 +367,23 @@ MonoBehaviour:
         targetType: 1
         skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
           type: 2}
+        skeletonDataAssetPath: Assets/Res/Spine/SP_Zhanshi/SP_Zhanshi_SkeletonData.asset
         animationName: Attack_02
         animationDuration: 22
         isAnimationLooping: 0
         timeEffects:
         - triggerTime: 7
-          portId: de0ba361-3aba-4ef0-bb07-9b418fcae591
+          portIdValue: 2315086
+          legacyPortId: de0ba361-3aba-4ef0-bb07-9b418fcae591
         - triggerTime: 22
-          portId: 97dc121c-84b7-4f94-9997-02e0e5b2ea6c
+          portIdValue: 2821173
+          legacyPortId: 97dc121c-84b7-4f94-9997-02e0e5b2ea6c
         timeCues:
         - startTime: 7
           endTime: 48
-          portId: 8dea1941-c520-4f9a-aee0-40932c8542ef
-    - rid: 661027877190631655
+          portIdValue: 2287012
+          legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
+    - rid: 8915324422656098355
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330

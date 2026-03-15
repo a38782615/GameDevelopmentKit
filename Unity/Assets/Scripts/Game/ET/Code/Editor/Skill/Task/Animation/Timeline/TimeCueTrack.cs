@@ -34,7 +34,7 @@ namespace ET.Client.Editor
         {
             _data = data;
             _index = index;
-            PortId = data.portId;
+            PortId = data.PortId;
 
             // 创建删除按钮
             var removeButton = new Button { text = "×" };
@@ -75,7 +75,8 @@ namespace ET.Client.Editor
                 OutputPort = createPortFunc();
                 OutputPort.portName = "";
                 OutputPort.portColor = REGION_COLOR;
-                OutputPort.name = data.portId;
+                OutputPort.name = PortId.ToString();
+                OutputPort.userData = PortId;
                 PortArea.Add(OutputPort);
 
                 // 如果是TimelinePort，监听连接变化事件
