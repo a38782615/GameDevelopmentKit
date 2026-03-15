@@ -53,11 +53,24 @@ namespace ET.Client
 
         private static void RemoveCueInternal(this GameplayCueContainerComponent self, GameplayCueSpec cue)
         {
+            if (cue == null)
+            {
+                self.ActiveCues.RemoveAll(cueRef => cueRef.As() == null);
+                self.PendingRemove.RemoveAll(cueRef => cueRef.As() == null);
+                return;
+            }
+
             if (cue.IsRunning)
+            {
                 self.StopCue(cue, true);
+            }
+
             self.ActiveCues.Remove(cue);
+            self.PendingRemove.Remove(cue);
             if (!cue.IsDisposed)
+            {
                 cue.Dispose();
+            }
         }
 
         // ============ 更新 ============
@@ -78,19 +91,24 @@ namespace ET.Client
             }
 
             self.IsUpdating = false;
+            self.ActiveCues.RemoveAll(cueRef => cueRef.As() == null);
+            self.PendingRemove.RemoveAll(cueRef => cueRef.As() == null);
 
-            if (self.PendingRemove.Count > 0)
+            while (self.PendingRemove.Count > 0)
             {
-                foreach (var cue in self.PendingRemove)
-                    self.RemoveCueInternal(cue);
-                self.PendingRemove.Clear();
+                GameplayCueSpec cue = self.PendingRemove[self.PendingRemove.Count - 1].As();
+                self.RemoveCueInternal(cue);
             }
         }
 
         public static void Clear(this GameplayCueContainerComponent self)
         {
-            for (int i = self.ActiveCues.Count - 1; i >= 0; i--)
-                self.RemoveCueInternal(self.ActiveCues[i]);
+            while (self.ActiveCues.Count > 0)
+            {
+                GameplayCueSpec cue = self.ActiveCues[self.ActiveCues.Count - 1].As();
+                self.RemoveCueInternal(cue);
+            }
+
             self.ActiveCues.Clear();
             self.PendingRemove.Clear();
         }

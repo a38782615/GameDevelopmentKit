@@ -44,6 +44,11 @@ namespace ET.Client
             foreach (var e in self.ActiveEffects)
             {
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.EffectNodeData?.nodeType != spec.EffectNodeData?.nodeType) continue;
                 if (!effect.Tags.AssetTags.Equals(spec.Tags.AssetTags)) continue;
 
@@ -80,10 +85,20 @@ namespace ET.Client
 
         private static void RemoveEffectInternal(this GameplayEffectContainerComponent self, GameplayEffectSpec spec)
         {
+            if (spec == null)
+            {
+                self.ActiveEffects.RemoveAll(effectRef => effectRef.As() == null);
+                self.PendingRemove.RemoveAll(effectRef => effectRef.As() == null);
+                return;
+            }
+
             spec.RemoveEffect();
             self.ActiveEffects.Remove(spec);
+            self.PendingRemove.Remove(spec);
             if (!spec.IsDisposed)
+            {
                 spec.Dispose();
+            }
         }
 
         public static int RemoveEffectsWithTags(this GameplayEffectContainerComponent self, GameplayTagSet tags)
@@ -95,6 +110,11 @@ namespace ET.Client
             {
                 var e = self.ActiveEffects[i];
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.Tags.AssetTags.HasAnyTags(tags))
                 {
                     self.RemoveEffect(effect);
@@ -113,6 +133,11 @@ namespace ET.Client
             {
                 var e = self.ActiveEffects[i];
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.Source.As() == source)
                 {
                     self.RemoveEffect(effect);
@@ -134,6 +159,11 @@ namespace ET.Client
             foreach (var e in self.ActiveEffects)
             {
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.Tags.AssetTags.HasTag(tag))
                     return effect;
             }
@@ -145,6 +175,11 @@ namespace ET.Client
             foreach (var e in self.ActiveEffects)
             {
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.Tags.GrantedTags.HasTag(tag))
                     return effect;
             }
@@ -158,6 +193,11 @@ namespace ET.Client
             foreach (var e in self.ActiveEffects)
             {
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 if (effect.NodeGuid == nodeGuid)
                     return effect;
             }
@@ -175,7 +215,13 @@ namespace ET.Client
             {
                 if (effect is EntityRef<GameplayEffectSpec> buffSpec)
                 {
-                    var buffData = buffSpec.As().EffectNodeData as BuffEffectNodeData;
+                    GameplayEffectSpec spec = buffSpec.As();
+                    if (spec == null)
+                    {
+                        continue;
+                    }
+
+                    var buffData = spec.EffectNodeData as BuffEffectNodeData;
                     if (buffData != null && buffData.buffId == buffId)
                         return buffSpec;
                 }
@@ -193,6 +239,11 @@ namespace ET.Client
             {
                 var e = self.ActiveEffects[i];
                 var effect = e.As();
+                if (effect == null)
+                {
+                    continue;
+                }
+
                 effect.TickEffect(deltaTime);
 
                 if (effect.IsExpired && !self.PendingRemove.Contains(effect))
@@ -200,19 +251,24 @@ namespace ET.Client
             }
 
             self.IsUpdating = false;
+            self.ActiveEffects.RemoveAll(effectRef => effectRef.As() == null);
+            self.PendingRemove.RemoveAll(effectRef => effectRef.As() == null);
 
-            if (self.PendingRemove.Count > 0)
+            while (self.PendingRemove.Count > 0)
             {
-                foreach (var effect in self.PendingRemove)
-                    self.RemoveEffectInternal(effect);
-                self.PendingRemove.Clear();
+                GameplayEffectSpec effect = self.PendingRemove[self.PendingRemove.Count - 1].As();
+                self.RemoveEffectInternal(effect);
             }
         }
 
         public static void Clear(this GameplayEffectContainerComponent self)
         {
-            for (int i = self.ActiveEffects.Count - 1; i >= 0; i--)
-                self.RemoveEffectInternal(self.ActiveEffects[i]);
+            while (self.ActiveEffects.Count > 0)
+            {
+                GameplayEffectSpec effect = self.ActiveEffects[self.ActiveEffects.Count - 1].As();
+                self.RemoveEffectInternal(effect);
+            }
+
             self.ActiveEffects.Clear();
             self.PendingRemove.Clear();
         }

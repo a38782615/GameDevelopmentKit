@@ -334,12 +334,13 @@ namespace ET.Client
             }
 
             self.IsRemoved = true;
+            EffectTagContainer tags = self.Tags;
             // 取消Cue
-            if (self.TriggeredCueIds.Count > 0)
+            if (self.TriggeredCueIds != null && self.TriggeredCueIds.Count > 0)
             {
                 var asc = self.GetSource();
                 var cueContainer = asc?.GetComponent<GameplayCueContainerComponent>();
-                if (cueContainer != null)
+                if (cueContainer != null && !cueContainer.IsDisposed)
                 {
                     foreach (var cueId in self.TriggeredCueIds)
                     {
@@ -353,7 +354,7 @@ namespace ET.Client
 
             // 移除属性修改器
             var target = self.GetTarget();
-            if (target?.Attributes != null)
+            if (target != null && !target.IsDisposed && target.Attributes != null && self.Modifiers != null)
             {
                 foreach (var modifier in self.Modifiers)
                 {
@@ -367,8 +368,10 @@ namespace ET.Client
             }
 
             // 移除标签
-            if (target != null && !self.Tags.GrantedTags.IsEmpty)
-                target.OwnedTags.RemoveTags(self.Tags.GrantedTags);
+            if (target != null && !target.IsDisposed && target.OwnedTags != null && !tags.GrantedTags.IsEmpty)
+            {
+                target.OwnedTags.RemoveTags(tags.GrantedTags);
+            }
 
             self.UnregisterTagListener();
 
@@ -396,9 +399,10 @@ namespace ET.Client
             self.IsRunning = false;
 
             // 取消Cue
+            EffectTagContainer tags = self.Tags;
             var asc = self.GetSource();
             var cueContainer = asc?.GetComponent<GameplayCueContainerComponent>();
-            if (cueContainer != null && self.TriggeredCueIds.Count > 0)
+            if (cueContainer != null && !cueContainer.IsDisposed && self.TriggeredCueIds != null && self.TriggeredCueIds.Count > 0)
             {
                 foreach (var cueId in self.TriggeredCueIds)
                 {
@@ -411,7 +415,7 @@ namespace ET.Client
 
             // 移除属性修改器
             var target = self.GetTarget();
-            if (target?.Attributes != null)
+            if (target != null && !target.IsDisposed && target.Attributes != null && self.Modifiers != null)
             {
                 foreach (var modifier in self.Modifiers)
                 {
@@ -424,8 +428,10 @@ namespace ET.Client
                 }
             }
 
-            if (target != null && !self.Tags.GrantedTags.IsEmpty)
-                target.OwnedTags.RemoveTags(self.Tags.GrantedTags);
+            if (target != null && !target.IsDisposed && target.OwnedTags != null && !tags.GrantedTags.IsEmpty)
+            {
+                target.OwnedTags.RemoveTags(tags.GrantedTags);
+            }
 
             var ctx = self.GetContext();
             if (ctx == null)
@@ -494,7 +500,7 @@ namespace ET.Client
         private static void RegisterTagListener(this GameplayEffectSpec self)
         {
             var target = self.GetTarget();
-            if (target?.OwnedTags == null) return;
+            if (target == null || target.IsDisposed || target.OwnedTags == null) return;
 
             if (!self.Tags.OngoingRequiredTags.IsEmpty)
                 target.OwnedTags.OnTagAdded += self.OnOwnerTagAdded;
@@ -503,7 +509,7 @@ namespace ET.Client
         private static void UnregisterTagListener(this GameplayEffectSpec self)
         {
             var target = self.GetTarget();
-            if (target?.OwnedTags == null) return;
+            if (target == null || target.IsDisposed || target.OwnedTags == null) return;
 
             if (!self.Tags.OngoingRequiredTags.IsEmpty)
                 target.OwnedTags.OnTagAdded -= self.OnOwnerTagAdded;
@@ -662,7 +668,7 @@ namespace ET.Client
         /// </summary>
         public static AbilitySystemComponent GetSource(this GameplayEffectSpec self)
         {
-            return self.GetParent<GameplayEffectContainerComponent>().GetASC;
+            return self.GetParent<GameplayEffectContainerComponent>()?.GetASC;
         }
 
         /// <summary>
@@ -686,7 +692,7 @@ namespace ET.Client
         /// </summary>
         public static GameplayEffectContainerComponent GetContainer(this GameplayEffectSpec self)
         {
-            return self.GetParent<GameplayEffectContainerComponent>();
+            return self?.GetParent<GameplayEffectContainerComponent>();
         }
 
         // ============ SetByCaller ============
