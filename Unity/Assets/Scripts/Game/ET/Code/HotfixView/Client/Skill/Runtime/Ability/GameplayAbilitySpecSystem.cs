@@ -428,7 +428,16 @@ namespace ET.Client
             foreach (var portData in self.AbilityNodeData.eventOutputPorts)
             {
                 if (portData.eventType == gameplayEvent)
+                {
+#if UNITY_EDITOR
+                    if (self.SkillId == "1010")
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagGameplayEvent] execute skillId={self.SkillId} event={gameplayEvent} portId={portData.PortId}");
+                    }
+#endif
                     context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, portData.PortId);
+                }
             }
         }
 

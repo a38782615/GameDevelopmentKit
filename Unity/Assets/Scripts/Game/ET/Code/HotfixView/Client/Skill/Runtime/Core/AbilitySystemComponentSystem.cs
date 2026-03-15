@@ -2,6 +2,8 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(AbilitySystemComponent))]
     [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(AbilityContainerComponent))]
+    [FriendOf(typeof(GameplayAbilitySpec))]
     [FriendOf(typeof(GameplayEffectContainerComponent))]
     [FriendOf(typeof(GameplayEffectSpec))]
     public static partial class AbilitySystemComponentSystem
@@ -28,11 +30,58 @@ namespace ET.Client
             {
                 if (after < before)
                 {
-                    EventSystem.Instance.Invoke(new AbilitySystemComponent.OnTGameplayEvent()
-                    {
-                        GameplayEventType = GameplayEventType.OnTakeDamage
-                    });
+                    self.DispatchGameplayEvent(GameplayEventType.OnTakeDamage);
                 }
+            }
+        }
+
+        public static void DispatchGameplayEvent(this AbilitySystemComponent self, GameplayEventType gameplayEventType)
+        {
+            AbilityContainerComponent abilityContainer = self.Abilities;
+            if (abilityContainer == null)
+            {
+                return;
+            }
+
+            using ListComponent<EntityRef<GameplayAbilitySpec>> activeAbilities = ListComponent<EntityRef<GameplayAbilitySpec>>.Create();
+            activeAbilities.AddRange(abilityContainer.GetActiveAbilities());
+
+#if UNITY_EDITOR
+            bool shouldLog = false;
+            for (int i = 0; i < activeAbilities.Count; i++)
+            {
+                GameplayAbilitySpec diagAbility = activeAbilities[i].As();
+                if (diagAbility != null && diagAbility.SkillId == "1010")
+                {
+                    shouldLog = true;
+                    break;
+                }
+            }
+
+            if (shouldLog)
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagGameplayEvent] dispatch event={gameplayEventType} activeCount={activeAbilities.Count}");
+            }
+#endif
+
+            for (int i = activeAbilities.Count - 1; i >= 0; i--)
+            {
+                GameplayAbilitySpec ability = activeAbilities[i].As();
+                if (ability == null || !ability.IsActive)
+                {
+                    continue;
+                }
+
+#if UNITY_EDITOR
+                if (ability.SkillId == "1010")
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagGameplayEvent] deliver skillId={ability.SkillId} event={gameplayEventType}");
+                }
+#endif
+
+                ability.OnGameplayEvent(gameplayEventType);
             }
         }
 
@@ -67,7 +116,31 @@ namespace ET.Client
         {
             if (spec == null) return false;
 
-            bool success = self.Abilities?.TryActivateAbility(self, spec, target) ?? false;
+            AbilitySystemComponent resolvedTarget = target;
+            if (resolvedTarget == null && spec.RequiresMainTarget())
+            {
+                resolvedTarget = self.FindDefaultMainTarget();
+#if UNITY_EDITOR
+                if (spec.SkillId == "1010")
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagAutoTarget] skillId={spec.SkillId} resolvedTarget={DescribeTarget(resolvedTarget)}");
+                }
+#endif
+                if (resolvedTarget == null)
+                {
+#if UNITY_EDITOR
+                    if (spec.SkillId == "1010")
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagAutoTarget] abort skillId={spec.SkillId} reason=no-main-target");
+                    }
+#endif
+                    return false;
+                }
+            }
+
+            bool success = self.Abilities?.TryActivateAbility(self, spec, resolvedTarget) ?? false;
             if (success)
             {
                 EventSystem.Instance.Publish(self.Root(), new AbilitySystemComponent.OnAbilityActivated()
@@ -167,6 +240,101 @@ namespace ET.Client
         public static bool HasNoneTags(this AbilitySystemComponent self, GameplayTagSet tags)
         {
             return self.OwnedTags.HasNoneTags(tags);
+        }
+
+        private static bool RequiresMainTarget(this GameplayAbilitySpec self)
+        {
+            SkillData graphData = self?.GraphData;
+            if (graphData?.nodes == null)
+            {
+                return false;
+            }
+
+            foreach (NodeData node in graphData.nodes)
+            {
+                if (node != null && node.targetType == TargetType.MainTarget)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static AbilitySystemComponent FindDefaultMainTarget(this AbilitySystemComponent self)
+        {
+            SkillUnit skillUnit = self.GetParent<SkillUnit>();
+            Unit selfUnit = skillUnit?.Unit.As();
+            Scene currentScene = self.Root()?.CurrentScene();
+            UnitComponent unitComponent = currentScene?.GetComponent<UnitComponent>();
+            if (selfUnit == null || unitComponent?.Children == null)
+            {
+                return null;
+            }
+
+            UnityEngine.Vector3 selfPosition = GetWorldPosition(selfUnit, self);
+            AbilitySystemComponent nearestTarget = null;
+            float nearestDistanceSqr = float.MaxValue;
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is not Unit unit || unit.Id == selfUnit.Id)
+                {
+                    continue;
+                }
+
+                if ((UnitType)unit.Config().Type != UnitType.Monster)
+                {
+                    continue;
+                }
+
+                AbilitySystemComponent targetAsc = unit.GetComponent<SkillUnit>()?.ASC.As();
+                if (targetAsc == null)
+                {
+                    continue;
+                }
+
+                float? health = targetAsc.Attributes?.GetCurrentValue(AttrType.Health);
+                if (health.HasValue && health.Value <= 0f)
+                {
+                    continue;
+                }
+
+                UnityEngine.Vector3 targetPosition = GetWorldPosition(unit, targetAsc);
+                float deltaX = targetPosition.x - selfPosition.x;
+                float deltaY = targetPosition.y - selfPosition.y;
+                float distanceSqr = deltaX * deltaX + deltaY * deltaY;
+                if (distanceSqr < nearestDistanceSqr)
+                {
+                    nearestDistanceSqr = distanceSqr;
+                    nearestTarget = targetAsc;
+                }
+            }
+
+            return nearestTarget;
+        }
+
+        private static UnityEngine.Vector3 GetWorldPosition(Unit unit, AbilitySystemComponent asc)
+        {
+            if (asc?.Owner != null)
+            {
+                return asc.Owner.transform.position;
+            }
+
+            return unit == null
+                ? UnityEngine.Vector3.zero
+                : new UnityEngine.Vector3(unit.Position.x, unit.Position.y, unit.Position.z);
+        }
+
+        private static string DescribeTarget(AbilitySystemComponent target)
+        {
+            if (target == null)
+            {
+                return "null";
+            }
+
+            Unit unit = target.GetParent<SkillUnit>()?.Unit.As();
+            UnityEngine.Vector3 position = GetWorldPosition(unit, target);
+            return $"cfg={unit?.ConfigId ?? 0} id={unit?.Id ?? 0} pos={position}";
         }
     }
 }

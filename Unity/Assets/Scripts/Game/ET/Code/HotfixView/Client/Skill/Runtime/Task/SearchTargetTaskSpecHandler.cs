@@ -80,21 +80,61 @@ namespace ET.Client
         {
             float halfAngle = angle * 0.5f;
             Vector2 forward = this.GetFacingDirection(casterTransform);
+            bool enableDiag = this.ShouldLogSkill1001();
 
             Collider2D[] colliders = Physics2D.OverlapCircleAll(center, radius);
+            if (enableDiag)
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagSearch1001] sector begin center={center} forward={forward} radius={radius:0.##} angle={angle:0.##} caster={this.DescribeTransform(casterTransform)} overlapCount={colliders.Length}");
+            }
+
             foreach (Collider2D collider in colliders)
             {
                 AbilitySystemComponent asc = this.GetASCFromCollider(collider);
-                if (asc == null || !this.IsValidTarget(asc))
+                bool isValidTarget = asc != null && this.IsValidTarget(asc);
+                if (asc == null || !isValidTarget)
+                {
+                    if (enableDiag)
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagSearch1001] sector skip collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} valid={isValidTarget}");
+                    }
                     continue;
+                }
 
                 Vector2 toTarget = (Vector2)collider.transform.position - center;
                 if (toTarget.sqrMagnitude < 0.001f)
+                {
+                    if (enableDiag)
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagSearch1001] sector skip-zero collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)}");
+                    }
                     continue;
+                }
 
                 float angleToTarget = Vector2.Angle(forward, toTarget);
+                if (enableDiag)
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagSearch1001] sector test collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} toTarget={toTarget} angleToTarget={angleToTarget:0.##} halfAngle={halfAngle:0.##}");
+                }
+
                 if (angleToTarget <= halfAngle)
+                {
                     foundTargets.Add(asc);
+                    if (enableDiag)
+                    {
+                        SkillDiagFileLogger.Log(
+                            $"[DiagSearch1001] sector hit collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} foundCount={foundTargets.Count}");
+                    }
+                }
+            }
+
+            if (enableDiag)
+            {
+                SkillDiagFileLogger.Log($"[DiagSearch1001] sector end foundCount={foundTargets.Count}");
             }
         }
 
@@ -269,6 +309,39 @@ namespace ET.Client
             Debug.DrawLine(worldCorners[1], worldCorners[2], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
             Debug.DrawLine(worldCorners[2], worldCorners[3], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
             Debug.DrawLine(worldCorners[3], worldCorners[0], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
+        }
+
+        private bool ShouldLogSkill1001()
+        {
+            return this.Spec?.SkillId == "1001";
+        }
+
+        private string DescribeCollider(Collider2D collider)
+        {
+            if (collider == null)
+            {
+                return "null-collider";
+            }
+
+            Transform transform = collider.transform;
+            return $"{collider.name}@{transform.position}";
+        }
+
+        private string DescribeTransform(Transform transform)
+        {
+            if (transform == null)
+            {
+                return "null-transform";
+            }
+
+            return $"{transform.name}@pos={transform.position},rot={transform.rotation.eulerAngles},scale={transform.localScale}";
+        }
+
+        private int GetUnitConfigId(AbilitySystemComponent asc)
+        {
+            SkillUnit skillUnit = asc?.GetParent<SkillUnit>();
+            Unit unit = skillUnit?.Unit.As();
+            return unit?.ConfigId ?? 0;
         }
     }
 }
