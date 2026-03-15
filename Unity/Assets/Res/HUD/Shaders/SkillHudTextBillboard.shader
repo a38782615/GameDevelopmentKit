@@ -1,8 +1,9 @@
-Shader "Game/HUD/InstancedBillboard"
+Shader "Game/HUD/TextBillboard"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
 
     SubShader
@@ -27,54 +28,41 @@ Shader "Game/HUD/InstancedBillboard"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_instancing
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
 
-            UNITY_INSTANCING_BUFFER_START(Props)
-                UNITY_DEFINE_INSTANCED_PROP(float4, _HudColor)
-                UNITY_DEFINE_INSTANCED_PROP(float4, _HudUvRect)
-            UNITY_INSTANCING_BUFFER_END(Props)
+            CBUFFER_START(UnityPerMaterial)
+                float4 _Color;
+            CBUFFER_END
 
             struct Attributes
             {
                 float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
             {
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                float4 color : COLOR0;
-                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             Varyings vert(Attributes input)
             {
-                UNITY_SETUP_INSTANCE_ID(input);
-
                 Varyings output;
-                UNITY_TRANSFER_INSTANCE_ID(input, output);
-
-                float4 uvRect = UNITY_ACCESS_INSTANCED_PROP(Props, _HudUvRect);
                 output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.uv = uvRect.xy + input.uv * uvRect.zw;
-                output.color = UNITY_ACCESS_INSTANCED_PROP(Props, _HudColor);
+                output.uv = input.uv;
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
-                UNITY_SETUP_INSTANCE_ID(input);
-
                 half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
                 half alpha = saturate(max(texColor.a, texColor.r));
-                half4 color = input.color;
+                half4 color = _Color;
                 color.a *= alpha;
                 return color;
             }

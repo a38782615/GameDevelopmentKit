@@ -162,10 +162,14 @@ namespace ET.Client
         /// </summary>
         public static SpecExecutionContext GetContext(this GameplayCueSpec self)
         {
+            if (self.Context != null)
+            {
+                return self.Context;
+            }
+
             var gameplayAbilitySpec = self.ContextOwner.As();
             if (gameplayAbilitySpec == null) return null;
-            var ret = gameplayAbilitySpec.Context;
-            return ret;
+            return gameplayAbilitySpec.Context;
         }
 
 

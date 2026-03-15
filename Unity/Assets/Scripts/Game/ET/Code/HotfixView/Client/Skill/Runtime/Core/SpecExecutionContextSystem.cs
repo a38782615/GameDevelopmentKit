@@ -202,7 +202,41 @@ namespace ET.Client
             if (bindingPoint != null)
                 return bindingPoint.position;
 
+            if (bindingName == "head")
+            {
+                return GetObjectTopPosition(obj);
+            }
+
             return obj.transform.position;
+        }
+
+        private static Vector3 GetObjectTopPosition(GameObject obj)
+        {
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length > 0)
+            {
+                Bounds bounds = renderers[0].bounds;
+                for (int index = 1; index < renderers.Length; ++index)
+                {
+                    bounds.Encapsulate(renderers[index].bounds);
+                }
+
+                return new Vector3(bounds.center.x, bounds.max.y, obj.transform.position.z);
+            }
+
+            Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>(true);
+            if (colliders.Length > 0)
+            {
+                Bounds bounds = colliders[0].bounds;
+                for (int index = 1; index < colliders.Length; ++index)
+                {
+                    bounds.Encapsulate(colliders[index].bounds);
+                }
+
+                return new Vector3(bounds.center.x, bounds.max.y, obj.transform.position.z);
+            }
+
+            return obj.transform.position + new Vector3(0f, 1f, 0f);
         }
 
         private static Transform FindChildRecursive(Transform parent, string name)
@@ -539,6 +573,7 @@ namespace ET.Client
             cueSpec.SkillId = skillId;
             cueSpec.NodeGuid = nodeData.guid;
             cueSpec.ContextOwner = self.AbilitySpec;
+            cueSpec.Context = self;
             cueSpec.IsRunning = false;
             cueSpec.IsCancelled = false;
             cueSpec.ActiveCue = null;

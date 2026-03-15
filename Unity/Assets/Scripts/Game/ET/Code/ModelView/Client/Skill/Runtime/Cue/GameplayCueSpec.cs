@@ -25,6 +25,11 @@ namespace ET.Client
         public EntityRef<GameplayAbilitySpec> ContextOwner;
 
         /// <summary>
+        /// 实际触发该 Cue 的执行上下文
+        /// </summary>
+        public SpecExecutionContext Context;
+
+        /// <summary>
         /// 是否正在执行
         /// </summary>
         public bool IsRunning;

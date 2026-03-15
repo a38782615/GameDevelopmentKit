@@ -30,7 +30,7 @@ namespace ET.Client
             }
         }
 
-        private const float WorldScaleFactor = 0.012f;
+        private const float WorldScaleFactor = 0.05f;
 
         private readonly Dictionary<char, GlyphInfo> glyphCache = new Dictionary<char, GlyphInfo>();
 
@@ -103,11 +103,11 @@ namespace ET.Client
             }
 
             GlyphRect glyphRect = glyph.glyphRect;
-            Vector4 uvRect = new Vector4(
-                glyphRect.x / atlasTexture.width,
-                glyphRect.y / atlasTexture.height,
-                glyphRect.width / (float)atlasTexture.width,
-                glyphRect.height / (float)atlasTexture.height);
+            float uvX = glyphRect.x / (float)atlasTexture.width;
+            float uvWidth = glyphRect.width / (float)atlasTexture.width;
+            float uvHeight = glyphRect.height / (float)atlasTexture.height;
+            float uvY = glyphRect.y / (float)atlasTexture.height;
+            Vector4 uvRect = new Vector4(uvX, uvY, uvWidth, uvHeight);
 
             GlyphMetrics metrics = glyph.metrics;
             glyphInfo = new GlyphInfo(
