@@ -195,7 +195,7 @@ namespace ET.Client
 
             if (cooldownInfo.IsOnCooldown)
             {
-                return $"CD {cooldownInfo.RemainingTime:0.0}";
+                return $"{cooldownInfo.RemainingTime:0.0}";
             }
 
             return string.Empty;
@@ -233,7 +233,7 @@ namespace ET.Client
             {
                 if (view.CooldownTrackImage != null)
                 {
-                    view.CooldownTrackImage.gameObject.SetActive(isVisible);
+                    view.CooldownTrackImage.gameObject.SetActive(false);
                 }
 
                 if (view.CooldownRingImage != null)

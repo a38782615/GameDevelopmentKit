@@ -15,7 +15,8 @@ namespace ET.Editor
         private const string MonoUIFormSkillTypeName = "ET.Client.MonoUIFormSkill, Game.ET.Code.ModelView";
         private const string MonoUISkillItemTypeName = "ET.Client.MonoUISkillItem, Game.ET.Code.ModelView";
         private const string PendingNormalizeKey = "UISkillPrefabBuilder.PendingNormalize";
-        private const string CooldownRingSpritePath = "Assets/Res/UI/UISprite/Common/circle-outline.png";
+        private const string CooldownSectorSpritePath = "Assets/Res/UI/UISprite/Common/circle-filled.png";
+        private static readonly Vector2 iconInset = new Vector2(12f, 12f);
 
         [MenuItem(MenuPath)]
         public static void Rebuild()
@@ -184,8 +185,8 @@ namespace ET.Editor
             RectTransform rectTransform = icon.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = new Vector2(12f, 12f);
-            rectTransform.offsetMax = new Vector2(-12f, -12f);
+            rectTransform.offsetMin = iconInset;
+            rectTransform.offsetMax = -iconInset;
 
             Image image = icon.GetComponent<Image>();
             image.color = new Color(1f, 1f, 1f, 0.95f);
@@ -201,15 +202,16 @@ namespace ET.Editor
             RectTransform rectTransform = cooldownTrack.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = new Vector2(8f, 8f);
-            rectTransform.offsetMax = new Vector2(-8f, -8f);
+            rectTransform.offsetMin = iconInset;
+            rectTransform.offsetMax = -iconInset;
 
             Image image = cooldownTrack.GetComponent<Image>();
-            image.sprite = LoadSprite(CooldownRingSpritePath);
+            image.sprite = LoadSprite(CooldownSectorSpritePath);
             image.type = Image.Type.Simple;
-            image.color = new Color(0f, 0f, 0f, 0.32f);
+            image.color = new Color(0f, 0f, 0f, 0f);
             image.raycastTarget = false;
             image.preserveAspect = true;
+            cooldownTrack.SetActive(false);
         }
 
         private static void CreateCooldownRing(Transform parent)
@@ -220,17 +222,17 @@ namespace ET.Editor
             RectTransform rectTransform = cooldownRing.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = new Vector2(8f, 8f);
-            rectTransform.offsetMax = new Vector2(-8f, -8f);
+            rectTransform.offsetMin = iconInset;
+            rectTransform.offsetMax = -iconInset;
 
             Image image = cooldownRing.GetComponent<Image>();
-            image.sprite = LoadSprite(CooldownRingSpritePath);
+            image.sprite = LoadSprite(CooldownSectorSpritePath);
             image.type = Image.Type.Filled;
             image.fillMethod = Image.FillMethod.Radial360;
             image.fillOrigin = (int)Image.Origin360.Top;
             image.fillClockwise = false;
             image.fillAmount = 0f;
-            image.color = new Color(0.36f, 0.86f, 0.98f, 0.96f);
+            image.color = new Color(0f, 0f, 0f, 0.62f);
             image.raycastTarget = false;
             image.preserveAspect = true;
             cooldownRing.SetActive(false);
@@ -251,12 +253,12 @@ namespace ET.Editor
 
         private static void CreateStateText(Transform parent)
         {
-            Text stateText = CreateText("State_Text", parent, string.Empty, 32, TextAnchor.LowerRight);
+            Text stateText = CreateText("State_Text", parent, string.Empty, 32, TextAnchor.MiddleCenter);
             RectTransform rectTransform = stateText.rectTransform;
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = new Vector2(16f, 16f);
-            rectTransform.offsetMax = new Vector2(-16f, -16f);
+            rectTransform.offsetMin = new Vector2(24f, 24f);
+            rectTransform.offsetMax = new Vector2(-24f, -24f);
             stateText.color = new Color(0.97f, 0.98f, 1f, 1f);
             Outline outline = stateText.gameObject.AddComponent<Outline>();
             outline.effectColor = new Color(0f, 0f, 0f, 0.9f);
