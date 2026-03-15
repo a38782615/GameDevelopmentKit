@@ -196,21 +196,26 @@ namespace ET
 
             if (self.TurnTime > 0)
             {
-                if (math.lengthsq(faceV) < 0.0001f)
-                {
-                    return;
-                }
-
                 self.From = unit.Rotation;
-                self.To = faceV.ToPlanarRotation();
+                self.To = GetFacingRotation(faceV, unit.Rotation);
                 return;
             }
 
-            if (self.TurnTime == 0 && (Math.Abs(faceV.x) > 0.01f || Math.Abs(faceV.y) > 0.01f))
+            if (self.TurnTime == 0)
             {
-                self.To = faceV.ToPlanarRotation();
+                self.To = GetFacingRotation(faceV, unit.Rotation);
                 unit.Rotation = self.To;
             }
+        }
+
+        private static quaternion GetFacingRotation(float2 faceV, quaternion currentRotation)
+        {
+            if (Math.Abs(faceV.x) <= 0.01f)
+            {
+                return currentRotation;
+            }
+
+            return faceV.x < 0f ? quaternion.RotateY(math.PI) : quaternion.identity;
         }
 
         private static float2 GetFaceV(this Move2DComponent self)

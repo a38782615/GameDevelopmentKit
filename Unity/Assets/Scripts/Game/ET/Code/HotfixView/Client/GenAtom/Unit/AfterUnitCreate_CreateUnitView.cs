@@ -36,6 +36,7 @@ namespace ET.Client
             }
 
             gameObjectComponent.GameObject = viewGameObject;
+            ChangeRotation_SyncGameObjectRotation.SyncTransform(unit, gameObjectComponent.Transform);
 
             AbilitySystemComponent asc = skillUnit?.ASC.As();
             if (asc != null)
