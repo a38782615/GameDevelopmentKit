@@ -21,6 +21,7 @@ public partial class Tables
     public DTSkillGraph DTSkillGraph { private set; get; }
     public DTHero DTHero { private set; get; }
     public DTMonster DTMonster { private set; get; }
+    public DTGameAI DTGameAI { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -56,6 +57,9 @@ public partial class Tables
         DTMonster = new DTMonster(() => loader("dtmonster"));
         loadTasks.Add(DTMonster.LoadAsync());
         _tables.Add("DTMonster", DTMonster);
+        DTGameAI = new DTGameAI(() => loader("dtgameai"));
+        loadTasks.Add(DTGameAI.LoadAsync());
+        _tables.Add("DTGameAI", DTGameAI);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -74,6 +78,7 @@ public partial class Tables
         DTSkillGraph.ResolveRef(this);
         DTHero.ResolveRef(this);
         DTMonster.ResolveRef(this);
+        DTGameAI.ResolveRef(this);
         PostResolveRef();
     }
 

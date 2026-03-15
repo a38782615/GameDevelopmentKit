@@ -1,9 +1,8 @@
 
-
 namespace ET.Client
 {
     /// <summary>
-    /// 治疗效果Spec（瞬时效果）
+    /// 治疗效果 Spec（瞬时效果）
     /// </summary>
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
@@ -11,26 +10,31 @@ namespace ET.Client
     {
         public HealEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<HealEffectSpec>();
+            HealEffectSpec selfSpec = Spec.GetComponent<HealEffectSpec>();
             return selfSpec;
         }
+
         public HealEffectNodeData GetNode()
         {
-            var nodeData = NodeData as HealEffectNodeData;
+            HealEffectNodeData nodeData = NodeData as HealEffectNodeData;
             return nodeData;
         }
+
         public override SpecExecutionContext GetContext()
         {
             return Spec.GetContext();
         }
+
         public override void OnInitialize()
         {
             Spec.OnInitialize();
         }
+
         public override void Execute()
         {
             Spec.Execute();
         }
+
         public override void Cancel()
         {
             Spec.CancelEffect();
@@ -44,7 +48,6 @@ namespace ET.Client
         public override void OnCompleteHook()
         {
         }
-
 
         public override void OnPeriodicHook()
         {
@@ -62,44 +65,75 @@ namespace ET.Client
 
         public override void OnInitialHook(AbilitySystemComponent target)
         {
-            var HealNodeData = GetNode();
-            if (target?.Attributes == null) return;
-            var nodeData = HealNodeData;
-            if (nodeData == null) return;
-            if (target.Attributes.GetCurrentValue(AttrType.Health) == target.Attributes.GetCurrentValue(AttrType.MaxHealth))
+            HealEffectNodeData healNodeData = GetNode();
+            if (target?.Attributes == null || healNodeData == null)
             {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagHeal2001] abort targetOrNodeNull targetNull={(target == null)} nodeNull={(healNodeData == null)}");
+#endif
                 return;
             }
-            // 计算治疗量
-            float baseHeal = CalculateHeal(nodeData, target);
 
-            // 如果勾选了"乘以堆叠层数"，从上下文获取层数并相乘
-            if (nodeData.healMultiplyByStackCount)
+            float currentHealth = target.Attributes.GetCurrentValue(AttrType.Health);
+            float maxHealth = target.Attributes.GetCurrentValue(AttrType.MaxHealth);
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagHeal2001] enter skillId={Spec.SkillId} node={Spec.NodeGuid} target={(target.Owner != null ? target.Owner.name : "null")} current={currentHealth:0.##} max={maxHealth:0.##}");
+#endif
+            if (maxHealth > 0f && currentHealth >= maxHealth - 0.001f)
+            {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log("[DiagHeal2001] skip reason=already-full");
+#endif
+                return;
+            }
+
+            float baseHeal = CalculateHeal(healNodeData, target);
+            if (healNodeData.healMultiplyByStackCount)
             {
                 int stackCount = GetContext()?.StackCount ?? 1;
                 baseHeal *= stackCount;
             }
 
             baseHeal = UnityEngine.Mathf.Max(0f, baseHeal);
-            if (baseHeal <= 0) return;
+            if (baseHeal <= 0f)
+            {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagHeal2001] skip reason=base-heal<=0 baseHeal={baseHeal:0.##}");
+#endif
+                return;
+            }
 
-            // 应用治疗
-            var healthAttr = target.Attributes.GetAttribute(AttrType.Health);
-            if (healthAttr == null) return;
+            Attribute healthAttr = target.Attributes.GetAttribute(AttrType.Health);
+            if (healthAttr == null)
+            {
+                return;
+            }
 
-            float? maxHealth = target.Attributes.GetCurrentValue(AttrType.MaxHealth);
-            float newHealth = healthAttr.BaseValue + baseHeal;
-            if (maxHealth.HasValue)
-                newHealth = UnityEngine.Mathf.Min(newHealth, maxHealth.Value);
+            float oldHealth = healthAttr.BaseValue;
+            float newHealth = oldHealth + baseHeal;
+            if (maxHealth > 0f)
+            {
+                newHealth = UnityEngine.Mathf.Min(newHealth, maxHealth);
+            }
 
-            // 只修改 BaseValue，CurrentValue 会自动重新计算
+            float actualHeal = UnityEngine.Mathf.Max(0f, newHealth - oldHealth);
+            if (actualHeal <= 0.001f)
+            {
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagHeal2001] skip reason=actual-heal<=0 old={oldHealth:0.##} new={newHealth:0.##} max={maxHealth:0.##}");
+#endif
+                return;
+            }
+
             healthAttr.BaseValue = newHealth;
 
-            // 将治疗量存入上下文，供飘字Cue使用
-            var ctx = GetExecutionContext();
-            ctx.SetCustomData("Heal", baseHeal);
+            SpecExecutionContext executionContext = GetExecutionContext();
+            executionContext.SetCustomData("Heal", actualHeal);
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagHeal2001] apply old={oldHealth:0.##} new={newHealth:0.##} actual={actualHeal:0.##}");
+#endif
+            executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "治疗");
 
-            GetExecutionContext().ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "治疗");
         }
 
         /// <summary>
@@ -107,7 +141,7 @@ namespace ET.Client
         /// </summary>
         private float CalculateHeal(HealEffectNodeData nodeData, AbilitySystemComponent target)
         {
-            var Context = GetContext();
+            SpecExecutionContext context = GetContext();
             switch (nodeData.healSourceType)
             {
                 case ModifierMagnitudeSourceType.FixedValue:
@@ -115,13 +149,16 @@ namespace ET.Client
 
                 case ModifierMagnitudeSourceType.Formula:
                     if (string.IsNullOrEmpty(nodeData.healFormula))
+                    {
                         return 0f;
+                    }
+
                     return FormulaEvaluator.Evaluate(nodeData.healFormula, new FormulaContext
                     {
-                        CasterAttributes = Context?.Caster.As().Attributes,
+                        CasterAttributes = context?.Caster.As().Attributes,
                         TargetAttributes = target.Attributes,
                         Level = Spec.Level,
-                        StackCount = Context?.StackCount ?? 1
+                        StackCount = context?.StackCount ?? 1
                     });
 
                 case ModifierMagnitudeSourceType.SetByCaller:
@@ -142,10 +179,8 @@ namespace ET.Client
         {
             if (nodeData.healMMCType == MMCType.AttributeBased)
             {
-                // 基于属性的 MMC
                 float? attrValue = null;
 
-                // 根据快照设置决定使用快照值还是实时值
                 if (nodeData.healMMCUseSnapshot && Spec.SnapshotValues != null)
                 {
                     if (Spec.SnapshotValues.TryGetValue(nodeData.healMMCCaptureAttribute, out float snapshotValue))
@@ -154,27 +189,23 @@ namespace ET.Client
                     }
                 }
 
-                // 如果没有快照值，实时获取
                 if (!attrValue.HasValue)
                 {
                     if (nodeData.healMMCAttributeSource == MMCAttributeSource.Source)
                     {
-                        // 从施法者获取属性
                         attrValue = Spec.Source.As().Attributes?.GetCurrentValue(nodeData.healMMCCaptureAttribute);
                     }
                     else
                     {
-                        // 从目标获取属性
                         attrValue = target?.Attributes?.GetCurrentValue(nodeData.healMMCCaptureAttribute);
                     }
                 }
 
-                // 属性值 × 系数
                 return (attrValue ?? 0f) * nodeData.healMMCCoefficient;
             }
-            else if (nodeData.healMMCType == MMCType.LevelBased)
+
+            if (nodeData.healMMCType == MMCType.LevelBased)
             {
-                // 基于等级的 MMC
                 return nodeData.healFixedValue * (1 + Spec.Level * 0.1f);
             }
 

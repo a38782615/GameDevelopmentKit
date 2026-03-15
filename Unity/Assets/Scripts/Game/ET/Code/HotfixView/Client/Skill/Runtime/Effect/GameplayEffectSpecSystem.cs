@@ -173,6 +173,9 @@ namespace ET.Client
 
         private static void ExecuteInitialFlow(this GameplayEffectSpec self, AbilitySystemComponent target, SpecExecutionContext ctx)
         {
+            AEffectHandler handler = self.ResolveEffectHandler();
+            ctx = handler?.GetExecutionContext() ?? ctx;
+
             if (self.EffectNodeData?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
             {
                 var calcContext = self.CreateCalculationContext(target);
@@ -191,19 +194,25 @@ namespace ET.Client
                 }
             }
 
-            self.ResolveEffectHandler()?.OnInitialHook(target);
+            handler?.OnInitialHook(target);
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "初始效果");
         }
 
         private static void ExecutePeriodicFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
-            self.ResolveEffectHandler()?.OnPeriodicHook();
+            AEffectHandler handler = self.ResolveEffectHandler();
+            ctx = handler?.GetExecutionContext() ?? ctx;
+
+            handler?.OnPeriodicHook();
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "每周期执行");
         }
 
         private static void ExecuteCompleteFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
-            self.ResolveEffectHandler()?.OnCompleteHook();
+            AEffectHandler handler = self.ResolveEffectHandler();
+            ctx = handler?.GetExecutionContext() ?? ctx;
+
+            handler?.OnCompleteHook();
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "完成效果");
         }
 

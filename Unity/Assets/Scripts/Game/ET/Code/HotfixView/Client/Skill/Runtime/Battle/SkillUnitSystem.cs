@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ET.Client
 {
     [EntitySystemOf(typeof(SkillUnit))]
@@ -61,7 +63,7 @@ namespace ET.Client
 #if UNITY_EDITOR
                         SkillDiagFileLogger.Log($"[DiagInitFromTable] after ActiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
 #endif
-                        self.GrantSkills(asc, heroData.PassiveSkill);
+                        self.GrantSkills(asc, heroData.PassiveSkill, true);
 #if UNITY_EDITOR
                         SkillDiagFileLogger.Log($"[DiagInitFromTable] after PassiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
 #endif
@@ -87,7 +89,7 @@ namespace ET.Client
 #if UNITY_EDITOR
                         SkillDiagFileLogger.Log($"[DiagInitFromTable] after ActiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
 #endif
-                        self.GrantSkills(asc, monsterData.PassiveSkill);
+                        self.GrantSkills(asc, monsterData.PassiveSkill, true);
 #if UNITY_EDITOR
                         SkillDiagFileLogger.Log($"[DiagInitFromTable] after PassiveSkills unit={unit.ConfigId} newGO={CountAnonymousRootObjects()}");
 #endif
@@ -162,7 +164,7 @@ namespace ET.Client
             }
         }
 
-        private static void GrantSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds)
+        private static void GrantSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds, bool autoActivate = false)
         {
             if (skillIds == null) return;
 
@@ -174,6 +176,7 @@ namespace ET.Client
                 return;
             }
 
+            List<GameplayAbilitySpec> pendingActivationSpecs = autoActivate ? new List<GameplayAbilitySpec>() : null;
             foreach (var skillId in skillIds)
             {
 #if UNITY_EDITOR
@@ -203,11 +206,33 @@ namespace ET.Client
                 int beforeNewGameObjectCount = CountAnonymousRootObjects();
                 SkillDiagFileLogger.Log($"[DiagGrantSkill] before skillId={skillId} newGO={beforeNewGameObjectCount}");
 #endif
-                asc.GrantAbility(graphData);
+                GameplayAbilitySpec spec = asc.GrantAbility(graphData);
 #if UNITY_EDITOR
                 int afterNewGameObjectCount = CountAnonymousRootObjects();
                 SkillDiagFileLogger.Log($"[DiagGrantSkill] after skillId={skillId} newGO={afterNewGameObjectCount}");
 #endif
+                if (autoActivate && spec != null)
+                {
+                    pendingActivationSpecs.Add(spec);
+                }
+            }
+
+            if (!autoActivate || pendingActivationSpecs == null)
+            {
+                return;
+            }
+
+            foreach (GameplayAbilitySpec spec in pendingActivationSpecs)
+            {
+                bool activated = asc.TryActivateAbility(spec);
+#if UNITY_EDITOR
+                SkillDiagFileLogger.Log(
+                    $"[DiagGrantSkill] auto activate unit={self.Unit.As()?.ConfigId ?? 0} skillId={spec?.AbilityNodeData?.skillId ?? 0} success={activated} state={spec?.State}");
+#endif
+                if (!activated)
+                {
+                    Log.Warning($"[Unit] 被动技能自动激活失败 SkillId: {spec?.AbilityNodeData?.skillId ?? 0}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
+                }
             }
         }
 

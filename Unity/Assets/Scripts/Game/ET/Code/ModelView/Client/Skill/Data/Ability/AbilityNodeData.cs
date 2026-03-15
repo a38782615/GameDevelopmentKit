@@ -113,11 +113,49 @@ namespace ET.Client
     /// 技能事件端口数据 - 用于被动技能等事件监听
     /// </summary>
     [Serializable]
-    public class AbilityEventPortData : Object
+public class AbilityEventPortData : Object
     {
         public GameplayEventType eventType = GameplayEventType.OnHit;
-        public string PortId { get; set; }
+        public string portId;
         public string customEventTag = "";  // 当eventType为Custom时使用
+
+        public string PortId
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(this.portId))
+                {
+                    return this.portId;
+                }
+
+                return GetFallbackPortId();
+            }
+            set
+            {
+                this.portId = value;
+            }
+        }
+
+        private string GetFallbackPortId()
+        {
+            switch (this.eventType)
+            {
+                case GameplayEventType.OnHit:
+                    return "受击时";
+                case GameplayEventType.OnDealDamage:
+                    return "造成伤害时";
+                case GameplayEventType.OnTakeDamage:
+                    return "受到伤害时";
+                case GameplayEventType.OnDeath:
+                    return "死亡时";
+                case GameplayEventType.OnKill:
+                    return "击杀时";
+                case GameplayEventType.Custom:
+                    return string.IsNullOrEmpty(this.customEventTag) ? "自定义事件" : this.customEventTag;
+                default:
+                    return "事件";
+            }
+        }
     }
 
     public struct AbilityTagContainer
