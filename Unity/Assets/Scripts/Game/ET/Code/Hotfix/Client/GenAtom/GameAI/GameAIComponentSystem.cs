@@ -9,6 +9,8 @@ namespace ET.Client
     [FriendOf(typeof(GameAIDispatcherComponent))]
     public static partial class GameAIComponentSystem
     {
+        private const int SyntheticIdleCurrentId = -1;
+
         [Invoke(TimerInvokeType.GameAITimer)]
         public class GameAITimer : ATimer<GameAIComponent>
         {
@@ -39,6 +41,7 @@ namespace ET.Client
             self.CancellationTokenSource?.Cancel();
             self.CancellationTokenSource = null;
             self.Current = 0;
+            self.PatrolIdleUntil = 0;
         }
 
         private static void Check(this GameAIComponent self)
@@ -71,7 +74,7 @@ namespace ET.Client
 
                 if (self.Current == aiConfig.Id)
                 {
-                    break;
+                    return;
                 }
 
                 self.Cancel();
@@ -81,6 +84,29 @@ namespace ET.Client
                 handler.Execute(self, aiConfig, cts.Token).Forget();
                 return;
             }
+
+            if (self.PatrolIdleUntil <= 0 || self.PatrolIdleUntil <= TimeInfo.Instance.ClientNow())
+            {
+                self.PatrolIdleUntil = 0;
+                return;
+            }
+
+            AGameAIHandler idleHandler = GameAIDispatcherComponent.Instance.Get("Idle");
+            if (idleHandler == null)
+            {
+                return;
+            }
+
+            if (self.Current == SyntheticIdleCurrentId)
+            {
+                return;
+            }
+
+            self.Cancel();
+            CancellationTokenSource idleCts = new CancellationTokenSource();
+            self.CancellationTokenSource = idleCts;
+            self.Current = SyntheticIdleCurrentId;
+            idleHandler.Execute(self, null, idleCts.Token).Forget();
         }
 
         private static void Cancel(this GameAIComponent self)

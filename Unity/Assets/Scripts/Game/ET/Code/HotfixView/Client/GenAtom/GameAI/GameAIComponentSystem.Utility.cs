@@ -1,4 +1,6 @@
+using Game;
 using UnityEngine;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -34,6 +36,115 @@ namespace ET.Client
             }
 
             return aiConfig.NodeParams[1];
+        }
+
+        public static int GetNodeParam(this DRGameAI aiConfig, int index, int defaultValue)
+        {
+            if (aiConfig?.NodeParams == null || aiConfig.NodeParams.Count <= index)
+            {
+                return defaultValue;
+            }
+
+            int value = aiConfig.NodeParams[index];
+            return value > 0 ? value : defaultValue;
+        }
+
+        public static float GetPatrolMinDistance(this DRGameAI aiConfig, float defaultValue = 2f)
+        {
+            return Mathf.Max(0.5f, aiConfig.GetNodeParam(0, Mathf.RoundToInt(defaultValue)));
+        }
+
+        public static float GetPatrolMaxDistance(this DRGameAI aiConfig, float defaultValue = 4f)
+        {
+            float minDistance = aiConfig.GetPatrolMinDistance();
+            return Mathf.Max(minDistance, aiConfig.GetNodeParam(1, Mathf.RoundToInt(defaultValue)));
+        }
+
+        public static int GetIdleMinSeconds(this DRGameAI aiConfig, int defaultValue = 1)
+        {
+            return Mathf.Max(1, aiConfig.GetNodeParam(0, defaultValue));
+        }
+
+        public static int GetIdleMaxSeconds(this DRGameAI aiConfig, int defaultValue = 3)
+        {
+            int minSeconds = aiConfig.GetIdleMinSeconds();
+            return Mathf.Max(minSeconds, aiConfig.GetNodeParam(1, defaultValue));
+        }
+
+        public static void MarkPatrolIdle(this GameAIComponent self, DRGameAI aiConfig)
+        {
+            DRGameAI idleConfig = self.FindAIConfigByName("Idle");
+            int minSeconds = idleConfig?.GetIdleMinSeconds() ?? 1;
+            int maxSeconds = idleConfig?.GetIdleMaxSeconds() ?? 3;
+            int idleSeconds = UnityEngine.Random.Range(minSeconds, maxSeconds + 1);
+            self.PatrolIdleUntil = TimeInfo.Instance.ClientNow() + idleSeconds * 1000L;
+        }
+
+        public static void ClearPatrolIdle(this GameAIComponent self)
+        {
+            self.PatrolIdleUntil = 0;
+        }
+
+        public static bool HasPendingPatrolIdle(this GameAIComponent self)
+        {
+            if (self == null || self.PatrolIdleUntil <= 0)
+            {
+                return false;
+            }
+
+            if (self.PatrolIdleUntil <= TimeInfo.Instance.ClientNow())
+            {
+                self.PatrolIdleUntil = 0;
+                return false;
+            }
+
+            return true;
+        }
+
+        public static int GetRemainingPatrolIdleMs(this GameAIComponent self)
+        {
+            if (!self.HasPendingPatrolIdle())
+            {
+                return 0;
+            }
+
+            long remaining = self.PatrolIdleUntil - TimeInfo.Instance.ClientNow();
+            return remaining > int.MaxValue ? int.MaxValue : Mathf.Max(0, (int)remaining);
+        }
+
+        public static bool HasAIHandler(this GameAIComponent self, string nodeName)
+        {
+            return self.FindAIConfigByName(nodeName) != null;
+        }
+
+        public static DRGameAI FindAIConfigByName(this GameAIComponent self, string nodeName)
+        {
+            if (self == null || string.IsNullOrEmpty(nodeName))
+            {
+                return null;
+            }
+
+            if (!Tables.Instance.DTGameAI.GameAIs.TryGetValue(self.AIConfigId, out var oneAI) || oneAI == null)
+            {
+                return null;
+            }
+
+            foreach (DRGameAI aiNode in oneAI.Values)
+            {
+                if (aiNode == null)
+                {
+                    continue;
+                }
+
+                if (aiNode.Name == nodeName ||
+                    aiNode.Name == $"GameAI_{nodeName}" ||
+                    aiNode.Name == $"AI_{nodeName}")
+                {
+                    return aiNode;
+                }
+            }
+
+            return null;
         }
 
         public static GameplayAbilitySpec FindPreferredAbility(this GameAIComponent self, DRGameAI aiConfig)
@@ -138,6 +249,86 @@ namespace ET.Client
             return unit == null
                 ? Vector3.zero
                 : new Vector3(unit.Position.x, unit.Position.y, unit.Position.z);
+        }
+
+        public static bool TryGetRandomPatrolTargetInScreen(this GameAIComponent self, DRGameAI aiConfig, out float3 target)
+        {
+            target = default;
+
+            Unit unit = self?.GetOwnerUnit();
+            if (unit == null)
+            {
+                return false;
+            }
+
+            Camera camera = GameEntry.Camera?.CurrentSceneCamera ?? Camera.main;
+            if (camera == null)
+            {
+                return false;
+            }
+
+            Vector3 origin = unit.GetWorldPosition();
+            float minDistance = aiConfig.GetPatrolMinDistance();
+            float maxDistance = aiConfig.GetPatrolMaxDistance();
+            float viewportMargin = 0.08f;
+            Vector2[] directions =
+            {
+                Vector2.right,
+                (Vector2.right + Vector2.up).normalized,
+                Vector2.up,
+                (Vector2.left + Vector2.up).normalized,
+                Vector2.left,
+                (Vector2.left + Vector2.down).normalized,
+                Vector2.down,
+                (Vector2.right + Vector2.down).normalized,
+            };
+
+            for (int i = 0; i < directions.Length; ++i)
+            {
+                int swapIndex = UnityEngine.Random.Range(i, directions.Length);
+                (directions[i], directions[swapIndex]) = (directions[swapIndex], directions[i]);
+            }
+
+            foreach (Vector2 direction in directions)
+            {
+                float distance = UnityEngine.Random.Range(minDistance, maxDistance);
+                Vector3 candidate = origin + new Vector3(direction.x * distance, direction.y * distance, 0f);
+                Vector3 viewportPoint = camera.WorldToViewportPoint(candidate);
+                if (viewportPoint.z <= 0f)
+                {
+                    continue;
+                }
+
+                if (viewportPoint.x < viewportMargin || viewportPoint.x > 1f - viewportMargin ||
+                    viewportPoint.y < viewportMargin || viewportPoint.y > 1f - viewportMargin)
+                {
+                    continue;
+                }
+
+                target = new float3(candidate.x, candidate.y, unit.Position.z);
+                return true;
+            }
+
+            float depth = camera.WorldToScreenPoint(origin).z;
+            if (depth <= 0f)
+            {
+                depth = Mathf.Abs(Vector3.Dot(origin - camera.transform.position, camera.transform.forward));
+            }
+
+            if (depth <= 0f)
+            {
+                depth = 10f;
+            }
+
+            Vector3 minWorld = camera.ViewportToWorldPoint(new Vector3(viewportMargin, viewportMargin, depth));
+            Vector3 maxWorld = camera.ViewportToWorldPoint(new Vector3(1f - viewportMargin, 1f - viewportMargin, depth));
+            Vector2 fallbackDirection = directions[UnityEngine.Random.Range(0, directions.Length)];
+            float fallbackDistance = UnityEngine.Random.Range(minDistance, maxDistance);
+            Vector3 fallback = origin + new Vector3(fallbackDirection.x * fallbackDistance, fallbackDirection.y * fallbackDistance, 0f);
+            fallback.x = Mathf.Clamp(fallback.x, Mathf.Min(minWorld.x, maxWorld.x), Mathf.Max(minWorld.x, maxWorld.x));
+            fallback.y = Mathf.Clamp(fallback.y, Mathf.Min(minWorld.y, maxWorld.y), Mathf.Max(minWorld.y, maxWorld.y));
+            target = new float3(fallback.x, fallback.y, unit.Position.z);
+            return true;
         }
     }
 }

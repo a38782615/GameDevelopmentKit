@@ -14,7 +14,7 @@ namespace ET.Client
                 return 1;
             }
 
-            if (aiComponent.FindNearestTarget(aiConfig.GetAttackRange()) != null)
+            if (aiComponent.HasPendingPatrolIdle())
             {
                 return 1;
             }
@@ -48,15 +48,15 @@ namespace ET.Client
                 return;
             }
 
-            XunLuoPathComponent pathComponent = unit.GetComponent<XunLuoPathComponent>();
-            if (pathComponent == null)
-            {
-                pathComponent = unit.AddComponent<XunLuoPathComponent>();
-            }
-
             while (!token.IsCancellationRequested)
             {
-                float3 nextTarget = pathComponent.GetCurrent();
+                if (!aiComponent.TryGetRandomPatrolTargetInScreen(aiConfig, out float3 nextTarget))
+                {
+#if UNITY_EDITOR
+                    Log.Warning($"[GameAI] XunLuo skipped: target build failed unit={unit.Id} config={unit.ConfigId}");
+#endif
+                    return;
+                }
 
                 using ListComponent<float3> path = ListComponent<float3>.Create();
                 path.Add(unit.Position);
@@ -73,7 +73,12 @@ namespace ET.Client
                     return;
                 }
 
-                pathComponent.MoveNext();
+                aiComponent.MarkPatrolIdle(aiConfig);
+#if UNITY_EDITOR
+                Log.Info(
+                    $"[GameAI] XunLuo arrived unit={unit.Id} config={unit.ConfigId} idleMs={aiComponent.GetRemainingPatrolIdleMs()}");
+#endif
+                return;
             }
         }
     }

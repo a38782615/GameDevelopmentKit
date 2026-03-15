@@ -12,5 +12,7 @@ namespace ET.Client
         public long Timer;
 
         public int Current;
+
+        public long PatrolIdleUntil;
     }
 }
