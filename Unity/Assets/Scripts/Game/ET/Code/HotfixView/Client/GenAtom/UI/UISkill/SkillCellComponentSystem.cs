@@ -1,5 +1,6 @@
 using System.IO;
 using Game;
+using UnityEngine;
 
 namespace ET.Client
 {
@@ -17,6 +18,8 @@ namespace ET.Client
         {
             self.StateRefreshLeftTime = 0f;
             self.StateInitialized = false;
+            self.CachedCooldownVisible = false;
+            self.CachedCooldownFillAmount = -1f;
             self.CachedIconPath = null;
         }
 
@@ -57,6 +60,8 @@ namespace ET.Client
             {
                 self.View.CastButton.onClick.RemoveAllListeners();
             }
+
+            self.ResetCooldownVisual();
         }
 
         public static void Bind(this SkillCellComponent self, GameplayAbilitySpec spec)
@@ -116,6 +121,7 @@ namespace ET.Client
             }
 
             SkillCooldownInfo cooldownInfo = spec.GetCooldownInfo();
+            self.RefreshCooldownVisual(cooldownInfo);
             bool canCast = !spec.IsActive && !cooldownInfo.IsOnCooldown && spec.CanAffordCost();
             string stateText = self.GetStateText(spec, cooldownInfo);
 
@@ -134,6 +140,7 @@ namespace ET.Client
                 if (view.StateText != null)
                 {
                     view.StateText.text = stateText;
+                    view.StateText.gameObject.SetActive(!string.IsNullOrEmpty(stateText));
                 }
 
                 self.CachedStateText = stateText;
@@ -162,6 +169,7 @@ namespace ET.Client
             if (self.View.StateText != null && self.CachedStateText != owner.EditorSmokeStateOverrideText)
             {
                 self.View.StateText.text = owner.EditorSmokeStateOverrideText;
+                self.View.StateText.gameObject.SetActive(!string.IsNullOrEmpty(owner.EditorSmokeStateOverrideText));
             }
 
             self.CachedCanCast = true;
@@ -180,17 +188,96 @@ namespace ET.Client
                 return "Casting";
             }
 
+            if (cooldownInfo.IsChargeCooldown && cooldownInfo.CurrentCharges < cooldownInfo.MaxCharges)
+            {
+                return $"{cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
+            }
+
             if (cooldownInfo.IsOnCooldown)
             {
-                if (cooldownInfo.IsChargeCooldown)
-                {
-                    return $"{cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
-                }
-
                 return $"CD {cooldownInfo.RemainingTime:0.0}";
             }
 
-            return "Ready";
+            return string.Empty;
+        }
+
+        private static void RefreshCooldownVisual(this SkillCellComponent self, SkillCooldownInfo cooldownInfo)
+        {
+            MonoUISkillItem view = self.View;
+            if (view == null)
+            {
+                return;
+            }
+
+            bool isVisible = false;
+            float fillAmount = 0f;
+
+            if (cooldownInfo != null)
+            {
+                if (cooldownInfo.IsChargeCooldown && cooldownInfo.MaxCharges > 0)
+                {
+                    isVisible = cooldownInfo.CurrentCharges < cooldownInfo.MaxCharges;
+                    fillAmount = 1f - cooldownInfo.ChargeProgress;
+                }
+                else if (cooldownInfo.IsOnCooldown)
+                {
+                    isVisible = true;
+                    fillAmount = cooldownInfo.TotalDuration > 0f
+                        ? cooldownInfo.RemainingTime / cooldownInfo.TotalDuration
+                        : 0f;
+                }
+            }
+
+            fillAmount = Mathf.Clamp01(fillAmount);
+            if (self.CachedCooldownVisible != isVisible)
+            {
+                if (view.CooldownTrackImage != null)
+                {
+                    view.CooldownTrackImage.gameObject.SetActive(isVisible);
+                }
+
+                if (view.CooldownRingImage != null)
+                {
+                    view.CooldownRingImage.gameObject.SetActive(isVisible);
+                }
+
+                self.CachedCooldownVisible = isVisible;
+            }
+
+            if (!isVisible)
+            {
+                if (view.CooldownRingImage != null && self.CachedCooldownFillAmount != 0f)
+                {
+                    view.CooldownRingImage.fillAmount = 0f;
+                }
+
+                self.CachedCooldownFillAmount = 0f;
+                return;
+            }
+
+            if (view.CooldownRingImage != null && !Mathf.Approximately(self.CachedCooldownFillAmount, fillAmount))
+            {
+                view.CooldownRingImage.fillAmount = fillAmount;
+                self.CachedCooldownFillAmount = fillAmount;
+            }
+        }
+
+        private static void ResetCooldownVisual(this SkillCellComponent self)
+        {
+            MonoUISkillItem view = self.View;
+            if (view?.CooldownTrackImage != null)
+            {
+                view.CooldownTrackImage.gameObject.SetActive(false);
+            }
+
+            if (view?.CooldownRingImage != null)
+            {
+                view.CooldownRingImage.fillAmount = 0f;
+                view.CooldownRingImage.gameObject.SetActive(false);
+            }
+
+            self.CachedCooldownVisible = false;
+            self.CachedCooldownFillAmount = 0f;
         }
 
         private static bool TryCastSkill(this SkillCellComponent self, GameplayAbilitySpec spec)

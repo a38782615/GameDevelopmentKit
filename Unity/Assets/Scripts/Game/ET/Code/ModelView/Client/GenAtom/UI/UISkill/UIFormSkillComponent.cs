@@ -6,6 +6,7 @@ namespace ET.Client
     public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnClose, IUGFUIFormOnUpdate
     {
         public readonly List<EntityRef<GameplayAbilitySpec>> SkillSpecs = new List<EntityRef<GameplayAbilitySpec>>();
+        public readonly List<MonoUISkillItem> SkillItems = new List<MonoUISkillItem>();
         public readonly Dictionary<int, EntityRef<SkillCellComponent>> SkillCellMap = new Dictionary<int, EntityRef<SkillCellComponent>>();
         public float ListSyncLeftTime;
 #if UNITY_EDITOR

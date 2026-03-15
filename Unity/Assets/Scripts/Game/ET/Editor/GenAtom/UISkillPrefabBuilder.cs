@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Game;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,8 @@ namespace ET.Editor
         private const string PrefabPath = "Assets/Res/UI/UIForm/GenAtom/UISkill.prefab";
         private const string MonoUIFormSkillTypeName = "ET.Client.MonoUIFormSkill, Game.ET.Code.ModelView";
         private const string MonoUISkillItemTypeName = "ET.Client.MonoUISkillItem, Game.ET.Code.ModelView";
-        private const string LoopVerticalScrollRectTypeName = "UnityEngine.UI.LoopVerticalScrollRect, LoopScrollRect.Runtime";
+        private const string PendingNormalizeKey = "UISkillPrefabBuilder.PendingNormalize";
+        private const string CooldownRingSpritePath = "Assets/Res/UI/UISprite/Common/circle-outline.png";
 
         [MenuItem(MenuPath)]
         public static void Rebuild()
@@ -28,12 +30,14 @@ namespace ET.Editor
             try
             {
                 root = CreateRoot();
+                RefreshMonoCodeBindSerialization(root);
                 GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 if (prefab == null)
                 {
                     throw new InvalidOperationException($"Save prefab failed: {PrefabPath}");
                 }
 
+                ScheduleSavedPrefabNormalization();
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 Debug.Log($"[UISkillPrefabBuilder] Rebuilt prefab: {PrefabPath}");
@@ -50,6 +54,15 @@ namespace ET.Editor
                     UnityEngine.Object.DestroyImmediate(root);
                 }
             }
+        }
+
+        [MenuItem("ET/GenAtom/Finalize UISkill Prefab")]
+        public static void FinalizePrefab()
+        {
+            NormalizeSavedPrefab();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[UISkillPrefabBuilder] Finalized prefab: {PrefabPath}");
         }
 
         private static GameObject CreateRoot()
@@ -79,179 +92,71 @@ namespace ET.Editor
             raycastGraphic.raycastTarget = true;
 
             RectTransform panelRect = CreatePanel(root.transform);
-            CreateTitle(panelRect);
-            CreateCloseButton(panelRect);
-            CreateSkillLoopScrollRect(panelRect);
+            RectTransform skillGridRect = CreateSkillGrid(panelRect);
+            CreateSkillItemTemplate(skillGridRect);
             return root;
         }
 
         private static RectTransform CreatePanel(Transform parent)
         {
-            GameObject panel = new GameObject("Panel", typeof(RectTransform), typeof(Image));
+            GameObject panel = new GameObject("Panel_RectTransform", typeof(RectTransform), typeof(Image));
             panel.transform.SetParent(parent, false);
 
             Image image = panel.GetComponent<Image>();
-            image.color = new Color(0.08f, 0.1f, 0.14f, 0.92f);
+            image.color = new Color(0.05f, 0.08f, 0.12f, 0.86f);
 
             RectTransform rectTransform = panel.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(1f, 0.5f);
-            rectTransform.anchorMax = new Vector2(1f, 0.5f);
-            rectTransform.pivot = new Vector2(1f, 0.5f);
-            rectTransform.anchoredPosition = new Vector2(-24f, 0f);
-            rectTransform.sizeDelta = new Vector2(420f, 460f);
+            rectTransform.anchorMin = new Vector2(0.5f, 0f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0f);
+            rectTransform.pivot = new Vector2(0.5f, 0f);
+            rectTransform.anchoredPosition = new Vector2(0f, 20f);
+            rectTransform.sizeDelta = new Vector2(820f, 196f);
             return rectTransform;
         }
 
-        private static void CreateTitle(RectTransform parent)
+        private static RectTransform CreateSkillGrid(RectTransform parent)
         {
-            Text titleText = CreateText("TitleText", parent, "Skills", 26, TextAnchor.MiddleLeft);
-            RectTransform rectTransform = titleText.rectTransform;
-            rectTransform.anchorMin = new Vector2(0f, 1f);
-            rectTransform.anchorMax = new Vector2(0f, 1f);
-            rectTransform.pivot = new Vector2(0f, 1f);
-            rectTransform.anchoredPosition = new Vector2(20f, -18f);
-            rectTransform.sizeDelta = new Vector2(220f, 40f);
-            titleText.color = new Color(0.94f, 0.95f, 0.98f, 1f);
-        }
+            GameObject skillGrid = new GameObject("SkillGrid_RectTransform_GridLayoutGroup", typeof(RectTransform), typeof(GridLayoutGroup));
+            skillGrid.transform.SetParent(parent, false);
 
-        private static void CreateCloseButton(RectTransform parent)
-        {
-            GameObject buttonObject = DefaultControls.CreateButton(new DefaultControls.Resources());
-            buttonObject.name = "Close_Button";
-            buttonObject.transform.SetParent(parent, false);
+            RectTransform rectTransform = skillGrid.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(18f, 18f);
+            rectTransform.offsetMax = new Vector2(-18f, -18f);
 
-            RectTransform rectTransform = buttonObject.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(1f, 1f);
-            rectTransform.anchorMax = new Vector2(1f, 1f);
-            rectTransform.pivot = new Vector2(1f, 1f);
-            rectTransform.anchoredPosition = new Vector2(-18f, -18f);
-            rectTransform.sizeDelta = new Vector2(96f, 40f);
+            GridLayoutGroup gridLayoutGroup = skillGrid.GetComponent<GridLayoutGroup>();
+            gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
+            gridLayoutGroup.childAlignment = TextAnchor.UpperCenter;
+            gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            gridLayoutGroup.constraintCount = 1;
+            gridLayoutGroup.cellSize = new Vector2(160f, 160f);
+            gridLayoutGroup.spacing = new Vector2(20f, 20f);
 
-            Image image = buttonObject.GetComponent<Image>();
-            image.color = new Color(0.76f, 0.24f, 0.24f, 1f);
-
-            Text buttonText = buttonObject.GetComponentInChildren<Text>();
-            if (buttonText != null)
-            {
-                buttonText.text = "Close";
-                buttonText.fontSize = 20;
-                buttonText.color = Color.white;
-            }
-        }
-
-        private static void CreateSkillLoopScrollRect(RectTransform parent)
-        {
-            GameObject scrollObject = DefaultControls.CreateScrollView(new DefaultControls.Resources());
-            scrollObject.name = "SkillLoop_CommonLoopScrollRect";
-            scrollObject.transform.SetParent(parent, false);
-
-            RectTransform scrollRectTransform = scrollObject.GetComponent<RectTransform>();
-            scrollRectTransform.anchorMin = new Vector2(0f, 0f);
-            scrollRectTransform.anchorMax = new Vector2(1f, 1f);
-            scrollRectTransform.offsetMin = new Vector2(18f, 18f);
-            scrollRectTransform.offsetMax = new Vector2(-18f, -70f);
-
-            Image scrollBackground = scrollObject.GetComponent<Image>();
-            scrollBackground.color = new Color(0.12f, 0.15f, 0.2f, 0.95f);
-
-            Transform horizontalScrollbar = scrollObject.transform.Find("Scrollbar Horizontal");
-            if (horizontalScrollbar != null)
-            {
-                UnityEngine.Object.DestroyImmediate(horizontalScrollbar.gameObject);
-            }
-
-            Transform verticalScrollbar = scrollObject.transform.Find("Scrollbar Vertical");
-            if (verticalScrollbar != null)
-            {
-                UnityEngine.Object.DestroyImmediate(verticalScrollbar.gameObject);
-            }
-
-            RectTransform viewport = scrollObject.transform.Find("Viewport") as RectTransform;
-            RectTransform content = viewport?.Find("Content") as RectTransform;
-            if (viewport == null || content == null)
-            {
-                return;
-            }
-
-            viewport.anchorMin = Vector2.zero;
-            viewport.anchorMax = Vector2.one;
-            viewport.offsetMin = Vector2.zero;
-            viewport.offsetMax = Vector2.zero;
-
-            Image viewportImage = viewport.GetComponent<Image>();
-            if (viewportImage != null)
-            {
-                viewportImage.color = new Color(1f, 1f, 1f, 0.04f);
-            }
-
-            Mask mask = viewport.GetComponent<Mask>();
-            if (mask != null)
-            {
-                mask.showMaskGraphic = false;
-            }
-
-            content.anchorMin = new Vector2(0f, 1f);
-            content.anchorMax = new Vector2(1f, 1f);
-            content.pivot = new Vector2(0.5f, 1f);
-            content.anchoredPosition = Vector2.zero;
-            content.sizeDelta = Vector2.zero;
-
-            VerticalLayoutGroup layoutGroup = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            layoutGroup.childAlignment = TextAnchor.UpperCenter;
-            layoutGroup.childControlWidth = true;
-            layoutGroup.childControlHeight = false;
-            layoutGroup.childForceExpandWidth = true;
-            layoutGroup.childForceExpandHeight = false;
-            layoutGroup.spacing = 10f;
-            layoutGroup.padding = new RectOffset(12, 12, 12, 12);
-
-            CreateSkillItemTemplate(content);
-
-            ScrollRect scrollRect = scrollObject.GetComponent<ScrollRect>();
-            if (scrollRect != null)
-            {
-                UnityEngine.Object.DestroyImmediate(scrollRect);
-            }
-
-            Component loopScrollRect = scrollObject.AddComponent(ResolveType(LoopVerticalScrollRectTypeName));
-            SetProperty(loopScrollRect, "content", content);
-            SetProperty(loopScrollRect, "viewport", viewport);
-            SetProperty(loopScrollRect, "horizontal", false);
-            SetProperty(loopScrollRect, "vertical", true);
-            SetEnumProperty(loopScrollRect, "movementType", "Clamped");
-            SetProperty(loopScrollRect, "inertia", true);
-            SetProperty(loopScrollRect, "scrollSensitivity", 36f);
-            SetProperty(loopScrollRect, "decelerationRate", 0.135f);
-
-            scrollObject.AddComponent<CommonLoopScrollRect>();
+            return rectTransform;
         }
 
         private static void CreateSkillItemTemplate(RectTransform parent)
         {
             GameObject item = new GameObject(
-                "SkillItemTemplate",
+                "ItemTemplate_SkillItemTemplate",
                 typeof(RectTransform),
-                typeof(LayoutElement),
                 ResolveType(MonoUISkillItemTypeName));
 
             item.transform.SetParent(parent, false);
 
             RectTransform rectTransform = item.GetComponent<RectTransform>();
             rectTransform.anchorMin = new Vector2(0f, 1f);
-            rectTransform.anchorMax = new Vector2(1f, 1f);
-            rectTransform.pivot = new Vector2(0.5f, 1f);
-            rectTransform.sizeDelta = new Vector2(0f, 72f);
-
-            LayoutElement layoutElement = item.GetComponent<LayoutElement>();
-            layoutElement.preferredHeight = 72f;
-            layoutElement.minHeight = 72f;
+            rectTransform.anchorMax = new Vector2(0f, 1f);
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.sizeDelta = new Vector2(160f, 160f);
 
             GameObject castButtonObject = new GameObject(
                 "Cast_Button",
                 typeof(RectTransform),
                 typeof(Image),
-                typeof(Button),
-                typeof(HorizontalLayoutGroup));
+                typeof(Button));
             castButtonObject.transform.SetParent(item.transform, false);
 
             RectTransform castButtonRect = castButtonObject.GetComponent<RectTransform>();
@@ -261,54 +166,102 @@ namespace ET.Editor
             castButtonRect.offsetMax = Vector2.zero;
 
             Image castButtonImage = castButtonObject.GetComponent<Image>();
-            castButtonImage.color = new Color(0.18f, 0.22f, 0.29f, 1f);
-
-            HorizontalLayoutGroup horizontalLayoutGroup = castButtonObject.GetComponent<HorizontalLayoutGroup>();
-            horizontalLayoutGroup.childAlignment = TextAnchor.MiddleLeft;
-            horizontalLayoutGroup.childControlWidth = true;
-            horizontalLayoutGroup.childControlHeight = true;
-            horizontalLayoutGroup.childForceExpandWidth = false;
-            horizontalLayoutGroup.childForceExpandHeight = false;
-            horizontalLayoutGroup.spacing = 12f;
-            horizontalLayoutGroup.padding = new RectOffset(12, 12, 10, 10);
+            castButtonImage.color = new Color(0.16f, 0.2f, 0.27f, 0.96f);
 
             CreateIcon(castButtonObject.transform);
+            CreateCooldownTrack(castButtonObject.transform);
+            CreateCooldownRing(castButtonObject.transform);
             CreateNameText(castButtonObject.transform);
             CreateStateText(castButtonObject.transform);
+            item.SetActive(false);
         }
 
         private static void CreateIcon(Transform parent)
         {
-            GameObject icon = new GameObject("Icon_Image", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+            GameObject icon = new GameObject("Icon_Image", typeof(RectTransform), typeof(Image));
             icon.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = icon.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(12f, 12f);
+            rectTransform.offsetMax = new Vector2(-12f, -12f);
 
             Image image = icon.GetComponent<Image>();
             image.color = new Color(1f, 1f, 1f, 0.95f);
             image.enabled = false;
+            image.preserveAspect = true;
+        }
 
-            LayoutElement layoutElement = icon.GetComponent<LayoutElement>();
-            layoutElement.preferredWidth = 44f;
-            layoutElement.preferredHeight = 44f;
-            layoutElement.minWidth = 44f;
-            layoutElement.minHeight = 44f;
+        private static void CreateCooldownTrack(Transform parent)
+        {
+            GameObject cooldownTrack = new GameObject("CooldownTrack_Image", typeof(RectTransform), typeof(Image));
+            cooldownTrack.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = cooldownTrack.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(8f, 8f);
+            rectTransform.offsetMax = new Vector2(-8f, -8f);
+
+            Image image = cooldownTrack.GetComponent<Image>();
+            image.sprite = LoadSprite(CooldownRingSpritePath);
+            image.type = Image.Type.Simple;
+            image.color = new Color(0f, 0f, 0f, 0.32f);
+            image.raycastTarget = false;
+            image.preserveAspect = true;
+        }
+
+        private static void CreateCooldownRing(Transform parent)
+        {
+            GameObject cooldownRing = new GameObject("CooldownRing_Image", typeof(RectTransform), typeof(Image));
+            cooldownRing.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = cooldownRing.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(8f, 8f);
+            rectTransform.offsetMax = new Vector2(-8f, -8f);
+
+            Image image = cooldownRing.GetComponent<Image>();
+            image.sprite = LoadSprite(CooldownRingSpritePath);
+            image.type = Image.Type.Filled;
+            image.fillMethod = Image.FillMethod.Radial360;
+            image.fillOrigin = (int)Image.Origin360.Top;
+            image.fillClockwise = false;
+            image.fillAmount = 0f;
+            image.color = new Color(0.36f, 0.86f, 0.98f, 0.96f);
+            image.raycastTarget = false;
+            image.preserveAspect = true;
+            cooldownRing.SetActive(false);
         }
 
         private static void CreateNameText(Transform parent)
         {
-            Text nameText = CreateText("Name_Text", parent, "Skill", 22, TextAnchor.MiddleLeft);
-            LayoutElement layoutElement = nameText.gameObject.AddComponent<LayoutElement>();
-            layoutElement.flexibleWidth = 1f;
-            layoutElement.minWidth = 120f;
-            nameText.color = new Color(0.94f, 0.95f, 0.98f, 1f);
+            Text nameText = CreateText("Name_Text", parent, "Skill", 24, TextAnchor.LowerCenter);
+            RectTransform rectTransform = nameText.rectTransform;
+            rectTransform.anchorMin = new Vector2(0f, 0f);
+            rectTransform.anchorMax = new Vector2(1f, 0f);
+            rectTransform.pivot = new Vector2(0.5f, 0f);
+            rectTransform.anchoredPosition = Vector2.zero;
+            rectTransform.sizeDelta = new Vector2(0f, 36f);
+            nameText.color = new Color(0.94f, 0.95f, 0.98f, 0.92f);
+            nameText.gameObject.SetActive(false);
         }
 
         private static void CreateStateText(Transform parent)
         {
-            Text stateText = CreateText("State_Text", parent, "Ready", 20, TextAnchor.MiddleRight);
-            LayoutElement layoutElement = stateText.gameObject.AddComponent<LayoutElement>();
-            layoutElement.preferredWidth = 96f;
-            layoutElement.minWidth = 96f;
-            stateText.color = new Color(0.54f, 0.83f, 0.98f, 1f);
+            Text stateText = CreateText("State_Text", parent, string.Empty, 32, TextAnchor.LowerRight);
+            RectTransform rectTransform = stateText.rectTransform;
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(16f, 16f);
+            rectTransform.offsetMax = new Vector2(-16f, -16f);
+            stateText.color = new Color(0.97f, 0.98f, 1f, 1f);
+            Outline outline = stateText.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0f, 0f, 0f, 0.9f);
+            outline.effectDistance = new Vector2(2.4f, -2.4f);
+            stateText.gameObject.SetActive(false);
         }
 
         private static Text CreateText(string name, Transform parent, string text, int fontSize, TextAnchor anchor)
@@ -321,7 +274,7 @@ namespace ET.Editor
             textComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             textComponent.fontSize = fontSize;
             textComponent.alignment = anchor;
-            textComponent.horizontalOverflow = HorizontalWrapMode.Overflow;
+            textComponent.horizontalOverflow = HorizontalWrapMode.Wrap;
             textComponent.verticalOverflow = VerticalWrapMode.Truncate;
             textComponent.raycastTarget = false;
             return textComponent;
@@ -338,6 +291,168 @@ namespace ET.Editor
             rectTransform.anchoredPosition = Vector2.zero;
         }
 
+        private static void NormalizeSavedPrefab()
+        {
+            GameObject prefabRoot = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                RectTransform rootRect = prefabRoot.GetComponent<RectTransform>();
+                if (rootRect != null)
+                {
+                    NormalizeRootRect(rootRect);
+                }
+
+                RefreshMonoCodeBindSerialization(prefabRoot);
+
+                GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(prefabRoot, PrefabPath);
+                if (savedPrefab == null)
+                {
+                    throw new InvalidOperationException($"Normalize prefab failed: {PrefabPath}");
+                }
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(prefabRoot);
+            }
+        }
+
+        private static void ScheduleSavedPrefabNormalization()
+        {
+            SessionState.SetBool(PendingNormalizeKey, true);
+            EditorApplication.delayCall -= TryNormalizePendingSavedPrefab;
+            EditorApplication.delayCall += TryNormalizePendingSavedPrefab;
+        }
+
+        [DidReloadScripts]
+        private static void OnScriptsReloaded()
+        {
+            if (!SessionState.GetBool(PendingNormalizeKey, false))
+            {
+                return;
+            }
+
+            EditorApplication.delayCall -= TryNormalizePendingSavedPrefab;
+            EditorApplication.delayCall += TryNormalizePendingSavedPrefab;
+        }
+
+        private static void TryNormalizePendingSavedPrefab()
+        {
+            if (!SessionState.GetBool(PendingNormalizeKey, false))
+            {
+                return;
+            }
+
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+                EditorApplication.delayCall -= TryNormalizePendingSavedPrefab;
+                EditorApplication.delayCall += TryNormalizePendingSavedPrefab;
+                return;
+            }
+
+            SessionState.EraseBool(PendingNormalizeKey);
+
+            try
+            {
+                NormalizeSavedPrefab();
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        private static void NormalizeRootRect(RectTransform rectTransform)
+        {
+            rectTransform.localScale = Vector3.one;
+            rectTransform.localPosition = Vector3.zero;
+            rectTransform.localRotation = Quaternion.identity;
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            rectTransform.anchoredPosition = Vector2.zero;
+            rectTransform.sizeDelta = Vector2.zero;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+        }
+
+        private static void RefreshMonoCodeBindSerialization(GameObject root)
+        {
+            Component formComponent = root.GetComponent(ResolveType(MonoUIFormSkillTypeName));
+            if (formComponent == null)
+            {
+                throw new InvalidOperationException("MonoUIFormSkill component not found.");
+            }
+
+            RectTransform panelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "Panel_RectTransform"));
+            Transform skillGrid = FindRequiredChild(panelRectTransform, "SkillGrid_RectTransform_GridLayoutGroup");
+            RectTransform skillGridRectTransform = GetRequiredComponent<RectTransform>(skillGrid);
+            GridLayoutGroup skillGridLayoutGroup = GetRequiredComponent<GridLayoutGroup>(skillGrid);
+            Transform itemRoot = FindRequiredChild(skillGrid, "ItemTemplate_SkillItemTemplate");
+
+            Component itemComponent = itemRoot.GetComponent(ResolveType(MonoUISkillItemTypeName));
+            if (itemComponent == null)
+            {
+                throw new InvalidOperationException("MonoUISkillItem component not found.");
+            }
+
+            Button castButton = GetRequiredComponent<Button>(FindRequiredChild(itemRoot, "Cast_Button"));
+            Transform castButtonTransform = castButton.transform;
+            Image iconImage = GetRequiredComponent<Image>(FindRequiredChild(castButtonTransform, "Icon_Image"));
+            Image cooldownRingImage = GetRequiredComponent<Image>(FindRequiredChild(castButtonTransform, "CooldownRing_Image"));
+            Image cooldownTrackImage = GetRequiredComponent<Image>(FindRequiredChild(castButtonTransform, "CooldownTrack_Image"));
+            Text nameText = GetRequiredComponent<Text>(FindRequiredChild(castButtonTransform, "Name_Text"));
+            Text stateText = GetRequiredComponent<Text>(FindRequiredChild(castButtonTransform, "State_Text"));
+
+            TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);
+            TrySetObjectReference(formComponent, "m_SkillGridRectTransform", skillGridRectTransform);
+            TrySetObjectReference(formComponent, "m_SkillGridGridLayoutGroup", skillGridLayoutGroup);
+            TrySetObjectReference(formComponent, "m_ItemTemplateSkillItemTemplate", itemComponent);
+
+            TrySetObjectReference(itemComponent, "m_CastButton", castButton);
+            TrySetObjectReference(itemComponent, "m_CooldownTrackImage", cooldownTrackImage);
+            TrySetObjectReference(itemComponent, "m_IconImage", iconImage);
+            TrySetObjectReference(itemComponent, "m_CooldownRingImage", cooldownRingImage);
+            TrySetObjectReference(itemComponent, "m_NameText", nameText);
+            TrySetObjectReference(itemComponent, "m_StateText", stateText);
+        }
+
+        private static Transform FindRequiredChild(Transform parent, string path)
+        {
+            Transform child = parent.Find(path);
+            if (child == null)
+            {
+                throw new InvalidOperationException($"Child not found: {path}");
+            }
+
+            return child;
+        }
+
+        private static T GetRequiredComponent<T>(Transform transform) where T : Component
+        {
+            T component = transform.GetComponent<T>();
+            if (component == null)
+            {
+                throw new InvalidOperationException($"Component not found: {typeof(T).FullName} on {transform.name}");
+            }
+
+            return component;
+        }
+
+        private static void TrySetObjectReference(Component component, string propertyName, UnityEngine.Object value)
+        {
+            SerializedObject serializedObject = new SerializedObject(component);
+            SerializedProperty property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                return;
+            }
+
+            property.objectReferenceValue = value;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
         private static Type ResolveType(string assemblyQualifiedTypeName)
         {
             Type type = Type.GetType(assemblyQualifiedTypeName);
@@ -349,27 +464,15 @@ namespace ET.Editor
             return type;
         }
 
-        private static void SetProperty(Component component, string propertyName, object value)
+        private static Sprite LoadSprite(string assetPath)
         {
-            var property = component.GetType().GetProperty(propertyName);
-            if (property == null)
+            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+            if (sprite == null)
             {
-                throw new InvalidOperationException($"Property not found: {component.GetType().FullName}.{propertyName}");
+                throw new InvalidOperationException($"Sprite not found: {assetPath}");
             }
 
-            property.SetValue(component, value);
-        }
-
-        private static void SetEnumProperty(Component component, string propertyName, string value)
-        {
-            var property = component.GetType().GetProperty(propertyName);
-            if (property == null)
-            {
-                throw new InvalidOperationException($"Property not found: {component.GetType().FullName}.{propertyName}");
-            }
-
-            object enumValue = Enum.Parse(property.PropertyType, value);
-            property.SetValue(component, enumValue);
+            return sprite;
         }
     }
 }

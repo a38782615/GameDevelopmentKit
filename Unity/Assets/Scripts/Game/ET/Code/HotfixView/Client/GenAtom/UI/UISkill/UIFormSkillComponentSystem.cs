@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -10,22 +11,20 @@ namespace ET.Client
     public static partial class UIFormSkillComponentSystem
     {
         private const float RefreshInterval = 0.2f;
+        private const float PanelMaxWidth = 820f;
+        private const float PanelSideMargin = 24f;
+        private const float PanelPadding = 18f;
+        private const float SkillCellWidth = 160f;
+        private const float SkillCellHeight = 160f;
+        private const float SkillCellSpacingX = 20f;
+        private const float SkillCellSpacingY = 20f;
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkillComponent self)
         {
-            if (self.View.CloseButton != null)
-            {
-                self.View.CloseButton.Set(self.OnClickCloseButton);
-            }
-
-            if (self.View.SkillLoopCommonLoopScrollRect != null)
-            {
-                self.View.SkillLoopCommonLoopScrollRect.itemRenderer = self.RenderSkillItem;
-            }
-
             self.ListSyncLeftTime = 0f;
             self.SyncSkillList();
+            self.RefreshSkillLayout();
 #if UNITY_EDITOR
             SkillDiagFileLogger.Log($"[DiagUISkill] open runId={self.EditorSmokeRunId + 1} visible={self.SkillSpecs.Count}");
             self.EditorSmokeRunId++;
@@ -43,11 +42,7 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormSkillComponent self, bool isShutdown)
         {
-            if (self.View?.SkillLoopCommonLoopScrollRect != null)
-            {
-                self.View.SkillLoopCommonLoopScrollRect.itemRenderer = null;
-            }
-
+            self.DestroySkillItems();
             self.DisposeSkillCells();
             self.SkillSpecs.Clear();
         }
@@ -69,11 +64,8 @@ namespace ET.Client
             self.UpdateEditorSmokeStateOverride(elapseSeconds);
             self.TryReportEditorSmokeResult(elapseSeconds);
 #endif
-        }
 
-        private static void OnClickCloseButton(this UIFormSkillComponent self)
-        {
-            self.Dispose();
+            self.RefreshSkillLayout();
         }
 
         private static void SyncSkillList(this UIFormSkillComponent self)
@@ -83,6 +75,7 @@ namespace ET.Client
             var grantedAbilities = asc?.Abilities?.GetGrantedAbilities();
             if (!self.IsSkillListChanged(grantedAbilities))
             {
+                self.RefreshSkillLayout();
                 return;
             }
 
@@ -101,12 +94,7 @@ namespace ET.Client
                 }
             }
 
-            if (self.View?.SkillLoopCommonLoopScrollRect == null)
-            {
-                return;
-            }
-
-            self.View.SkillLoopCommonLoopScrollRect.numItems = self.SkillSpecs.Count;
+            self.RefreshSkillItems();
         }
 
         private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
@@ -143,29 +131,6 @@ namespace ET.Client
             }
 
             return abilityNodeData.eventOutputPorts == null || abilityNodeData.eventOutputPorts.Count == 0;
-        }
-
-        private static void RenderSkillItem(this UIFormSkillComponent self, int index, Transform itemTransform)
-        {
-            if (index < 0 || index >= self.SkillSpecs.Count)
-            {
-                return;
-            }
-
-            MonoUISkillItem item = itemTransform.GetComponent<MonoUISkillItem>();
-            if (item == null)
-            {
-                return;
-            }
-
-            GameplayAbilitySpec spec = self.SkillSpecs[index].As();
-            if (spec == null)
-            {
-                return;
-            }
-
-            SkillCellComponent cell = self.GetOrCreateSkillCell(item);
-            cell.Bind(spec);
         }
 
         private static bool TryCastSkillAtIndex(this UIFormSkillComponent self, int index)
@@ -363,6 +328,104 @@ namespace ET.Client
             return cell;
         }
 
+        private static void RefreshSkillItems(this UIFormSkillComponent self)
+        {
+            if (self.View?.ItemTemplateSkillItemTemplate == null || self.View.SkillGridRectTransform == null)
+            {
+                return;
+            }
+
+            self.EnsureSkillItemCount(self.SkillSpecs.Count);
+            for (int i = 0; i < self.SkillItems.Count; ++i)
+            {
+                MonoUISkillItem item = self.SkillItems[i];
+                if (item == null)
+                {
+                    continue;
+                }
+
+                item.transform.SetSiblingIndex(i + 1);
+                GameplayAbilitySpec spec = self.SkillSpecs[i].As();
+                if (spec == null)
+                {
+                    continue;
+                }
+
+                SkillCellComponent cell = self.GetOrCreateSkillCell(item);
+                cell.Bind(spec);
+            }
+
+            self.RefreshSkillLayout();
+        }
+
+        private static void EnsureSkillItemCount(this UIFormSkillComponent self, int targetCount)
+        {
+            while (self.SkillItems.Count < targetCount)
+            {
+                self.CreateSkillItem();
+            }
+
+            while (self.SkillItems.Count > targetCount)
+            {
+                self.DestroySkillItem(self.SkillItems.Count - 1);
+            }
+        }
+
+        private static void CreateSkillItem(this UIFormSkillComponent self)
+        {
+            MonoUISkillItem template = self.View?.ItemTemplateSkillItemTemplate;
+            RectTransform skillGridRectTransform = self.View?.SkillGridRectTransform;
+            if (template == null || skillGridRectTransform == null)
+            {
+                return;
+            }
+
+            MonoUISkillItem item = UnityEngine.Object.Instantiate(template, skillGridRectTransform, false);
+            self.SkillItems.Add(item);
+
+            SkillCellComponent cell = self.GetOrCreateSkillCell(item);
+            cell.TryDynamicOpen();
+        }
+
+        private static void DestroySkillItem(this UIFormSkillComponent self, int index)
+        {
+            if (index < 0 || index >= self.SkillItems.Count)
+            {
+                return;
+            }
+
+            MonoUISkillItem item = self.SkillItems[index];
+            self.SkillItems.RemoveAt(index);
+            if (item == null)
+            {
+                return;
+            }
+
+            self.DisposeSkillCell(item.gameObject.GetInstanceID());
+            UnityEngine.Object.Destroy(item.gameObject);
+        }
+
+        private static void DestroySkillItems(this UIFormSkillComponent self)
+        {
+            for (int i = self.SkillItems.Count - 1; i >= 0; --i)
+            {
+                self.DestroySkillItem(i);
+            }
+
+            self.SkillItems.Clear();
+        }
+
+        private static void DisposeSkillCell(this UIFormSkillComponent self, int instanceId)
+        {
+            if (!self.SkillCellMap.Remove(instanceId, out EntityRef<SkillCellComponent> cellRef))
+            {
+                return;
+            }
+
+            SkillCellComponent cell = cellRef.As();
+            cell?.Dispose();
+        }
+
         private static void DisposeSkillCells(this UIFormSkillComponent self)
         {
             foreach (EntityRef<SkillCellComponent> cellRef in self.SkillCellMap.Values)
@@ -377,6 +440,55 @@ namespace ET.Client
             }
 
             self.SkillCellMap.Clear();
+        }
+
+        private static void RefreshSkillLayout(this UIFormSkillComponent self)
+        {
+            MonoUIFormSkill view = self.View;
+            RectTransform rootRectTransform = self.CachedTransform as RectTransform;
+            if (view?.PanelRectTransform == null ||
+                view.SkillGridRectTransform == null ||
+                view.SkillGridGridLayoutGroup == null ||
+                rootRectTransform == null)
+            {
+                return;
+            }
+
+            float availableWidth = Mathf.Max(
+                (PanelPadding * 2f) + SkillCellWidth,
+                rootRectTransform.rect.width - (PanelSideMargin * 2f));
+            float panelWidth = Mathf.Min(PanelMaxWidth, availableWidth);
+            int itemCount = self.SkillItems.Count;
+            int columns = self.GetColumnCount(panelWidth, itemCount);
+            int rows = itemCount <= 0 ? 1 : Mathf.CeilToInt(itemCount / (float)columns);
+            float panelHeight = (PanelPadding * 2f) +
+                (rows * SkillCellHeight) +
+                (Mathf.Max(0, rows - 1) * SkillCellSpacingY);
+
+            view.PanelRectTransform.sizeDelta = new Vector2(panelWidth, panelHeight);
+
+            GridLayoutGroup gridLayoutGroup = view.SkillGridGridLayoutGroup;
+            gridLayoutGroup.cellSize = new Vector2(SkillCellWidth, SkillCellHeight);
+            gridLayoutGroup.spacing = new Vector2(SkillCellSpacingX, SkillCellSpacingY);
+            gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
+            gridLayoutGroup.startAxis = GridLayoutGroup.Axis.Horizontal;
+            gridLayoutGroup.childAlignment = TextAnchor.UpperCenter;
+            gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            gridLayoutGroup.constraintCount = columns;
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(view.SkillGridRectTransform);
+        }
+
+        private static int GetColumnCount(this UIFormSkillComponent self, float panelWidth, int itemCount)
+        {
+            float contentWidth = Mathf.Max(0f, panelWidth - (PanelPadding * 2f));
+            int columns = Mathf.Max(1, Mathf.FloorToInt((contentWidth + SkillCellSpacingX) / (SkillCellWidth + SkillCellSpacingX)));
+            if (itemCount > 0)
+            {
+                columns = Mathf.Min(columns, itemCount);
+            }
+
+            return Mathf.Max(1, columns);
         }
 
         private static global::ET.DRSkill GetSkillData(this UIFormSkillComponent self, GameplayAbilitySpec spec)

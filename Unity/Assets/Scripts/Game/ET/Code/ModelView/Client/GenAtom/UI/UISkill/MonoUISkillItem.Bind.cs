@@ -7,6 +7,10 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Button m_CastButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_CooldownRingImage;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_CooldownTrackImage;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_IconImage;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Text m_NameText;
@@ -15,6 +19,8 @@ namespace ET.Client
 
 
         public UnityEngine.UI.Button CastButton => m_CastButton;
+        public UnityEngine.UI.Image CooldownRingImage => m_CooldownRingImage;
+        public UnityEngine.UI.Image CooldownTrackImage => m_CooldownTrackImage;
         public UnityEngine.UI.Image IconImage => m_IconImage;
         public UnityEngine.UI.Text NameText => m_NameText;
         public UnityEngine.UI.Text StateText => m_StateText;
@@ -29,6 +35,8 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_CastButton == null) return true;
+            if (this.m_CooldownRingImage == null) return true;
+            if (this.m_CooldownTrackImage == null) return true;
             if (this.m_IconImage == null) return true;
             if (this.m_NameText == null) return true;
             if (this.m_StateText == null) return true;

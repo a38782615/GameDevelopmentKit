@@ -7,6 +7,8 @@ namespace ET.Client
         public float StateRefreshLeftTime;
         public bool StateInitialized;
         public bool CachedCanCast;
+        public bool CachedCooldownVisible;
+        public float CachedCooldownFillAmount;
         public string CachedStateText;
         public string CachedIconPath;
     }

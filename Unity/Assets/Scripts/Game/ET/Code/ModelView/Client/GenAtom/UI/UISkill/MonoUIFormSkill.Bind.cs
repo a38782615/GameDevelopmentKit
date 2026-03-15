@@ -5,13 +5,19 @@ namespace ET.Client
     public partial class MonoUIFormSkill
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Button m_CloseButton;
+        private ET.Client.MonoUISkillItem m_ItemTemplateSkillItemTemplate;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_SkillLoopCommonLoopScrollRect;
+        private UnityEngine.RectTransform m_PanelRectTransform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.GridLayoutGroup m_SkillGridGridLayoutGroup;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.RectTransform m_SkillGridRectTransform;
 
 
-        public UnityEngine.UI.Button CloseButton => m_CloseButton;
-        public Game.CommonLoopScrollRect SkillLoopCommonLoopScrollRect => m_SkillLoopCommonLoopScrollRect;
+        public ET.Client.MonoUISkillItem ItemTemplateSkillItemTemplate => m_ItemTemplateSkillItemTemplate;
+        public UnityEngine.RectTransform PanelRectTransform => m_PanelRectTransform;
+        public UnityEngine.UI.GridLayoutGroup SkillGridGridLayoutGroup => m_SkillGridGridLayoutGroup;
+        public UnityEngine.RectTransform SkillGridRectTransform => m_SkillGridRectTransform;
 
 
 #if UNITY_EDITOR
@@ -22,8 +28,10 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_CloseButton == null) return true;
-            if (this.m_SkillLoopCommonLoopScrollRect == null) return true;
+            if (this.m_ItemTemplateSkillItemTemplate == null) return true;
+            if (this.m_PanelRectTransform == null) return true;
+            if (this.m_SkillGridGridLayoutGroup == null) return true;
+            if (this.m_SkillGridRectTransform == null) return true;
             return false;
         }
 #endif
