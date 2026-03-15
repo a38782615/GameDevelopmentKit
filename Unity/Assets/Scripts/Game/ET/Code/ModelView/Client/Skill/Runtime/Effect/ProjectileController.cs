@@ -80,9 +80,11 @@ namespace ET.Client
 
             // 碰撞检测
             CheckCollision();
+            if (!_initialized) return;
 
             // 检查是否到达目标或超出距离
             CheckReachTarget();
+            if (!_initialized) return;
 
             // 更新Transform
             transform.position = _currentPosition;
@@ -546,7 +548,13 @@ namespace ET.Client
         /// </summary>
         private void DestroyProjectile()
         {
+            if (!_initialized)
+            {
+                return;
+            }
+
             _initialized = false;
+            enabled = false;
             OnDestroy?.Invoke();
 
             // 清理事件

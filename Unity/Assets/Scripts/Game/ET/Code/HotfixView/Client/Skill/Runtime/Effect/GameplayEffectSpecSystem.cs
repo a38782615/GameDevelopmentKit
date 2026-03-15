@@ -46,6 +46,7 @@ namespace ET.Client
             self.IsApplied = false;
             self.IsExpired = false;
             self.WasRefreshed = false;
+            self.IsRemoved = false;
             self.TriggeredCueIds.Clear();
 
             var effectData = self.EffectNodeData;
@@ -234,6 +235,13 @@ namespace ET.Client
             self.ElapsedTime += deltaTime;
             var effectData = self.EffectNodeData;
             var ctx = self.GetContext();
+            if (ctx == null)
+            {
+                self.IsApplied = false;
+                self.IsExpired = true;
+                self.IsRemoved = true;
+                return;
+            }
 
             if (effectData?.isPeriodic == true && self.Period > 0)
             {
@@ -311,6 +319,12 @@ namespace ET.Client
 
         public static void RemoveEffect(this GameplayEffectSpec self)
         {
+            if (self == null || self.IsDisposed || self.IsRemoved)
+            {
+                return;
+            }
+
+            self.IsRemoved = true;
             // 取消Cue
             if (self.TriggeredCueIds.Count > 0)
             {
@@ -350,9 +364,17 @@ namespace ET.Client
             self.UnregisterTagListener();
 
             var ctx = self.GetContext();
+            if (ctx == null)
+            {
+                self.IsApplied = false;
+                self.IsExpired = true;
+                self.IsRunning = false;
+                return;
+            }
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
             self.ExecuteCompleteFlow(ctx);
 
+            self.IsApplied = false;
             self.IsExpired = true;
             self.IsRunning = false;
         }
@@ -397,9 +419,18 @@ namespace ET.Client
                 target.OwnedTags.RemoveTags(self.Tags.GrantedTags);
 
             var ctx = self.GetContext();
+            if (ctx == null)
+            {
+                self.IsApplied = false;
+                self.IsExpired = true;
+                self.IsRemoved = true;
+                return;
+            }
             ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, "全部移除后");
 
+            self.IsApplied = false;
             self.IsExpired = true;
+            self.IsRemoved = true;
         }
 
         // ============ 堆叠 ============
@@ -605,6 +636,7 @@ namespace ET.Client
             self.IsApplied = false;
             self.IsExpired = false;
             self.WasRefreshed = false;
+            self.IsRemoved = false;
             self.ElapsedTime = 0f;
             self.PeriodTimer = 0f;
             self.StackCount = 1;

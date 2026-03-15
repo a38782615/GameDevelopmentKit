@@ -15,6 +15,11 @@ namespace ET.Client
     {
         public ProjectileEffectSpec SelfSpec()
         {
+            if (Spec == null || Spec.IsDisposed)
+            {
+                return null;
+            }
+
             var selfSpec = Spec.GetComponent<ProjectileEffectSpec>();
             return selfSpec;
         }
@@ -25,7 +30,7 @@ namespace ET.Client
         }
         public override SpecExecutionContext GetContext()
         {
-            return Spec.GetContext();
+            return Spec?.GetContext();
         }
         public override void Execute()
         {
@@ -69,6 +74,7 @@ namespace ET.Client
             if (nodeData == null) return;
             var selfSpec = SelfSpec();
             var Context = GetContext();
+            if (selfSpec == null || Context == null) return;
             // 使用 PositionSourceType 获取发射位置
             Vector2 launchPosition = Context.GetPosition(nodeData.launchPositionSource, nodeData.launchBindingName);
 
@@ -125,6 +131,7 @@ namespace ET.Client
         {
             var nodeData = GetNode();
             var selfSpec = SelfSpec();
+            if (selfSpec == null) return;
 #if UNITY_EDITOR
             SkillDiagFileLogger.Log(
                 $"[DiagProjectile] spawn begin skillId={Spec.SkillId} prefabNull={(nodeData?.projectilePrefab == null)} prefabPath={nodeData?.projectilePrefabPath} launch={launchPosition} target={targetPosition}");
@@ -202,8 +209,10 @@ namespace ET.Client
             if (hitTarget == null) return;
             var Context = GetContext();
             var selfSpec = SelfSpec();
+            if (Context == null || selfSpec == null) return;
             // 创建带有命中目标的上下文
             var hitContext = Context.CreateWithParentInput(hitTarget);
+            if (hitContext == null) return;
             hitContext.SetCustomData("HitPosition", hitPosition);
             // 确保投射物对象在上下文中
             hitContext.ProjectileObject = selfSpec._projectileObject;
@@ -219,6 +228,7 @@ namespace ET.Client
         {
             var ctx = GetExecutionContext();
             var selfSpec = SelfSpec();
+            if (ctx == null || selfSpec == null) return;
             ctx.SetCustomData("ReachPosition", position);
             // 确保投射物对象在上下文中
             ctx.ProjectileObject = selfSpec._projectileObject;
@@ -236,8 +246,10 @@ namespace ET.Client
 
             var Context = GetContext();
             var selfSpec = SelfSpec();
+            if (Context == null || selfSpec == null) return;
             // 创建带有反弹目标的上下文
             var bounceContext = Context.CreateWithParentInput(nextTarget);
+            if (bounceContext == null) return;
             bounceContext.SetCustomData("BouncePosition", bouncePosition);
             bounceContext.ProjectileObject = selfSpec._projectileObject;
 
@@ -251,11 +263,17 @@ namespace ET.Client
         private void OnProjectileDestroy()
         {
             var selfSpec = SelfSpec();
-            selfSpec._projectileController = null;
-            selfSpec._projectileObject = null;
+            if (selfSpec != null)
+            {
+                selfSpec._projectileController = null;
+                selfSpec._projectileObject = null;
+            }
 
             // 投射物销毁时，结束Effect
-            Spec.RemoveEffect();
+            if (Spec != null && !Spec.IsDisposed)
+            {
+                Spec.RemoveEffect();
+            }
         }
 
         /// <summary>
@@ -264,6 +282,15 @@ namespace ET.Client
         public override void Cancel()
         {
             var selfSpec = SelfSpec();
+            if (selfSpec == null)
+            {
+                if (Spec != null && !Spec.IsDisposed)
+                {
+                    Spec.CancelEffect();
+                }
+
+                return;
+            }
             // 如果投射物还存在，销毁它
             if (selfSpec._projectileController != null)
             {

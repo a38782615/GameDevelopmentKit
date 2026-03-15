@@ -35,6 +35,7 @@ namespace ET.Client
         public bool IsApplied;
         public bool IsExpired;
         public bool WasRefreshed;
+        public bool IsRemoved;
         public float ElapsedTime;
         public float PeriodTimer;
         public List<long> TriggeredCueIds = new List<long>(); // GameplayCueSpec Entity Ids
