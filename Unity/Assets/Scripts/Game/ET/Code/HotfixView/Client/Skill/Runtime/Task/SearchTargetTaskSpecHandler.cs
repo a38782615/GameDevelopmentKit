@@ -85,8 +85,6 @@ namespace ET.Client
             Collider2D[] colliders = Physics2D.OverlapCircleAll(center, radius);
             if (enableDiag)
             {
-                SkillDiagFileLogger.Log(
-                    $"[DiagSearch1001] sector begin center={center} forward={forward} radius={radius:0.##} angle={angle:0.##} caster={this.DescribeTransform(casterTransform)} overlapCount={colliders.Length}");
             }
 
             foreach (Collider2D collider in colliders)
@@ -97,8 +95,6 @@ namespace ET.Client
                 {
                     if (enableDiag)
                     {
-                        SkillDiagFileLogger.Log(
-                            $"[DiagSearch1001] sector skip collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} valid={isValidTarget}");
                     }
                     continue;
                 }
@@ -108,8 +104,6 @@ namespace ET.Client
                 {
                     if (enableDiag)
                     {
-                        SkillDiagFileLogger.Log(
-                            $"[DiagSearch1001] sector skip-zero collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)}");
                     }
                     continue;
                 }
@@ -117,8 +111,6 @@ namespace ET.Client
                 float angleToTarget = Vector2.Angle(forward, toTarget);
                 if (enableDiag)
                 {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagSearch1001] sector test collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} toTarget={toTarget} angleToTarget={angleToTarget:0.##} halfAngle={halfAngle:0.##}");
                 }
 
                 if (angleToTarget <= halfAngle)
@@ -126,15 +118,12 @@ namespace ET.Client
                     foundTargets.Add(asc);
                     if (enableDiag)
                     {
-                        SkillDiagFileLogger.Log(
-                            $"[DiagSearch1001] sector hit collider={this.DescribeCollider(collider)} ascCfg={this.GetUnitConfigId(asc)} foundCount={foundTargets.Count}");
                     }
                 }
             }
 
             if (enableDiag)
             {
-                SkillDiagFileLogger.Log($"[DiagSearch1001] sector end foundCount={foundTargets.Count}");
             }
         }
 

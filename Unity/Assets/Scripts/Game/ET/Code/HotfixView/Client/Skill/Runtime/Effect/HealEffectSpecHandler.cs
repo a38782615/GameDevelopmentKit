@@ -69,7 +69,6 @@ namespace ET.Client
             if (target?.Attributes == null || healNodeData == null)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log($"[DiagHeal2001] abort targetOrNodeNull targetNull={(target == null)} nodeNull={(healNodeData == null)}");
 #endif
                 return;
             }
@@ -77,12 +76,10 @@ namespace ET.Client
             float currentHealth = target.Attributes.GetCurrentValue(AttrType.Health);
             float maxHealth = target.Attributes.GetCurrentValue(AttrType.MaxHealth);
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log($"[DiagHeal2001] enter skillId={Spec.SkillId} node={Spec.NodeGuid} target={(target.Owner != null ? target.Owner.name : "null")} current={currentHealth:0.##} max={maxHealth:0.##}");
 #endif
             if (maxHealth > 0f && currentHealth >= maxHealth - 0.001f)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log("[DiagHeal2001] skip reason=already-full");
 #endif
                 return;
             }
@@ -98,7 +95,6 @@ namespace ET.Client
             if (baseHeal <= 0f)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log($"[DiagHeal2001] skip reason=base-heal<=0 baseHeal={baseHeal:0.##}");
 #endif
                 return;
             }
@@ -120,7 +116,6 @@ namespace ET.Client
             if (actualHeal <= 0.001f)
             {
 #if UNITY_EDITOR
-                SkillDiagFileLogger.Log($"[DiagHeal2001] skip reason=actual-heal<=0 old={oldHealth:0.##} new={newHealth:0.##} max={maxHealth:0.##}");
 #endif
                 return;
             }
@@ -130,7 +125,6 @@ namespace ET.Client
             SpecExecutionContext executionContext = GetExecutionContext();
             executionContext.SetCustomData("Heal", actualHeal);
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log($"[DiagHeal2001] apply old={oldHealth:0.##} new={newHealth:0.##} actual={actualHeal:0.##}");
 #endif
             executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, "治疗");
 

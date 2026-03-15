@@ -69,8 +69,6 @@ namespace ET.Client
 
             if (shouldLog)
             {
-                SkillDiagFileLogger.Log(
-                    $"[DiagGameplayEvent] dispatch event={gameplayEventType} activeCount={activeAbilities.Count}");
             }
 #endif
 
@@ -85,8 +83,6 @@ namespace ET.Client
 #if UNITY_EDITOR
                 if (ability.SkillId == "1010")
                 {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagGameplayEvent] deliver skillId={ability.SkillId} event={gameplayEventType}");
                 }
 #endif
 
@@ -133,8 +129,6 @@ namespace ET.Client
 #if UNITY_EDITOR
                 if (spec.SkillId == "1010")
                 {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagAutoTarget] skillId={spec.SkillId} resolvedTarget={DescribeTarget(resolvedTarget)}");
                 }
 #endif
                 if (resolvedTarget == null)
@@ -142,8 +136,6 @@ namespace ET.Client
 #if UNITY_EDITOR
                     if (spec.SkillId == "1010")
                     {
-                        SkillDiagFileLogger.Log(
-                            $"[DiagAutoTarget] abort skillId={spec.SkillId} reason=no-main-target");
                     }
 #endif
                     return false;

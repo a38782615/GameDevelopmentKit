@@ -21,7 +21,6 @@ namespace ET.Client
 #if UNITY_EDITOR
             if (token.Type != JTokenType.Null)
             {
-                SkillDiagFileLogger.Log($"[DiagSkillDataConverter] ignore UnityObject type={objectType.Name} token={Truncate(token.ToString(Formatting.None), 200)}");
             }
 #endif
 

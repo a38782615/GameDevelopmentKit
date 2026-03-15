@@ -69,7 +69,6 @@ namespace ET.Client
                 int afterConvertNewGameObjectCount = CountAnonymousRootObjects();
                 if (beforeConvertNewGameObjectCount != afterConvertNewGameObjectCount)
                 {
-                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] Convert changed skillId={tableData.Id} before={beforeConvertNewGameObjectCount} after={afterConvertNewGameObjectCount}");
                 }
 #endif
                 if (skillData != null)
@@ -154,7 +153,6 @@ namespace ET.Client
                 int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
                 if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
                 {
-                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] Deserialize changed type={typeName} before={beforeDeserializeNewGameObjectCount} after={afterDeserializeNewGameObjectCount} json={Truncate(nodeJson, 240)}");
                 }
 #endif
                 return nodeData;
@@ -204,7 +202,6 @@ namespace ET.Client
                 int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
                 if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
                 {
-                    SkillDiagFileLogger.Log($"[DiagSkillDataConverter] DeserializeByNodeType changed nodeType={(int)nodeType} targetType={targetType.Name} before={beforeDeserializeNewGameObjectCount} after={afterDeserializeNewGameObjectCount} json={Truncate(nodeJson, 240)}");
                 }
 #endif
                 return nodeData;

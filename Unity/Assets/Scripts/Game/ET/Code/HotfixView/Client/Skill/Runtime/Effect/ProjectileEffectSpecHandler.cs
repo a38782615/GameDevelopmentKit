@@ -133,8 +133,6 @@ namespace ET.Client
             var selfSpec = SelfSpec();
             if (selfSpec == null) return;
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log(
-                $"[DiagProjectile] spawn begin skillId={Spec.SkillId} prefabNull={(nodeData?.projectilePrefab == null)} prefabPath={nodeData?.projectilePrefabPath} launch={launchPosition} target={targetPosition}");
 #endif
 
             // 创建投射物GameObject
@@ -190,8 +188,6 @@ namespace ET.Client
             // 保存引用
             selfSpec._projectileController = controller;
 #if UNITY_EDITOR
-            SkillDiagFileLogger.Log(
-                $"[DiagProjectile] spawn end skillId={Spec.SkillId} projectile={selfSpec._projectileObject?.name} controller={selfSpec._projectileController != null}");
 #endif
 
             // 注册事件

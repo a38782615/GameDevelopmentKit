@@ -232,8 +232,6 @@ namespace ET.Client
                     builder.Append(mappedAsc?.Owner != null ? mappedAsc.Owner.name : "null");
                 }
 
-                SkillDiagFileLogger.Log(
-                    $"[DiagProjectileCollision] skillId={_data.SkillId} overlapCount={colliders.Length} position={_currentPosition} radius={_data.CollisionRadius:0.00} targets={builder}");
             }
 #endif
 
@@ -257,8 +255,6 @@ namespace ET.Client
 #if UNITY_EDITOR
                 if (_data.SkillId == "1010")
                 {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagProjectileCollision] hit skillId={_data.SkillId} collider={collider.name} target={(asc.Owner != null ? asc.Owner.name : "null")} position={_currentPosition}");
                 }
 #endif
 
@@ -361,8 +357,6 @@ namespace ET.Client
                         #if UNITY_EDITOR
                         if (_data.SkillId == "1010")
                         {
-                            SkillDiagFileLogger.Log(
-                                $"[DiagProjectileReach] skillId={_data.SkillId} current={_currentPosition} target={_endPosition} traveled={_traveledDistance:0.00}");
                         }
                         #endif
                         OnReachTarget?.Invoke(_endPosition);

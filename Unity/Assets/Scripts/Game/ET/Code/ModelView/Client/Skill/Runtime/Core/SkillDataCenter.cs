@@ -61,16 +61,8 @@ namespace ET.Client
             _loadingFromTables = true;
             try
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkillDataCenter] EnsureLoaded begin dataCount={skillGraphTable.DataList.Count} registered={_skillGraphs.Count} newGO={CountAnonymousRootObjects()}");
-#endif
                 SkillDataConverter.ConvertAndRegisterAll(skillGraphTable);
                 _loadedFromTables = true;
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkillDataCenter] EnsureLoaded end dataCount={skillGraphTable.DataList.Count} registered={_skillGraphs.Count} newGO={CountAnonymousRootObjects()}");
-#endif
             }
             finally
             {
@@ -103,16 +95,8 @@ namespace ET.Client
             _preloadingRuntimeAssets = true;
             try
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkillDataCenter] EnsureLoadedAndPreloadAsync begin registered={_skillGraphs.Count} runtimeReady={_runtimeAssetsReady} newGO={CountAnonymousRootObjects()}");
-#endif
                 await SkillNodeRuntimeAssetResolver.PreloadSkillGraphsAsync(_skillGraphs.Values);
                 _runtimeAssetsReady = true;
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkillDataCenter] EnsureLoadedAndPreloadAsync end registered={_skillGraphs.Count} runtimeReady={_runtimeAssetsReady} newGO={CountAnonymousRootObjects()}");
-#endif
             }
             finally
             {
@@ -138,19 +122,8 @@ namespace ET.Client
             if (_skillGraphs.ContainsKey(skillId))
                 return;
 
-#if UNITY_EDITOR
-            int beforeNewGameObjectCount = CountAnonymousRootObjects();
-#endif
             _skillGraphs[skillId] = graphData;
             BuildCache(graphData, skillId);
-#if UNITY_EDITOR
-            int afterNewGameObjectCount = CountAnonymousRootObjects();
-            if (beforeNewGameObjectCount != afterNewGameObjectCount)
-            {
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkillDataCenter] RegisterSkillGraph changed skillId={skillId} before={beforeNewGameObjectCount} after={afterNewGameObjectCount}");
-            }
-#endif
         }
 
         /// <summary>
@@ -362,21 +335,5 @@ namespace ET.Client
         /// </summary>
         public int RegisteredCount => _skillGraphs.Count;
 
-#if UNITY_EDITOR
-        private static int CountAnonymousRootObjects()
-        {
-            var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-            int count = 0;
-            foreach (var gameObject in rootGameObjects)
-            {
-                if (gameObject != null && gameObject.name == "New Game Object")
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-#endif
     }
 }

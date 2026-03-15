@@ -429,13 +429,6 @@ namespace ET.Client
             {
                 if (portData.eventType == gameplayEvent)
                 {
-#if UNITY_EDITOR
-                    if (self.SkillId == "1010")
-                    {
-                        SkillDiagFileLogger.Log(
-                            $"[DiagGameplayEvent] execute skillId={self.SkillId} event={gameplayEvent} portId={portData.PortId}");
-                    }
-#endif
                     context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, portData.PortId);
                 }
             }
@@ -448,14 +441,6 @@ namespace ET.Client
             if (self.State != AbilityState.Active) return;
 
             self.CurrentPlayTime += deltaTime;
-#if UNITY_EDITOR
-            if (self.SkillId == "1010" && self.CurrentPlayTime <= deltaTime + 0.0001f)
-            {
-                SkillDiagFileLogger.Log(
-                    $"[DiagAbilityTick] start skillId={self.SkillId} currentPlayTime={self.CurrentPlayTime:0.00} duration={self.AnimationDuration:0.00} timeEffects={self.GetTimeEffectRuntime()?.TimeEffects?.Count ?? 0}");
-            }
-#endif
-
             var context = self.Context;
 
             // 检查时间效果触发
@@ -529,13 +514,6 @@ namespace ET.Client
             }
 
             animationComponent.PlayAnimation(name, loop);
-#if UNITY_EDITOR
-            if (self.SkillId == "1010")
-            {
-                SkillDiagFileLogger.Log(
-                    $"[DiagAnimation] skillId={self.SkillId} animation={name} loop={loop} hasAnimationComponent={(animationComponent != null)} owner={asc.Owner.name}");
-            }
-#endif
         }
 
         private static TimeCueRuntimeComponent GetTimeCueRuntime(this GameplayAbilitySpec self)
