@@ -37,6 +37,7 @@
 
 - 导表或刷新 Luban 数据时，必须优先在项目内调用 Unity 菜单 `Game/Tool/ExcelExporter`；工具栏 `ExportExcel` 按钮视为同一入口。
 - 执行项目内导表后，以 Unity Console 出现 `Luban excel export success!` 和 `Export cost ...` 作为成功依据，再继续后续验证或运行时检查。
+- 每次写入 Excel 时，必须优先使用带校验的单元格写法；不要默认使用无校验批量写入，除非已确认目标工具不支持且不会影响导表结果。
 - 先判断任务属于哪条链路，再决定改哪里。
 - 做 **热更玩法 / UI / 流程 / 配置消费逻辑** 时，优先看 `Assets/Scripts/Game/Hot/Code/`。
 - 做 **Hot 启动、桥接、基础 MonoBehaviour、网络包装** 时，优先看 `Assets/Scripts/Game/Hot/Loader/`。
