@@ -18,7 +18,6 @@
         "Coffee.UnmaskForUGUI",
         "ZString",
         "MemoryPack",
-        "EnhancedScroller",
         "Leihuo.UXTools.Runtime",
         "StateController",
         "R3.Unity",
@@ -29,7 +28,8 @@
         "LoopScrollRect.Runtime",
         "Game",
         "UnityGameFramework.Runtime",
-        "spine-unity"
+        "spine-unity",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

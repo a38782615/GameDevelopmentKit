@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1ab7574a9ae4abf40a6c631ef69cecc2
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 8404be70184654265930450def6a9037, type: 3}
+  generateWrapperCode: 1
+  wrapperCodePath: Assets/Scripts/Game/ET/Code/ModelView/Client/Module/Input/InputControls.cs
+  wrapperClassName: 
+  wrapperCodeNamespace: ET.Client

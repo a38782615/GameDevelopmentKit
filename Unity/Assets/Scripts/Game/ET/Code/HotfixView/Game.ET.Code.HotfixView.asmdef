@@ -30,7 +30,8 @@
         "LitMotion.Animation",
         "LoopScrollRect.Runtime",
         "Game",
-        "spine-unity"
+        "spine-unity",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

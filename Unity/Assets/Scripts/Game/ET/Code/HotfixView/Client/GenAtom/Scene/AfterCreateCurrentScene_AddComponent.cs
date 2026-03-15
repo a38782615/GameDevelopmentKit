@@ -9,6 +9,7 @@ namespace ET.Client
         {
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
+            scene.AddComponent<FightInputComponent>();
             await UniTask.CompletedTask;
         }
     }
