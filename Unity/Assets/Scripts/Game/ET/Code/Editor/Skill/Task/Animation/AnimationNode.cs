@@ -550,7 +550,7 @@ namespace ET.Client.Editor
 
             _timelineView.Initialize(TypedData, () =>
             {
-                var port = TimelinePort.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+                var port = TimelinePort.Create(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
                 return port;
             });
 

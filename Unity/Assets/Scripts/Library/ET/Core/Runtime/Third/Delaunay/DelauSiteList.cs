@@ -1,0 +1,188 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using Unity.Mathematics;
+
+namespace ET
+{
+    public sealed class DelauSiteList : IDisposable
+    {
+        private List<DelauSite> _sites;
+        private int _currentIndex;
+
+        private bool _sorted;
+
+        public DelauSiteList()
+        {
+            _sites = new List<DelauSite>();
+            _sorted = false;
+        }
+
+        public void Dispose()
+        {
+            if (_sites != null)
+            {
+                for (int i = 0; i < _sites.Count; i++)
+                {
+                    DelauSite site = _sites[i];
+                    site.Dispose();
+                }
+
+                _sites.Clear();
+                _sites = null;
+            }
+        }
+
+        public int Add(DelauSite site)
+        {
+            _sorted = false;
+            _sites.Add(site);
+            return _sites.Count;
+        }
+
+        public int Count
+        {
+            get { return _sites.Count; }
+        }
+
+        public DelauSite Next()
+        {
+            if (_sorted == false)
+            {
+                var error = ("SiteList::next():  sites have not been sorted");
+                throw new Exception(error);
+            }
+
+            if (_currentIndex < _sites.Count)
+            {
+                return _sites[_currentIndex++];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        internal RectangleF GetSitesBounds()
+        {
+            if (_sorted == false)
+            {
+                DelauSite.SortSites(_sites);
+                _currentIndex = 0;
+                _sorted = true;
+            }
+
+            float xmin, xmax, ymin, ymax;
+            if (_sites.Count == 0)
+            {
+                return new RectangleF(0, 0, 0, 0);
+            }
+
+            xmin = float.MaxValue;
+            xmax = float.MinValue;
+            for (int i = 0; i < _sites.Count; i++)
+            {
+                DelauSite site = _sites[i];
+                if (site.x < xmin)
+                {
+                    xmin = site.x;
+                }
+
+                if (site.x > xmax)
+                {
+                    xmax = site.x;
+                }
+            }
+
+            // here's where we assume that the sites have been sorted on y:
+            ymin = _sites[0].y;
+            ymax = _sites[_sites.Count - 1].y;
+
+            return new RectangleF(xmin, ymin, xmax - xmin, ymax - ymin);
+        }
+
+        public List<uint> SiteColors( /*BitmapData referenceImage = null*/)
+        {
+            List<uint> colors = new List<uint>();
+            DelauSite site;
+            for (int i = 0; i < _sites.Count; i++)
+            {
+                site = _sites[i];
+                colors.Add( /*referenceImage ? referenceImage.getPixel(site.x, site.y) :*/site.color);
+            }
+
+            return colors;
+        }
+
+        public List<float2> SiteCoords()
+        {
+            List<float2> coords = new List<float2>();
+            DelauSite site;
+            for (int i = 0; i < _sites.Count; i++)
+            {
+                site = _sites[i];
+                coords.Add(site.Coord);
+            }
+
+            return coords;
+        }
+
+        /**
+         *
+         * @return the largest circle centered at each site that fits in its region;
+         * if the region is infinite, return a circle of radius 0.
+         *
+         */
+        public List<GeoCircle> Circles()
+        {
+            List<GeoCircle> circles = new List<GeoCircle>();
+            DelauSite site;
+            for (int i = 0; i < _sites.Count; i++)
+            {
+                site = _sites[i];
+                float radius = 0f;
+                DelauEdge nearestEdge = site.NearestEdge();
+
+                if (!nearestEdge.IsPartOfConvexHull())
+                {
+                    radius = nearestEdge.SitesDistance() * 0.5f;
+                }
+
+                circles.Add(new GeoCircle(site.x, site.y, radius));
+            }
+
+            return circles;
+        }
+
+        public List<List<float2>> Regions(RectangleF plotBounds)
+        {
+            List<List<float2>> regions = new List<List<float2>>();
+            DelauSite site;
+            for (int i = 0; i < _sites.Count; i++)
+            {
+                site = _sites[i];
+                regions.Add(site.Region(plotBounds));
+            }
+
+            return regions;
+        }
+
+        /**
+         *
+         * @param proximityMap a BitmapData whose regions are filled with the site index values; see PlanePointsCanvas::fillRegions()
+         * @param x
+         * @param y
+         * @return coordinates of nearest Site to (x, y)
+         *
+         */
+        public Nullable<float2> NearestSitePoint( /*proximityMap:BitmapData,*/ float x, float y)
+        {
+            //			uint index = proximityMap.getPixel(x, y);
+            //			if (index > _sites.length - 1)
+            //			{
+            return null;
+            //			}
+            //			return _sites[index].coord;
+        }
+    }
+}

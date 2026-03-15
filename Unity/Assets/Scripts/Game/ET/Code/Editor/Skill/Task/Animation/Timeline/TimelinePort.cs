@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
+using GraphViewEdge = UnityEditor.Experimental.GraphView.Edge;
 
 namespace ET.Client.Editor
 {
     /// <summary>
-    /// 自定义端口 - 监听连接和断开事件
+    /// 自定义时间轴端口，统一派发连接变化事件。
     /// </summary>
     public class TimelinePort : Port
     {
@@ -16,109 +19,114 @@ namespace ET.Client.Editor
         {
         }
 
-        public static TimelinePort Create<TEdge>(Orientation orientation, Direction direction, Capacity capacity, Type type)
-            where TEdge : Edge, new()
+        public static TimelinePort Create(Orientation orientation, Direction direction, Capacity capacity, Type type)
         {
             var connectorListener = new DefaultEdgeConnectorListener();
             var port = new TimelinePort(orientation, direction, capacity, type)
             {
-                m_EdgeConnector = new EdgeConnector<TEdge>(connectorListener)
+                m_EdgeConnector = new EdgeConnector<GraphViewEdge>(connectorListener)
             };
+
             port.AddManipulator(port.m_EdgeConnector);
             return port;
         }
 
-        /// <summary>
-        /// 重写Connect方法，监听连接事件
-        /// </summary>
-        public override void Connect(Edge edge)
-        {
-            base.Connect(edge);
-            // 延迟触发事件，确保连接状态已更新
-            schedule.Execute(() =>
-            {
-                OnConnectionChanged?.Invoke();
-            }).ExecuteLater(50);
-        }
-
-        /// <summary>
-        /// 重写Disconnect方法，监听断开事件
-        /// </summary>
-        public override void Disconnect(Edge edge)
-        {
-            base.Disconnect(edge);
-            // 延迟触发事件，确保连接状态已更新
-            schedule.Execute(() =>
-            {
-                OnConnectionChanged?.Invoke();
-            }).ExecuteLater(50);
-        }
-
-        /// <summary>
-        /// 重写DisconnectAll方法，监听全部断开事件
-        /// </summary>
         public override void DisconnectAll()
         {
             base.DisconnectAll();
-            // 延迟触发事件，确保连接状态已更新
+            NotifyConnectionChanged();
+        }
+
+        private void NotifyConnectionChanged()
+        {
             schedule.Execute(() =>
             {
                 OnConnectionChanged?.Invoke();
             }).ExecuteLater(50);
         }
 
+        private static void NotifyPortChanged(Port port, ISet<TimelinePort> changedPorts)
+        {
+            if (port is TimelinePort timelinePort && changedPorts.Add(timelinePort))
+            {
+                timelinePort.NotifyConnectionChanged();
+            }
+        }
+
         /// <summary>
-        /// 默认的EdgeConnector监听器
+        /// 处理 GraphView 默认连线行为，并补发端口变化通知。
         /// </summary>
         private class DefaultEdgeConnectorListener : IEdgeConnectorListener
         {
-            public void OnDropOutsidePort(Edge edge, UnityEngine.Vector2 position) { }
-            public void OnDrop(GraphView graphView, Edge edge)
+            public void OnDropOutsidePort(GraphViewEdge edge, Vector2 position)
             {
-                // 让GraphView处理连接
-                var edgesToCreate = new System.Collections.Generic.List<Edge> { edge };
-                var edgesToDelete = new System.Collections.Generic.List<GraphElement>();
+            }
 
-                // 如果输入端口已有连接且容量为Single，删除旧连接
+            public void OnDrop(GraphView graphView, GraphViewEdge edge)
+            {
+                var changedPorts = new HashSet<TimelinePort>();
+                var edgesToCreate = new List<GraphViewEdge> { edge };
+                var edgesToDelete = new List<GraphElement>();
+
+                NotifyPortChanged(edge.input, changedPorts);
+                NotifyPortChanged(edge.output, changedPorts);
+
                 if (edge.input.capacity == Capacity.Single)
                 {
-                    foreach (var connection in edge.input.connections)
+                    foreach (GraphViewEdge connection in edge.input.connections)
                     {
-                        if (connection != edge)
-                            edgesToDelete.Add(connection);
+                        if (connection == edge)
+                        {
+                            continue;
+                        }
+
+                        edgesToDelete.Add(connection);
+                        NotifyPortChanged(connection.input, changedPorts);
+                        NotifyPortChanged(connection.output, changedPorts);
                     }
                 }
 
-                // 如果输出端口已有连接且容量为Single，删除旧连接
                 if (edge.output.capacity == Capacity.Single)
                 {
-                    foreach (var connection in edge.output.connections)
+                    foreach (GraphViewEdge connection in edge.output.connections)
                     {
-                        if (connection != edge)
-                            edgesToDelete.Add(connection);
+                        if (connection == edge)
+                        {
+                            continue;
+                        }
+
+                        edgesToDelete.Add(connection);
+                        NotifyPortChanged(connection.input, changedPorts);
+                        NotifyPortChanged(connection.output, changedPorts);
                     }
                 }
 
                 if (edgesToDelete.Count > 0)
+                {
                     graphView.DeleteElements(edgesToDelete);
+                }
 
-                var edgesToAdd = edgesToCreate;
                 if (graphView.graphViewChanged != null)
                 {
-                    edgesToAdd = graphView.graphViewChanged(new GraphViewChange
+                    edgesToCreate = graphView.graphViewChanged(new GraphViewChange
                     {
                         edgesToCreate = edgesToCreate
                     }).edgesToCreate;
                 }
 
-                if (edgesToAdd != null)
+                if (edgesToCreate == null)
                 {
-                    foreach (var e in edgesToAdd)
-                    {
-                        graphView.AddElement(e);
-                        e.input.Connect(e);
-                        e.output.Connect(e);
-                    }
+                    return;
+                }
+
+                foreach (GraphViewEdge currentEdge in edgesToCreate)
+                {
+                    graphView.AddElement(currentEdge);
+                    currentEdge.input.Connect(currentEdge);
+                    currentEdge.output.Connect(currentEdge);
+
+                    NotifyPortChanged(currentEdge.input, changedPorts);
+                    NotifyPortChanged(currentEdge.output, changedPorts);
                 }
             }
         }

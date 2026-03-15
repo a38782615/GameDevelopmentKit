@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ET
 {
-    public class ObjectPool: Singleton<ObjectPool>, ISingletonAwake
+    public class ObjectPool : Singleton<ObjectPool>, ISingletonAwake
     {
         private ConcurrentDictionary<Type, Pool> objPool;
 
@@ -21,7 +21,7 @@ namespace ET
 
         public T Fetch<T>() where T : class
         {
-            return this.Fetch(typeof (T)) as T;
+            return this.Fetch(typeof(T)) as T;
         }
 
         public object Fetch(Type type, bool isFromPool = true)
@@ -30,7 +30,7 @@ namespace ET
             {
                 return Activator.CreateInstance(type);
             }
-            
+
             Pool pool = GetPool(type);
             object obj = pool.Get();
             if (obj is IPool p)
@@ -38,6 +38,11 @@ namespace ET
                 p.IsFromPool = true;
             }
             return obj;
+        }
+
+        public void Recycle<T>(object obj)
+        {
+            this.Recycle(obj);
         }
 
         public void Recycle(object obj)

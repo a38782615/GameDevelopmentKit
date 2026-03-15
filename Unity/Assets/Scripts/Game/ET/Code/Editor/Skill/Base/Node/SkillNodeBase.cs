@@ -3,11 +3,12 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System;
+using GraphViewNode = UnityEditor.Experimental.GraphView.Node;
 
 
 namespace ET.Client.Editor
 {
-    public abstract class SkillNodeBase : Node
+    public abstract class SkillNodeBase : GraphViewNode
     {
         public string Guid { get; set; }
         public NodeType NodeType { get; protected set; }
