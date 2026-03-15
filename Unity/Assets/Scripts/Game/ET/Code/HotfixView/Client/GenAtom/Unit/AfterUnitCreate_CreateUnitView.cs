@@ -41,6 +41,13 @@ namespace ET.Client
             if (asc != null)
             {
                 asc.Owner = viewGameObject;
+                AnimationComponent animationComponent = viewGameObject.GetComponent<AnimationComponent>();
+                if (animationComponent == null)
+                {
+                    animationComponent = viewGameObject.AddComponent<AnimationComponent>();
+                }
+
+                animationComponent.Initialize(asc);
             }
 
             unit.AddComponent<Collider2DComponent>().Bind(viewGameObject, asc);

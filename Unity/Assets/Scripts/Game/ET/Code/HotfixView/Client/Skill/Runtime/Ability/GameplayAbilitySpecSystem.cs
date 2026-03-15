@@ -515,9 +515,21 @@ namespace ET.Client
             var asc = self.GetASC;
             if (asc?.Owner == null || string.IsNullOrEmpty(name)) return;
 
-            // var animator = asc.Owner.GetComponent<AnimationComponent>();
-            // if (animator != null)
-            //     animator.PlayAnimation(name, loop);
+            var animationComponent = asc.Owner.GetComponent<AnimationComponent>();
+            if (animationComponent == null)
+            {
+                animationComponent = asc.Owner.AddComponent<AnimationComponent>();
+            }
+
+            animationComponent.Initialize(asc);
+            animationComponent.PlayAnimation(name, loop);
+#if UNITY_EDITOR
+            if (self.SkillId == "1010")
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagAnimation] skillId={self.SkillId} animation={name} loop={loop} hasAnimationComponent={(animationComponent != null)} owner={asc.Owner.name}");
+            }
+#endif
         }
 
         private static TimeCueRuntimeComponent GetTimeCueRuntime(this GameplayAbilitySpec self)

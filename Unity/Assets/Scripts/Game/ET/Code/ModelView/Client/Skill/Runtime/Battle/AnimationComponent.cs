@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if Spine
 using Spine.Unity;
@@ -5,97 +6,135 @@ using Spine.Unity;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 控制效果动画处理器 - 监听标签事件，控制动画播放
-    /// 独立于 Buff，通过标签系统驱动
-    ///
-    /// 使用方式：挂载到角色上，配置 ASC 引用
-    /// </summary>
     [EnableClass]
-    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOf(typeof(AbilitySystemComponent))]
     public class AnimationComponent : MonoBehaviour
     {
-        [Header("引用")]
+        [Header("Reference")]
         [SerializeField] private AbilitySystemComponent _asc;
 #if Spine
         private SkeletonAnimation _animation;
 #endif
+        private readonly GameplayTag _cachedStunTag = GameplayTagLibrary.Buff_DeBuff_Stun;
+        private bool _isListening;
+
         public string StandAnimationName = "Stand";
         public string StunAnimationName = "Stun";
 
-        // 缓存的标签（通过 GameplayTagLibrary 引用，tag 重命名/删除时编译期即可发现）
-        private GameplayTag _cachedStunTag = GameplayTagLibrary.Buff_DeBuff_Stun;
-
-        // 当前状态
         [HideInInspector]
         public bool _isStunned;
 
-
         private void Awake()
         {
-            // 自动获取组件
-            if (_asc == null)
-                _asc = GetComponent<SkillUnit>().ASC;
-#if Spine
-            if (_animation == null)
-                _animation = GetComponent<SkeletonAnimation>();
-#endif
+            this.EnsureAnimationReference();
         }
 
         private void OnEnable()
         {
-            if (_asc?.OwnedTags == null) return;
-
-            // 注册标签事件监听
-            _asc.OwnedTags.OnTagAdded += OnTagAdded;
-            _asc.OwnedTags.OnTagRemoved += OnTagRemoved;
+            this.RegisterTagListeners();
         }
 
         private void OnDisable()
         {
-            if (_asc?.OwnedTags == null) return;
-
-            // 取消注册
-            _asc.OwnedTags.OnTagAdded -= OnTagAdded;
-            _asc.OwnedTags.OnTagRemoved -= OnTagRemoved;
+            this.UnregisterTagListeners();
         }
 
-        /// <summary>
-        /// 标签添加时的回调
-        /// </summary>
+        public void Initialize(AbilitySystemComponent asc)
+        {
+            if (!ReferenceEquals(_asc, asc))
+            {
+                this.UnregisterTagListeners();
+                _asc = asc;
+            }
+
+            this.EnsureAnimationReference();
+            this.RegisterTagListeners();
+        }
+
         private void OnTagAdded(GameplayTag tag)
         {
-            if (!_isStunned && tag == _cachedStunTag)
+            if (_isStunned || tag != _cachedStunTag)
             {
-                _isStunned = true;
-                PlayAnimation(StunAnimationName, true);
+                return;
             }
+
+            _isStunned = true;
+            this.PlayAnimation(StunAnimationName, true);
         }
 
-        /// <summary>
-        /// 标签移除时的回调
-        /// </summary>
         private void OnTagRemoved(GameplayTag tag)
         {
-            if (_isStunned && tag == _cachedStunTag && !_asc.OwnedTags.HasTag(_cachedStunTag))
+            if (!_isStunned || tag != _cachedStunTag || _asc == null || _asc.OwnedTags.HasTag(_cachedStunTag))
             {
-                _isStunned = false;
-                PlayAnimation(StandAnimationName, true);
+                return;
             }
+
+            _isStunned = false;
+            this.PlayAnimation(StandAnimationName, true);
         }
 
         public void PlayAnimation(string name, bool loop)
         {
 #if Spine
-            // 检查当前是否已经在播放这个动画
-            var current = _animation.AnimationState.GetCurrent(0);
-            if (current != null && current.Animation.Name == name)
+            if (string.IsNullOrEmpty(name))
+            {
                 return;
+            }
+
+            this.EnsureAnimationReference();
+            if (_animation?.AnimationState == null)
+            {
+                return;
+            }
+
+            var current = _animation.AnimationState.GetCurrent(0);
+            if (current?.Animation?.Name == name)
+            {
+                return;
+            }
 
             _animation.AnimationState.SetAnimation(0, name, loop);
 #endif
         }
 
+        private void RegisterTagListeners()
+        {
+            if (_isListening || !isActiveAndEnabled || _asc?.OwnedTags == null)
+            {
+                return;
+            }
 
+            _asc.OwnedTags.OnTagAdded += OnTagAdded;
+            _asc.OwnedTags.OnTagRemoved += OnTagRemoved;
+            _isListening = true;
+
+            _isStunned = _asc.OwnedTags.HasTag(_cachedStunTag);
+            if (_isStunned)
+            {
+                this.PlayAnimation(StunAnimationName, true);
+            }
+        }
+
+        private void UnregisterTagListeners()
+        {
+            if (!_isListening || _asc?.OwnedTags == null)
+            {
+                return;
+            }
+
+            _asc.OwnedTags.OnTagAdded -= OnTagAdded;
+            _asc.OwnedTags.OnTagRemoved -= OnTagRemoved;
+            _isListening = false;
+        }
+
+        private void EnsureAnimationReference()
+        {
+#if Spine
+            if (_animation == null)
+            {
+                _animation = GetComponentInChildren<SkeletonAnimation>(true);
+            }
+#endif
+        }
     }
 }
