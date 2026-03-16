@@ -270,7 +270,7 @@ namespace ET.Client
                         // 启用反弹：尝试反弹到下一个目标
                         if (_bounceCount < _data.MaxBounceCount)
                         {
-                            if (TryBounceToNextTarget(asc))
+                            if (TryBounceToNextTarget(asc, collider))
                             {
                                 return; // 成功反弹，继续飞行
                             }
@@ -293,7 +293,7 @@ namespace ET.Client
                     // 达到最大穿透数，检查是否可以反弹
                     if (_data.IsBouncing && _bounceCount < _data.MaxBounceCount)
                     {
-                        if (TryBounceToNextTarget(asc))
+                        if (TryBounceToNextTarget(asc, collider))
                         {
                             _hitCount = 0; // 反弹后重置穿透计数
                             return;
@@ -401,7 +401,7 @@ namespace ET.Client
         /// <summary>
         /// 尝试反弹到下一个目标
         /// </summary>
-        private bool TryBounceToNextTarget(AbilitySystemComponent currentTarget)
+        private bool TryBounceToNextTarget(AbilitySystemComponent currentTarget, Collider2D hitCollider)
         {
             // 记录反弹
             _bounceCount++;
@@ -438,10 +438,10 @@ namespace ET.Client
             {
                 // 反向偏移角度模式
                 // 计算反向方向并应用偏移角度
-                Vector2 reverseDirection = -_currentDirection;
+                Vector2 reflectDirection = GetReflectDirection(hitCollider, currentTarget);
                 if (Mathf.Abs(_data.BounceAngleOffset) > 0.01f)
                 {
-                    reverseDirection = RotateVector2(reverseDirection, _data.BounceAngleOffset);
+                    reflectDirection = RotateVector2(reflectDirection, _data.BounceAngleOffset);
                 }
 
                 // 如果不允许反弹到相同目标，将当前目标加入已命中列表
@@ -451,7 +451,7 @@ namespace ET.Client
                 }
 
                 // 更新方向和位置
-                _currentDirection = reverseDirection;
+                _currentDirection = reflectDirection;
                 _startPosition = _currentPosition;
                 _data.TargetUnit = null; // 清除目标单位，改为点模式飞行
                 _traveledDistance = 0f;
@@ -473,6 +473,42 @@ namespace ET.Client
             float cos = Mathf.Cos(radians);
             float sin = Mathf.Sin(radians);
             return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+        }
+
+        private Vector2 GetReflectDirection(Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        {
+            Vector2 surfaceNormal = GetSurfaceNormal(hitCollider, currentTarget);
+            Vector2 reflectDirection = Vector2.Reflect(_currentDirection.normalized, surfaceNormal).normalized;
+            if (reflectDirection.sqrMagnitude <= 0.0001f)
+            {
+                reflectDirection = -_currentDirection.normalized;
+            }
+
+            return reflectDirection;
+        }
+
+        private Vector2 GetSurfaceNormal(Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        {
+            if (hitCollider != null)
+            {
+                Vector2 closestPoint = hitCollider.ClosestPoint(_currentPosition - (_currentDirection.normalized * _data.CollisionRadius));
+                Vector2 surfaceNormal = (_currentPosition - closestPoint).normalized;
+                if (surfaceNormal.sqrMagnitude > 0.0001f)
+                {
+                    return surfaceNormal;
+                }
+            }
+
+            if (currentTarget?.Owner != null)
+            {
+                Vector2 fallbackNormal = (_currentPosition - (Vector2)currentTarget.Owner.transform.position).normalized;
+                if (fallbackNormal.sqrMagnitude > 0.0001f)
+                {
+                    return fallbackNormal;
+                }
+            }
+
+            return -_currentDirection.normalized;
         }
 
         /// <summary>
