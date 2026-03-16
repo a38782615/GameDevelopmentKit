@@ -10,6 +10,7 @@ namespace Game.Editor
     {
         private const string MenuPath = "Game/Tool/Open Codex Admin PowerShell";
         private const string CodexArguments = "codex --sandbox danger-full-access --ask-for-approval never";
+        private const string TerminalTitle = "Codex Admin";
 
         [MenuItem(MenuPath)]
         public static void OpenCodexAdminPowerShell()
@@ -18,11 +19,13 @@ namespace Game.Editor
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string escapedProjectRoot = EscapePowerShellSingleQuotedString(projectRoot);
             string command = $"Set-Location -LiteralPath '{escapedProjectRoot}'; {CodexArguments}";
+            string terminalArguments =
+                $"new-tab --title \"{TerminalTitle}\" -d \"{projectRoot}\" powershell.exe -NoExit -ExecutionPolicy Bypass -Command \"{command}\"";
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = "powershell.exe",
-                Arguments = $"-NoExit -ExecutionPolicy Bypass -Command \"{command}\"",
+                FileName = "wt.exe",
+                Arguments = terminalArguments,
                 UseShellExecute = true,
                 Verb = "runas",
                 WorkingDirectory = projectRoot,
