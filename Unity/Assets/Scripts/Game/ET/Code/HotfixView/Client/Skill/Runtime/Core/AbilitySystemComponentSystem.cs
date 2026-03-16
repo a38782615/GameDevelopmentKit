@@ -11,9 +11,15 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this AbilitySystemComponent self)
         {
-            self.Attributes = new AttributeSetContainer();
             self.OwnedTags = new GameplayTagContainer();
             self.IsInitialized = true;
+
+            SkillUnit skillUnit = self.GetParent<SkillUnit>();
+            Unit unit = skillUnit?.Unit.As();
+            if (unit != null && unit.GetComponent<global::ET.AttributeComponent>() == null)
+            {
+                unit.AddComponent<global::ET.AttributeComponent>();
+            }
 
             // 添加子组件
             self.AddComponent<AbilityContainerComponent>();
@@ -21,7 +27,11 @@ namespace ET.Client
             self.AddComponent<GameplayCueContainerComponent>();
 
             // 订阅属性变化事件
-            self.Attributes.OnAnyAttributeChanged += self.OnAnyAttributeChanged;
+            AttributeSetContainer attributes = self.Attributes;
+            if (attributes != null)
+            {
+                attributes.OnAnyAttributeChanged += self.OnAnyAttributeChanged;
+            }
         }
 
         public static void OnAnyAttributeChanged(this AbilitySystemComponent self, Attribute attribute, float before, float after)
@@ -100,8 +110,12 @@ namespace ET.Client
         private static void Destroy(this AbilitySystemComponent self)
         {
             SkillHudManager.Instance?.UnregisterUnit(self);
+            AttributeSetContainer attributes = self.Attributes;
+            if (attributes != null)
+            {
+                attributes.OnAnyAttributeChanged -= self.OnAnyAttributeChanged;
+            }
             self.OwnedTags?.Clear();
-            self.Attributes?.Clear();
             self.IsInitialized = false;
         }
 

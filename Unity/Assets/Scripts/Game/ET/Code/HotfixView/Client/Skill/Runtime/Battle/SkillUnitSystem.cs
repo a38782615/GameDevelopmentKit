@@ -23,6 +23,8 @@ namespace ET.Client
             if (asc == null) return;
 
             var unitType = (UnitType)unit.Config().Type;
+            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
+            attributeComponent?.InitializeMissingRuntimeAttributesFromConfig();
 
             self.InitUnitTypeTags(asc);
 
@@ -113,18 +115,6 @@ namespace ET.Client
                 case UnitType.Monster:
                     asc.OwnedTags.AddTag(GameplayTagLibrary.unitType_monster);
                     break;
-            }
-        }
-
-        private static void InitAttributes(this SkillUnit self, AbilitySystemComponent asc, (int, int)[] attributes)
-        {
-            if (attributes == null) return;
-
-            foreach (var (typeId, value) in attributes)
-            {
-                var attrType = (AttrType)typeId;
-                if (!asc.Attributes.HasAttribute(attrType))
-                    asc.Attributes.AddAttribute(attrType, value);
             }
         }
 

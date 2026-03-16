@@ -12,7 +12,9 @@ namespace ET.Client
         /// <summary>
         /// 属性容器
         /// </summary>
-        public AttributeSetContainer Attributes;
+        public global::ET.AttributeComponent AttributeComponent => this.GetParent<SkillUnit>()?.Unit.As()?.GetComponent<global::ET.AttributeComponent>();
+
+        public AttributeSetContainer Attributes => this.AttributeComponent?.RuntimeAttributes as AttributeSetContainer;
 
         /// <summary>
         /// 标签容器

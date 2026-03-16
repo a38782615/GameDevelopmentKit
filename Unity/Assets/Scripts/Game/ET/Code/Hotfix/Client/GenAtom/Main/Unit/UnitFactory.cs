@@ -20,6 +20,12 @@ namespace ET.Client
             {
                 numericComponent.Set(kv.Key, kv.Value);
             }
+
+            if (unit.GetComponent<global::ET.AttributeComponent>() == null)
+            {
+                unit.AddComponent<global::ET.AttributeComponent>();
+            }
+
             if (unitInfo.MoveInfo != null)
             {
                 if (unitInfo.MoveInfo.Points.Count > 0)

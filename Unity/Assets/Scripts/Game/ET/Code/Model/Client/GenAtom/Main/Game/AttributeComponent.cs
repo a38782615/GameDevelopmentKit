@@ -1,11 +1,13 @@
 ﻿
 using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ET
 {
     /// <summary>
     /// 战斗属性数值组件，在这里管理角色所有战斗属性数值的存储、变更、刷新等
     /// </summary>
+    [ComponentOf(typeof(Unit))]
     public partial class AttributeComponent : Entity, IAwake, IDestroy
     {
         public int Level;
@@ -24,6 +26,8 @@ namespace ET
         /// Value为此装饰器分组中所有的装饰器
         /// </summary>
         public XList<DataModifier> AllModifiers;
+        [BsonIgnore]
+        public object RuntimeAttributes;
         public int DataId;
 
         // public EquipComponent EquipComponent => this.GetParent<Unit>().GetComponent<EquipComponent>();
