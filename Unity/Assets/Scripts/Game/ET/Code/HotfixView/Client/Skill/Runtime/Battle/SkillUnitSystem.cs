@@ -38,8 +38,6 @@ namespace ET.Client
                             return;
                         }
 
-                        self.InitAttributes(asc, heroData.InitialAttribute);
-
                         self.GrantSkills(asc, heroData.ActiveSkill);
 
                         self.GrantSkills(asc, heroData.PassiveSkill, true);
@@ -54,9 +52,6 @@ namespace ET.Client
                             Log.Warning($"[Unit] 怪物表中找不到 UnitConfigId: {unit.ConfigId}");
                             return;
                         }
-
-
-                        self.InitAttributes(asc, monsterData.InitialAttribute);
 
                         self.GrantSkills(asc, monsterData.ActiveSkill);
 

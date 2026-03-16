@@ -16,6 +16,7 @@ public partial class Tables
     public DTOneConfig DTOneConfig { private set; get; }
     public DTAIConfig DTAIConfig { private set; get; }
     public DTUnitConfig DTUnitConfig { private set; get; }
+    public DTUnitAttribute DTUnitAttribute { private set; get; }
     public DTGenAtom DTGenAtom { private set; get; }
     public DTSkill DTSkill { private set; get; }
     public DTSkillGraph DTSkillGraph { private set; get; }
@@ -42,6 +43,9 @@ public partial class Tables
         DTUnitConfig = new DTUnitConfig(() => loader("dtunitconfig"));
         loadTasks.Add(DTUnitConfig.LoadAsync());
         _tables.Add("DTUnitConfig", DTUnitConfig);
+        DTUnitAttribute = new DTUnitAttribute(() => loader("dtunitattribute"));
+        loadTasks.Add(DTUnitAttribute.LoadAsync());
+        _tables.Add("DTUnitAttribute", DTUnitAttribute);
         DTGenAtom = new DTGenAtom(() => loader("dtgenatom"));
         loadTasks.Add(DTGenAtom.LoadAsync());
         _tables.Add("DTGenAtom", DTGenAtom);
@@ -73,6 +77,7 @@ public partial class Tables
         DTOneConfig.ResolveRef(this);
         DTAIConfig.ResolveRef(this);
         DTUnitConfig.ResolveRef(this);
+        DTUnitAttribute.ResolveRef(this);
         DTGenAtom.ResolveRef(this);
         DTSkill.ResolveRef(this);
         DTSkillGraph.ResolveRef(this);
