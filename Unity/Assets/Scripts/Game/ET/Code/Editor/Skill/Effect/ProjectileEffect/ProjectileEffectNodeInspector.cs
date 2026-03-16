@@ -289,6 +289,15 @@ namespace ET.Client.Editor
                                     projectileNode.SyncUIFromData();
                                 });
                                 modeParamsContainer.Add(canBounceToSameToggle);
+
+                                var excludeSourceCampToggle = new Toggle("排除来源阵营") { value = data.excludeSourceCamp };
+                                excludeSourceCampToggle.style.marginTop = 4;
+                                excludeSourceCampToggle.RegisterValueChangedCallback(evt =>
+                                {
+                                    data.excludeSourceCamp = evt.newValue;
+                                    projectileNode.SyncUIFromData();
+                                });
+                                modeParamsContainer.Add(excludeSourceCampToggle);
                             }
                             else
                             {

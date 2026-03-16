@@ -409,7 +409,7 @@ namespace ET.Client
             if (_data.BounceTargetMode == BounceTargetMode.SearchNearest)
             {
                 // 搜索最近目标模式
-                var nextTarget = FindNextBounceTarget(currentTarget);
+                var nextTarget = FindNextBounceCandidate(currentTarget);
                 if (nextTarget == null)
                 {
                     _bounceCount--; // 回退计数
@@ -513,6 +513,78 @@ namespace ET.Client
             }
 
             return nearestTarget;
+        }
+
+        private AbilitySystemComponent FindNextBounceCandidate(AbilitySystemComponent currentTarget)
+        {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(_currentPosition, _data.BounceSearchRadius);
+
+            AbilitySystemComponent nearestTarget = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Collider2D collider in colliders)
+            {
+                AbilitySystemComponent asc = GetASCFromCollider(collider);
+                if (asc == null || asc == _data.SourceASC || asc == currentTarget)
+                {
+                    continue;
+                }
+
+                if (!_data.CanBounceToSameTarget && _hitTargets.Contains(asc))
+                {
+                    continue;
+                }
+
+                if (ShouldExcludeSourceCamp(asc) || !IsValidTarget(asc))
+                {
+                    continue;
+                }
+
+                float distance = Vector2.Distance(_currentPosition, (Vector2)asc.Owner.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestTarget = asc;
+                }
+            }
+
+            return nearestTarget;
+        }
+
+        private bool ShouldExcludeSourceCamp(AbilitySystemComponent target)
+        {
+            if (!_data.ExcludeSourceCamp)
+            {
+                return false;
+            }
+
+            GameplayTag sourceCampTag = GetCampTag(_data.SourceASC);
+            if (!sourceCampTag.IsValid || target?.OwnedTags == null)
+            {
+                return false;
+            }
+
+            return target.OwnedTags.HasTagExact(sourceCampTag);
+        }
+
+        private GameplayTag GetCampTag(AbilitySystemComponent asc)
+        {
+            if (asc?.OwnedTags == null || asc.OwnedTags.IsEmpty)
+            {
+                return GameplayTag.None;
+            }
+
+            var tags = asc.OwnedTags.Tags;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                GameplayTag tag = tags[i];
+                if (tag.IsValid && tag.GetParent() == GameplayTagLibrary.unitType)
+                {
+                    return tag;
+                }
+            }
+
+            return GameplayTag.None;
         }
 
         /// <summary>

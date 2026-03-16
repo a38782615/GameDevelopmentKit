@@ -33,6 +33,7 @@ namespace ET.Client
         public int MaxBounceCount;
         public float BounceSearchRadius;
         public bool CanBounceToSameTarget;
+        public bool ExcludeSourceCamp;
         public float BounceAngleOffset;
     }
 }

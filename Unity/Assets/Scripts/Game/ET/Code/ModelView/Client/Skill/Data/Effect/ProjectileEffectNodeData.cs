@@ -156,6 +156,8 @@ namespace ET.Client
         /// <summary>
         /// 反弹偏移角度（反向偏移模式，相对于反向的偏移）
         /// </summary>
+        public bool excludeSourceCamp = true;
+
         public float bounceAngleOffset = 0f;
     }
 }

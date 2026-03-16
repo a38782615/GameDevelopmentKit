@@ -182,6 +182,7 @@ namespace ET.Client
                 MaxBounceCount = nodeData.maxBounceCount,
                 BounceSearchRadius = nodeData.bounceSearchRadius,
                 CanBounceToSameTarget = nodeData.canBounceToSameTarget,
+                ExcludeSourceCamp = nodeData.excludeSourceCamp,
                 BounceAngleOffset = nodeData.bounceAngleOffset
             });
 
