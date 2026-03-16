@@ -221,7 +221,7 @@ namespace ET.Client
             Vector3 currentPosition = selfSpec.KnockbackTransform.position;
             Vector3 nextPosition = currentPosition + selfSpec.KnockbackDirection * moveStep;
             nextPosition.z = currentPosition.z;
-            ApplyKnockbackPosition(selfSpec.KnockbackTransform, nextPosition, GetTargetUnit());
+            ApplyKnockbackPosition(nextPosition, GetTargetUnit());
             selfSpec.KnockbackRemainingDistance -= moveStep;
 
             if (selfSpec.KnockbackRemainingDistance <= 0.001f)
@@ -282,15 +282,8 @@ namespace ET.Client
             return skillUnit?.Unit.As();
         }
 
-        private static void ApplyKnockbackPosition(Transform targetTransform, Vector3 nextPosition, Unit unit)
+        private static void ApplyKnockbackPosition(Vector3 nextPosition, Unit unit)
         {
-            if (targetTransform == null)
-            {
-                return;
-            }
-
-            targetTransform.position = nextPosition;
-
             if (unit == null)
             {
                 return;
