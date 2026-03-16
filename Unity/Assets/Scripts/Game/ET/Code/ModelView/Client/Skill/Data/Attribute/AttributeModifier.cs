@@ -331,12 +331,12 @@ namespace ET.Client
         /// <summary>
         /// 效果来源的属性容器
         /// </summary>
-        public AttributeSetContainer SourceAttributes { get; set; }
+        public global::ET.AttributeComponent SourceAttributes { get; set; }
 
         /// <summary>
         /// 效果目标的属性容器
         /// </summary>
-        public AttributeSetContainer TargetAttributes { get; set; }
+        public global::ET.AttributeComponent TargetAttributes { get; set; }
 
         /// <summary>
         /// 快照属性值（效果创建时捕获）

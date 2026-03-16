@@ -11,12 +11,12 @@ namespace ET.Client
         /// <summary>
         /// 施法者属性容器
         /// </summary>
-        public AttributeSetContainer CasterAttributes { get; set; }
+        public global::ET.AttributeComponent CasterAttributes { get; set; }
 
         /// <summary>
         /// 目标属性容器
         /// </summary>
-        public AttributeSetContainer TargetAttributes { get; set; }
+        public global::ET.AttributeComponent TargetAttributes { get; set; }
 
         /// <summary>
         /// 自定义变量

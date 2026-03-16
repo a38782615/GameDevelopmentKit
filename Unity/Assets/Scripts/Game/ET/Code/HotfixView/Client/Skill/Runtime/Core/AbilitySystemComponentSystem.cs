@@ -27,16 +27,11 @@ namespace ET.Client
             self.AddComponent<GameplayCueContainerComponent>();
 
             // 订阅属性变化事件
-            AttributeSetContainer attributes = self.Attributes;
-            if (attributes != null)
-            {
-                attributes.OnAnyAttributeChanged += self.OnAnyAttributeChanged;
-            }
         }
 
-        public static void OnAnyAttributeChanged(this AbilitySystemComponent self, Attribute attribute, float before, float after)
+        public static void HandleAttributeChanged(this AbilitySystemComponent self, AttrType attrType, float before, float after)
         {
-            if (self.Owner != null && (attribute.AttrType == AttrType.Health || attribute.AttrType == AttrType.MaxHealth))
+            if (self.Owner != null && (attrType == AttrType.Health || attrType == AttrType.MaxHealth))
             {
                 SkillHudManager.GetOrCreate().UpdateUnitHealth(
                     self.InstanceId,
@@ -45,7 +40,7 @@ namespace ET.Client
                     self.Attributes?.GetCurrentValue(AttrType.MaxHealth) ?? 0f);
             }
 
-            if (attribute.AttrType == AttrType.Health)
+            if (attrType == AttrType.Health)
             {
                 if (after < before)
                 {
@@ -110,11 +105,6 @@ namespace ET.Client
         private static void Destroy(this AbilitySystemComponent self)
         {
             SkillHudManager.Instance?.UnregisterUnit(self);
-            AttributeSetContainer attributes = self.Attributes;
-            if (attributes != null)
-            {
-                attributes.OnAnyAttributeChanged -= self.OnAnyAttributeChanged;
-            }
             self.OwnedTags?.Clear();
             self.IsInitialized = false;
         }
