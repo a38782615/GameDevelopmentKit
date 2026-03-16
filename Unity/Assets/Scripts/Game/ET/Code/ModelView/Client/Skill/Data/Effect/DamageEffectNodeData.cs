@@ -69,5 +69,11 @@ namespace ET.Client
         /// 伤害计算类型
         /// </summary>
         public DamageCalculationType damageCalculationType = DamageCalculationType.Default;
+
+        public bool enableHitKnockback = false;
+
+        public float knockbackDistance = 1f;
+
+        public float knockbackSpeed = 12f;
     }
 }

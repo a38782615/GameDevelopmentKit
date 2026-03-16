@@ -476,11 +476,11 @@ namespace ET.Client.Editor
                 // 2. 运行 Luban 生成代码
                 EditorUtility.DisplayProgressBar("导出到 Luban", "正在生成 Luban 代码...", 0.6f);
 
-                var genBatPath = Path.Combine(Application.dataPath, "..", "Luban", "MiniTemplate", "gen.bat");
+                var genBatPath = Path.Combine(Application.dataPath, "..", "..", "Design", "Excel", "gen all.bat");
                 if (!File.Exists(genBatPath))
                 {
                     EditorUtility.ClearProgressBar();
-                    EditorUtility.DisplayDialog("导出失败", $"找不到 gen.bat: {genBatPath}", "确定");
+                    Debug.LogError($"找不到 gen.bat: {genBatPath}");
                     return;
                 }
 
@@ -511,21 +511,17 @@ namespace ET.Client.Editor
 
                 if (process.ExitCode == 0)
                 {
-                    EditorUtility.DisplayDialog("导出成功",
-                        $"已导出 {skills.Count} 个技能到 Luban Excel\nLuban 代码生成成功", "确定");
                     Debug.Log($"[SkillEditor] Luban 生成成功:\n{output}");
                 }
                 else
                 {
-                    EditorUtility.DisplayDialog("导出警告",
-                        $"技能已导出到 Excel，但 Luban 生成可能有问题\n\n错误: {error}", "确定");
                     Debug.LogWarning($"[SkillEditor] Luban 生成警告:\n{error}\n{output}");
                 }
             }
             catch (System.Exception e)
             {
                 EditorUtility.ClearProgressBar();
-                EditorUtility.DisplayDialog("导出失败", $"导出过程中发生错误:\n{e.Message}", "确定");
+
                 Debug.LogError($"[SkillEditor] 导出失败: {e}");
             }
         }

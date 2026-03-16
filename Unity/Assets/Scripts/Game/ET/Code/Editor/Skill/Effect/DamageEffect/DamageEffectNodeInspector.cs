@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
 namespace ET.Client.Editor
 {
     public class DamageEffectNodeInspector : EffectNodeInspector
@@ -10,69 +9,63 @@ namespace ET.Client.Editor
 
         protected override void BuildEffectInspectorUI(VisualElement container, SkillNodeBase node)
         {
-            if (node is DamageEffectNode damageNode)
+            if (node is not DamageEffectNode damageNode)
             {
-                var data = damageNode.TypedData;
-                if (data == null) return;
-
-                // 伤害类型
-                var damageTypeField = new EnumField("伤害类型", data.damageType) { style = { marginBottom = 8 } };
-                ApplyEnumFieldStyle(damageTypeField);
-                damageTypeField.RegisterValueChangedCallback(evt =>
-                {
-                    data.damageType = (DamageType)evt.newValue;
-                    damageNode.SyncUIFromData();
-                });
-                container.Add(damageTypeField);
-
-                // 伤害值 - 使用四选项系统
-                container.Add(CreateMagnitudeSourceUIWithMMCDetail(
-                    "伤害值",
-                    data,
-                    damageNode
-                ));
-
-                // 伤害计算类型
-                var calcTypeField = new EnumField("计算方式", data.damageCalculationType) { style = { marginTop = 4 } };
-                ApplyEnumFieldStyle(calcTypeField);
-                calcTypeField.RegisterValueChangedCallback(evt =>
-                {
-                    data.damageCalculationType = (DamageCalculationType)evt.newValue;
-                    damageNode.SyncUIFromData();
-                });
-                container.Add(calcTypeField);
+                return;
             }
+
+            var data = damageNode.TypedData;
+            if (data == null)
+            {
+                return;
+            }
+
+            var damageTypeField = new EnumField("伤害类型", data.damageType) { style = { marginBottom = 8 } };
+            ApplyEnumFieldStyle(damageTypeField);
+            damageTypeField.RegisterValueChangedCallback(evt =>
+            {
+                data.damageType = (DamageType)evt.newValue;
+                damageNode.SyncUIFromData();
+            });
+            container.Add(damageTypeField);
+
+            container.Add(CreateMagnitudeSourceUIWithMMCDetail("伤害值", data, damageNode));
+
+            var calcTypeField = new EnumField("计算方式", data.damageCalculationType) { style = { marginTop = 4 } };
+            ApplyEnumFieldStyle(calcTypeField);
+            calcTypeField.RegisterValueChangedCallback(evt =>
+            {
+                data.damageCalculationType = (DamageCalculationType)evt.newValue;
+                damageNode.SyncUIFromData();
+            });
+            container.Add(calcTypeField);
+
+            container.Add(CreateKnockbackSection(data, damageNode));
         }
 
-        /// <summary>
-        /// 创建带 MMC 详细配置的数值来源 UI
-        /// </summary>
         private VisualElement CreateMagnitudeSourceUIWithMMCDetail(string label, DamageEffectNodeData data, DamageEffectNode node)
         {
             var container = new VisualElement();
             container.style.marginBottom = 8;
 
-            // 标签行
             var labelElement = new Label(label);
             labelElement.style.marginBottom = 4;
             container.Add(labelElement);
 
-            // 数值行：来源类型下拉框 + 输入框
             var valueRow = new VisualElement();
             valueRow.style.flexDirection = FlexDirection.Row;
 
-            // 数值来源类型下拉框
             var sourceTypeField = new EnumField(data.damageSourceType);
             sourceTypeField.style.width = 100;
             sourceTypeField.style.marginRight = 4;
             ApplyEnumFieldStyle(sourceTypeField);
             valueRow.Add(sourceTypeField);
 
-            // ===== 具体值输入框 =====
             var fixedValueField = new FloatField { value = data.damageFixedValue };
             fixedValueField.style.flexGrow = 1;
             fixedValueField.style.display = data.damageSourceType == ModifierMagnitudeSourceType.FixedValue
-                ? DisplayStyle.Flex : DisplayStyle.None;
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
             fixedValueField.RegisterValueChangedCallback(evt =>
             {
                 data.damageFixedValue = evt.newValue;
@@ -80,11 +73,11 @@ namespace ET.Client.Editor
             });
             valueRow.Add(fixedValueField);
 
-            // ===== 公式输入框 =====
-            var formulaField = new TextField { value = data.damageFormula ?? "" };
+            var formulaField = new TextField { value = data.damageFormula ?? string.Empty };
             formulaField.style.flexGrow = 1;
             formulaField.style.display = data.damageSourceType == ModifierMagnitudeSourceType.Formula
-                ? DisplayStyle.Flex : DisplayStyle.None;
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
             formulaField.RegisterValueChangedCallback(evt =>
             {
                 data.damageFormula = evt.newValue;
@@ -92,19 +85,19 @@ namespace ET.Client.Editor
             });
             valueRow.Add(formulaField);
 
-            // ===== MMC 类型枚举选择 =====
             var mmcTypeField = new EnumField(data.damageMMCType);
             mmcTypeField.style.flexGrow = 1;
             mmcTypeField.style.display = data.damageSourceType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
-                ? DisplayStyle.Flex : DisplayStyle.None;
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
             ApplyEnumFieldStyle(mmcTypeField);
             valueRow.Add(mmcTypeField);
 
-            // ===== 上下文数据键名输入框 =====
-            var setByCallerField = new TextField { value = data.damageSetByCallerKey ?? "" };
+            var setByCallerField = new TextField { value = data.damageSetByCallerKey ?? string.Empty };
             setByCallerField.style.flexGrow = 1;
             setByCallerField.style.display = data.damageSourceType == ModifierMagnitudeSourceType.SetByCaller
-                ? DisplayStyle.Flex : DisplayStyle.None;
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
             setByCallerField.RegisterValueChangedCallback(evt =>
             {
                 data.damageSetByCallerKey = evt.newValue;
@@ -114,17 +107,17 @@ namespace ET.Client.Editor
 
             container.Add(valueRow);
 
-            // ===== MMC 详细配置容器 =====
             var mmcDetailContainer = new VisualElement();
             mmcDetailContainer.style.marginTop = 4;
             mmcDetailContainer.style.marginLeft = 8;
             mmcDetailContainer.style.paddingLeft = 8;
             mmcDetailContainer.style.borderLeftWidth = 2;
             mmcDetailContainer.style.borderLeftColor = new Color(0.3f, 0.6f, 0.9f);
-            mmcDetailContainer.style.display = (data.damageSourceType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
-                && data.damageMMCType == MMCType.AttributeBased) ? DisplayStyle.Flex : DisplayStyle.None;
+            mmcDetailContainer.style.display = data.damageSourceType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
+                && data.damageMMCType == MMCType.AttributeBased
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
 
-            // MMC 捕获属性
             var mmcCaptureAttrField = new AttributeField("捕获属性");
             mmcCaptureAttrField.Value = data.damageMMCCaptureAttribute;
             mmcCaptureAttrField.OnValueChanged += value =>
@@ -134,7 +127,6 @@ namespace ET.Client.Editor
             };
             mmcDetailContainer.Add(mmcCaptureAttrField);
 
-            // MMC 属性来源
             var mmcSourceField = new EnumField("属性来源", data.damageMMCAttributeSource);
             mmcSourceField.style.marginBottom = 4;
             ApplyEnumFieldStyle(mmcSourceField);
@@ -145,7 +137,6 @@ namespace ET.Client.Editor
             });
             mmcDetailContainer.Add(mmcSourceField);
 
-            // MMC 系数
             var mmcCoefficientField = new FloatField("系数") { value = data.damageMMCCoefficient };
             mmcCoefficientField.style.marginBottom = 4;
             mmcCoefficientField.RegisterValueChangedCallback(evt =>
@@ -155,9 +146,8 @@ namespace ET.Client.Editor
             });
             mmcDetailContainer.Add(mmcCoefficientField);
 
-            // MMC 快照模式
-            var mmcSnapshotToggle = new Toggle("使用快照（施放时捕获）") { value = data.damageMMCUseSnapshot };
-            mmcSnapshotToggle.tooltip = "勾选：施放时捕获属性值，后续不变\n不勾选：每次计算时实时读取属性值";
+            var mmcSnapshotToggle = new Toggle("使用快照") { value = data.damageMMCUseSnapshot };
+            mmcSnapshotToggle.tooltip = "开启后在施放时捕获属性值，后续不再实时读取。";
             mmcSnapshotToggle.RegisterValueChangedCallback(evt =>
             {
                 data.damageMMCUseSnapshot = evt.newValue;
@@ -167,9 +157,8 @@ namespace ET.Client.Editor
 
             container.Add(mmcDetailContainer);
 
-            // ===== 乘以堆叠层数选项 =====
             var stackMultiplyToggle = new Toggle("乘以堆叠层数") { value = data.damageMultiplyByStackCount };
-            stackMultiplyToggle.tooltip = "勾选后，当此伤害被 Buff 的周期效果触发时，伤害会乘以 Buff 的堆叠层数\n例如：基础伤害 50，Buff 3层 → 实际伤害 150";
+            stackMultiplyToggle.tooltip = "开启后，来自 Buff 周期触发的伤害会乘以 Buff 当前层数。";
             stackMultiplyToggle.style.marginTop = 8;
             stackMultiplyToggle.RegisterValueChangedCallback(evt =>
             {
@@ -178,38 +167,91 @@ namespace ET.Client.Editor
             });
             container.Add(stackMultiplyToggle);
 
-            // 数值来源类型切换事件
             sourceTypeField.RegisterValueChangedCallback(evt =>
             {
                 var newType = (ModifierMagnitudeSourceType)evt.newValue;
                 data.damageSourceType = newType;
 
                 fixedValueField.style.display = newType == ModifierMagnitudeSourceType.FixedValue
-                    ? DisplayStyle.Flex : DisplayStyle.None;
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
                 formulaField.style.display = newType == ModifierMagnitudeSourceType.Formula
-                    ? DisplayStyle.Flex : DisplayStyle.None;
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
                 mmcTypeField.style.display = newType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
-                    ? DisplayStyle.Flex : DisplayStyle.None;
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
                 setByCallerField.style.display = newType == ModifierMagnitudeSourceType.SetByCaller
-                    ? DisplayStyle.Flex : DisplayStyle.None;
-
-                // 更新 MMC 详细配置显示
-                mmcDetailContainer.style.display = (newType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
-                    && data.damageMMCType == MMCType.AttributeBased) ? DisplayStyle.Flex : DisplayStyle.None;
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
+                mmcDetailContainer.style.display = newType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
+                    && data.damageMMCType == MMCType.AttributeBased
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
 
                 node.SyncUIFromData();
             });
 
-            // MMC 类型切换事件
             mmcTypeField.RegisterValueChangedCallback(evt =>
             {
                 data.damageMMCType = (MMCType)evt.newValue;
-                mmcDetailContainer.style.display = (data.damageSourceType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
-                    && (MMCType)evt.newValue == MMCType.AttributeBased) ? DisplayStyle.Flex : DisplayStyle.None;
+                mmcDetailContainer.style.display = data.damageSourceType == ModifierMagnitudeSourceType.ModifierMagnitudeCalculation
+                    && data.damageMMCType == MMCType.AttributeBased
+                    ? DisplayStyle.Flex
+                    : DisplayStyle.None;
                 node.SyncUIFromData();
             });
 
             return container;
+        }
+
+        private VisualElement CreateKnockbackSection(DamageEffectNodeData data, DamageEffectNode node)
+        {
+            var section = CreateCollapsibleSection("受击击退", out var content, true);
+
+            var enableToggle = new Toggle("启用受击击退") { value = data.enableHitKnockback };
+            enableToggle.style.marginBottom = 4;
+            content.Add(enableToggle);
+
+            var paramsContainer = new VisualElement();
+            content.Add(paramsContainer);
+
+            void Refresh(bool enabled)
+            {
+                paramsContainer.Clear();
+                if (!enabled)
+                {
+                    return;
+                }
+
+                paramsContainer.Add(CreateFloatField("击退距离", data.knockbackDistance, value =>
+                {
+                    data.knockbackDistance = value;
+                    node.SyncUIFromData();
+                }));
+
+                paramsContainer.Add(CreateFloatField("击退速度", data.knockbackSpeed, value =>
+                {
+                    data.knockbackSpeed = value;
+                    node.SyncUIFromData();
+                }));
+
+                var hint = new Label("持续时间会自动按 击退距离 / 击退速度 计算。");
+                hint.style.marginTop = 4;
+                hint.style.color = new Color(0.7f, 0.7f, 0.7f);
+                hint.style.whiteSpace = WhiteSpace.Normal;
+                paramsContainer.Add(hint);
+            }
+
+            enableToggle.RegisterValueChangedCallback(evt =>
+            {
+                data.enableHitKnockback = evt.newValue;
+                Refresh(evt.newValue);
+                node.SyncUIFromData();
+            });
+
+            Refresh(data.enableHitKnockback);
+            return section;
         }
     }
 }

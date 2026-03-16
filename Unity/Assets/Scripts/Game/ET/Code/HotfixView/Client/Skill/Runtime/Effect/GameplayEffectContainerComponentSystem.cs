@@ -244,7 +244,15 @@ namespace ET.Client
                     continue;
                 }
 
-                effect.TickEffect(deltaTime);
+                var handler = self.ResolveTickHandler(effect);
+                if (handler != null)
+                {
+                    handler.Tick(deltaTime);
+                }
+                else
+                {
+                    effect.TickEffect(deltaTime);
+                }
 
                 if (effect.IsExpired && !self.PendingRemove.Contains(effect))
                     self.PendingRemove.Add(effect);
@@ -271,6 +279,25 @@ namespace ET.Client
 
             self.ActiveEffects.Clear();
             self.PendingRemove.Clear();
+        }
+
+        private static AEffectHandler ResolveTickHandler(this GameplayEffectContainerComponent self, GameplayEffectSpec effect)
+        {
+            if (effect == null || string.IsNullOrEmpty(effect.HandName))
+            {
+                return null;
+            }
+
+            var handler = EffectDispatcherComponent.Instance.Get(effect.HandName);
+            if (handler == null)
+            {
+                Log.Error($"EffectHandler not found: {effect.HandName}");
+                return null;
+            }
+
+            handler.Spec = effect;
+            handler.NodeData = effect.EffectNodeData;
+            return handler;
         }
     }
 }

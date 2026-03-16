@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace ET.Client
 {
     /// <summary>
@@ -6,5 +8,10 @@ namespace ET.Client
     [ComponentOf(typeof(GameplayEffectSpec))]
     public class DamageEffectSpec : Entity, IAwake
     {
+        public bool HasRuntimeFollowup;
+        public Vector3 KnockbackDirection;
+        public float KnockbackRemainingDistance;
+        public float KnockbackSpeed;
+        public Transform KnockbackTransform;
     }
 }

@@ -264,7 +264,7 @@ namespace ET.Client.Editor
                     message += $"\n... 还有 {errors.Count - 5} 个错误";
             }
 
-            EditorUtility.DisplayDialog("导入结果", message, "确定");
+            Debug.Log(message);
             LoadExcelData(); // 刷新列表
         }
 

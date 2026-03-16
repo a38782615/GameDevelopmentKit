@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1003
   nodes:
-  - rid: 8915324422656098380
-  - rid: 8915324422656098381
-  - rid: 8915324422656098382
-  - rid: 8915324422656098383
-  - rid: 8915324422656098384
-  - rid: 8915324422656098385
-  - rid: 8915324422656098386
-  - rid: 8915324422656098387
-  - rid: 8915324422656098388
+  - rid: 8915324426574889119
+  - rid: 8915324426574889120
+  - rid: 8915324426574889121
+  - rid: 8915324426574889122
+  - rid: 8915324426574889123
+  - rid: 8915324426574889124
+  - rid: 8915324426574889125
+  - rid: 8915324426574889126
+  - rid: 8915324426574889127
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -75,7 +75,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324422656098380
+    - rid: 8915324426574889119
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -120,7 +120,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324422656098381
+    - rid: 8915324426574889120
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -163,7 +163,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324422656098382
+    - rid: 8915324426574889121
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -186,7 +186,7 @@ MonoBehaviour:
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
-    - rid: 8915324422656098383
+    - rid: 8915324426574889122
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
@@ -196,7 +196,7 @@ MonoBehaviour:
           y: -1856.6667
         targetType: 1
         endType: 0
-    - rid: 8915324422656098384
+    - rid: 8915324426574889123
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 93ec5a43-cc34-4e4a-acb3-39da2f2c3010
@@ -219,7 +219,7 @@ MonoBehaviour:
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 1
         particleLoop: 1
-    - rid: 8915324422656098385
+    - rid: 8915324426574889124
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cb1df36f-5729-423e-9d1a-287db5a433f0
@@ -268,7 +268,7 @@ MonoBehaviour:
           _tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
-    - rid: 8915324422656098386
+    - rid: 8915324426574889125
       type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
@@ -306,7 +306,7 @@ MonoBehaviour:
             - unitType
         searchExcludeTags:
           _tags: []
-    - rid: 8915324422656098387
+    - rid: 8915324426574889126
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -333,7 +333,7 @@ MonoBehaviour:
           endTime: 55
           portIdValue: 2287012
           legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
-    - rid: 8915324422656098388
+    - rid: 8915324426574889127
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330

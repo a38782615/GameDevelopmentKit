@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 2001
   nodes:
-  - rid: 8915324422656098389
-  - rid: 8915324422656098390
-  - rid: 8915324422656098391
-  - rid: 8915324422656098392
-  - rid: 8915324422656098393
+  - rid: 8915324426574889128
+  - rid: 8915324426574889129
+  - rid: 8915324426574889130
+  - rid: 8915324426574889131
+  - rid: 8915324426574889132
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     outputPortId: 3002
@@ -47,7 +47,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324422656098389
+    - rid: 8915324426574889128
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
@@ -92,7 +92,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324422656098390
+    - rid: 8915324426574889129
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
@@ -119,7 +119,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324422656098391
+    - rid: 8915324426574889130
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
@@ -162,7 +162,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324422656098392
+    - rid: 8915324426574889131
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 426755b7-c39a-4524-9cb5-960a31a19c10
@@ -203,7 +203,7 @@ MonoBehaviour:
             - CD
         cancelOnAbilityEnd: 1
         buffId: 0
-    - rid: 8915324422656098393
+    - rid: 8915324426574889132
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d5809887-df6e-4604-bd09-36cef191ce83

@@ -9,6 +9,7 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
+    [FriendOfAttribute(typeof(ET.Client.DamageEffectSpec))]
 
     public static partial class GameplayEffectSpecSystem
     {
@@ -90,12 +91,35 @@ namespace ET.Client
 
             self.IsRunning = true;
             var effectData = self.EffectNodeData;
+            bool hasRuntimeFollowup = self.HasRuntimeFollowup();
 
             if (effectData?.durationType == EffectDurationType.Instant)
             {
                 self.ExecuteInitialFlow(target, context);
-                self.ExecuteCompleteFlow(context);
-                self.IsRunning = false;
+                if (hasRuntimeFollowup)
+                {
+                    var container = target.EffectContainer;
+                    if (container == null)
+                    {
+                        self.ExecuteCompleteFlow(context);
+                        self.IsRunning = false;
+                        return;
+                    }
+
+                    if (!container.ActiveEffects.Contains(self))
+                    {
+                        container.ActiveEffects.Add(self);
+                    }
+
+                    self.Target = target;
+                    self.IsApplied = true;
+                    self.ActivationTime = UnityEngine.Time.time;
+                }
+                else
+                {
+                    self.ExecuteCompleteFlow(context);
+                    self.IsRunning = false;
+                }
             }
             else
             {
@@ -262,7 +286,7 @@ namespace ET.Client
                 }
             }
 
-            if (effectData?.durationType == EffectDurationType.Duration && self.Duration > 0 && self.ElapsedTime >= self.Duration)
+            if (self.UsesFiniteDuration() && self.Duration > 0 && self.ElapsedTime >= self.Duration)
                 self.Expire();
         }
 
@@ -703,6 +727,17 @@ namespace ET.Client
         public static float GetSetByCallerValue(this GameplayEffectSpec self, string key, float defaultValue = 0f)
         {
             return self.SetByCallerValues.TryGetValue(key, out float value) ? value : defaultValue;
+        }
+
+        private static bool HasRuntimeFollowup(this GameplayEffectSpec self)
+        {
+            var damageSpec = self.GetComponent<DamageEffectSpec>();
+            return damageSpec != null && damageSpec.HasRuntimeFollowup;
+        }
+
+        private static bool UsesFiniteDuration(this GameplayEffectSpec self)
+        {
+            return self.EffectNodeData?.durationType == EffectDurationType.Duration || self.HasRuntimeFollowup();
         }
     }
 }
