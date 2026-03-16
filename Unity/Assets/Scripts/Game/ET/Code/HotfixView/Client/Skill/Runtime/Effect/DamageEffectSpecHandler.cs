@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client
@@ -220,7 +221,7 @@ namespace ET.Client
             Vector3 currentPosition = selfSpec.KnockbackTransform.position;
             Vector3 nextPosition = currentPosition + selfSpec.KnockbackDirection * moveStep;
             nextPosition.z = currentPosition.z;
-            selfSpec.KnockbackTransform.position = nextPosition;
+            ApplyKnockbackPosition(selfSpec.KnockbackTransform, nextPosition, GetTargetUnit());
             selfSpec.KnockbackRemainingDistance -= moveStep;
 
             if (selfSpec.KnockbackRemainingDistance <= 0.001f)
@@ -273,6 +274,29 @@ namespace ET.Client
             selfSpec.KnockbackTransform = targetTransform;
             selfSpec.KnockbackDirection = knockbackDirection.normalized;
             selfSpec.KnockbackRemainingDistance = Mathf.Max(0f, nodeData.knockbackDistance);
+        }
+
+        private Unit GetTargetUnit()
+        {
+            SkillUnit skillUnit = Spec.Target.As()?.GetParent<SkillUnit>();
+            return skillUnit?.Unit.As();
+        }
+
+        private static void ApplyKnockbackPosition(Transform targetTransform, Vector3 nextPosition, Unit unit)
+        {
+            if (targetTransform == null)
+            {
+                return;
+            }
+
+            targetTransform.position = nextPosition;
+
+            if (unit == null)
+            {
+                return;
+            }
+
+            unit.Position = new float3(nextPosition.x, nextPosition.y, nextPosition.z);
         }
     }
 }
