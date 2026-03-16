@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System;
+using System.Collections.Generic;
 using GraphViewNode = UnityEditor.Experimental.GraphView.Node;
 
 
@@ -10,6 +11,30 @@ namespace ET.Client.Editor
 {
     public abstract class SkillNodeBase : GraphViewNode
     {
+        private static readonly Dictionary<int, string> s_OutputPortNames = new Dictionary<int, string>
+        {
+            { SkillPortId.Ability.Activate, "激活" },
+            { SkillPortId.Ability.Animation, "动画" },
+            { SkillPortId.Ability.Cost, "消耗" },
+            { SkillPortId.Ability.Cooldown, "冷却" },
+            { SkillPortId.Condition.True, "是" },
+            { SkillPortId.Condition.False, "否" },
+            { SkillPortId.Effect.Initial, "初始效果" },
+            { SkillPortId.Effect.Periodic, "每周期执行" },
+            { SkillPortId.Effect.Refresh, "刷新时" },
+            { SkillPortId.Effect.Complete, "完成效果" },
+            { SkillPortId.Effect.RemoveAll, "全部移除后" },
+            { SkillPortId.Effect.Overflow, "溢出" },
+            { SkillPortId.SearchTargetTask.ForEachTarget, "对每个目标" },
+            { SkillPortId.SearchTargetTask.Complete, "完成效果" },
+            { SkillPortId.SearchTargetTask.NoTarget, "无目标" },
+            { SkillPortId.ProjectileEffect.OnHit, "碰撞时" },
+            { SkillPortId.ProjectileEffect.OnReachTarget, "到达目标位置" },
+            { SkillPortId.ProjectileEffect.OnBounce, "反弹时" },
+            { SkillPortId.PlacementEffect.OnEnter, "进入时" },
+            { SkillPortId.PlacementEffect.OnExit, "离开时" },
+        };
+
         public string Guid { get; set; }
         public NodeType NodeType { get; protected set; }
         public NodeData NodeData { get; set; }
@@ -166,18 +191,17 @@ namespace ET.Client.Editor
             return field;
         }
 
-        protected Port CreateOutputPort(int portId, string portName)
+        protected Port CreateOutputPort(int portId)
         {
             var port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            ConfigureOutputPort(port, portId, portName);
+            ConfigureOutputPort(port, portId);
             outputContainer.Add(port);
             return port;
         }
 
-        protected Port CreateOutputPort(string portName)
+        protected void ConfigureOutputPort(Port port, int portId)
         {
-            int portId = SkillPortIdUtility.ResolveLegacyOutputPortId(this.NodeType, portName);
-            return CreateOutputPort(portId, portName);
+            ConfigureOutputPort(port, portId, GetOutputPortName(portId));
         }
 
         protected void ConfigureOutputPort(Port port, int portId, string portName)
@@ -190,6 +214,13 @@ namespace ET.Client.Editor
             port.portName = portName;
             port.name = portId.ToString();
             port.userData = portId;
+        }
+
+        protected static string GetOutputPortName(int portId)
+        {
+            return s_OutputPortNames.TryGetValue(portId, out string portName)
+                ? portName
+                : portId.ToString();
         }
 
         protected void ConfigureInputPort(Port port, int portId, string portName)

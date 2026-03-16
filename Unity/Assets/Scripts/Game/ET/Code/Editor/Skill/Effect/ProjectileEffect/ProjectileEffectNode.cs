@@ -25,9 +25,9 @@ namespace ET.Client.Editor
         protected override void CreateEffectContent()
         {
             // 只创建输出端口
-            onHitPort = CreateOutputPort("碰撞时");
-            onReachTargetPort = CreateOutputPort("到达目标位置");
-            onBouncePort = CreateOutputPort("反弹时");
+            onHitPort = CreateOutputPort(SkillPortId.ProjectileEffect.OnHit);
+            onReachTargetPort = CreateOutputPort(SkillPortId.ProjectileEffect.OnReachTarget);
+            onBouncePort = CreateOutputPort(SkillPortId.ProjectileEffect.OnBounce);
         }
 
         protected override void SyncEffectContentFromData()

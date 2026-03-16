@@ -116,33 +116,33 @@ namespace ET.Client.Editor
         {
             if (ShowInitialEffectPort)
             {
-                initialEffectPort = CreateOutputPort("初始效果");
+                initialEffectPort = CreateOutputPort(SkillPortId.Effect.Initial);
             }
 
             if (ShowPeriodicEffectPort)
             {
-                periodicEffectPort = CreateOutputPort("每周期执行");
+                periodicEffectPort = CreateOutputPort(SkillPortId.Effect.Periodic);
             }
 
             if (ShowRefreshEffectPort)
             {
-                refreshEffectPort = CreateOutputPort("刷新时");
+                refreshEffectPort = CreateOutputPort(SkillPortId.Effect.Refresh);
             }
 
             if (ShowCompleteEffectPort)
             {
-                completeEffectPort = CreateOutputPort("完成效果");
+                completeEffectPort = CreateOutputPort(SkillPortId.Effect.Complete);
             }
 
             if (ShowRemoveAllEffectPort)
             {
-                removeAllEffectPort = CreateOutputPort("全部移除后");
+                removeAllEffectPort = CreateOutputPort(SkillPortId.Effect.RemoveAll);
             }
 
             // 溢出效果端口（橙色，表示堆叠溢出时触发）
             if (ShowOverflowEffectPort)
             {
-                overflowEffectPort = CreateOutputPort("溢出");
+                overflowEffectPort = CreateOutputPort(SkillPortId.Effect.Overflow);
                 overflowEffectPort.portColor = new Color(1f, 0.6f, 0.2f);
             }
         }

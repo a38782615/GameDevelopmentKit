@@ -36,8 +36,8 @@ namespace ET.Client.Editor
         {
             base.CreateDefaultPorts();
             // 创建"是"和"否"两个输出端口，实现分支逻辑
-            truePort = CreateOutputPort("是");
-            falsePort = CreateOutputPort("否");
+            truePort = CreateOutputPort(SkillPortId.Condition.True);
+            falsePort = CreateOutputPort(SkillPortId.Condition.False);
         }
 
         /// <summary>

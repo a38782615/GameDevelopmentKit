@@ -32,10 +32,10 @@ namespace ET.Client.Editor
         {
 
 
-            onEnterPort = CreateOutputPort("进入时");
+            onEnterPort = CreateOutputPort(SkillPortId.PlacementEffect.OnEnter);
             onEnterPort.portColor = new Color(0.4f, 0.8f, 0.4f); // 绿色
 
-            onExitPort = CreateOutputPort("离开时");
+            onExitPort = CreateOutputPort(SkillPortId.PlacementEffect.OnExit);
             onExitPort.portColor = new Color(0.8f, 0.4f, 0.4f); // 红色
         }
 

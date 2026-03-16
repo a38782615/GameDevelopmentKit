@@ -45,8 +45,8 @@ namespace ET.Client.Editor
 
         protected override void CreateTaskContent()
         {
-            foreachPort = CreateOutputPort("对每个目标");
-            completePort = CreateOutputPort("完成效果");
+            foreachPort = CreateOutputPort(SkillPortId.SearchTargetTask.ForEachTarget);
+            completePort = CreateOutputPort(SkillPortId.SearchTargetTask.Complete);
 
             // 搜索形状
             searchShapeField = new EnumField("搜索形状", SearchShapeType.Circle);

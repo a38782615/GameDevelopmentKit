@@ -26,15 +26,15 @@ namespace ET.Client.Editor
 
         protected override void CreateContent()
         {
-            this.activatePort = CreateOutputPort(SkillPortId.Ability.Activate, "激活");
-            this.animationPort = CreateOutputPort(SkillPortId.Ability.Animation, "动画");
+            this.activatePort = CreateOutputPort(SkillPortId.Ability.Activate);
+            this.animationPort = CreateOutputPort(SkillPortId.Ability.Animation);
 
             this.costPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            ConfigureOutputPort(this.costPort, SkillPortId.Ability.Cost, "消耗");
+            ConfigureOutputPort(this.costPort, SkillPortId.Ability.Cost);
             inputContainer.Add(this.costPort);
 
             this.cooldownPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            ConfigureOutputPort(this.cooldownPort, SkillPortId.Ability.Cooldown, "冷却");
+            ConfigureOutputPort(this.cooldownPort, SkillPortId.Ability.Cooldown);
             inputContainer.Add(this.cooldownPort);
 
             CreateEventPortsSection();
