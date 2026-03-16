@@ -49,7 +49,7 @@ namespace ET.Client.Editor
                 if (outputPortId <= SkillPortId.Invalid || inputPortId <= SkillPortId.Invalid)
                 {
                     UnityEngine.Debug.LogWarning(
-                        $"Skip invalid connection ids: outputPortId={outputPortId}, inputPortId={inputPortId}, inputPortName={connection.inputPortName}");
+                        $"Skip invalid connection ids: outputPortId={outputPortId}, inputPortId={inputPortId}");
                     continue;
                 }
 
@@ -60,11 +60,11 @@ namespace ET.Client.Editor
                     continue;
                 }
 
-                Port inputPort = FindInputPort(inputNode, inputPortId, connection.inputPortName);
+                Port inputPort = FindInputPort(inputNode, inputPortId);
                 if (inputPort == null)
                 {
                     UnityEngine.Debug.LogWarning(
-                        $"Input port not found: node={inputNode.Guid}, inputPortId={inputPortId}, inputPortName={connection.inputPortName}");
+                        $"Input port not found: node={inputNode.Guid}, inputPortId={inputPortId}");
                     continue;
                 }
 
@@ -86,22 +86,12 @@ namespace ET.Client.Editor
                 .FirstOrDefault(candidate => candidate.direction == Direction.Output && SkillNodeBase.GetPortId(candidate) == portId);
         }
 
-        private Port FindInputPort(SkillNodeBase node, int portId, string portName)
+        private Port FindInputPort(SkillNodeBase node, int portId)
         {
-            Port port = node.inputContainer
-                .Query<Port>()
-                .ToList()
-                .FirstOrDefault(candidate => SkillNodeBase.GetPortId(candidate) == portId);
-
-            if (port != null)
-            {
-                return port;
-            }
-
             return node.inputContainer
                 .Query<Port>()
                 .ToList()
-                .FirstOrDefault(candidate => candidate.portName == portName);
+                .FirstOrDefault(candidate => SkillNodeBase.GetPortId(candidate) == portId);
         }
 
         public SkillGraphData SaveGraph(SkillGraphData graphData)
@@ -135,11 +125,10 @@ namespace ET.Client.Editor
 
                 int outputPortId = GetPortIdentifier(edge.output);
                 int inputPortId = GetPortIdentifier(edge.input);
-                string inputPortName = edge.input.portName;
-                if (outputPortId <= SkillPortId.Invalid || inputPortId <= SkillPortId.Invalid || string.IsNullOrEmpty(inputPortName))
+                if (outputPortId <= SkillPortId.Invalid || inputPortId <= SkillPortId.Invalid)
                 {
                     UnityEngine.Debug.LogWarning(
-                        $"Skip invalid edge: {outputNode.Guid}->{inputNode.Guid}, outputPortId={outputPortId}, inputPortId={inputPortId}, inputPortName={inputPortName}");
+                        $"Skip invalid edge: {outputNode.Guid}->{inputNode.Guid}, outputPortId={outputPortId}, inputPortId={inputPortId}");
                     continue;
                 }
 
@@ -148,8 +137,7 @@ namespace ET.Client.Editor
                     outputNodeGuid = outputNode.Guid,
                     outputPortId = outputPortId,
                     inputNodeGuid = inputNode.Guid,
-                    inputPortId = inputPortId,
-                    inputPortName = inputPortName
+                    inputPortId = inputPortId
                 });
             }
 

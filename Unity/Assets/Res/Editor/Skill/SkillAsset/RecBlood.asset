@@ -14,54 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324426574889103
-  - rid: 8915324426574889104
-  - rid: 8915324426574889105
-  - rid: 8915324426574889106
-  - rid: 8915324426574889107
-  - rid: 8915324426574889108
-  - rid: 8915324426574889109
+  - rid: 8915324426574889308
+  - rid: 8915324426574889309
+  - rid: 8915324426574889310
+  - rid: 8915324426574889311
+  - rid: 8915324426574889312
+  - rid: 8915324426574889313
+  - rid: 8915324426574889314
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
-    legacyOutputPortName: "\u51B7\u5374"
     inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1003
-    legacyOutputPortName: "\u6D88\u8017"
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1001
-    legacyOutputPortName: "\u6FC0\u6D3B"
     inputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
     outputPortId: 3001
-    legacyOutputPortName: "\u521D\u59CB\u6548\u679C"
     inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
     outputPortId: 3004
-    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: 011aad56-e96c-41eb-9d85-e793d74a40bb
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
     outputPortId: 3004
-    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   references:
     version: 2
     RefIds:
-    - rid: 8915324426574889103
+    - rid: 8915324426574889308
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -106,7 +94,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324426574889104
+    - rid: 8915324426574889309
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
@@ -151,7 +139,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324426574889105
+    - rid: 8915324426574889310
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
@@ -161,7 +149,7 @@ MonoBehaviour:
           y: -1780
         targetType: 1
         endType: 0
-    - rid: 8915324426574889106
+    - rid: 8915324426574889311
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -204,7 +192,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324426574889107
+    - rid: 8915324426574889312
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -235,7 +223,7 @@ MonoBehaviour:
         ongoingBlockedTags:
           _tags: []
         eventOutputPorts: []
-    - rid: 8915324426574889108
+    - rid: 8915324426574889313
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -258,7 +246,7 @@ MonoBehaviour:
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
-    - rid: 8915324426574889109
+    - rid: 8915324426574889314
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7

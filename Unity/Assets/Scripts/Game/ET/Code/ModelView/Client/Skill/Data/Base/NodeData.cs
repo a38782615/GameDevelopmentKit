@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
-using UnityEngine.Serialization;
-
 namespace ET.Client
 {
     [Serializable]
@@ -41,31 +39,16 @@ namespace ET.Client
     {
         public string outputNodeGuid;
         public int outputPortId;
-        [FormerlySerializedAs("outputPortName")]
-        public string legacyOutputPortName;
         public string inputNodeGuid;
         public int inputPortId;
-        public string inputPortName;
 
         public int GetOutputPortId(NodeType nodeType)
         {
-            if (this.outputPortId > SkillPortId.Invalid)
-            {
-                return this.outputPortId;
-            }
-
-            this.outputPortId = SkillPortIdUtility.ResolveLegacyOutputPortId(nodeType, this.legacyOutputPortName);
             return this.outputPortId;
         }
 
         public int GetInputPortId()
         {
-            if (this.inputPortId > SkillPortId.Invalid)
-            {
-                return this.inputPortId;
-            }
-
-            this.inputPortId = SkillPortIdUtility.ResolveLegacyInputPortId(this.inputPortName);
             return this.inputPortId;
         }
     }

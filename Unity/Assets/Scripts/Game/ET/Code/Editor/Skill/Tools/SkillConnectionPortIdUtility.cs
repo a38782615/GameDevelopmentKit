@@ -10,49 +10,7 @@ namespace ET.Client.Editor
             {
                 return false;
             }
-
-            var nodeTypeMap = new Dictionary<string, NodeType>(nodes.Count);
-            foreach (NodeData node in nodes)
-            {
-                if (node == null || string.IsNullOrEmpty(node.guid))
-                {
-                    continue;
-                }
-
-                nodeTypeMap[node.guid] = node.nodeType;
-            }
-
-            bool changed = false;
-            foreach (ConnectionData connection in connections)
-            {
-                if (connection == null)
-                {
-                    continue;
-                }
-
-                if (connection.outputPortId <= SkillPortId.Invalid &&
-                    nodeTypeMap.TryGetValue(connection.outputNodeGuid, out NodeType outputNodeType))
-                {
-                    int outputPortId = SkillPortIdUtility.ResolveLegacyOutputPortId(outputNodeType, connection.legacyOutputPortName);
-                    if (outputPortId > SkillPortId.Invalid)
-                    {
-                        connection.outputPortId = outputPortId;
-                        changed = true;
-                    }
-                }
-
-                if (connection.inputPortId <= SkillPortId.Invalid)
-                {
-                    int inputPortId = SkillPortIdUtility.ResolveLegacyInputPortId(connection.inputPortName);
-                    if (inputPortId > SkillPortId.Invalid)
-                    {
-                        connection.inputPortId = inputPortId;
-                        changed = true;
-                    }
-                }
-            }
-
-            return changed;
+            return false;
         }
 
         public static bool NormalizeNodePortIds(IReadOnlyList<NodeData> nodes)

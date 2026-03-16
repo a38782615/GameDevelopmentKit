@@ -14,40 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 2001
   nodes:
-  - rid: 8915324426574889128
-  - rid: 8915324426574889129
-  - rid: 8915324426574889130
-  - rid: 8915324426574889131
-  - rid: 8915324426574889132
+  - rid: 8915324426574889324
+  - rid: 8915324426574889325
+  - rid: 8915324426574889326
+  - rid: 8915324426574889327
+  - rid: 8915324426574889328
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     outputPortId: 3002
-    legacyOutputPortName: "\u6BCF\u5468\u671F\u6267\u884C"
     inputNodeGuid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
     outputPortId: 3004
-    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: d5809887-df6e-4604-bd09-36cef191ce83
     outputPortId: 1001
-    legacyOutputPortName: "\u6FC0\u6D3B"
     inputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   - outputNodeGuid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
     outputPortId: 3004
-    legacyOutputPortName: "\u5B8C\u6210\u6548\u679C"
     inputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     inputPortId: 7001
-    inputPortName: "\u8F93\u5165"
   references:
     version: 2
     RefIds:
-    - rid: 8915324426574889128
+    - rid: 8915324426574889324
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
@@ -92,7 +84,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324426574889129
+    - rid: 8915324426574889325
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
@@ -119,7 +111,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324426574889130
+    - rid: 8915324426574889326
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
@@ -162,7 +154,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324426574889131
+    - rid: 8915324426574889327
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 426755b7-c39a-4524-9cb5-960a31a19c10
@@ -203,7 +195,7 @@ MonoBehaviour:
             - CD
         cancelOnAbilityEnd: 1
         buffId: 0
-    - rid: 8915324426574889132
+    - rid: 8915324426574889328
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d5809887-df6e-4604-bd09-36cef191ce83
