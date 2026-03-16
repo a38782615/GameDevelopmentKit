@@ -341,4 +341,5 @@ MonoBehaviour:
         maxBounceCount: 2
         bounceSearchRadius: 10
         canBounceToSameTarget: 0
+        excludeSourceCamp: 1
         bounceAngleOffset: 50

@@ -18,10 +18,10 @@ MonoBehaviour:
   - rid: 8915324426574889274
   - rid: 8915324426574889275
   - rid: 8915324426574889276
-  - rid: 8915324426574889277
-  - rid: 8915324426574889278
   - rid: 8915324426574889279
   - rid: 8915324426574889280
+  - rid: 8915324426574889277
+  - rid: 8915324426574889278
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -213,11 +213,12 @@ MonoBehaviour:
           _tags: []
         collisionExcludeTags:
           _tags: []
-        isBouncing: 0
-        bounceTargetMode: 0
+        isBouncing: 1
+        bounceTargetMode: 1
         maxBounceCount: 3
         bounceSearchRadius: 10
         canBounceToSameTarget: 0
+        excludeSourceCamp: 1
         bounceAngleOffset: 0
     - rid: 8915324426574889278
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -245,7 +246,7 @@ MonoBehaviour:
         removeGameEffectsWithTags:
           _tags: []
         durationType: 1
-        duration: 1
+        duration: 3
         isPeriodic: 0
         period: 1
         executeOnApplication: 0
