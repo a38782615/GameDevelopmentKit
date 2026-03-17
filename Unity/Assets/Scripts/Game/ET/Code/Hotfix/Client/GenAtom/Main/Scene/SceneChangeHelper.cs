@@ -22,6 +22,7 @@ namespace ET.Client
             M2C_CreateMyUnit m2CCreateMyUnit = waitCreateMyUnit.Message;
             Unit unit = UnitFactory.Create(currentScene, m2CCreateMyUnit.Unit);
             unitComponent.Add(unit);
+            await EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
             root.RemoveComponent<AIComponent>();
 
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());

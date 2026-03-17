@@ -9,6 +9,7 @@ namespace ET.Client
 		{
 			Scene currentScene = root.CurrentScene();
 			UnitComponent unitComponent = currentScene.GetComponent<UnitComponent>();
+			using ListComponent<UniTask> afterCreateTasks = ListComponent<UniTask>.Create();
 			
 			foreach (UnitInfo unitInfo in message.Units)
 			{
@@ -16,9 +17,15 @@ namespace ET.Client
 				{
 					continue;
 				}
+
 				Unit unit = UnitFactory.Create(currentScene, unitInfo);
+				afterCreateTasks.Add(EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit }));
 			}
-			await UniTask.CompletedTask;
+
+			if (afterCreateTasks.Count > 0)
+			{
+				await UniTask.WhenAll(afterCreateTasks);
+			}
 		}
 	}
 }
