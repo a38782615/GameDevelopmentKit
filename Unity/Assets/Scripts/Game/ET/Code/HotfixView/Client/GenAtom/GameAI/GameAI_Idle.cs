@@ -25,15 +25,6 @@ namespace ET.Client
                 return;
             }
 
-            Unit unit = aiComponent.GetOwnerUnit();
-#if UNITY_EDITOR
-            if (unit != null)
-            {
-                SkillDiagFileLogger.Log($"[DiagGameAI] idle start unit={unit.Id} config={unit.ConfigId} waitMs={remainingMs}");
-                Log.Info($"[GameAI] Idle start unit={unit.Id} config={unit.ConfigId} waitMs={remainingMs}");
-            }
-#endif
-
             bool canceled = await aiComponent.Root().GetComponent<TimerComponent>().WaitAsync(remainingMs, token).SuppressCancellationThrow();
             if (canceled)
             {
@@ -41,13 +32,6 @@ namespace ET.Client
             }
 
             aiComponent.ClearPatrolIdle();
-#if UNITY_EDITOR
-            if (unit != null)
-            {
-                SkillDiagFileLogger.Log($"[DiagGameAI] idle finish unit={unit.Id} config={unit.ConfigId}");
-                Log.Info($"[GameAI] Idle finish unit={unit.Id} config={unit.ConfigId}");
-            }
-#endif
         }
     }
 }
