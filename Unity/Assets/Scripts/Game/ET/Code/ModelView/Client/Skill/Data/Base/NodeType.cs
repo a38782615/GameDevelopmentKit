@@ -260,8 +260,6 @@ namespace ET.Client
         OnDeath,
         //[InspectorName((("击杀")]
         OnKill,
-        //[InspectorName((("自定义事件")]
-        Custom
     }
 
     /// <summary>

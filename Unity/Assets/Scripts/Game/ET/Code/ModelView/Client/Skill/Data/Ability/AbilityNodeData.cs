@@ -61,18 +61,6 @@ namespace ET.Client
         {
             get
             {
-                if (!string.IsNullOrEmpty(this.legacyPortId))
-                {
-                    this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(this.legacyPortId);
-                    return this.portIdValue;
-                }
-
-                if (this.portIdValue > SkillPortId.Invalid)
-                {
-                    return this.portIdValue;
-                }
-
-                this.portIdValue = SkillPortIdUtility.ResolveAnimationTrackPortId(Guid.NewGuid().ToString());
                 return this.portIdValue;
             }
             set
@@ -101,35 +89,8 @@ namespace ET.Client
     public class AbilityEventPortData : Object
     {
         public GameplayEventType eventType = GameplayEventType.OnHit;
-        public int portIdValue;
-        [FormerlySerializedAs("portId")]
-        public string legacyPortId;
         public string customEventTag = "";
-
-        public int PortId
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(this.legacyPortId))
-                {
-                    this.portIdValue = SkillPortIdUtility.ResolveAbilityEventPortId(this.legacyPortId);
-                    return this.portIdValue;
-                }
-
-                if (this.portIdValue > SkillPortId.Invalid)
-                {
-                    return this.portIdValue;
-                }
-
-                this.portIdValue = SkillPortIdUtility.ResolveAbilityEventPortId(this.eventType, this.customEventTag);
-                return this.portIdValue;
-            }
-            set
-            {
-                this.portIdValue = value;
-                this.legacyPortId = null;
-            }
-        }
+        public int PortId;
     }
 
     public struct AbilityTagContainer

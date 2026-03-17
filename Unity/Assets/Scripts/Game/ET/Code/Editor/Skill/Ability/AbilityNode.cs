@@ -120,7 +120,7 @@ namespace ET.Client.Editor
                 index = TypedData.eventOutputPorts.Count - 1;
             }
 
-            eventData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(eventData.eventType, eventData.customEventTag);
+            eventData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(eventData.eventType);
 
             var port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
             ConfigureOutputPort(port, eventData.PortId, GetEventPortName(eventData));
@@ -144,7 +144,7 @@ namespace ET.Client.Editor
             var customTagField = new TextField { value = eventData.customEventTag ?? string.Empty };
             customTagField.style.width = 60;
             customTagField.style.marginRight = 4;
-            customTagField.style.display = eventData.eventType == GameplayEventType.Custom ? DisplayStyle.Flex : DisplayStyle.None;
+            customTagField.style.display = DisplayStyle.Flex;
             ApplyFieldStyle(customTagField);
 
             var deleteButton = new Button { text = "X" };
@@ -163,9 +163,9 @@ namespace ET.Client.Editor
 
                 AbilityEventPortData currentData = TypedData.eventOutputPorts[currentIndex];
                 currentData.eventType = newType;
-                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(newType, currentData.customEventTag);
+                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(newType);
                 ConfigureOutputPort(port, currentData.PortId, GetEventPortName(currentData));
-                customTagField.style.display = newType == GameplayEventType.Custom ? DisplayStyle.Flex : DisplayStyle.None;
+                customTagField.style.display = DisplayStyle.Flex;
                 NotifyDataChanged();
             });
 
@@ -178,7 +178,7 @@ namespace ET.Client.Editor
 
                 AbilityEventPortData currentData = TypedData.eventOutputPorts[currentIndex];
                 currentData.customEventTag = evt.newValue;
-                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(currentData.eventType, evt.newValue);
+                currentData.PortId = SkillPortIdUtility.ResolveAbilityEventPortId(currentData.eventType);
                 ConfigureOutputPort(port, currentData.PortId, GetEventPortName(currentData));
                 NotifyDataChanged();
             });
@@ -244,19 +244,17 @@ namespace ET.Client.Editor
             switch (eventData.eventType)
             {
                 case GameplayEventType.OnHit:
-                    return "受击时";
+                    return GetOutputPortName(SkillPortId.Ability.EventOnKill);
                 case GameplayEventType.OnDealDamage:
-                    return "造成伤害时";
+                    return GetOutputPortName(SkillPortId.Ability.EventOnDealDamage);
                 case GameplayEventType.OnTakeDamage:
-                    return "受到伤害时";
+                    return GetOutputPortName(SkillPortId.Ability.EventOnTakeDamage);
                 case GameplayEventType.OnDeath:
-                    return "死亡时";
+                    return GetOutputPortName(SkillPortId.Ability.EventOnDeath);
                 case GameplayEventType.OnKill:
-                    return "击杀时";
-                case GameplayEventType.Custom:
-                    return string.IsNullOrEmpty(eventData.customEventTag) ? "自定义事件" : eventData.customEventTag;
+                    return GetOutputPortName(SkillPortId.Ability.EventOnKill);
                 default:
-                    return "事件";
+                    return GetOutputPortName(SkillPortId.Ability.EventOnKill);
             }
         }
 

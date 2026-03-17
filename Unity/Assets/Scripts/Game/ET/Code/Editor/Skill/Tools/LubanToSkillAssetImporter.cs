@@ -480,8 +480,6 @@ namespace ET.Client.Editor
             }
 
             // 检查是否已存在
-            SkillConnectionPortIdUtility.NormalizeNodePortIds(skillData.Nodes);
-            SkillConnectionPortIdUtility.NormalizeConnections(skillData.Nodes, skillData.Connections);
             var existingAsset = AssetDatabase.LoadAssetAtPath<SkillGraphData>(assetPath);
 
             if (existingAsset != null)

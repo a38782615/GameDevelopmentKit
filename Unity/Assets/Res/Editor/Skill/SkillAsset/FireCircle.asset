@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 7001
   nodes:
-  - rid: 8915324426574889273
-  - rid: 8915324426574889274
-  - rid: 8915324426574889275
-  - rid: 8915324426574889276
-  - rid: 8915324426574889279
-  - rid: 8915324426574889280
-  - rid: 8915324426574889277
-  - rid: 8915324426574889278
+  - rid: 8915324449508032629
+  - rid: 8915324449508032630
+  - rid: 8915324449508032631
+  - rid: 8915324449508032632
+  - rid: 8915324449508032633
+  - rid: 8915324449508032634
+  - rid: 8915324449508032635
+  - rid: 8915324449508032636
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -54,7 +54,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324426574889273
+    - rid: 8915324449508032629
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -99,7 +99,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324426574889274
+    - rid: 8915324449508032630
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
@@ -126,7 +126,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324426574889275
+    - rid: 8915324449508032631
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
@@ -136,7 +136,7 @@ MonoBehaviour:
           y: -1987.3334
         targetType: 1
         endType: 0
-    - rid: 8915324426574889276
+    - rid: 8915324449508032632
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -159,7 +159,94 @@ MonoBehaviour:
           portIdValue: 2715463
           legacyPortId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
         timeCues: []
-    - rid: 8915324426574889277
+    - rid: 8915324449508032633
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+        nodeType: 0
+        position:
+          x: -880.6666
+          y: -1851.3334
+        targetType: 1
+        skillId: 7001
+        assetTags:
+          _tags: []
+        cancelAbilitiesWithTags:
+          _tags: []
+        blockAbilitiesWithTags:
+          _tags: []
+        activationOwnedTags:
+          _tags: []
+        activationRequiredTags:
+          _tags: []
+        activationBlockedTags:
+          _tags:
+          - _name: CD.FireCircle
+            _hashCode: 522143731
+            _shortName: FireCircle
+            _ancestorHashCodes: aba22dbc
+            _ancestorNames:
+            - CD
+        ongoingBlockedTags:
+          _tags:
+          - _name: Buff.DeBuff.Stun
+            _hashCode: 1791562953
+            _shortName: Stun
+            _ancestorHashCodes: 6f57da37077b2413
+            _ancestorNames:
+            - Buff
+            - Buff.DeBuff
+        eventOutputPorts: []
+    - rid: 8915324449508032634
+      type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
+        nodeType: 1
+        position:
+          x: 46.666687
+          y: -1808.6667
+        targetType: 0
+        assetTags:
+          _tags: []
+        grantedTags:
+          _tags: []
+        applicationRequiredTags:
+          _tags: []
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 1
+        damageType: 0
+        damageSourceType: 0
+        damageFixedValue: 10
+        damageFormula: 
+        damageMMCType: 0
+        damageSetByCallerKey: 
+        damageMMCCaptureAttribute: 200
+        damageMMCAttributeSource: 0
+        damageMMCCoefficient: 1
+        damageMMCUseSnapshot: 1
+        damageMultiplyByStackCount: 0
+        damageCalculationType: 0
+        enableHitKnockback: 1
+        knockbackDistance: 1
+        knockbackSpeed: 12
+    - rid: 8915324449508032635
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
@@ -220,7 +307,7 @@ MonoBehaviour:
         canBounceToSameTarget: 0
         excludeSourceCamp: 1
         bounceAngleOffset: 0
-    - rid: 8915324426574889278
+    - rid: 8915324449508032636
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -263,90 +350,3 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324426574889279
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-        nodeType: 0
-        position:
-          x: -880.6666
-          y: -1851.3334
-        targetType: 1
-        skillId: 7001
-        assetTags:
-          _tags: []
-        cancelAbilitiesWithTags:
-          _tags: []
-        blockAbilitiesWithTags:
-          _tags: []
-        activationOwnedTags:
-          _tags: []
-        activationRequiredTags:
-          _tags: []
-        activationBlockedTags:
-          _tags:
-          - _name: CD.FireCircle
-            _hashCode: 522143731
-            _shortName: FireCircle
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
-            - CD
-        ongoingBlockedTags:
-          _tags:
-          - _name: Buff.DeBuff.Stun
-            _hashCode: 1791562953
-            _shortName: Stun
-            _ancestorHashCodes: 6f57da37077b2413
-            _ancestorNames:
-            - Buff
-            - Buff.DeBuff
-        eventOutputPorts: []
-    - rid: 8915324426574889280
-      type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
-        nodeType: 1
-        position:
-          x: 46.666687
-          y: -1808.6667
-        targetType: 0
-        assetTags:
-          _tags: []
-        grantedTags:
-          _tags: []
-        applicationRequiredTags:
-          _tags: []
-        applicationImmunityTags:
-          _tags: []
-        removeGameEffectsWithTags:
-          _tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          _tags: []
-        cancelOnAbilityEnd: 1
-        damageType: 0
-        damageSourceType: 0
-        damageFixedValue: 10
-        damageFormula: 
-        damageMMCType: 0
-        damageSetByCallerKey: 
-        damageMMCCaptureAttribute: 200
-        damageMMCAttributeSource: 0
-        damageMMCCoefficient: 1
-        damageMMCUseSnapshot: 1
-        damageMultiplyByStackCount: 0
-        damageCalculationType: 0
-        enableHitKnockback: 1
-        knockbackDistance: 1
-        knockbackSpeed: 12

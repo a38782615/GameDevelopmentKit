@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324426574889308
-  - rid: 8915324426574889309
-  - rid: 8915324426574889310
-  - rid: 8915324426574889311
-  - rid: 8915324426574889312
-  - rid: 8915324426574889313
-  - rid: 8915324426574889314
+  - rid: 8915324449508032673
+  - rid: 8915324449508032674
+  - rid: 8915324449508032675
+  - rid: 8915324449508032676
+  - rid: 8915324449508032677
+  - rid: 8915324449508032678
+  - rid: 8915324449508032679
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -49,14 +49,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324426574889308
+    - rid: 8915324449508032673
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
         position:
-          x: -1186.4
-          y: -2019.2
+          x: -1186.6666
+          y: -2019.3334
         targetType: 1
         assetTags:
           _tags: []
@@ -94,14 +94,14 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324426574889309
+    - rid: 8915324449508032674
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
         nodeType: 2
         position:
-          x: -571.2
-          y: -1987.2
+          x: -571.3333
+          y: -1987.3334
         targetType: 1
         assetTags:
           _tags: []
@@ -139,24 +139,24 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324426574889310
+    - rid: 8915324449508032675
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
         nodeType: 7
         position:
-          x: -333.6
+          x: -333.3333
           y: -1780
         targetType: 1
         endType: 0
-    - rid: 8915324426574889311
+    - rid: 8915324449508032676
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
         position:
-          x: -1223.2
-          y: -1826.4
+          x: -1223.3334
+          y: -1826.6667
         targetType: 1
         assetTags:
           _tags: []
@@ -192,13 +192,13 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324426574889312
+    - rid: 8915324449508032677
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
         position:
-          x: -902.4
+          x: -902.6666
           y: -1844
         targetType: 1
         skillId: 1007
@@ -223,7 +223,7 @@ MonoBehaviour:
         ongoingBlockedTags:
           _tags: []
         eventOutputPorts: []
-    - rid: 8915324426574889313
+    - rid: 8915324449508032678
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -246,14 +246,14 @@ MonoBehaviour:
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
-    - rid: 8915324426574889314
+    - rid: 8915324449508032679
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
         nodeType: 14
         position:
-          x: -313.6
-          y: -1951.2
+          x: -313.3333
+          y: -1951.3334
         targetType: 1
         requiredTags:
           _tags: []

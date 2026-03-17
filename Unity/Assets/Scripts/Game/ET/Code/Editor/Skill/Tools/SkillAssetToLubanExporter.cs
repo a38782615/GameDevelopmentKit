@@ -171,13 +171,6 @@ namespace ET.Client.Editor
 
                 foreach (var skill in skills)
                 {
-                    bool nodePortChanged = SkillConnectionPortIdUtility.NormalizeNodePortIds(skill.nodes);
-                    bool connectionChanged = SkillConnectionPortIdUtility.NormalizeConnections(skill.nodes, skill.connections);
-                    if (nodePortChanged || connectionChanged)
-                    {
-                        EditorUtility.SetDirty(skill);
-                    }
-
                     int nodeCount = skill.nodes?.Count ?? 0;
                     int connCount = skill.connections?.Count ?? 0;
                     int maxRows = Math.Max(Math.Max(nodeCount, connCount), 1);

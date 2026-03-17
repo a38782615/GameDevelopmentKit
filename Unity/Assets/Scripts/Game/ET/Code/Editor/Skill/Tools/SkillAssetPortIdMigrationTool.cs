@@ -24,13 +24,6 @@ namespace ET.Client.Editor
                 }
 
                 int beforeChangedConnections = CountCompletedConnections(asset.connections);
-                bool connectionChanged = SkillConnectionPortIdUtility.NormalizeConnections(asset.nodes, asset.connections);
-                bool nodeChanged = SkillConnectionPortIdUtility.NormalizeNodePortIds(asset.nodes);
-                if (!connectionChanged && !nodeChanged)
-                {
-                    continue;
-                }
-
                 int afterChangedConnections = CountCompletedConnections(asset.connections);
                 changedConnections += afterChangedConnections - beforeChangedConnections;
                 changedAssets++;

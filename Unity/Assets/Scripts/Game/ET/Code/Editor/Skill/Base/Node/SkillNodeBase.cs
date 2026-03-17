@@ -11,7 +11,12 @@ namespace ET.Client.Editor
 {
     public abstract class SkillNodeBase : GraphViewNode
     {
-        private static readonly Dictionary<int, string> s_OutputPortNames = new Dictionary<int, string>
+        public static readonly Dictionary<int, string> s_InputPortNames = new Dictionary<int, string>
+        {
+            {SkillPortId.Input.Default, "输入"}
+        };
+
+        public static readonly Dictionary<int, string> s_OutputPortNames = new Dictionary<int, string>
         {
             { SkillPortId.Ability.Activate, "激活" },
             { SkillPortId.Ability.Animation, "动画" },
@@ -104,8 +109,8 @@ namespace ET.Client.Editor
             if (HasDefaultInputPort)
             {
                 defaultInputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
-                defaultInputPort.portName = "输入";
-                ConfigureInputPort(defaultInputPort, SkillPortIdUtility.ResolveLegacyInputPortId("\u8F93\u5165"), "\u8F93\u5165");
+                defaultInputPort.portName = s_InputPortNames[SkillPortId.Input.Default];
+                ConfigureInputPort(defaultInputPort, SkillPortId.Input.Default, defaultInputPort.portName);
                 inputContainer.Add(defaultInputPort);
             }
         }
@@ -282,8 +287,6 @@ namespace ET.Client.Editor
                 }
             }
         }
-
-
 
         private void OnNodeMouseDown(MouseDownEvent evt)
         {
