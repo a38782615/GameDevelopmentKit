@@ -20,16 +20,7 @@ namespace ET.Client
                 return;
             }
 
-            NumericComponent numericComponent = unit.GetComponent<NumericComponent>();
-            if (numericComponent == null)
-            {
-#if UNITY_EDITOR
-                Log.Warning(
-                    $"[FightInput] MovePlayer skipped: numeric={numericComponent != null} unit={unit.Id}");
-#endif
-                await UniTask.CompletedTask;
-                return;
-            }
+            var a = unit.GetComponent<AttributeComponent>(); 
 
             if (!TryGetWorldPosition(unit, args.ScreenPosition, out float3 targetPosition))
             {
@@ -51,7 +42,7 @@ namespace ET.Client
                 return;
             }
 
-            float speed = numericComponent.GetAsFloat(NumericType.Speed);
+            float speed = a.GetAttrCmp((int)NumericType.Speed).CurrentValue;
             if (speed <= 0f)
             {
 #if UNITY_EDITOR
