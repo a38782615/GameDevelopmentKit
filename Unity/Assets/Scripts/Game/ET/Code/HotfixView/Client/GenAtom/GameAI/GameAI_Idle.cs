@@ -29,6 +29,7 @@ namespace ET.Client
 #if UNITY_EDITOR
             if (unit != null)
             {
+                SkillDiagFileLogger.Log($"[DiagGameAI] idle start unit={unit.Id} config={unit.ConfigId} waitMs={remainingMs}");
                 Log.Info($"[GameAI] Idle start unit={unit.Id} config={unit.ConfigId} waitMs={remainingMs}");
             }
 #endif
@@ -43,6 +44,7 @@ namespace ET.Client
 #if UNITY_EDITOR
             if (unit != null)
             {
+                SkillDiagFileLogger.Log($"[DiagGameAI] idle finish unit={unit.Id} config={unit.ConfigId}");
                 Log.Info($"[GameAI] Idle finish unit={unit.Id} config={unit.ConfigId}");
             }
 #endif

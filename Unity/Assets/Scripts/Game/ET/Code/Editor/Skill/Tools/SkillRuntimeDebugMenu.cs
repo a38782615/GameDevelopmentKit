@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Unity.Mathematics;
@@ -17,6 +18,7 @@ namespace ET.Client.Editor
         private const string TriggerMoveAndCast1001MenuPath = "SkillEditor/Runtime/Move To Monster And Cast Skill 1001";
         private const string TriggerSkill1008MenuPath = "SkillEditor/Runtime/Trigger Skill 1008";
         private const string TriggerSkill1010MenuPath = "SkillEditor/Runtime/Trigger Skill 1010";
+        private const string DumpMonsterGameAIMenuPath = "SkillEditor/Runtime/Dump Monster GameAI";
 
         private static MoveCastState moveCastState;
         private static Unit moveCastPlayerUnit;
@@ -31,6 +33,9 @@ namespace ET.Client.Editor
         private static double moveCastWaitStartTime;
         private static float moveCastHealthBefore;
         private static bool moveCastSkillTriggered;
+        private static readonly Dictionary<long, float3> monsterGameAIStartPositions = new Dictionary<long, float3>();
+        private static double monsterGameAIProbeStartTime;
+        private static bool monsterGameAIProbeRunning;
 
         [MenuItem(TriggerMoveAndCast1001MenuPath)]
         public static void TriggerMoveAndCastSkill1001()
@@ -99,6 +104,44 @@ namespace ET.Client.Editor
         public static void TriggerSkill1010()
         {
             TriggerSkill(1010);
+        }
+
+        [MenuItem(DumpMonsterGameAIMenuPath)]
+        public static void DumpMonsterGameAI()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("[SkillRuntimeDebug] Play Mode required. dump monster game ai");
+                return;
+            }
+
+            Scene currentScene = GetCurrentClientScene();
+            UnitComponent unitComponent = currentScene?.GetComponent<UnitComponent>();
+            if (currentScene == null || unitComponent?.Children == null)
+            {
+                SkillDiagFileLogger.Log("[DiagGameAIProbe] abort current scene or unit component missing");
+                return;
+            }
+
+            monsterGameAIStartPositions.Clear();
+            int monsterCount = 0;
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is not Unit unit || (UnitType)unit.Config().Type != UnitType.Monster)
+                {
+                    continue;
+                }
+
+                monsterCount++;
+                monsterGameAIStartPositions[unit.Id] = unit.Position;
+                LogMonsterGameAISnapshot(unit, "snapshot");
+            }
+
+            SkillDiagFileLogger.Log($"[DiagGameAIProbe] snapshot-count monsters={monsterCount}");
+            monsterGameAIProbeStartTime = EditorApplication.timeSinceStartup;
+            monsterGameAIProbeRunning = true;
+            EditorApplication.update -= UpdateMonsterGameAIProbe;
+            EditorApplication.update += UpdateMonsterGameAIProbe;
         }
 
         private static void UpdateMoveCast1001()
@@ -181,6 +224,59 @@ namespace ET.Client.Editor
             moveCastWaitStartTime = 0d;
             moveCastHealthBefore = 0f;
             moveCastSkillTriggered = false;
+        }
+
+        private static void UpdateMonsterGameAIProbe()
+        {
+            if (!monsterGameAIProbeRunning)
+            {
+                EditorApplication.update -= UpdateMonsterGameAIProbe;
+                return;
+            }
+
+            if (!EditorApplication.isPlaying)
+            {
+                monsterGameAIProbeRunning = false;
+                monsterGameAIStartPositions.Clear();
+                EditorApplication.update -= UpdateMonsterGameAIProbe;
+                return;
+            }
+
+            if (EditorApplication.timeSinceStartup - monsterGameAIProbeStartTime < 3d)
+            {
+                return;
+            }
+
+            monsterGameAIProbeRunning = false;
+            EditorApplication.update -= UpdateMonsterGameAIProbe;
+
+            Scene currentScene = GetCurrentClientScene();
+            UnitComponent unitComponent = currentScene?.GetComponent<UnitComponent>();
+            if (currentScene == null || unitComponent?.Children == null)
+            {
+                SkillDiagFileLogger.Log("[DiagGameAIProbe] result abort current scene or unit component missing");
+                monsterGameAIStartPositions.Clear();
+                return;
+            }
+
+            int monsterCount = 0;
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is not Unit unit || (UnitType)unit.Config().Type != UnitType.Monster)
+                {
+                    continue;
+                }
+
+                monsterCount++;
+                float3 startPosition = monsterGameAIStartPositions.TryGetValue(unit.Id, out float3 cachedPosition)
+                    ? cachedPosition
+                    : unit.Position;
+                float movedDistance = math.distance(startPosition.xy, unit.Position.xy);
+                LogMonsterGameAISnapshot(unit, $"result moved={movedDistance:0.###}");
+            }
+
+            SkillDiagFileLogger.Log($"[DiagGameAIProbe] result-count monsters={monsterCount}");
+            monsterGameAIStartPositions.Clear();
         }
 
         private static void TriggerSkill(int skillId)
@@ -393,6 +489,21 @@ namespace ET.Client.Editor
             float scaleX = gameObject != null ? gameObject.transform.localScale.x : 0f;
             string gameObjectName = gameObject != null ? gameObject.name : "null-go";
             return $"cfg={unit.ConfigId} id={unit.Id} unitPos={unit.Position} worldPos={worldPosition} center={centerPosition} scaleX={scaleX:0.##} go={gameObjectName}";
+        }
+
+        private static void LogMonsterGameAISnapshot(Unit unit, string phase)
+        {
+            GameAIComponent gameAIComponent = unit.GetComponent<GameAIComponent>();
+            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
+            NumericComponent numericComponent = unit.GetComponent<NumericComponent>();
+            float speed = attributeComponent?.GetCurrentValue(global::ET.NumericType.Speed)
+                ?? numericComponent?.GetAsFloat(global::ET.NumericType.Speed)
+                ?? 0f;
+            string currentHandler = gameAIComponent == null
+                ? "none"
+                : gameAIComponent.Current == -1 ? "Idle" : gameAIComponent.Current.ToString();
+            SkillDiagFileLogger.Log(
+                $"[DiagGameAIProbe] {phase} hasAI={(gameAIComponent != null)} current={currentHandler} patrolIdleUntil={gameAIComponent?.PatrolIdleUntil ?? 0} speed={speed:0.##} runtimePos={unit.Position} {DescribeUnitRuntime(unit)}");
         }
 
         private static float3 GetUnitWorldPosition(Unit unit)

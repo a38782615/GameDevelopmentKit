@@ -43,16 +43,22 @@ namespace ET.Client
             if (speed <= 0f)
             {
 #if UNITY_EDITOR
+                SkillDiagFileLogger.Log($"[DiagGameAI] xunluo invalid-speed unit={unit.Id} config={unit.ConfigId} speed={speed:0.##}");
                 Log.Warning($"[GameAI] XunLuo skipped: invalid speed={speed:0.##} unit={unit.Id} config={unit.ConfigId}");
 #endif
                 return;
             }
+
+#if UNITY_EDITOR
+            SkillDiagFileLogger.Log($"[DiagGameAI] xunluo execute-start unit={unit.Id} config={unit.ConfigId} speed={speed:0.##}");
+#endif
 
             while (!token.IsCancellationRequested)
             {
                 if (!aiComponent.TryGetRandomPatrolTargetInScreen(aiConfig, out float3 nextTarget))
                 {
 #if UNITY_EDITOR
+                    SkillDiagFileLogger.Log($"[DiagGameAI] xunluo target-failed unit={unit.Id} config={unit.ConfigId}");
                     Log.Warning($"[GameAI] XunLuo skipped: target build failed unit={unit.Id} config={unit.ConfigId}");
 #endif
                     return;
@@ -63,6 +69,8 @@ namespace ET.Client
                 path.Add(nextTarget);
 
 #if UNITY_EDITOR
+                SkillDiagFileLogger.Log(
+                    $"[DiagGameAI] xunluo move-start unit={unit.Id} config={unit.ConfigId} from=({unit.Position.x:0.##},{unit.Position.y:0.##},{unit.Position.z:0.##}) to=({nextTarget.x:0.##},{nextTarget.y:0.##},{nextTarget.z:0.##}) speed={speed:0.##}");
                 Log.Info(
                     $"[GameAI] XunLuo local move unit={unit.Id} config={unit.ConfigId} from=({unit.Position.x:0.##},{unit.Position.y:0.##},{unit.Position.z:0.##}) to=({nextTarget.x:0.##},{nextTarget.y:0.##},{nextTarget.z:0.##}) speed={speed:0.##}");
 #endif
@@ -75,6 +83,8 @@ namespace ET.Client
 
                 aiComponent.MarkPatrolIdle(aiConfig);
 #if UNITY_EDITOR
+                SkillDiagFileLogger.Log(
+                    $"[DiagGameAI] xunluo arrived unit={unit.Id} config={unit.ConfigId} idleMs={aiComponent.GetRemainingPatrolIdleMs()}");
                 Log.Info(
                     $"[GameAI] XunLuo arrived unit={unit.Id} config={unit.ConfigId} idleMs={aiComponent.GetRemainingPatrolIdleMs()}");
 #endif
