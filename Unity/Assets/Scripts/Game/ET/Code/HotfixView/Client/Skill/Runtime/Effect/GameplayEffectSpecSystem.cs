@@ -210,10 +210,18 @@ namespace ET.Client
                     float magnitude = modifier.CalculateMagnitude(calcContext);
                     switch (modifier.Operation)
                     {
-                        case ModifierOperation.Add: attribute.BaseValue += magnitude; break;
-                        case ModifierOperation.Multiply: attribute.BaseValue *= magnitude; break;
-                        case ModifierOperation.Divide: if (Math.Abs(magnitude) > 0.0001f) attribute.BaseValue /= magnitude; break;
-                        case ModifierOperation.Override: attribute.BaseValue = magnitude; break;
+                        case ModifierOperation.Add:
+                            attribute.BaseValue += magnitude;
+                            break;
+                        case ModifierOperation.Multiply:
+                            attribute.BaseValue *= magnitude;
+                            break;
+                        case ModifierOperation.Divide:
+                            if (Math.Abs(magnitude) > 0.0001f) attribute.BaseValue /= magnitude;
+                            break;
+                        case ModifierOperation.Override:
+                            attribute.BaseValue = magnitude;
+                            break;
                     }
                 }
             }
