@@ -74,23 +74,6 @@ namespace ET.Client
             using ListComponent<EntityRef<GameplayAbilitySpec>> activeAbilities = ListComponent<EntityRef<GameplayAbilitySpec>>.Create();
             activeAbilities.AddRange(abilityContainer.GetActiveAbilities());
 
-#if UNITY_EDITOR
-            bool shouldLog = false;
-            for (int i = 0; i < activeAbilities.Count; i++)
-            {
-                GameplayAbilitySpec diagAbility = activeAbilities[i].As();
-                if (diagAbility != null && diagAbility.SkillId == "1010")
-                {
-                    shouldLog = true;
-                    break;
-                }
-            }
-
-            if (shouldLog)
-            {
-            }
-#endif
-
             for (int i = activeAbilities.Count - 1; i >= 0; i--)
             {
                 GameplayAbilitySpec ability = activeAbilities[i].As();
@@ -98,13 +81,6 @@ namespace ET.Client
                 {
                     continue;
                 }
-
-#if UNITY_EDITOR
-                if (ability.SkillId == "1010")
-                {
-                }
-#endif
-
                 ability.OnGameplayEvent(gameplayEventType);
             }
         }

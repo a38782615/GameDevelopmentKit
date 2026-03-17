@@ -132,9 +132,6 @@ namespace ET.Client
             var nodeData = GetNode();
             var selfSpec = SelfSpec();
             if (selfSpec == null) return;
-#if UNITY_EDITOR
-#endif
-
             // 创建投射物GameObject
             if (nodeData.projectilePrefab != null)
             {
@@ -188,9 +185,6 @@ namespace ET.Client
 
             // 保存引用
             selfSpec._projectileController = controller;
-#if UNITY_EDITOR
-#endif
-
             // 注册事件
             controller.OnHit += OnProjectileHit;
             controller.OnReachTarget += OnProjectileReachTarget;

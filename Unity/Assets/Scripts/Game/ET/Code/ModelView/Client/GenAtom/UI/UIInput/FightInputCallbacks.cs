@@ -39,10 +39,6 @@ namespace ET.Client
             {
                 self.FireTriggeredFrame = Time.frameCount;
                 self.PendingScreenClick = true;
-#if UNITY_EDITOR
-                UGFLog.Info(
-                    $"[FightInput] Fire performed frame={Time.frameCount} pointer=({self.PointerScreenPosition.x:0.##},{self.PointerScreenPosition.y:0.##})");
-#endif
             }
         }
 

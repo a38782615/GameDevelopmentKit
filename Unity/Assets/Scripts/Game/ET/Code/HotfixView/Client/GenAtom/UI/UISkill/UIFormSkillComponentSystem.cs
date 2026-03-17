@@ -161,8 +161,6 @@ namespace ET.Client
         {
             if (index < 0 || index >= self.SkillSpecs.Count)
             {
-#if UNITY_EDITOR
-#endif
                 return false;
             }
 
@@ -175,16 +173,10 @@ namespace ET.Client
             AbilitySystemComponent asc = spec?.GetASC;
             if (spec == null || asc == null)
             {
-#if UNITY_EDITOR
-#endif
                 return false;
             }
 
-#if UNITY_EDITOR
-#endif
             bool success = asc.TryActivateAbility(spec);
-#if UNITY_EDITOR
-#endif
             return success;
         }
 

@@ -68,19 +68,13 @@ namespace ET.Client
             HealEffectNodeData healNodeData = GetNode();
             if (target?.Attributes == null || healNodeData == null)
             {
-#if UNITY_EDITOR
-#endif
                 return;
             }
 
             float currentHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.Hp);
             float maxHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.MaxHp);
-#if UNITY_EDITOR
-#endif
             if (maxHealth > 0f && currentHealth >= maxHealth - 0.001f)
             {
-#if UNITY_EDITOR
-#endif
                 return;
             }
 
@@ -94,8 +88,6 @@ namespace ET.Client
             baseHeal = UnityEngine.Mathf.Max(0f, baseHeal);
             if (baseHeal <= 0f)
             {
-#if UNITY_EDITOR
-#endif
                 return;
             }
 
@@ -115,8 +107,6 @@ namespace ET.Client
             float actualHeal = UnityEngine.Mathf.Max(0f, newHealth - oldHealth);
             if (actualHeal <= 0.001f)
             {
-#if UNITY_EDITOR
-#endif
                 return;
             }
 
@@ -124,8 +114,6 @@ namespace ET.Client
 
             SpecExecutionContext executionContext = GetExecutionContext();
             executionContext.SetCustomData("Heal", actualHeal);
-#if UNITY_EDITOR
-#endif
             executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.Effect.Initial);
 
         }

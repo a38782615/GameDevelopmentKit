@@ -13,9 +13,6 @@ namespace ET.Client
             Unit unit = UnitHelper.GetMyUnitFromCurrentScene(scene);
             if (unit == null || unit.IsDisposed)
             {
-#if UNITY_EDITOR
-                Log.Warning("[FightInput] MovePlayer skipped: player unit is null.");
-#endif
                 await UniTask.CompletedTask;
                 return;
             }
@@ -24,20 +21,12 @@ namespace ET.Client
 
             if (!TryGetWorldPosition(unit, args.ScreenPosition, out float3 targetPosition))
             {
-#if UNITY_EDITOR
-                Log.Warning(
-                    $"[FightInput] MovePlayer skipped: screen to world failed unit={unit.Id} screen=({args.ScreenPosition.x:0.##},{args.ScreenPosition.y:0.##})");
-#endif
                 await UniTask.CompletedTask;
                 return;
             }
 
             if (math.distancesq(unit.Position.ToPlanar(), targetPosition.ToPlanar()) < 0.0001f)
             {
-#if UNITY_EDITOR
-                Log.Info(
-                    $"[FightInput] MovePlayer ignored: target too close unit={unit.Id} from=({unit.Position.x:0.##},{unit.Position.y:0.##}) to=({targetPosition.x:0.##},{targetPosition.y:0.##})");
-#endif
                 await UniTask.CompletedTask;
                 return;
             }
@@ -45,18 +34,9 @@ namespace ET.Client
             float speed = a.GetAttrCmp((int)NumericType.Speed).CurrentValue;
             if (speed <= 0f)
             {
-#if UNITY_EDITOR
-                Log.Warning(
-                    $"[FightInput] MovePlayer skipped: invalid speed={speed:0.##} unit={unit.Id}");
-#endif
                 await UniTask.CompletedTask;
                 return;
             }
-
-#if UNITY_EDITOR
-            Log.Info(
-                $"[FightInput] MovePlayer start unit={unit.Id} from=({unit.Position.x:0.##},{unit.Position.y:0.##}) to=({targetPosition.x:0.##},{targetPosition.y:0.##}) speed={speed:0.##} screen=({args.ScreenPosition.x:0.##},{args.ScreenPosition.y:0.##})");
-#endif
             using ListComponent<float3> path = ListComponent<float3>.Create();
             path.Add(unit.Position);
             path.Add(targetPosition);
