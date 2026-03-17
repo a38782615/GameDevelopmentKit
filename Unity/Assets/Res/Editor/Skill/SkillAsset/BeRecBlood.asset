@@ -201,8 +201,8 @@ MonoBehaviour:
         guid: d5809887-df6e-4604-bd09-36cef191ce83
         nodeType: 0
         position:
-          x: 210.66669
-          y: 114.66667
+          x: 146
+          y: 124.66667
         targetType: 1
         skillId: 2001
         assetTags:

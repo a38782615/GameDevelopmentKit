@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1001
   nodes:
-  - rid: 8915324449508032655
   - rid: 8915324449508032657
   - rid: 8915324449508032660
-  - rid: 8915324449508032662
-  - rid: 8915324449508032663
   - rid: 8915324449508032658
   - rid: 8915324449508032661
+  - rid: 8915324449508032655
+  - rid: 8915324449508032662
+  - rid: 8915324449508032663
   - rid: 8915324449508032656
   - rid: 8915324449508032659
   connections:
@@ -109,7 +109,7 @@ MonoBehaviour:
         nodeType: 12
         position:
           x: 731.3334
-          y: -2489.3333
+          y: -2490.6665
         targetType: 1
         requiredTags:
           _tags: []
@@ -218,7 +218,7 @@ MonoBehaviour:
         - attrType: 1003
           operation: 0
           magnitudeSourceType: 0
-          fixedValue: -100
+          fixedValue: -10
           formula: 
           mmcType: 0
           setByCallerKey: 
@@ -331,8 +331,8 @@ MonoBehaviour:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
         nodeType: 20
         position:
-          x: -414
-          y: -2826
+          x: -415.3333
+          y: -2827.3333
         targetType: 1
         skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
           type: 2}

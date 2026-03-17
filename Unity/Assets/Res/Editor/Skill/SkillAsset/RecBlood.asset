@@ -14,37 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324449508032673
-  - rid: 8915324449508032674
   - rid: 8915324449508032675
-  - rid: 8915324449508032676
-  - rid: 8915324449508032677
   - rid: 8915324449508032678
   - rid: 8915324449508032679
+  - rid: 8915324449508032677
+  - rid: 8915324449508032676
+  - rid: 8915324449508032693
+  - rid: 8915324449508032673
   connections:
-  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortId: 1004
-    inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
-    inputPortId: 7001
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1003
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
     inputPortId: 7001
-  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortId: 1001
-    inputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
-    inputPortId: 7001
-  - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
+  - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3001
     inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
     inputPortId: 7001
-  - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
-    outputPortId: 3004
-    inputNodeGuid: 011aad56-e96c-41eb-9d85-e793d74a40bb
-    inputPortId: 7001
-  - outputNodeGuid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
+  - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3004
     inputNodeGuid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
+    inputPortId: 7001
+  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+    outputPortId: 1001
+    inputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
+    inputPortId: 7001
+  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+    outputPortId: 1004
+    inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+    inputPortId: 7001
+  - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
+    outputPortId: 3004
+    inputNodeGuid: 011aad56-e96c-41eb-9d85-e793d74a40bb
     inputPortId: 7001
   references:
     version: 2
@@ -55,8 +55,8 @@ MonoBehaviour:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
         position:
-          x: -1186.6666
-          y: -2019.3334
+          x: -1223.3334
+          y: -2020.6667
         targetType: 1
         assetTags:
           _tags: []
@@ -74,10 +74,10 @@ MonoBehaviour:
         period: 1
         executeOnApplication: 0
         attributeModifiers:
-        - attrType: 100
+        - attrType: 1003
           operation: 0
           magnitudeSourceType: 0
-          fixedValue: 10
+          fixedValue: 100
           formula: 
           mmcType: 0
           setByCallerKey: 
@@ -94,51 +94,6 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324449508032674
-      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 5fb21a71-2fff-4477-b79b-4c1a8bc10f9a
-        nodeType: 2
-        position:
-          x: -571.3333
-          y: -1987.3334
-        targetType: 1
-        assetTags:
-          _tags: []
-        grantedTags:
-          _tags: []
-        applicationRequiredTags:
-          _tags: []
-        applicationImmunityTags:
-          _tags: []
-        removeGameEffectsWithTags:
-          _tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          _tags: []
-        cancelOnAbilityEnd: 0
-        healSourceType: 0
-        healFixedValue: 10
-        healFormula: 
-        healMMCType: 0
-        healSetByCallerKey: 
-        healMMCCaptureAttribute: 202
-        healMMCAttributeSource: 0
-        healMMCCoefficient: 1
-        healMMCUseSnapshot: 1
-        healMultiplyByStackCount: 0
-        healCalculationType: 0
     - rid: 8915324449508032675
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
@@ -155,8 +110,8 @@ MonoBehaviour:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
         position:
-          x: -1223.3334
-          y: -1826.6667
+          x: -1156
+          y: -1801.3334
         targetType: 1
         assetTags:
           _tags: []
@@ -198,8 +153,8 @@ MonoBehaviour:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
         position:
-          x: -902.6666
-          y: -1844
+          x: -924.6666
+          y: -1886.6667
         targetType: 1
         skillId: 1007
         assetTags:
@@ -273,3 +228,48 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
+    - rid: 8915324449508032693
+      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 6d127270-5aeb-4542-9183-8d2d028d6786
+        nodeType: 2
+        position:
+          x: -551.3333
+          y: -2050
+        targetType: 1
+        assetTags:
+          _tags: []
+        grantedTags:
+          _tags: []
+        applicationRequiredTags:
+          _tags: []
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 0
+        healSourceType: 0
+        healFixedValue: 10
+        healFormula: 
+        healMMCType: 0
+        healSetByCallerKey: 
+        healMMCCaptureAttribute: 1007
+        healMMCAttributeSource: 0
+        healMMCCoefficient: 1
+        healMMCUseSnapshot: 1
+        healMultiplyByStackCount: 0
+        healCalculationType: 0

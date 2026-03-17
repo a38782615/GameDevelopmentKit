@@ -69,7 +69,7 @@ namespace ET.Client
             float facingDirection = 1f;
             if (sourceObject != null)
             {
-                facingDirection = sourceObject.transform.localScale.x >= 0 ? 1f : -1f;
+                facingDirection = sourceObject.transform.localScale.x >= 0 ? -1f : 1f;
             }
 
             // 使用 PositionSourceType 获取播放位置，根据朝向翻转X偏移
