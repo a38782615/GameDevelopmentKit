@@ -14,8 +14,8 @@ namespace ET.Client
         /// 目标属性类型
         /// </summary>
         [SerializeField]
-        private AttrType targetAttrType;
-        public AttrType TargetAttrType
+        private int targetAttrType;
+        public int TargetAttrType
         {
             get => targetAttrType;
             set => targetAttrType = value;
@@ -94,8 +94,8 @@ namespace ET.Client
         /// MMC 捕获的属性类型
         /// </summary>
         [SerializeField]
-        private AttrType mmcCaptureAttribute = AttrType.Attack;
-        public AttrType MMCCaptureAttribute
+        private int mmcCaptureAttribute = global::ET.NumericType.Attack;
+        public int MMCCaptureAttribute
         {
             get => mmcCaptureAttribute;
             set => mmcCaptureAttribute = value;
@@ -138,7 +138,7 @@ namespace ET.Client
 
         public AttributeModifier() { }
 
-        public AttributeModifier(AttrType targetAttrType, ModifierOperation operation, float magnitude)
+        public AttributeModifier(int targetAttrType, ModifierOperation operation, float magnitude)
         {
             this.targetAttrType = targetAttrType;
             this.operation = operation;
@@ -341,7 +341,7 @@ namespace ET.Client
         /// <summary>
         /// 快照属性值（效果创建时捕获）
         /// </summary>
-        public System.Collections.Generic.Dictionary<AttrType, float> SnapshotValues { get; set; }
+        public System.Collections.Generic.Dictionary<int, float> SnapshotValues { get; set; }
 
         /// <summary>
         /// 效果等级
@@ -356,7 +356,7 @@ namespace ET.Client
         /// <summary>
         /// 获取来源属性值
         /// </summary>
-        public float? GetSourceAttribute(AttrType attrType)
+        public float? GetSourceAttribute(int attrType)
         {
             return SourceAttributes?.GetCurrentValue(attrType);
         }
@@ -364,7 +364,7 @@ namespace ET.Client
         /// <summary>
         /// 获取目标属性值
         /// </summary>
-        public float? GetTargetAttribute(AttrType attrType)
+        public float? GetTargetAttribute(int attrType)
         {
             return TargetAttributes?.GetCurrentValue(attrType);
         }
@@ -372,7 +372,7 @@ namespace ET.Client
         /// <summary>
         /// 获取快照属性值
         /// </summary>
-        public float? GetSnapshotValue(AttrType attrType)
+        public float? GetSnapshotValue(int attrType)
         {
             if (SnapshotValues != null && SnapshotValues.TryGetValue(attrType, out float value))
             {

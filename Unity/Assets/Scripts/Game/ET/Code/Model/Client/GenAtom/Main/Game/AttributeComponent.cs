@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ET
@@ -11,23 +10,16 @@ namespace ET
     public partial class AttributeComponent : Entity, IAwake, IDestroy
     {
         public int Level;
-        public float Hp => NumericComponent.GetAsFloat(NumericType.Hp.GetHashCode());
-        public float MaxHp => NumericComponent.GetAsFloat(NumericType.MaxHp.GetHashCode());
-        public float Mode => NumericComponent.GetAsFloat(NumericType.Mode.GetHashCode());
-        public float ModeMax => NumericComponent.GetAsFloat(NumericType.ModeMax.GetHashCode());
-        public float Attack => NumericComponent.GetAsFloat(NumericType.Attack.GetHashCode());
-        public float Armor => NumericComponent.GetAsFloat(NumericType.Armor.GetHashCode());
-        public float CriticalProbability => NumericComponent.GetAsFloat(NumericType.CriticalProbability.GetHashCode());
+        public float Hp => NumericComponent.GetAsFloat(NumericType.Hp);
+        public float MaxHp => NumericComponent.GetAsFloat(NumericType.MaxHp);
+        public float Mode => NumericComponent.GetAsFloat(NumericType.Mode);
+        public float ModeMax => NumericComponent.GetAsFloat(NumericType.ModeMax);
+        public float Attack => NumericComponent.GetAsFloat(NumericType.Attack);
+        public float Armor => NumericComponent.GetAsFloat(NumericType.Armor);
+        public float CriticalProbability => NumericComponent.GetAsFloat(NumericType.CriticalProbability);
 
         public NumericComponent NumericComponent => this.GetParent<Unit>().GetComponent<NumericComponent>();
-        /// <summary>
-        /// 所有的数据修改器
-        /// Key为分组名称，其中如果和NumericComponent有联系，则必须使用NumericType对应String作为Key，例如NumericType.HP对应String就是HP
-        /// Value为此装饰器分组中所有的装饰器
-        /// </summary>
         public XList<DataModifier> AllModifiers;
-        [BsonIgnore]
-        public object RuntimeAttributes;
         public int DataId;
 
         // public EquipComponent EquipComponent => this.GetParent<Unit>().GetComponent<EquipComponent>();

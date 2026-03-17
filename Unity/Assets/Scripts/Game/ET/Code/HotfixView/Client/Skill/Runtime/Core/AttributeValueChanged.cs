@@ -3,7 +3,7 @@ namespace ET.Client
     public struct AttributeValueChanged
     {
         public Unit Unit;
-        public int AttrType;
+        public int NumericType;
         public float OldValue;
         public float NewValue;
     }

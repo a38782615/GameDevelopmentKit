@@ -13,7 +13,7 @@ namespace ET.Client
         /// <summary>
         /// 要比较的属性类型
         /// </summary>
-        public AttrType compareAttrType = AttrType.Health;
+        public int compareAttrType = global::ET.NumericType.Hp;
 
         /// <summary>
         /// 比较操作符
@@ -33,6 +33,6 @@ namespace ET.Client
         /// <summary>
         /// 百分比基准属性
         /// </summary>
-        public AttrType percentageBaseAttrType = AttrType.MaxHealth;
+        public int percentageBaseAttrType = global::ET.NumericType.MaxHp;
     }
 }

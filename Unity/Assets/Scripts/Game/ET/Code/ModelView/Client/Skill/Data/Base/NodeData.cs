@@ -6,14 +6,14 @@ namespace ET.Client
     [Serializable]
     public class AttributeModifierData : Object
     {
-        public AttrType attrType = AttrType.None;
+        public int attrType = global::ET.NumericType.None;
         public ModifierOperation operation = ModifierOperation.Add;
         public ModifierMagnitudeSourceType magnitudeSourceType = ModifierMagnitudeSourceType.FixedValue;
         public float fixedValue = 0f;
         public string formula = "";
         public MMCType mmcType = MMCType.AttributeBased;
         public string setByCallerKey = "";
-        public AttrType mmcCaptureAttribute = AttrType.Attack;
+        public int mmcCaptureAttribute = global::ET.NumericType.Attack;
         public MMCAttributeSource mmcAttributeSource = MMCAttributeSource.Source;
         public float mmcCoefficient = 1f;
         public bool mmcUseSnapshot = true;

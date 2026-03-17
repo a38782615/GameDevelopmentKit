@@ -49,7 +49,7 @@ namespace ET.Client
                 && nodeData.damageType != DamageType.True
                 && target.Attributes != null)
             {
-                AttrType defenseType = nodeData.damageType == DamageType.Physical ? AttrType.Defense : AttrType.MagicDefense;
+                int defenseType = nodeData.damageType == DamageType.Physical ? global::ET.NumericType.Armor : global::ET.NumericType.MagicResistance;
                 float? defense = target.Attributes.GetCurrentValue(defenseType);
                 if (defense.HasValue && defense.Value > 0)
                 {
@@ -61,7 +61,7 @@ namespace ET.Client
 
             if (target.Attributes != null && baseDamage > 0f)
             {
-                Attribute healthAttr = target.Attributes.GetAttribute(AttrType.Health);
+                AttrCmp healthAttr = target.Attributes.GetAttribute(global::ET.NumericType.Hp);
                 if (healthAttr != null)
                 {
                     healthAttr.BaseValue -= baseDamage;

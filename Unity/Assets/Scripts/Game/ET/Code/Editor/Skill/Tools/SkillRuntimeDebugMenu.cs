@@ -68,7 +68,7 @@ namespace ET.Client.Editor
             moveCastSpec = spec;
             moveCastStartPosition = GetUnitWorldPosition(playerUnit);
             moveCastTargetPosition = CalculateCastPosition(playerUnit, monsterUnit, 1.5f);
-            moveCastHealthBefore = monsterAsc.Attributes?.GetCurrentValue(AttrType.Health) ?? -1f;
+            moveCastHealthBefore = monsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
 
             float speed = playerUnit.GetComponent<NumericComponent>()?.GetAsFloat(NumericType.Speed) ?? 0f;
             if (speed <= 0.01f)
@@ -153,7 +153,7 @@ namespace ET.Client.Editor
                         return;
                     }
 
-                    float healthAfter = moveCastMonsterAsc.Attributes?.GetCurrentValue(AttrType.Health) ?? -1f;
+                    float healthAfter = moveCastMonsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
                     float damage = moveCastHealthBefore >= 0f && healthAfter >= 0f ? moveCastHealthBefore - healthAfter : 0f;
                     SkillDiagFileLogger.Log(
                         $"[DiagMoveCast1001] result healthBefore={moveCastHealthBefore:0.##} healthAfter={healthAfter:0.##} damage={damage:0.##} castSuccess={moveCastSkillTriggered} player={DescribeUnitRuntime(moveCastPlayerUnit)} monster={DescribeUnitRuntime(moveCastMonsterUnit)} planarDistance={GetPlanarDistance(moveCastPlayerUnit, moveCastMonsterUnit):0.###}");

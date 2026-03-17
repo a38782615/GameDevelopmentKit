@@ -11,7 +11,7 @@ namespace ET.Client
     /// </summary>
     public static class FormulaEvaluator
     {
-        // 属性引用正则：Caster.AttrType 或 Target.AttrType
+        // 属性引用正则：Caster.Health 或 Target.Health
         [StaticField]
         private static readonly Regex AttributePattern = new Regex(
             @"(Caster|Target)\.(\w+)",
@@ -47,7 +47,7 @@ namespace ET.Client
                     string attrName = match.Groups[2].Value;
 
                     // 尝试解析属性类型
-                    if (!Enum.TryParse<AttrType>(attrName, true, out var attrType))
+                    if (!global::ET.NumericType.TryParseAttributeName(attrName, out int numericType))
                     {
                         return "0";
                     }
@@ -55,11 +55,11 @@ namespace ET.Client
                     float? value = null;
                     if (source == "Caster" && context.CasterAttributes != null)
                     {
-                        value = context.CasterAttributes.GetCurrentValue(attrType);
+                        value = context.CasterAttributes.GetCurrentValue(numericType);
                     }
                     else if (source == "Target" && context.TargetAttributes != null)
                     {
-                        value = context.TargetAttributes.GetCurrentValue(attrType);
+                        value = context.TargetAttributes.GetCurrentValue(numericType);
                     }
 
                     return (value ?? 0f).ToString(System.Globalization.CultureInfo.InvariantCulture);

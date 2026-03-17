@@ -59,7 +59,7 @@
 
 //             if (moveDirection.magnitude > 0.1f)
 //             {
-//                 transform.position += (Vector3)moveDirection * _unit.ownerASC.Attributes.GetCurrentValue(AttrType.MoveSpeed) * Time.deltaTime;
+//                 transform.position += (Vector3)moveDirection * _unit.ownerASC.Attributes.GetCurrentValue(global::ET.NumericType.Speed) * Time.deltaTime;
 
 //                 if (horizontal != 0f)
 //                 {

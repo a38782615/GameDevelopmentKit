@@ -29,18 +29,18 @@ namespace ET.Client
             // 订阅属性变化事件
         }
 
-        public static void HandleAttributeChanged(this AbilitySystemComponent self, AttrType attrType, float before, float after)
+        public static void HandleAttributeChanged(this AbilitySystemComponent self, int numericType, float before, float after)
         {
-            if (self.Owner != null && (attrType == AttrType.Health || attrType == AttrType.MaxHealth))
+            if (self.Owner != null && (numericType == global::ET.NumericType.Hp || numericType == global::ET.NumericType.MaxHp))
             {
                 SkillHudManager.GetOrCreate().UpdateUnitHealth(
                     self.InstanceId,
                     self.Owner,
-                    self.Attributes?.GetCurrentValue(AttrType.Health) ?? 0f,
-                    self.Attributes?.GetCurrentValue(AttrType.MaxHealth) ?? 0f);
+                    self.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
+                    self.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
             }
 
-            if (attrType == AttrType.Health)
+            if (numericType == global::ET.NumericType.Hp)
             {
                 if (after < before)
                 {
@@ -299,7 +299,7 @@ namespace ET.Client
                     continue;
                 }
 
-                float? health = targetAsc.Attributes?.GetCurrentValue(AttrType.Health);
+                float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
                 if (health.HasValue && health.Value <= 0f)
                 {
                     continue;

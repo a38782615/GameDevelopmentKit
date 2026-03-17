@@ -215,7 +215,7 @@ namespace ET.Client
                     continue;
                 }
 
-                float? health = targetAsc.Attributes?.GetCurrentValue(AttrType.Health);
+                float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
                 if (health.HasValue && health.Value <= 0f)
                 {
                     continue;

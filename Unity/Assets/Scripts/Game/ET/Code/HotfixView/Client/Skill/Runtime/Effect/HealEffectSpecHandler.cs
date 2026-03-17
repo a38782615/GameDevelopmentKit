@@ -73,8 +73,8 @@ namespace ET.Client
                 return;
             }
 
-            float currentHealth = target.Attributes.GetCurrentValue(AttrType.Health);
-            float maxHealth = target.Attributes.GetCurrentValue(AttrType.MaxHealth);
+            float currentHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.Hp);
+            float maxHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.MaxHp);
 #if UNITY_EDITOR
 #endif
             if (maxHealth > 0f && currentHealth >= maxHealth - 0.001f)
@@ -99,7 +99,7 @@ namespace ET.Client
                 return;
             }
 
-            Attribute healthAttr = target.Attributes.GetAttribute(AttrType.Health);
+            AttrCmp healthAttr = target.Attributes.GetAttribute(global::ET.NumericType.Hp);
             if (healthAttr == null)
             {
                 return;

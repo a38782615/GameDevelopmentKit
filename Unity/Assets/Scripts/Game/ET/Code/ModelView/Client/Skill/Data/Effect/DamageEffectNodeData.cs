@@ -43,7 +43,7 @@ namespace ET.Client
         /// <summary>
         /// MMC 捕获的属性类型
         /// </summary>
-        public AttrType damageMMCCaptureAttribute = AttrType.Attack;
+        public int damageMMCCaptureAttribute = global::ET.NumericType.Attack;
 
         /// <summary>
         /// MMC 属性来源

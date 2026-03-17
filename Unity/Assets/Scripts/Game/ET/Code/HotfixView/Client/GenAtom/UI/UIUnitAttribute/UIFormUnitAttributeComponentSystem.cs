@@ -103,7 +103,7 @@ namespace ET.Client
                 int attributeCount = GetCategoryAttributeCount(categoryIndex);
                 for (int attributeIndex = 0; attributeIndex < attributeCount; ++attributeIndex)
                 {
-                    AttrType attrType = GetCategoryAttributeType(categoryIndex, attributeIndex);
+                    int attrType = GetCategoryAttributeType(categoryIndex, attributeIndex);
                     MonoUIUnitAttributeRow row = global::UnityEngine.Object.Instantiate(rowTemplate, rowsRoot, false);
                     row.gameObject.name = $"Row_{categoryIndex}_{attributeIndex}";
                     row.LabelTextMeshProUGUI.text = GetAttributeName(attrType);
@@ -245,7 +245,7 @@ namespace ET.Client
                     continue;
                 }
 
-                float health = asc.Attributes?.GetCurrentValue(AttrType.Health) ?? 0f;
+                float health = asc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f;
                 if (health <= 0f)
                 {
                     continue;
@@ -311,9 +311,9 @@ namespace ET.Client
             }
         }
 
-        private static string GetAttributeValueText(AbilitySystemComponent asc, AttrType attrType)
+        private static string GetAttributeValueText(AbilitySystemComponent asc, int attrType)
         {
-            Attribute attribute = asc?.Attributes?.GetAttribute(attrType);
+            AttrCmp attribute = asc?.Attributes?.GetAttribute(attrType);
             if (attribute == null)
             {
                 return "--";
@@ -322,23 +322,23 @@ namespace ET.Client
             string valueText;
             switch (attrType)
             {
-                case AttrType.Health:
-                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(AttrType.MaxHealth))}";
+                case global::ET.NumericType.Hp:
+                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(global::ET.NumericType.MaxHp))}";
                     break;
-                case AttrType.Mana:
-                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(AttrType.MaxMana))}";
+                case global::ET.NumericType.Mp:
+                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(global::ET.NumericType.MaxMp))}";
                     break;
-                case AttrType.CritRate:
-                case AttrType.CooldownReduction:
+                case global::ET.NumericType.CriticalProbability:
+                case global::ET.NumericType.SkillCD:
                     valueText = $"{attribute.CurrentValue * 100f:F1}%";
                     break;
-                case AttrType.CritDamage:
+                case global::ET.NumericType.CriticalStrikeHarm:
                     valueText = $"{attribute.CurrentValue * 100f:F0}%";
                     break;
-                case AttrType.Level:
-                case AttrType.Experience:
-                case AttrType.MaxHealth:
-                case AttrType.MaxMana:
+                case global::ET.NumericType.Level:
+                case global::ET.NumericType.Experience:
+                case global::ET.NumericType.MaxHp:
+                case global::ET.NumericType.MaxMp:
                     valueText = FormatIntegral(attribute.CurrentValue);
                     break;
                 default:
@@ -409,85 +409,65 @@ namespace ET.Client
             }
         }
 
-        private static AttrType GetCategoryAttributeType(int categoryIndex, int attributeIndex)
+        private static int GetCategoryAttributeType(int categoryIndex, int attributeIndex)
         {
             switch (categoryIndex)
             {
                 case 0:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.Health;
-                        case 1: return AttrType.MaxHealth;
-                        case 2: return AttrType.HealthRegen;
-                        default: return AttrType.Health;
+                        case 0: return global::ET.NumericType.Hp;
+                        case 1: return global::ET.NumericType.MaxHp;
+                        case 2: return global::ET.NumericType.HPRec;
+                        default: return global::ET.NumericType.Hp;
                     }
                 case 1:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.Mana;
-                        case 1: return AttrType.MaxMana;
-                        case 2: return AttrType.ManaRegen;
-                        default: return AttrType.Mana;
+                        case 0: return global::ET.NumericType.Mp;
+                        case 1: return global::ET.NumericType.MaxMp;
+                        case 2: return global::ET.NumericType.MPRec;
+                        default: return global::ET.NumericType.Mp;
                     }
                 case 2:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.Attack;
-                        case 1: return AttrType.Defense;
-                        case 2: return AttrType.MagicPower;
-                        case 3: return AttrType.MagicDefense;
-                        default: return AttrType.Attack;
+                        case 0: return global::ET.NumericType.Attack;
+                        case 1: return global::ET.NumericType.Armor;
+                        case 2: return global::ET.NumericType.MagicStrength;
+                        case 3: return global::ET.NumericType.MagicResistance;
+                        default: return global::ET.NumericType.Attack;
                     }
                 case 3:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.MoveSpeed;
-                        case 1: return AttrType.AttackSpeed;
-                        case 2: return AttrType.CooldownReduction;
-                        default: return AttrType.MoveSpeed;
+                        case 0: return global::ET.NumericType.Speed;
+                        case 1: return global::ET.NumericType.AttackSpeed;
+                        case 2: return global::ET.NumericType.SkillCD;
+                        default: return global::ET.NumericType.Speed;
                     }
                 case 4:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.CritRate;
-                        case 1: return AttrType.CritDamage;
-                        default: return AttrType.CritRate;
+                        case 0: return global::ET.NumericType.CriticalProbability;
+                        case 1: return global::ET.NumericType.CriticalStrikeHarm;
+                        default: return global::ET.NumericType.CriticalProbability;
                     }
                 case 5:
                     switch (attributeIndex)
                     {
-                        case 0: return AttrType.Level;
-                        case 1: return AttrType.Experience;
-                        default: return AttrType.Level;
+                        case 0: return global::ET.NumericType.Level;
+                        case 1: return global::ET.NumericType.Experience;
+                        default: return global::ET.NumericType.Level;
                     }
                 default:
-                    return AttrType.Health;
+                    return global::ET.NumericType.Hp;
             }
         }
 
-        private static string GetAttributeName(AttrType attrType)
+        private static string GetAttributeName(int attrType)
         {
-            switch (attrType)
-            {
-                case AttrType.Health: return "Health";
-                case AttrType.MaxHealth: return "Max Health";
-                case AttrType.HealthRegen: return "Health Regen";
-                case AttrType.Mana: return "Mana";
-                case AttrType.MaxMana: return "Max Mana";
-                case AttrType.ManaRegen: return "Mana Regen";
-                case AttrType.Attack: return "Attack";
-                case AttrType.Defense: return "Defense";
-                case AttrType.MagicPower: return "Magic Power";
-                case AttrType.MagicDefense: return "Magic Defense";
-                case AttrType.MoveSpeed: return "Move Speed";
-                case AttrType.AttackSpeed: return "Attack Speed";
-                case AttrType.CooldownReduction: return "Cooldown Reduction";
-                case AttrType.CritRate: return "Crit Rate";
-                case AttrType.CritDamage: return "Crit Damage";
-                case AttrType.Level: return "Level";
-                case AttrType.Experience: return "Experience";
-                default: return attrType.ToString();
-            }
+            return global::ET.NumericType.GetAttributeName(attrType);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace ET.Client
         /// <summary>
         /// MMC 捕获的属性类型
         /// </summary>
-        public AttrType healMMCCaptureAttribute = AttrType.MagicPower;
+        public int healMMCCaptureAttribute = global::ET.NumericType.MagicStrength;
 
         /// <summary>
         /// MMC 属性来源

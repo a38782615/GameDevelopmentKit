@@ -41,8 +41,8 @@ namespace ET.Client
                     asc.InstanceId,
                     viewGameObject,
                     (UnitType)unit.Config().Type,
-                    asc.Attributes?.GetCurrentValue(AttrType.Health) ?? 0f,
-                    asc.Attributes?.GetCurrentValue(AttrType.MaxHealth) ?? 0f);
+                    asc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
+                    asc.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
                 SkelenAnimationComponent skelenAnimationComponent = unit.GetComponent<SkelenAnimationComponent>();
                 if (skelenAnimationComponent == null)
                 {

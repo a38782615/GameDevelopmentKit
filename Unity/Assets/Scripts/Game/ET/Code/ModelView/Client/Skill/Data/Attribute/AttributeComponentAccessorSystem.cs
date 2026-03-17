@@ -2,46 +2,58 @@ using System.Collections.Generic;
 
 namespace ET.Client
 {
-    [FriendOfAttribute(typeof(ET.AttributeComponent))]
+    [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
     public static class AttributeComponentAccessorSystem
     {
-        public static Attribute GetAttribute(this global::ET.AttributeComponent self, AttrType attrType)
+        public static AttrCmp GetAttrCmp(this global::ET.AttributeComponent self, int numericType)
         {
-            return self.TryGetAttribute(attrType, out Attribute attribute) ? attribute : null;
+            return self?.GetChild<AttrCmp>(numericType);
         }
 
-        public static bool RemoveAttribute(this global::ET.AttributeComponent self, AttrType attrType)
+        public static AttrCmp GetAttribute(this global::ET.AttributeComponent self, int numericType)
         {
-            Dictionary<AttrType, Attribute> attributes = self.EnsureAttributeMap();
-            if (!attributes.TryGetValue(attrType, out Attribute attribute))
+            return self.GetAttrCmp(numericType);
+        }
+
+        public static bool RemoveAttribute(this global::ET.AttributeComponent self, int numericType)
+        {
+            AttrCmp attribute = self.GetAttrCmp(numericType);
+            if (attribute == null)
             {
                 return false;
             }
 
             attribute.ClearCallbacks();
             attribute.ClearModifiers();
-            attributes.Remove(attrType);
+            attribute.Dispose();
             return true;
         }
 
-        public static bool HasAttribute(this global::ET.AttributeComponent self, AttrType attrType)
+        public static bool HasAttribute(this global::ET.AttributeComponent self, int numericType)
         {
-            return self.EnsureAttributeMap().ContainsKey(attrType);
+            return self.GetAttrCmp(numericType) != null;
         }
 
-        public static float GetBaseValue(this global::ET.AttributeComponent self, AttrType attrType)
+        public static float GetBaseValue(this global::ET.AttributeComponent self, int numericType)
         {
-            return self.GetAttribute(attrType)?.BaseValue ?? 0f;
+            return self.GetAttrCmp(numericType)?.BaseValue ?? 0f;
         }
 
-        public static float GetCurrentValue(this global::ET.AttributeComponent self, AttrType attrType)
+        public static float GetCurrentValue(this global::ET.AttributeComponent self, int numericType)
         {
-            return self.GetAttribute(attrType)?.CurrentValue ?? 0f;
+            AttrCmp attribute = self.GetAttrCmp(numericType);
+            if (attribute != null)
+            {
+                return attribute.CurrentValue;
+            }
+
+            NumericComponent numericComponent = self?.NumericComponent;
+            return numericComponent == null ? 0f : numericComponent.GetAsFloat(numericType);
         }
 
-        public static bool SetBaseValue(this global::ET.AttributeComponent self, AttrType attrType, float value)
+        public static bool SetBaseValue(this global::ET.AttributeComponent self, int numericType, float value)
         {
-            Attribute attribute = self.GetAttribute(attrType);
+            AttrCmp attribute = self.GetAttrCmp(numericType);
             if (attribute == null)
             {
                 return false;
@@ -51,9 +63,9 @@ namespace ET.Client
             return true;
         }
 
-        public static bool SetCurrentValue(this global::ET.AttributeComponent self, AttrType attrType, float value)
+        public static bool SetCurrentValue(this global::ET.AttributeComponent self, int numericType, float value)
         {
-            Attribute attribute = self.GetAttribute(attrType);
+            AttrCmp attribute = self.GetAttrCmp(numericType);
             if (attribute == null)
             {
                 return false;
@@ -63,9 +75,9 @@ namespace ET.Client
             return true;
         }
 
-        public static bool InitializeAttribute(this global::ET.AttributeComponent self, AttrType attrType, float value)
+        public static bool InitializeAttribute(this global::ET.AttributeComponent self, int numericType, float value)
         {
-            Attribute attribute = self.GetAttribute(attrType);
+            AttrCmp attribute = self.GetAttrCmp(numericType);
             if (attribute == null)
             {
                 return false;
@@ -86,7 +98,7 @@ namespace ET.Client
             {
                 if (item.Length >= 2)
                 {
-                    self.SetOrAddAttribute((AttrType)item[0], item[1]);
+                    self.SetOrAddAttribute(item[0], item[1]);
                 }
             }
         }
@@ -102,30 +114,37 @@ namespace ET.Client
             {
                 if (item.Length >= 2)
                 {
-                    self.SetOrAddAttribute((AttrType)(int)item[0], item[1]);
+                    self.SetOrAddAttribute((int)item[0], item[1]);
                 }
             }
         }
 
-        public static Dictionary<AttrType, float> CreateSnapshot(this global::ET.AttributeComponent self)
+        public static Dictionary<int, float> CreateSnapshot(this global::ET.AttributeComponent self)
         {
-            Dictionary<AttrType, float> snapshot = new Dictionary<AttrType, float>();
-            foreach (KeyValuePair<AttrType, Attribute> pair in self.EnsureAttributeMap())
+            Dictionary<int, float> snapshot = new Dictionary<int, float>();
+            foreach (AttrCmp attribute in self.GetAllAttributes())
             {
-                snapshot[pair.Key] = pair.Value.CurrentValue;
+                snapshot[attribute.NumericType] = attribute.CurrentValue;
             }
 
             return snapshot;
         }
 
-        public static IEnumerable<Attribute> GetAllAttributes(this global::ET.AttributeComponent self)
+        public static IEnumerable<AttrCmp> GetAllAttributes(this global::ET.AttributeComponent self)
         {
-            return self.EnsureAttributeMap().Values;
+            foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
+            {
+                AttrCmp attribute = self.GetAttrCmp(numericType);
+                if (attribute != null)
+                {
+                    yield return attribute;
+                }
+            }
         }
 
         public static void RecalculateAll(this global::ET.AttributeComponent self, ModifierCalculationContext context = null)
         {
-            foreach (Attribute attribute in self.EnsureAttributeMap().Values)
+            foreach (AttrCmp attribute in self.GetAllAttributes())
             {
                 attribute.Recalculate(context);
             }
@@ -133,39 +152,27 @@ namespace ET.Client
 
         public static void Clear(this global::ET.AttributeComponent self)
         {
-            Dictionary<AttrType, Attribute> attributes = self.EnsureAttributeMap();
-            foreach (Attribute attribute in attributes.Values)
+            List<AttrCmp> attributes = new List<AttrCmp>();
+            foreach (AttrCmp attribute in self.GetAllAttributes())
+            {
+                attributes.Add(attribute);
+            }
+
+            foreach (AttrCmp attribute in attributes)
             {
                 attribute.ClearCallbacks();
                 attribute.ClearModifiers();
+                attribute.Dispose();
             }
-
-            attributes.Clear();
         }
 
-        private static void SetOrAddAttribute(this global::ET.AttributeComponent self, AttrType attrType, float value)
+        private static void SetOrAddAttribute(this global::ET.AttributeComponent self, int numericType, float value)
         {
-            if (!self.InitializeAttribute(attrType, value) && !self.HasAttribute(attrType))
+            if (!self.InitializeAttribute(numericType, value) && !self.HasAttribute(numericType))
             {
-                Dictionary<AttrType, Attribute> attributes = self.EnsureAttributeMap();
-                attributes[attrType] = new Attribute(attrType, value);
+                AttrCmp attribute = self.AddChildWithId<AttrCmp, int>((long)numericType, numericType);
+                attribute.Initialize(value);
             }
-        }
-
-        private static Dictionary<AttrType, Attribute> EnsureAttributeMap(this global::ET.AttributeComponent self)
-        {
-            if (self.RuntimeAttributes is not Dictionary<AttrType, Attribute> attributes)
-            {
-                attributes = new Dictionary<AttrType, Attribute>();
-                self.RuntimeAttributes = attributes;
-            }
-
-            return attributes;
-        }
-
-        private static bool TryGetAttribute(this global::ET.AttributeComponent self, AttrType attrType, out Attribute attribute)
-        {
-            return self.EnsureAttributeMap().TryGetValue(attrType, out attribute);
         }
     }
 }

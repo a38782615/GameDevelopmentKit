@@ -28,7 +28,7 @@ namespace ET.Client
         public float Period;
         public List<AttributeModifier> Modifiers = new List<AttributeModifier>();
         public Dictionary<string, float> SetByCallerValues = new Dictionary<string, float>();
-        public Dictionary<AttrType, float> SnapshotValues = new Dictionary<AttrType, float>();
+        public Dictionary<int, float> SnapshotValues = new Dictionary<int, float>();
 
         // ============ 运行时状态 ============
         public float ActivationTime;

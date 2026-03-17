@@ -10,7 +10,7 @@ namespace ET.Client
             AbilitySystemComponent asc = args.Unit?.GetComponent<SkillUnit>()?.ASC.As();
             if (asc != null)
             {
-                asc.HandleAttributeChanged((AttrType)args.AttrType, args.OldValue, args.NewValue);
+                asc.HandleAttributeChanged(args.NumericType, args.OldValue, args.NewValue);
             }
 
             await UniTask.CompletedTask;

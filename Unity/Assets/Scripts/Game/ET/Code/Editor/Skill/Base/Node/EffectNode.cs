@@ -331,16 +331,17 @@ namespace ET.Client.Editor
                 };
 
                 // 属性类型
-                var attrTypeField = new EnumField(modifier.attrType);
-                attrTypeField.style.width = 60;
-                attrTypeField.RegisterValueChangedCallback(evt =>
+                var attrTypeField = new AttributeField();
+                attrTypeField.style.width = 120;
+                attrTypeField.Value = modifier.attrType;
+                attrTypeField.OnValueChanged += value =>
                 {
                     if (TypedData != null && index < TypedData.attributeModifiers.Count)
                     {
-                        TypedData.attributeModifiers[index].attrType = (AttrType)evt.newValue;
+                        TypedData.attributeModifiers[index].attrType = value;
                         NotifyDataChanged();
                     }
-                });
+                };
                 itemContainer.Add(attrTypeField);
 
                 // 操作类型

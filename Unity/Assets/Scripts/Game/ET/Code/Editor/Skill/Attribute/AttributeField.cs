@@ -1,42 +1,42 @@
+using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor;
-using UnityEditor.UIElements;
-using System.Collections.Generic;
-using System;
-
 
 namespace ET.Client.Editor
 {
-    /// <summary>
-    /// 属性选择器控件 - 用于在编辑器中选择属性类型
-    /// 使用枚举下拉框选择 AttrType
-    /// </summary>
     public class AttributeField : VisualElement
     {
-        private Label labelElement;
-        private EnumField enumField;
-        private AttrType currentValue;
+        private readonly List<int> numericTypes = new List<int>(global::ET.NumericType.GetClientAttributeTypes());
+        private readonly List<string> displayNames = new List<string>();
+        private readonly Label labelElement;
+        private readonly PopupField<string> popupField;
+        private int currentValue;
 
-        public event Action<AttrType> OnValueChanged;
+        public event Action<int> OnValueChanged;
 
-        public AttrType Value
+        public int Value
         {
             get => currentValue;
             set
             {
                 currentValue = value;
-                enumField?.SetValueWithoutNotify(value);
+                RefreshSelection();
             }
         }
 
         public AttributeField(string label = "属性")
         {
+            for (int i = 0; i < numericTypes.Count; i++)
+            {
+                displayNames.Add(global::ET.NumericType.GetAttributeName(numericTypes[i]));
+            }
+
             style.flexDirection = FlexDirection.Row;
             style.alignItems = Align.Center;
             style.marginBottom = 4;
 
-            // 标签
             labelElement = new Label(label)
             {
                 style =
@@ -47,42 +47,60 @@ namespace ET.Client.Editor
             };
             Add(labelElement);
 
-            // 枚举下拉框
-            enumField = new EnumField(AttrType.None)
+            popupField = new PopupField<string>(displayNames, 0)
             {
                 style =
                 {
                     flexGrow = 1
                 }
             };
-            enumField.RegisterValueChangedCallback(evt =>
+            popupField.RegisterValueChangedCallback(_ =>
             {
-                currentValue = (AttrType)evt.newValue;
+                int index = popupField.index;
+                if (index < 0 || index >= numericTypes.Count)
+                {
+                    return;
+                }
+
+                currentValue = numericTypes[index];
                 OnValueChanged?.Invoke(currentValue);
             });
-            Add(enumField);
+            Add(popupField);
+            RefreshSelection();
         }
 
         public void SetLabel(string label)
         {
             labelElement.text = label;
         }
+
+        private void RefreshSelection()
+        {
+            int index = numericTypes.IndexOf(currentValue);
+            if (index < 0)
+            {
+                index = 0;
+                currentValue = numericTypes.Count > 0 ? numericTypes[0] : global::ET.NumericType.None;
+            }
+
+            if (displayNames.Count > 0)
+            {
+                popupField.index = index;
+            }
+        }
     }
 
-    /// <summary>
-    /// 属性修改器编辑器控件 - 用于编辑 AttributeModifierData
-    /// </summary>
     public class AttributeModifierField : VisualElement
     {
-        private AttributeModifierData data;
-        private AttributeField attributeField;
-        private EnumField operationField;
-        private VisualElement valueContainer;
-        private EnumField sourceTypeField;
-        private FloatField fixedValueField;
-        private TextField formulaField;
-        private EnumField mmcTypeField;
-        private TextField setByCallerField;
+        private readonly AttributeModifierData data;
+        private readonly AttributeField attributeField;
+        private readonly EnumField operationField;
+        private readonly VisualElement valueContainer;
+        private readonly EnumField sourceTypeField;
+        private readonly FloatField fixedValueField;
+        private readonly TextField formulaField;
+        private readonly EnumField mmcTypeField;
+        private readonly TextField setByCallerField;
 
         public event Action OnDataChanged;
 
@@ -101,7 +119,6 @@ namespace ET.Client.Editor
             style.paddingBottom = 6;
             style.marginBottom = 4;
 
-            // 属性选择
             attributeField = new AttributeField("目标属性");
             attributeField.Value = data.attrType;
             attributeField.OnValueChanged += value =>
@@ -111,7 +128,6 @@ namespace ET.Client.Editor
             };
             Add(attributeField);
 
-            // 操作类型
             operationField = new EnumField("操作", data.operation);
             operationField.style.marginBottom = 4;
             operationField.RegisterValueChangedCallback(evt =>
@@ -121,7 +137,6 @@ namespace ET.Client.Editor
             });
             Add(operationField);
 
-            // 数值行 - 输入框 + 来源类型下拉框在同一行
             valueContainer = new VisualElement
             {
                 style =
@@ -137,7 +152,6 @@ namespace ET.Client.Editor
                 style = { width = 100, minWidth = 100 }
             });
 
-            // 固定值输入框
             fixedValueField = new FloatField
             {
                 value = data.fixedValue,
@@ -149,10 +163,9 @@ namespace ET.Client.Editor
                 OnDataChanged?.Invoke();
             });
 
-            // 公式输入框
             formulaField = new TextField
             {
-                value = data.formula ?? "",
+                value = data.formula ?? string.Empty,
                 style = { flexGrow = 1 }
             };
             formulaField.RegisterValueChangedCallback(evt =>
@@ -161,7 +174,6 @@ namespace ET.Client.Editor
                 OnDataChanged?.Invoke();
             });
 
-            // MMC 类型下拉框
             mmcTypeField = new EnumField(data.mmcType)
             {
                 style = { flexGrow = 1 }
@@ -172,10 +184,9 @@ namespace ET.Client.Editor
                 OnDataChanged?.Invoke();
             });
 
-            // SetByCaller 键名输入框
             setByCallerField = new TextField
             {
-                value = data.setByCallerKey ?? "",
+                value = data.setByCallerKey ?? string.Empty,
                 style = { flexGrow = 1 }
             };
             setByCallerField.RegisterValueChangedCallback(evt =>
@@ -184,7 +195,6 @@ namespace ET.Client.Editor
                 OnDataChanged?.Invoke();
             });
 
-            // 来源类型下拉框
             sourceTypeField = new EnumField(data.magnitudeSourceType)
             {
                 style = { width = 120, marginLeft = 4 }
@@ -202,13 +212,11 @@ namespace ET.Client.Editor
 
         private void RefreshValueInput()
         {
-            // 清除当前输入控件（保留标签）
             while (valueContainer.childCount > 1)
             {
                 valueContainer.RemoveAt(1);
             }
 
-            // 根据来源类型添加对应的输入控件
             switch (data.magnitudeSourceType)
             {
                 case ModifierMagnitudeSourceType.FixedValue:
@@ -216,7 +224,7 @@ namespace ET.Client.Editor
                     valueContainer.Add(fixedValueField);
                     break;
                 case ModifierMagnitudeSourceType.Formula:
-                    formulaField.SetValueWithoutNotify(data.formula ?? "");
+                    formulaField.SetValueWithoutNotify(data.formula ?? string.Empty);
                     valueContainer.Add(formulaField);
                     break;
                 case ModifierMagnitudeSourceType.ModifierMagnitudeCalculation:
@@ -224,12 +232,11 @@ namespace ET.Client.Editor
                     valueContainer.Add(mmcTypeField);
                     break;
                 case ModifierMagnitudeSourceType.SetByCaller:
-                    setByCallerField.SetValueWithoutNotify(data.setByCallerKey ?? "");
+                    setByCallerField.SetValueWithoutNotify(data.setByCallerKey ?? string.Empty);
                     valueContainer.Add(setByCallerField);
                     break;
             }
 
-            // 添加来源类型下拉框
             valueContainer.Add(sourceTypeField);
         }
 
@@ -242,13 +249,10 @@ namespace ET.Client.Editor
         }
     }
 
-    /// <summary>
-    /// 属性修改器列表编辑器控件
-    /// </summary>
     public class AttributeModifierListField : VisualElement
     {
-        private List<AttributeModifierData> dataList;
-        private VisualElement listContainer;
+        private readonly List<AttributeModifierData> dataList;
+        private readonly VisualElement listContainer;
 
         public event Action OnDataChanged;
 
@@ -256,7 +260,6 @@ namespace ET.Client.Editor
         {
             dataList = modifiers;
 
-            // 标题栏
             var header = new VisualElement
             {
                 style =
@@ -282,7 +285,6 @@ namespace ET.Client.Editor
 
             Add(header);
 
-            // 列表容器
             listContainer = new VisualElement();
             Add(listContainer);
 
@@ -296,7 +298,7 @@ namespace ET.Client.Editor
             for (int i = 0; i < dataList.Count; i++)
             {
                 int index = i;
-                var modifierData = dataList[index];
+                AttributeModifierData modifierData = dataList[index];
 
                 var itemContainer = new VisualElement();
 
@@ -304,7 +306,6 @@ namespace ET.Client.Editor
                 modifierField.OnDataChanged += () => OnDataChanged?.Invoke();
                 itemContainer.Add(modifierField);
 
-                // 删除按钮
                 var deleteButton = new Button(() =>
                 {
                     dataList.RemoveAt(index);
