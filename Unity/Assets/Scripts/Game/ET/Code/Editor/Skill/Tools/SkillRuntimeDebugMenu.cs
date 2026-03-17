@@ -502,8 +502,44 @@ namespace ET.Client.Editor
             string currentHandler = gameAIComponent == null
                 ? "none"
                 : gameAIComponent.Current == -1 ? "Idle" : gameAIComponent.Current.ToString();
+            string abilityStates = DescribeAbilityStates(unit);
             SkillDiagFileLogger.Log(
-                $"[DiagGameAIProbe] {phase} hasAI={(gameAIComponent != null)} current={currentHandler} patrolIdleUntil={gameAIComponent?.PatrolIdleUntil ?? 0} speed={speed:0.##} runtimePos={unit.Position} {DescribeUnitRuntime(unit)}");
+                $"[DiagGameAIProbe] {phase} hasAI={(gameAIComponent != null)} current={currentHandler} patrolIdleUntil={gameAIComponent?.PatrolIdleUntil ?? 0} speed={speed:0.##} runtimePos={unit.Position} abilities={abilityStates} {DescribeUnitRuntime(unit)}");
+        }
+
+        private static string DescribeAbilityStates(Unit unit)
+        {
+            AbilityContainerComponent abilities = unit?.GetComponent<SkillUnit>()?.ASC.As()?.Abilities;
+            if (abilities == null)
+            {
+                return "none";
+            }
+
+            System.Text.StringBuilder builder = new System.Text.StringBuilder();
+            foreach (EntityRef<GameplayAbilitySpec> abilityRef in abilities.GetGrantedAbilities())
+            {
+                GameplayAbilitySpec spec = abilityRef.As();
+                if (spec == null)
+                {
+                    continue;
+                }
+
+                if (builder.Length > 0)
+                {
+                    builder.Append(';');
+                }
+
+                builder.Append(spec.AbilityNodeData?.skillId ?? 0);
+                builder.Append("[");
+                builder.Append(spec.State);
+                builder.Append(",active=");
+                builder.Append(spec.IsActive);
+                builder.Append(",cd=");
+                builder.Append(spec.IsOnCooldown());
+                builder.Append(']');
+            }
+
+            return builder.Length == 0 ? "empty" : builder.ToString();
         }
 
         private static float3 GetUnitWorldPosition(Unit unit)

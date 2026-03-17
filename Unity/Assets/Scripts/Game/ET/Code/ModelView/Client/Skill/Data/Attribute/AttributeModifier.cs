@@ -232,7 +232,7 @@ namespace ET.Client
         {
             var modifier = new AttributeModifier
             {
-                targetAttrType = data.attrType,
+                targetAttrType = global::ET.NumericType.NormalizeLegacyAttributeType(data.attrType),
                 operation = data.operation,
             };
 
@@ -248,7 +248,7 @@ namespace ET.Client
                     modifier.useMMC = true;
                     modifier.mmcType = data.mmcType;
                     // 复制 MMC 详细配置
-                    modifier.mmcCaptureAttribute = data.mmcCaptureAttribute;
+                    modifier.mmcCaptureAttribute = global::ET.NumericType.NormalizeLegacyAttributeType(data.mmcCaptureAttribute);
                     modifier.mmcAttributeSource = data.mmcAttributeSource;
                     modifier.mmcCoefficient = data.mmcCoefficient;
                     modifier.mmcUseSnapshot = data.mmcUseSnapshot;

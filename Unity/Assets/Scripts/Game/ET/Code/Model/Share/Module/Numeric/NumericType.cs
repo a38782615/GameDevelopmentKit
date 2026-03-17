@@ -347,5 +347,20 @@ namespace ET
 					return false;
 			}
 		}
+
+		public static int NormalizeLegacyAttributeType(int numericType)
+		{
+			switch (numericType)
+			{
+				case 100:
+					return Mode;
+				case 200:
+					return Attack;
+				case 300:
+					return Speed;
+				default:
+					return numericType;
+			}
+		}
 	}
 }
