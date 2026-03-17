@@ -30,16 +30,16 @@ namespace ET.Client
                 return;
             }
 
-            NumericComponent numericComponent = unit.GetComponent<NumericComponent>();
-            if (numericComponent == null)
+            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
+            if (attributeComponent == null)
             {
 #if UNITY_EDITOR
-                Log.Warning($"[GameAI] XunLuo skipped: numeric missing unit={unit.Id} config={unit.ConfigId}");
+                Log.Warning($"[GameAI] XunLuo skipped: attribute missing unit={unit.Id} config={unit.ConfigId}");
 #endif
                 return;
             }
 
-            float speed = numericComponent.GetAsFloat(NumericType.Speed);
+            float speed = attributeComponent.GetCurrentValue(NumericType.Speed);
             if (speed <= 0f)
             {
 #if UNITY_EDITOR
