@@ -61,16 +61,7 @@ namespace ET.Client
 
             foreach (var tableData in tbSkillGraph.DataList)
             {
-#if UNITY_EDITOR
-                int beforeConvertNewGameObjectCount = CountAnonymousRootObjects();
-#endif
                 var skillData = Convert(tableData);
-#if UNITY_EDITOR
-                int afterConvertNewGameObjectCount = CountAnonymousRootObjects();
-                if (beforeConvertNewGameObjectCount != afterConvertNewGameObjectCount)
-                {
-                }
-#endif
                 if (skillData != null)
                 {
                     SkillDataCenter.Instance.RegisterSkillGraph(skillData);
@@ -145,16 +136,8 @@ namespace ET.Client
                 string cleanJson = Regex.Replace(nodeJson, @",?\s*""\$type""\s*:\s*""[^""]*""", "");
                 cleanJson = Regex.Replace(cleanJson, @"{\s*,", "{"); // 清理开头的逗号
 
-#if UNITY_EDITOR
-                int beforeDeserializeNewGameObjectCount = CountAnonymousRootObjects();
-#endif
                 var nodeData = (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(cleanJson, nodeDataType, CreateJsonSerializerSettings());
-#if UNITY_EDITOR
-                int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
-                if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
-                {
-                }
-#endif
+
                 return nodeData;
             }
             catch (Exception e)
@@ -194,16 +177,7 @@ namespace ET.Client
 
             try
             {
-#if UNITY_EDITOR
-                int beforeDeserializeNewGameObjectCount = CountAnonymousRootObjects();
-#endif
                 var nodeData = (NodeData)Newtonsoft.Json.JsonConvert.DeserializeObject(nodeJson, targetType, CreateJsonSerializerSettings());
-#if UNITY_EDITOR
-                int afterDeserializeNewGameObjectCount = CountAnonymousRootObjects();
-                if (beforeDeserializeNewGameObjectCount != afterDeserializeNewGameObjectCount)
-                {
-                }
-#endif
                 return nodeData;
             }
             catch (Exception e)
@@ -249,31 +223,5 @@ namespace ET.Client
             return settings;
         }
 
-#if UNITY_EDITOR
-        private static int CountAnonymousRootObjects()
-        {
-            var rootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-            int count = 0;
-            foreach (var gameObject in rootGameObjects)
-            {
-                if (gameObject != null && gameObject.name == "New Game Object")
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        private static string Truncate(string value, int maxLength)
-        {
-            if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
-            {
-                return value;
-            }
-
-            return value.Substring(0, maxLength) + "...";
-        }
-#endif
     }
 }
