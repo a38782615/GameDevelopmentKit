@@ -6,6 +6,7 @@ namespace ET.Client
     /// </summary>
     [EntitySystemOf(typeof(AttributeComponent))]
     [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
+    [FriendOfAttribute(typeof(global::ET.NumericComponent))]
     public static partial class AttributeComponentSystem
     {
         [EntitySystem]
@@ -79,11 +80,6 @@ namespace ET.Client
             {
                 RefreshRuntimeAttributeFromNumeric(self, numericType, overwriteExisting);
             }
-        }
-
-        public static void InitializeMissingRuntimeAttributesFromConfig(this global::ET.AttributeComponent self)
-        {
-            self.Init();
         }
 
         public static void SyncAllRuntimeAttributesToNumeric(this global::ET.AttributeComponent self)
