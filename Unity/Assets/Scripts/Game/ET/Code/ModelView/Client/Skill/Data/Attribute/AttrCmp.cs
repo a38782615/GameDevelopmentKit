@@ -4,10 +4,15 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    /// <summary>
+    /// 单个属性运行时实体。
+    /// 作为 AttributeComponent 的子实体存在，基础值和当前值都落在 NumericComponent 上。
+    /// </summary>
     [ChildOf(typeof(global::ET.AttributeComponent))]
     [EnableMethod]
     public class AttrCmp : Entity, IAwake<int>, IDestroy
     {
+        // 直接使用 NumericType 作为属性标识，避免再维护一套 AttrType 映射。
         [SerializeField]
         private int numericType;
         public int NumericType => numericType;
@@ -32,6 +37,7 @@ namespace ET.Client
         private float maxValue;
         public float MaxValue => maxValue;
 
+        // 运行时 modifier 只保存在内存中，不做持久化。
         [NonSerialized]
         private List<ActiveModifier> activeModifiers;
 
@@ -73,6 +79,7 @@ namespace ET.Client
             }
             set
             {
+                // BaseValue 变更后需要重新推导 CurrentValue。
                 float oldValue = this.BaseValue;
                 float newValue = ClampValue(value, true);
 
@@ -230,6 +237,7 @@ namespace ET.Client
                 return BaseValue;
             }
 
+            // 计算顺序与原 Attribute 实现保持一致：加法、乘法、覆盖。
             List<ActiveModifier> filteredModifiers = FilterModifiers(activeModifiers);
             float additive = 0f;
             float multiplicative = 1f;

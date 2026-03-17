@@ -2,6 +2,10 @@ using System.Collections.Generic;
 
 namespace ET.Client
 {
+    /// <summary>
+    /// AttributeComponent 的只读/读写访问入口。
+    /// 这里屏蔽 AttrCmp 子实体的创建与查询细节，业务层统一按 NumericType 访问。
+    /// </summary>
     [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
     public static class AttributeComponentAccessorSystem
     {
@@ -121,6 +125,7 @@ namespace ET.Client
 
         public static Dictionary<int, float> CreateSnapshot(this global::ET.AttributeComponent self)
         {
+            // Snapshot 按 NumericType 存值，供 MMC 和公式计算复用。
             Dictionary<int, float> snapshot = new Dictionary<int, float>();
             foreach (AttrCmp attribute in self.GetAllAttributes())
             {
@@ -170,6 +175,7 @@ namespace ET.Client
         {
             if (!self.InitializeAttribute(numericType, value) && !self.HasAttribute(numericType))
             {
+                // ModelView 侧不能依赖 HotfixView 扩展方法，缺失时直接补子实体。
                 AttrCmp attribute = self.AddChildWithId<AttrCmp, int>((long)numericType, numericType);
                 attribute.Initialize(value);
             }

@@ -6,6 +6,10 @@ using UnityEngine.UIElements;
 
 namespace ET.Client.Editor
 {
+    /// <summary>
+    /// 属性选择控件。
+    /// 现在基于 NumericType 构建下拉项，替代旧的 AttrType 枚举。
+    /// </summary>
     public class AttributeField : VisualElement
     {
         private readonly List<int> numericTypes = new List<int>(global::ET.NumericType.GetClientAttributeTypes());
@@ -28,6 +32,7 @@ namespace ET.Client.Editor
 
         public AttributeField(string label = "属性")
         {
+            // 只暴露客户端技能链路真正会消费的属性集合。
             for (int i = 0; i < numericTypes.Count; i++)
             {
                 displayNames.Add(global::ET.NumericType.GetAttributeName(numericTypes[i]));
@@ -92,6 +97,9 @@ namespace ET.Client.Editor
 
     public class AttributeModifierField : VisualElement
     {
+        /// <summary>
+        /// 单个属性修改器编辑控件。
+        /// </summary>
         private readonly AttributeModifierData data;
         private readonly AttributeField attributeField;
         private readonly EnumField operationField;
@@ -251,6 +259,9 @@ namespace ET.Client.Editor
 
     public class AttributeModifierListField : VisualElement
     {
+        /// <summary>
+        /// 属性修改器列表编辑控件。
+        /// </summary>
         private readonly List<AttributeModifierData> dataList;
         private readonly VisualElement listContainer;
 

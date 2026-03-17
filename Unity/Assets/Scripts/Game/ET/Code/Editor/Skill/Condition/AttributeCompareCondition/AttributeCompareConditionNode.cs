@@ -3,6 +3,10 @@ using UnityEngine.UIElements;
 
 namespace ET.Client.Editor
 {
+    /// <summary>
+    /// 属性比较条件节点。
+    /// 使用 NumericType 选择比较属性和百分比基准属性。
+    /// </summary>
     public class AttributeCompareConditionNode : ConditionNode<AttributeCompareConditionNodeData>
     {
         private AttributeField attrTypeField;

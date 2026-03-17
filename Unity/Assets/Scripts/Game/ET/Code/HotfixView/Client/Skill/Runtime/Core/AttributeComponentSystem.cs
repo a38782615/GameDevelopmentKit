@@ -1,5 +1,9 @@
 namespace ET.Client
 {
+    /// <summary>
+    /// AttributeComponent 的运行时逻辑。
+    /// 负责按 NumericComponent 初始化/同步 AttrCmp 子实体，并派发属性变化事件。
+    /// </summary>
     [EntitySystemOf(typeof(AttributeComponent))]
     [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
     public static partial class AttributeComponentSystem
@@ -58,6 +62,7 @@ namespace ET.Client
 
             EnsureNumericValue(self, numericType, defaultValue);
 
+            // 子实体 Id 直接使用 NumericType，便于快速定位。
             AttrCmp attribute = self.AddChildWithId<AttrCmp, int>(numericType, numericType);
             attribute.Initialize(self.NumericComponent?.GetAsFloat(numericType) ?? defaultValue);
             BindAttributeEvents(self, attribute);
@@ -73,6 +78,7 @@ namespace ET.Client
 
         public static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self, bool overwriteExisting)
         {
+            // 统一从 NumericComponent 拉取客户端关心的属性，构建或刷新 AttrCmp。
             foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
             {
                 RefreshRuntimeAttributeFromNumeric(self, numericType, overwriteExisting);
