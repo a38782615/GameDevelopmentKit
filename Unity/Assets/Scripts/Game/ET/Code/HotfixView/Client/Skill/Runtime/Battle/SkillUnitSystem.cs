@@ -23,11 +23,7 @@ namespace ET.Client
             if (asc == null) return;
 
             var unitType = (UnitType)unit.Config().Type;
-            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
-            attributeComponent?.InitializeMissingRuntimeAttributesFromConfig();
-
             self.InitUnitTypeTags(asc);
-
 
             switch (unitType)
             {

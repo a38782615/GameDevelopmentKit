@@ -12,43 +12,39 @@ namespace ET.Client
         private static void Awake(this global::ET.AttributeComponent self)
         {
             self.AllModifiers = XList<DataModifier>.Create();
-            self.RefreshRuntimeAttributesFromNumeric(false);
         }
 
         [EntitySystem]
         private static void Destroy(this global::ET.AttributeComponent self)
         {
             self.Clear();
-            self.AllModifiers.Dispose();
+            self.AllModifiers?.Dispose();
         }
 
-        public static void Init(this global::ET.AttributeComponent self, bool isHero)
+        public static void Init(this global::ET.AttributeComponent self)
         {
-            Unit unit = self.GetParent<Unit>();
-            int level = self.Level > 0 ? self.Level : 1;
-            DRUnitAttribute unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level);
-            if (unitBaseConfig == null && level != 0)
-            {
-                unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
-            }
-
-            if (unitBaseConfig == null)
+            NumericComponent numericComponent = self.NumericComponent;
+            if (numericComponent == null)
             {
                 return;
             }
 
-            NumericComponent num = unit.GetComponent<NumericComponent>();
-            num.SetNoEvent(global::ET.NumericType.MaxHpBase, GetConfigValue(unitBaseConfig.HP));
-            num.SetNoEvent(global::ET.NumericType.HpBase, GetConfigValue(unitBaseConfig.HP));
-            num.SetNoEvent(global::ET.NumericType.CriticalProbabilityBase, GetConfigValue(unitBaseConfig.CriticalProbability));
-            num.SetNoEvent(global::ET.NumericType.ModeBase, GetConfigValue(unitBaseConfig.Mode));
-            num.SetNoEvent(global::ET.NumericType.ModeMaxBase, GetConfigValue(unitBaseConfig.Mode));
-            num.SetNoEvent(global::ET.NumericType.MpBase, GetConfigValue(unitBaseConfig.MP));
-            num.SetNoEvent(global::ET.NumericType.MaxMpBase, GetConfigValue(unitBaseConfig.MP));
-            num.SetNoEvent(global::ET.NumericType.AttackBase, GetConfigValue(unitBaseConfig.Attack));
-            num.SetNoEvent(global::ET.NumericType.ArmorBase, GetConfigValue(unitBaseConfig.Armor));
-            num.SetNoEvent(global::ET.NumericType.SpeedBase, unitBaseConfig.MoveSpeed);
-            num.SetNoEvent(global::ET.NumericType.AttackSpeedBase, GetConfigValue(unitBaseConfig.AttackSpeed));
+            if (TryGetUnitBaseConfig(self, out Unit unit, out int level, out DRUnitAttribute unitBaseConfig))
+            {
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.ModeMax, ToNumericLong(unitBaseConfig.Mode));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Mp, ToNumericLong(unitBaseConfig.MP));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxMp, ToNumericLong(unitBaseConfig.MP));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Attack, ToNumericLong(unitBaseConfig.Attack));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Speed, unitBaseConfig.MoveSpeed);
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.AttackSpeed, ToNumericLong(unitBaseConfig.AttackSpeed));
+                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Level, level);
+            }
+
             self.RefreshRuntimeAttributesFromNumeric(true);
         }
 
@@ -87,35 +83,7 @@ namespace ET.Client
 
         public static void InitializeMissingRuntimeAttributesFromConfig(this global::ET.AttributeComponent self)
         {
-            Unit unit = self.GetParent<Unit>();
-            if (unit == null)
-            {
-                return;
-            }
-
-            int level = self.Level > 0 ? self.Level : 1;
-            DRUnitAttribute unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level);
-            if (unitBaseConfig == null && level != 0)
-            {
-                unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
-            }
-
-            if (unitBaseConfig == null)
-            {
-                return;
-            }
-
-            AddAttributeIfMissing(self, global::ET.NumericType.Hp, unitBaseConfig.HP);
-            AddAttributeIfMissing(self, global::ET.NumericType.MaxHp, unitBaseConfig.HP);
-            AddAttributeIfMissing(self, global::ET.NumericType.Mp, unitBaseConfig.MP);
-            AddAttributeIfMissing(self, global::ET.NumericType.MaxMp, unitBaseConfig.MP);
-            AddAttributeIfMissing(self, global::ET.NumericType.Attack, unitBaseConfig.Attack);
-            AddAttributeIfMissing(self, global::ET.NumericType.Armor, unitBaseConfig.Armor);
-            AddAttributeIfMissing(self, global::ET.NumericType.Speed, unitBaseConfig.MoveSpeed / 10000f);
-            AddAttributeIfMissing(self, global::ET.NumericType.AttackSpeed, unitBaseConfig.AttackSpeed);
-            AddAttributeIfMissing(self, global::ET.NumericType.CriticalProbability, unitBaseConfig.CriticalProbability);
-            AddAttributeIfMissing(self, global::ET.NumericType.Level, level);
-            self.SyncAllRuntimeAttributesToNumeric();
+            self.Init();
         }
 
         public static void SyncAllRuntimeAttributesToNumeric(this global::ET.AttributeComponent self)
@@ -144,14 +112,6 @@ namespace ET.Client
             self.AllModifiers.Remove(modify);
             CountAttr(self, modify.Attribute);
             modify.Dispose();
-        }
-
-        private static void AddAttributeIfMissing(this global::ET.AttributeComponent self, int numericType, float value)
-        {
-            if (!self.HasAttribute(numericType))
-            {
-                self.AddAttribute(numericType, value);
-            }
         }
 
         private static void BindAttributeEvents(global::ET.AttributeComponent self, AttrCmp attribute)
@@ -222,26 +182,86 @@ namespace ET.Client
             }
 
             int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-            if (baseNumericType != global::ET.NumericType.None && numericComponent.GetByKey(baseNumericType) == 0)
+            if (baseNumericType != global::ET.NumericType.None)
             {
-                numericComponent.SetNoEvent(baseNumericType, (long)(defaultValue * 10000));
-                numericComponent.Update(baseNumericType, false);
+                if (!numericComponent.NumericDic.ContainsKey(baseNumericType))
+                {
+                    numericComponent.SetNoEvent(baseNumericType, ToNumericLong(defaultValue));
+                }
+
+                if (!numericComponent.NumericDic.ContainsKey(numericType))
+                {
+                    numericComponent.Update(baseNumericType, false);
+                }
+
                 return;
             }
 
-            if (numericComponent.GetByKey(numericType) == 0)
+            if (!numericComponent.NumericDic.ContainsKey(numericType))
             {
-                numericComponent.SetNoEvent(numericType, (long)(defaultValue * 10000));
+                numericComponent.SetNoEvent(numericType, ToNumericLong(defaultValue));
             }
         }
 
-        private static int GetConfigValue(float value)
+        private static bool TryGetUnitBaseConfig(
+            global::ET.AttributeComponent self,
+            out Unit unit,
+            out int level,
+            out DRUnitAttribute unitBaseConfig)
         {
-            return (int)value * 1000;
+            unit = self.GetParent<Unit>();
+            level = self.Level > 0 ? self.Level : 1;
+            unitBaseConfig = null;
+            if (unit == null)
+            {
+                return false;
+            }
+
+            unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level);
+            if (unitBaseConfig == null && level != 0)
+            {
+                unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
+            }
+
+            return unitBaseConfig != null;
+        }
+
+        private static void TryApplyNumericFromConfig(NumericComponent numericComponent, int numericType, long value)
+        {
+            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
+            if (baseNumericType != global::ET.NumericType.None)
+            {
+                if (!numericComponent.NumericDic.ContainsKey(baseNumericType))
+                {
+                    numericComponent.SetNoEvent(baseNumericType, value);
+                }
+
+                if (!numericComponent.NumericDic.ContainsKey(numericType))
+                {
+                    numericComponent.Update(baseNumericType, false);
+                }
+
+                return;
+            }
+
+            if (!numericComponent.NumericDic.ContainsKey(numericType))
+            {
+                numericComponent.SetNoEvent(numericType, value);
+            }
+        }
+
+        private static long ToNumericLong(float value)
+        {
+            return (long)(value * 10000);
         }
 
         private static void CountAttr(global::ET.AttributeComponent self, int attributeType)
         {
+            if (self.NumericComponent == null)
+            {
+                return;
+            }
+
             float value = 0f;
             foreach (DataModifier modifier in self.AllModifiers)
             {

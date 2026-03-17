@@ -12,21 +12,35 @@ namespace ET.Client
         private static void Awake(this AbilitySystemComponent self)
         {
             self.OwnedTags = new GameplayTagContainer();
-            self.IsInitialized = true;
-
-            SkillUnit skillUnit = self.GetParent<SkillUnit>();
-            Unit unit = skillUnit?.Unit.As();
-            if (unit != null && unit.GetComponent<global::ET.AttributeComponent>() == null)
-            {
-                unit.AddComponent<global::ET.AttributeComponent>();
-            }
 
             // 添加子组件
             self.AddComponent<AbilityContainerComponent>();
             self.AddComponent<GameplayEffectContainerComponent>();
             self.AddComponent<GameplayCueContainerComponent>();
 
+            self.Init();
+
             // 订阅属性变化事件
+        }
+
+        public static void Init(this AbilitySystemComponent self)
+        {
+            SkillUnit skillUnit = self.GetParent<SkillUnit>();
+            Unit unit = skillUnit?.Unit.As();
+            if (unit == null)
+            {
+                self.IsInitialized = false;
+                return;
+            }
+
+            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
+            if (attributeComponent == null)
+            {
+                attributeComponent = unit.AddComponent<global::ET.AttributeComponent>();
+            }
+
+            attributeComponent.Init();
+            self.IsInitialized = true;
         }
 
         public static void HandleAttributeChanged(this AbilitySystemComponent self, int numericType, float before, float after)
