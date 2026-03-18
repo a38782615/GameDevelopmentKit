@@ -53,15 +53,6 @@ namespace ET.Client
         private bool isDirty;
 
         public int ModifierCount => activeModifiers?.Count ?? 0;
-
-        public delegate void PreValueChangeDelegate(AttrCmp attribute, ref float newValue);
-        public event PreValueChangeDelegate OnPreBaseValueChange;
-        public event PreValueChangeDelegate OnPreCurrentValueChange;
-
-        public delegate void PostValueChangeDelegate(AttrCmp attribute, float oldValue, float newValue);
-        public event PostValueChangeDelegate OnPostBaseValueChange;
-        public event PostValueChangeDelegate OnPostCurrentValueChange;
-
         public float BaseValue
         {
             get
@@ -86,7 +77,6 @@ namespace ET.Client
                 WriteBaseValue(newValue, true);
                 MarkDirty();
                 Recalculate();
-                OnPostBaseValueChange?.Invoke(this, oldValue, newValue);
             }
         }
 
@@ -103,7 +93,6 @@ namespace ET.Client
                 float newValue = ClampValue(value, false);
 
                 WriteCurrentValue(newValue, true);
-                OnPostCurrentValueChange?.Invoke(this, oldValue, newValue);
             }
         }
 
@@ -142,14 +131,6 @@ namespace ET.Client
         public void ResetCurrentToBase()
         {
             CurrentValue = BaseValue;
-        }
-
-        public void ClearCallbacks()
-        {
-            OnPreBaseValueChange = null;
-            OnPreCurrentValueChange = null;
-            OnPostBaseValueChange = null;
-            OnPostCurrentValueChange = null;
         }
 
         public void AddModifier(AttributeModifier modifier, object source = null)
@@ -389,15 +370,6 @@ namespace ET.Client
         private float ClampValue(float value, bool isBaseValue)
         {
             float newValue = value;
-            if (isBaseValue)
-            {
-                OnPreBaseValueChange?.Invoke(this, ref newValue);
-            }
-            else
-            {
-                OnPreCurrentValueChange?.Invoke(this, ref newValue);
-            }
-
             return ClampSilent(newValue);
         }
 

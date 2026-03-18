@@ -57,19 +57,9 @@ namespace ET.Client
                 return existing;
             }
 
-            EnsureNumericValue(self, numericType, defaultValue);
-
             // 子实体 Id 直接使用 NumericType，便于快速定位。
             AttrCmp attribute = self.AddChildWithId<AttrCmp, int>(numericType, numericType);
             attribute.Initialize(self.NumericComponent?.GetAsFloat(numericType) ?? defaultValue);
-            BindAttributeEvents(self, attribute);
-            return attribute;
-        }
-
-        public static AttrCmp AddMetaAttribute(this global::ET.AttributeComponent self, int numericType)
-        {
-            AttrCmp attribute = self.AddAttribute(numericType, 0f);
-            attribute.SetAsMeta(true);
             return attribute;
         }
 
@@ -79,14 +69,6 @@ namespace ET.Client
             foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
             {
                 RefreshRuntimeAttributeFromNumeric(self, numericType, overwriteExisting);
-            }
-        }
-
-        public static void SyncAllRuntimeAttributesToNumeric(this global::ET.AttributeComponent self)
-        {
-            foreach (AttrCmp attribute in self.GetAllAttributes())
-            {
-                SyncRuntimeAttributeToNumeric(self, attribute);
             }
         }
 
@@ -110,39 +92,6 @@ namespace ET.Client
             modify.Dispose();
         }
 
-        private static void BindAttributeEvents(global::ET.AttributeComponent self, AttrCmp attribute)
-        {
-            attribute.OnPostBaseValueChange += (attr, oldValue, newValue) =>
-            {
-                SyncRuntimeAttributeToNumeric(self, attr);
-                PublishAttributeChanged(self, attr, oldValue, newValue);
-            };
-
-            attribute.OnPostCurrentValueChange += (attr, oldValue, newValue) =>
-            {
-                SyncRuntimeAttributeToNumeric(self, attr);
-                PublishAttributeChanged(self, attr, oldValue, newValue);
-            };
-        }
-
-        private static void PublishAttributeChanged(global::ET.AttributeComponent self, AttrCmp attribute, float oldValue, float newValue)
-        {
-            Unit unit = self.GetParent<Unit>();
-            Scene scene = self.Scene();
-            if (unit == null || scene == null)
-            {
-                return;
-            }
-
-            EventSystem.Instance.Publish(scene, new AttributeValueChanged
-            {
-                Unit = unit,
-                NumericType = attribute.NumericType,
-                OldValue = oldValue,
-                NewValue = newValue
-            });
-        }
-
         private static void RefreshRuntimeAttributeFromNumeric(global::ET.AttributeComponent self, int numericType, bool overwriteExisting)
         {
             float value = self.NumericComponent?.GetAsFloat(numericType) ?? 0f;
@@ -158,47 +107,6 @@ namespace ET.Client
                 attribute.Initialize(value);
             }
         }
-
-        private static void SyncRuntimeAttributeToNumeric(global::ET.AttributeComponent self, AttrCmp attribute)
-        {
-            if (attribute == null || self.NumericComponent == null)
-            {
-                return;
-            }
-
-            self.NumericComponent.Set(attribute.NumericType, attribute.CurrentValue);
-        }
-
-        private static void EnsureNumericValue(global::ET.AttributeComponent self, int numericType, float defaultValue)
-        {
-            NumericComponent numericComponent = self.NumericComponent;
-            if (numericComponent == null)
-            {
-                return;
-            }
-
-            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-            if (baseNumericType != global::ET.NumericType.None)
-            {
-                if (!numericComponent.NumericDic.ContainsKey(baseNumericType))
-                {
-                    numericComponent.SetNoEvent(baseNumericType, ToNumericLong(defaultValue));
-                }
-
-                if (!numericComponent.NumericDic.ContainsKey(numericType))
-                {
-                    numericComponent.Update(baseNumericType, false);
-                }
-
-                return;
-            }
-
-            if (!numericComponent.NumericDic.ContainsKey(numericType))
-            {
-                numericComponent.SetNoEvent(numericType, ToNumericLong(defaultValue));
-            }
-        }
-
         private static bool TryGetUnitBaseConfig(
             global::ET.AttributeComponent self,
             out Unit unit,

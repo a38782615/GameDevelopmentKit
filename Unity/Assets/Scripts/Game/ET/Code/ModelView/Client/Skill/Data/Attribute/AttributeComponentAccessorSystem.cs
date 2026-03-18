@@ -27,7 +27,6 @@ namespace ET.Client
                 return false;
             }
 
-            attribute.ClearCallbacks();
             attribute.ClearModifiers();
             attribute.Dispose();
             return true;
@@ -165,7 +164,6 @@ namespace ET.Client
 
             foreach (AttrCmp attribute in attributes)
             {
-                attribute.ClearCallbacks();
                 attribute.ClearModifiers();
                 attribute.Dispose();
             }

@@ -3,14 +3,14 @@ using Cysharp.Threading.Tasks;
 namespace ET.Client
 {
     [Event(SceneType.Current)]
-    public class AttributeValueChanged_NotifyAbilitySystem : AEvent<Scene, AttributeValueChanged>
+    public class NumericChangeEvent_NotifyAbilitySystem : AEvent<Scene, NumbericChange>
     {
-        protected override async UniTask Run(Scene scene, AttributeValueChanged args)
+        protected override async UniTask Run(Scene scene, NumbericChange args)
         {
             AbilitySystemComponent asc = args.Unit?.GetComponent<SkillUnit>()?.ASC.As();
             if (asc != null)
             {
-                asc.HandleAttributeChanged(args.NumericType, args.OldValue, args.NewValue);
+                asc.HandleAttributeChanged(args.NumericType, args.Old, args.New);
             }
 
             await UniTask.CompletedTask;

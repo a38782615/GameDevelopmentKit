@@ -18,7 +18,6 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this AttrCmp self)
         {
-            self.ClearCallbacks();
             self.ClearModifiers();
         }
     }
