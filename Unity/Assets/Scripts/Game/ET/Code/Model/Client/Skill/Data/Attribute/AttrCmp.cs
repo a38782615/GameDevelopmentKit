@@ -1,58 +1,45 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 单个属性运行时实体。
-    /// 作为 AttributeComponent 的子实体存在，基础值和当前值都落在 NumericComponent 上。
-    /// </summary>
     [ChildOf(typeof(global::ET.AttributeComponent))]
     [EnableMethod]
     public class AttrCmp : Entity, IAwake<int>, IDestroy
     {
-        // 直接使用 NumericType 作为属性标识，避免再维护一套 AttrType 映射。
-        [SerializeField]
+        private const float Epsilon = 0.0001f;
+
         private int numericType;
-        public int NumericType => numericType;
-
-        [SerializeField]
         private bool isMeta;
-        public bool IsMeta => isMeta;
-
-        [SerializeField]
         private bool hasMinValue;
-        public bool HasMinValue => hasMinValue;
-
-        [SerializeField]
         private float minValue;
-        public float MinValue => minValue;
-
-        [SerializeField]
         private bool hasMaxValue;
-        public bool HasMaxValue => hasMaxValue;
-
-        [SerializeField]
         private float maxValue;
-        public float MaxValue => maxValue;
 
-        // 运行时 modifier 只保存在内存中，不做持久化。
         [NonSerialized]
         private List<ActiveModifier> activeModifiers;
 
         [NonSerialized]
         private AggregatorMode aggregatorMode = AggregatorMode.Default;
+
+        [NonSerialized]
+        private bool isDirty;
+
+        public int NumericType => numericType;
+        public bool IsMeta => isMeta;
+        public bool HasMinValue => hasMinValue;
+        public float MinValue => minValue;
+        public bool HasMaxValue => hasMaxValue;
+        public float MaxValue => maxValue;
+        public int ModifierCount => activeModifiers?.Count ?? 0;
+
         public AggregatorMode AggregatorMode
         {
             get => aggregatorMode;
             set => aggregatorMode = value;
         }
 
-        [NonSerialized]
-        private bool isDirty;
-
-        public int ModifierCount => activeModifiers?.Count ?? 0;
         public float BaseValue
         {
             get
@@ -63,17 +50,14 @@ namespace ET.Client
                     return 0f;
                 }
 
-                int baseNumericType = global::ET.NumericType.GetBaseNumericType(this.numericType);
+                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
                 return baseNumericType == global::ET.NumericType.None
-                    ? numericComponent.GetAsFloat(this.numericType)
+                    ? numericComponent.GetAsFloat(numericType)
                     : numericComponent.GetAsFloat(baseNumericType);
             }
             set
             {
-                // BaseValue 变更后需要重新推导 CurrentValue。
-                float oldValue = this.BaseValue;
-                float newValue = ClampValue(value, true);
-
+                float newValue = ClampSilent(value);
                 WriteBaseValue(newValue, true);
                 MarkDirty();
                 Recalculate();
@@ -85,13 +69,11 @@ namespace ET.Client
             get
             {
                 NumericComponent numericComponent = GetNumericComponent();
-                return numericComponent == null ? 0f : numericComponent.GetAsFloat(this.numericType);
+                return numericComponent == null ? 0f : numericComponent.GetAsFloat(numericType);
             }
             set
             {
-                float oldValue = this.CurrentValue;
-                float newValue = ClampValue(value, false);
-
+                float newValue = ClampSilent(value);
                 WriteCurrentValue(newValue, true);
             }
         }
@@ -105,7 +87,7 @@ namespace ET.Client
 
         public void SetNumericType(int value)
         {
-            this.numericType = value;
+            numericType = value;
         }
 
         public void SetClamp(float? min, float? max)
@@ -140,7 +122,7 @@ namespace ET.Client
             {
                 Modifier = modifier,
                 Source = source,
-                AppliedTime = Time.time
+                AppliedTime = global::ET.TimeInfo.Instance.ClientNow(),
             });
             MarkDirty();
         }
@@ -153,13 +135,13 @@ namespace ET.Client
             }
 
             int removed = activeModifiers.RemoveAll(m => m.Modifier == modifier);
-            if (removed > 0)
+            if (removed <= 0)
             {
-                MarkDirty();
-                return true;
+                return false;
             }
 
-            return false;
+            MarkDirty();
+            return true;
         }
 
         public int RemoveModifiersFromSource(object source)
@@ -208,7 +190,7 @@ namespace ET.Client
 
         public override string ToString()
         {
-            return $"{ET.NumericType.GetAttributeName(this.numericType)}: Base={BaseValue}, Current={CurrentValue}";
+            return $"{ET.NumericType.GetAttributeName(numericType)}: Base={BaseValue}, Current={CurrentValue}";
         }
 
         private float CalculateNewValue(ModifierCalculationContext context)
@@ -218,7 +200,6 @@ namespace ET.Client
                 return BaseValue;
             }
 
-            // 计算顺序与原 Attribute 实现保持一致：加法、乘法、覆盖。
             List<ActiveModifier> filteredModifiers = FilterModifiers(activeModifiers);
             float additive = 0f;
             float multiplicative = 1f;
@@ -239,7 +220,7 @@ namespace ET.Client
                         multiplicative *= 1f + (magnitude - 1f) * stackCount;
                         break;
                     case ModifierOperation.Divide:
-                        if (Mathf.Abs(magnitude) > 0.0001f)
+                        if (math.abs(magnitude) > Epsilon)
                         {
                             multiplicative /= 1f + (magnitude - 1f) * stackCount;
                         }
@@ -260,17 +241,13 @@ namespace ET.Client
 
         private List<ActiveModifier> FilterModifiers(List<ActiveModifier> modifiers)
         {
-            switch (aggregatorMode)
+            return aggregatorMode switch
             {
-                case AggregatorMode.MostNegativeModifier:
-                    return FilterMostNegative(modifiers);
-                case AggregatorMode.MostPositiveModifier:
-                    return FilterMostPositive(modifiers);
-                case AggregatorMode.MostNegativeWithAllPositive:
-                    return FilterMostNegativeWithAllPositive(modifiers);
-                default:
-                    return modifiers;
-            }
+                AggregatorMode.MostNegativeModifier => FilterMostNegative(modifiers),
+                AggregatorMode.MostPositiveModifier => FilterMostPositive(modifiers),
+                AggregatorMode.MostNegativeWithAllPositive => FilterMostNegativeWithAllPositive(modifiers),
+                _ => modifiers,
+            };
         }
 
         private List<ActiveModifier> FilterMostNegative(List<ActiveModifier> modifiers)
@@ -367,23 +344,17 @@ namespace ET.Client
             return result;
         }
 
-        private float ClampValue(float value, bool isBaseValue)
-        {
-            float newValue = value;
-            return ClampSilent(newValue);
-        }
-
         private float ClampSilent(float value)
         {
             float result = value;
             if (hasMinValue)
             {
-                result = Mathf.Max(result, minValue);
+                result = math.max(result, minValue);
             }
 
             if (hasMaxValue)
             {
-                result = Mathf.Min(result, maxValue);
+                result = math.min(result, maxValue);
             }
 
             return result;
@@ -397,7 +368,7 @@ namespace ET.Client
                 return;
             }
 
-            int baseNumericType = global::ET.NumericType.GetBaseNumericType(this.numericType);
+            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
             if (baseNumericType == global::ET.NumericType.None)
             {
                 WriteCurrentValue(value, publishEvent);
@@ -425,17 +396,17 @@ namespace ET.Client
 
             if (publishEvent)
             {
-                numericComponent.Set(this.numericType, value);
+                numericComponent.Set(numericType, value);
             }
             else
             {
-                numericComponent.SetNoEvent(this.numericType, (long)(value * 10000));
+                numericComponent.SetNoEvent(numericType, (long)(value * 10000));
             }
         }
 
         private NumericComponent GetNumericComponent()
         {
-            return this.GetParent<global::ET.AttributeComponent>()?.NumericComponent;
+            return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
         }
 
         private static int GetStackCount(object source)
@@ -460,7 +431,7 @@ namespace ET.Client
     {
         public AttributeModifier Modifier;
         public object Source;
-        public float AppliedTime;
+        public long AppliedTime;
     }
 
     public enum AggregatorMode

@@ -171,21 +171,6 @@ namespace ET.Client
     }
 
     /// <summary>
-    /// 属性修改器操作类型 - 对应GAS的GameplayModifierOp
-    /// </summary>
-    public enum ModifierOperation
-    {
-        //[InspectorName((("加法")]
-        Add,
-        //[InspectorName((("乘法")]
-        Multiply,
-        //[InspectorName((("除法")]
-        Divide,
-        //[InspectorName((("覆盖")]
-        Override
-    }
-
-    /// <summary>
     /// 堆叠类型 - 对应GAS的GameplayEffectStackingType
     /// </summary>
     public enum StackType
@@ -332,24 +317,6 @@ namespace ET.Client
     }
 
     /// <summary>
-    /// 修改器数值来源类型 - 决定 Modifier 的数值如何计算
-    /// </summary>
-    public enum ModifierMagnitudeSourceType
-    {
-        //[InspectorName((("具体值")]
-        FixedValue,
-
-        //[InspectorName((("公式")]
-        Formula,
-
-        //[InspectorName((("自定义计算器 (MMC)")]
-        ModifierMagnitudeCalculation,
-
-        //[InspectorName((("上下文数据")]
-        SetByCaller
-    }
-
-    /// <summary>
     /// 伤害计算类型枚举 - 选择使用哪个伤害计算类
     /// </summary>
     public enum DamageCalculationType
@@ -373,15 +340,4 @@ namespace ET.Client
         // PercentageHeal,
     }
 
-    /// <summary>
-    /// MMC 计算类型枚举 - 选择使用哪个 MMC 计算类
-    /// </summary>
-    public enum MMCType
-    {
-        //[InspectorName((("基于属性")]
-        AttributeBased,
-        //[InspectorName((("基于等级")]
-        LevelBased
-        // 扩展时在这里添加新的 MMC 类型
-    }
 }
