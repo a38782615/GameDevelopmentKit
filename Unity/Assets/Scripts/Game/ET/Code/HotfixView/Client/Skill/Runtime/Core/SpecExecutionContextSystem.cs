@@ -734,9 +734,9 @@ namespace ET.Client
             if (self.OwnerEffectSpec.As() != null && cueSpec.DestroyWithNode)
             {
                 var ownerEffect = self.GetOwnerEffectSpec();
-                if (ownerEffect != null && !ownerEffect.TriggeredCueIds.Contains(cueSpec.Id))
+                if (ownerEffect != null && !ownerEffect.TriggeredCueIds.Contains(cueSpec))
                 {
-                    ownerEffect.TriggeredCueIds.Add(cueSpec.Id);
+                    ownerEffect.TriggeredCueIds.Add(cueSpec);
                 }
             }
         }

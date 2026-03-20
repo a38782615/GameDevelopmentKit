@@ -454,11 +454,13 @@ namespace ET.Client
                 var cueContainer = asc?.GetComponent<GameplayCueContainerComponent>();
                 if (cueContainer != null && !cueContainer.IsDisposed)
                 {
-                    foreach (var cueId in self.TriggeredCueIds)
+                    foreach (EntityRef<GameplayCueSpec> cueRef in self.TriggeredCueIds)
                     {
-                        var cue = cueContainer.GetChild<GameplayCueSpec>(cueId);
+                        GameplayCueSpec cue = cueRef.As();
                         if (cue != null && cue.IsRunning)
+                        {
                             self.StopTriggeredCue(cue);
+                        }
                     }
                 }
                 self.TriggeredCueIds.Clear();
@@ -516,11 +518,13 @@ namespace ET.Client
             var cueContainer = asc?.GetComponent<GameplayCueContainerComponent>();
             if (cueContainer != null && !cueContainer.IsDisposed && self.TriggeredCueIds != null && self.TriggeredCueIds.Count > 0)
             {
-                foreach (var cueId in self.TriggeredCueIds)
+                foreach (EntityRef<GameplayCueSpec> cueRef in self.TriggeredCueIds)
                 {
-                    var cue = cueContainer.GetChild<GameplayCueSpec>(cueId);
+                    GameplayCueSpec cue = cueRef.As();
                     if (cue != null && cue.IsRunning)
+                    {
                         self.StopTriggeredCue(cue);
+                    }
                 }
                 self.TriggeredCueIds.Clear();
             }
@@ -636,10 +640,12 @@ namespace ET.Client
 
         // ============ Cue管理 ============
 
-        public static void RegisterTriggeredCue(this GameplayEffectSpec self, long cueId)
+        public static void RegisterTriggeredCue(this GameplayEffectSpec self, GameplayCueSpec cueSpec)
         {
-            if (cueId != 0 && !self.TriggeredCueIds.Contains(cueId))
-                self.TriggeredCueIds.Add(cueId);
+            if (cueSpec != null && !self.TriggeredCueIds.Contains(cueSpec))
+            {
+                self.TriggeredCueIds.Add(cueSpec);
+            }
         }
 
         // ============ 辅助方法 ============

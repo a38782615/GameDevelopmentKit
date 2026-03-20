@@ -40,7 +40,7 @@ namespace ET.Client
         public bool HasExecutedCompleteFlow;
         public float ElapsedTime;
         public float PeriodTimer;
-        public List<long> TriggeredCueIds = new List<long>(); // GameplayCueSpec Entity Ids
+        public List<EntityRef<GameplayCueSpec>> TriggeredCueIds = new List<EntityRef<GameplayCueSpec>>();
 
         // ============ 静态数据访问 ============
         public NodeData NodeData => SkillDataCenter.Instance.GetNodeData(SkillId, NodeGuid);
