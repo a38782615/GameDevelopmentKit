@@ -27,24 +27,12 @@ namespace ET.Client
         {
             if (target == null)
             {
-#if UNITY_EDITOR
-                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
-                {
-                    SkillDiagFileLogger.Log($"[DiagSkill{Spec.SkillId}] damage skip target=null");
-                }
-#endif
                 return;
             }
 
             DamageEffectNodeData nodeData = GetNode();
             if (nodeData == null)
             {
-#if UNITY_EDITOR
-                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
-                {
-                    SkillDiagFileLogger.Log($"[DiagSkill{Spec.SkillId}] damage skip nodeData=null");
-                }
-#endif
                 return;
             }
 
@@ -82,13 +70,6 @@ namespace ET.Client
                 SpecExecutionContext executionContext = GetExecutionContext();
                 DamageResult damageResult = new DamageResult(baseDamage, false, false, nodeData.damageType);
                 executionContext.SetCustomData("DamageResult", damageResult);
-#if UNITY_EDITOR
-                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
-                {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagSkill{Spec.SkillId}] damage applied node={Spec.NodeGuid} target={target.Owner?.name ?? "null"} damage={baseDamage:0.##} hasExecutionContext={(executionContext != null)} hasDamageResult={executionContext?.HasCustomData("DamageResult") ?? false}");
-                }
-#endif
             }
 
             if (baseDamage > 0f)

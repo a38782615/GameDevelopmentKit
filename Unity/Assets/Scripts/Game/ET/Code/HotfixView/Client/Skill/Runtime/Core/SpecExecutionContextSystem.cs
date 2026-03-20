@@ -414,25 +414,11 @@ namespace ET.Client
                 return;
 
             var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortId);
-#if UNITY_EDITOR
-            if (skillId == "1010" || skillId == "7001")
-            {
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkill{skillId}] execute-connected from={nodeGuid} port={outputPortId} count={connectedNodes?.Count ?? 0}");
-            }
-#endif
             if (connectedNodes == null || connectedNodes.Count == 0)
                 return;
 
             foreach (var nodeData in connectedNodes)
             {
-#if UNITY_EDITOR
-                if (skillId == "1010" || skillId == "7001")
-                {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagSkill{skillId}] execute-node guid={nodeData.guid} type={nodeData.nodeType} targetType={nodeData.targetType}");
-                }
-#endif
                 self.ExecuteNode(skillId, nodeData);
             }
         }

@@ -83,9 +83,6 @@ namespace ET.Client.Editor
             moveCastState = MoveCastState.Moving;
             moveCastSkillTriggered = false;
 
-            SkillDiagFileLogger.Log(
-                $"[DiagMoveCast1001] begin player={DescribeUnitRuntime(playerUnit)} monster={DescribeUnitRuntime(monsterUnit)} moveTarget={moveCastTargetPosition} planarDistance={GetPlanarDistance(playerUnit, monsterUnit):0.###} healthBefore={moveCastHealthBefore:0.##} speed={speed:0.##} moveDuration={moveCastMoveDuration:0.###}");
-
             EditorApplication.update -= UpdateMoveCast1001;
             EditorApplication.update += UpdateMoveCast1001;
         }
@@ -118,7 +115,6 @@ namespace ET.Client.Editor
 
             if (moveCastPlayerUnit == null || moveCastMonsterUnit == null || moveCastPlayerAsc == null || moveCastMonsterAsc == null || moveCastSpec == null)
             {
-                SkillDiagFileLogger.Log("[DiagMoveCast1001] abort invalid runtime references");
                 CleanupMoveCastState();
                 return;
             }
@@ -138,9 +134,6 @@ namespace ET.Client.Editor
                     }
 
                     moveCastPlayerUnit.Position = moveCastTargetPosition;
-                    SkillDiagFileLogger.Log(
-                        $"[DiagMoveCast1001] move complete player={DescribeUnitRuntime(moveCastPlayerUnit)} monster={DescribeUnitRuntime(moveCastMonsterUnit)} planarDistance={GetPlanarDistance(moveCastPlayerUnit, moveCastMonsterUnit):0.###}");
-
                     string beforeState = DescribeState(moveCastSpec);
                     bool castSuccess = moveCastPlayerAsc.TryActivateAbility(moveCastSpec, moveCastMonsterAsc);
                     string afterState = DescribeState(moveCastSpec);
@@ -148,8 +141,6 @@ namespace ET.Client.Editor
                     moveCastWaitStartTime = EditorApplication.timeSinceStartup;
                     moveCastState = MoveCastState.WaitingDamage;
 
-                    SkillDiagFileLogger.Log(
-                        $"[DiagMoveCast1001] cast skillId=1001 success={castSuccess} before={beforeState} after={afterState} hasTarget=True player={DescribeUnitRuntime(moveCastPlayerUnit)} monster={DescribeUnitRuntime(moveCastMonsterUnit)}");
                     return;
                 }
                 case MoveCastState.WaitingDamage:
@@ -162,10 +153,6 @@ namespace ET.Client.Editor
 
                     float healthAfter = moveCastMonsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
                     float damage = moveCastHealthBefore >= 0f && healthAfter >= 0f ? moveCastHealthBefore - healthAfter : 0f;
-                    SkillDiagFileLogger.Log(
-                        $"[DiagMoveCast1001] result healthBefore={moveCastHealthBefore:0.##} healthAfter={healthAfter:0.##} damage={damage:0.##} castSuccess={moveCastSkillTriggered} player={DescribeUnitRuntime(moveCastPlayerUnit)} monster={DescribeUnitRuntime(moveCastMonsterUnit)} planarDistance={GetPlanarDistance(moveCastPlayerUnit, moveCastMonsterUnit):0.###}");
-                    Debug.Log(
-                        $"[SkillRuntimeDebug] move-and-cast skillId=1001 castSuccess={moveCastSkillTriggered} damage={damage:0.##}");
                     CleanupMoveCastState();
                     return;
                 }
@@ -217,16 +204,11 @@ namespace ET.Client.Editor
             AbilitySystemComponent target = FindDefaultTarget(currentScene, unit);
             string projectilePath = GetProjectilePath(spec);
             int timeEffectCount = spec.GetComponent<TimeEffectRuntimeComponent>()?.TimeEffects?.Count ?? -1;
-            SkillDiagFileLogger.Log(
-                $"[DiagSkillDebug] graph skillId={skillId} animation={spec.AnimationName} animationGuid={spec.AnimationNodeGuid} duration={spec.AnimationDuration:0.00} timeEffects={timeEffectCount} projectilePath={projectilePath} ports={DescribeTimeEffectPorts(spec)}");
             string beforeState = DescribeState(spec);
             bool success = asc.TryActivateAbility(spec, target);
             string afterState = DescribeState(spec);
 
-            SkillDiagFileLogger.Log(
-                $"[DiagSkillDebug] trigger skillId={skillId} success={success} before={beforeState} after={afterState} hasTarget={(target != null)}");
-            Debug.Log(
-                $"[SkillRuntimeDebug] trigger skillId={skillId} success={success} before={beforeState} after={afterState} hasTarget={(target != null)}");
+
         }
 
         private static float3 CalculateCastPosition(Unit playerUnit, Unit monsterUnit, float castDistance)

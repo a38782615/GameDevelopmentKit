@@ -146,9 +146,6 @@ namespace ET.Client
             pendingFloatingTextRemovals.Clear();
             backgroundInstances.Clear();
             foregroundInstances.Clear();
-
-            UnityGameFramework.Runtime.Log.Info(
-                $"Skill HUD cleared scene data. units={unitCount} floatingTexts={floatingTextCount}");
         }
 
         public void UpdateUnitHealth(long ascInstanceId, GameObject owner, float currentHealth, float maxHealth)
@@ -179,18 +176,12 @@ namespace ET.Client
         {
             if (string.IsNullOrEmpty(text))
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log("[DiagFloatText] add skip empty-text");
-#endif
                 return 0;
             }
 
             EnsureRuntimeObjects();
             if (textAtlas == null || !textAtlas.EnsureReady())
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log("[DiagFloatText] add failed atlas-not-ready");
-#endif
                 return 0;
             }
 
@@ -200,10 +191,6 @@ namespace ET.Client
             float resolvedFontSize = fontSize > 0f ? fontSize : 42f;
             if (!TryBuildFloatingTextMesh(text, resolvedFontSize, out Mesh mesh, out Material material, out float worldScale))
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagFloatText] add failed mesh-build text={text} fontSize={resolvedFontSize:0.##}");
-#endif
                 return 0;
             }
 
@@ -221,10 +208,6 @@ namespace ET.Client
                 HorizontalDrift = UnityEngine.Random.Range(-0.18f, 0.18f),
                 VerticalRise = TextBaseRise + UnityEngine.Random.Range(0.10f, 0.30f)
             };
-#if UNITY_EDITOR
-            SkillDiagFileLogger.Log(
-                $"[DiagFloatText] add success handle={handle} text={text} pos={worldPosition} worldScale={worldScale:0.####} duration={(duration > 0f ? duration : DefaultTextDuration):0.##}");
-#endif
             return handle;
         }
 
@@ -618,10 +601,6 @@ namespace ET.Client
             worldScale = 0f;
             if (textGenerator == null || textAtlas == null || !textAtlas.EnsureReady() || string.IsNullOrEmpty(text))
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagFloatText] mesh invalid-generator textGenerator={(textGenerator != null)} textAtlas={(textAtlas != null)} atlasReady={(textAtlas != null && textAtlas.EnsureReady())} textEmpty={string.IsNullOrEmpty(text)}");
-#endif
                 return false;
             }
 
@@ -635,10 +614,6 @@ namespace ET.Client
             Mesh sourceMesh = textGenerator.mesh;
             if (sourceMesh == null || sourceMesh.vertexCount <= 0)
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log(
-                    $"[DiagFloatText] mesh empty sourceMesh={(sourceMesh != null)} vertexCount={sourceMesh?.vertexCount ?? 0} text={text}");
-#endif
                 return false;
             }
 
@@ -651,12 +626,6 @@ namespace ET.Client
             float targetHeight = Mathf.Max(textAtlas.GetLineHeight(fontSize), 0.01f);
             worldScale = targetHeight / meshHeight;
             material = textGenerator.fontSharedMaterial;
-#if UNITY_EDITOR
-            if (material == null)
-            {
-                SkillDiagFileLogger.Log($"[DiagFloatText] mesh missing-material text={text}");
-            }
-#endif
             return material != null;
         }
 

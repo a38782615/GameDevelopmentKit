@@ -38,10 +38,6 @@ namespace ET.Client
         private Vector2 _endPosition;
         private float _flightProgress; // 0-1
 
-#if UNITY_EDITOR
-        private int _diagLastOverlapCount = -1;
-#endif
-
         /// <summary>
         /// 初始化投射物
         /// </summary>
@@ -61,10 +57,6 @@ namespace ET.Client
             _bounceCount = 0;
             _hitTargets.Clear();
             _reachedTarget = false;
-#if UNITY_EDITOR
-            _diagLastOverlapCount = -1;
-#endif
-
             // 设置初始朝向
             UpdateRotation();
         }
@@ -214,29 +206,6 @@ namespace ET.Client
         {
             // 使用Physics2D.OverlapCircleAll检测碰撞
             var colliders = Physics2D.OverlapCircleAll(_currentPosition, _data.CollisionRadius);
-#if UNITY_EDITOR
-            if ((_data.SkillId == "1010" || _data.SkillId == "7001") && colliders.Length != _diagLastOverlapCount)
-            {
-                _diagLastOverlapCount = colliders.Length;
-                System.Text.StringBuilder builder = new System.Text.StringBuilder();
-                foreach (Collider2D collider in colliders)
-                {
-                    AbilitySystemComponent mappedAsc = GetASCFromCollider(collider);
-                    if (builder.Length > 0)
-                    {
-                        builder.Append(';');
-                    }
-
-                    builder.Append(collider.name);
-                    builder.Append("=>");
-                    builder.Append(mappedAsc?.Owner != null ? mappedAsc.Owner.name : "null");
-                }
-
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkill{_data.SkillId}] projectile overlapCount={colliders.Length} pos={_currentPosition} targets={builder}");
-            }
-#endif
-
             foreach (var collider in colliders)
             {
                 var asc = GetASCFromCollider(collider);
@@ -254,14 +223,6 @@ namespace ET.Client
                 // 命中！
                 _hitTargets.Add(asc);
                 _hitCount++;
-#if UNITY_EDITOR
-                if (_data.SkillId == "1010" || _data.SkillId == "7001")
-                {
-                    SkillDiagFileLogger.Log(
-                        $"[DiagSkill{_data.SkillId}] projectile hit target={asc.Owner?.name ?? "null"} pos={_currentPosition} hitCount={_hitCount} bounceCount={_bounceCount}");
-                }
-#endif
-
                 // 触发命中事件
                 OnHit?.Invoke(asc, _currentPosition);
 
@@ -343,13 +304,6 @@ namespace ET.Client
                         if (distToTarget < _data.CollisionRadius || _traveledDistance >= _totalDistance)
                         {
                             _reachedTarget = true;
-#if UNITY_EDITOR
-                            if (_data.SkillId == "1010" || _data.SkillId == "7001")
-                            {
-                                SkillDiagFileLogger.Log(
-                                    $"[DiagSkill{_data.SkillId}] projectile reach-target flyOver pos={_currentPosition} end={_endPosition} traveled={_traveledDistance:0.###} total={_totalDistance:0.###}");
-                            }
-#endif
                             OnReachTarget?.Invoke(_endPosition);
                         }
                     }
@@ -365,13 +319,6 @@ namespace ET.Client
                     // 非飞跃模式：到达目标点就停止
                     if (_flightProgress >= 1f || Vector2.Distance(_currentPosition, _endPosition) < 0.1f)
                     {
-                        #if UNITY_EDITOR
-                        if (_data.SkillId == "1010" || _data.SkillId == "7001")
-                        {
-                            SkillDiagFileLogger.Log(
-                                $"[DiagSkill{_data.SkillId}] projectile reach-target pos={_currentPosition} end={_endPosition} progress={_flightProgress:0.###} distance={Vector2.Distance(_currentPosition, _endPosition):0.###}");
-                        }
-                        #endif
                         OnReachTarget?.Invoke(_endPosition);
                         DestroyProjectile();
                     }
@@ -668,13 +615,6 @@ namespace ET.Client
                 return;
             }
 
-#if UNITY_EDITOR
-            if (_data.SkillId == "1010" || _data.SkillId == "7001")
-            {
-                SkillDiagFileLogger.Log(
-                    $"[DiagSkill{_data.SkillId}] projectile destroy pos={_currentPosition} end={_endPosition} traveled={_traveledDistance:0.###} total={_totalDistance:0.###} reached={_reachedTarget} hitCount={_hitCount} bounceCount={_bounceCount}");
-            }
-#endif
             _initialized = false;
             enabled = false;
             OnDestroy?.Invoke();

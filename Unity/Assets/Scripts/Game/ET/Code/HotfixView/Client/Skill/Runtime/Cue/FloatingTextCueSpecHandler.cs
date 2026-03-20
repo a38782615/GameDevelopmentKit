@@ -58,17 +58,11 @@ namespace ET.Client
             var nodeData = GetNode();
             if (nodeData == null)
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log("[DiagFloatText] skip nodeData=null");
-#endif
                 return;
             }
             var floatSpec = SelfSpec();
             if (floatSpec == null)
             {
-#if UNITY_EDITOR
-                SkillDiagFileLogger.Log("[DiagFloatText] skip floatSpec=null");
-#endif
                 return;
             }
             var Context = GetContext();
@@ -85,10 +79,6 @@ namespace ET.Client
 
             // 获取显示文本
             string displayText = GetDisplayText(damageResult);
-#if UNITY_EDITOR
-            SkillDiagFileLogger.Log(
-                $"[DiagFloatText] play target={target?.Owner?.name ?? "null"} cueTargetType={nodeData.targetType} positionSource={floatSpec.PositionSource} key={floatSpec.ContextDataKey} hasContext={(Context != null)} hasDamageResult={damageResult.HasValue} displayText={displayText ?? "null"}");
-#endif
             if (string.IsNullOrEmpty(displayText))
                 return;
 
@@ -122,11 +112,6 @@ namespace ET.Client
                 floatSpec.Duration,
                 floatSpec.TextType
             );
-
-#if UNITY_EDITOR
-            SkillDiagFileLogger.Log(
-                $"[DiagFloatText] activeCue={(Spec.ActiveCue != null)} worldPos={worldPosition} color={finalColor} fontSize={finalFontSize:0.##} duration={floatSpec.Duration:0.##}");
-#endif
 
             if (Spec.ActiveCue != null)
             {
