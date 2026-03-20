@@ -472,51 +472,6 @@ namespace ET.Client.Editor
 
                 SkillAssetToLubanExporter.ExportToExcel(skills);
                 Debug.Log($"[SkillEditor] 已导出 {skills.Count} 个技能到 Excel");
-
-                // 2. 运行 Luban 生成代码
-                EditorUtility.DisplayProgressBar("导出到 Luban", "正在生成 Luban 代码...", 0.6f);
-
-                var genBatPath = Path.Combine(Application.dataPath, "..", "..", "Design", "Excel", "gen all.bat");
-                if (!File.Exists(genBatPath))
-                {
-                    EditorUtility.ClearProgressBar();
-                    Debug.LogError($"找不到 gen.bat: {genBatPath}");
-                    return;
-                }
-
-                var workingDir = Path.GetDirectoryName(genBatPath);
-                var process = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cmd.exe",
-                        Arguments = "/c gen.bat",
-                        WorkingDirectory = workingDir,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true
-                    }
-                };
-
-                process.Start();
-                var output = process.StandardOutput.ReadToEnd();
-                var error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-
-                EditorUtility.DisplayProgressBar("导出到 Luban", "正在刷新资源...", 0.9f);
-                AssetDatabase.Refresh();
-
-                EditorUtility.ClearProgressBar();
-
-                if (process.ExitCode == 0)
-                {
-                    Debug.Log($"[SkillEditor] Luban 生成成功:\n{output}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[SkillEditor] Luban 生成警告:\n{error}\n{output}");
-                }
             }
             catch (System.Exception e)
             {

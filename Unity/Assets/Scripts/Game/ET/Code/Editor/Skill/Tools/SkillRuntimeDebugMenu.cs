@@ -15,6 +15,7 @@ namespace ET.Client.Editor
         }
 
         private const string TriggerMoveAndCast1001MenuPath = "SkillEditor/Runtime/Move To Monster And Cast Skill 1001";
+        private const string TriggerMoveAndCast1002MenuPath = "SkillEditor/Runtime/Move To Monster And Cast Skill 1002";
         private const string TriggerSkill7001MenuPath = "SkillEditor/Runtime/Trigger Skill 7001";
         private const string TriggerSkill1008MenuPath = "SkillEditor/Runtime/Trigger Skill 1008";
         private const string TriggerSkill1010MenuPath = "SkillEditor/Runtime/Trigger Skill 1010";
@@ -32,31 +33,44 @@ namespace ET.Client.Editor
         private static double moveCastWaitStartTime;
         private static float moveCastHealthBefore;
         private static bool moveCastSkillTriggered;
+        private static int moveCastSkillId;
+        private static double moveCastWaitDuration;
 
         [MenuItem(TriggerMoveAndCast1001MenuPath)]
         public static void TriggerMoveAndCastSkill1001()
         {
+            TriggerMoveAndCastSkill(1001, 1.2d);
+        }
+
+        [MenuItem(TriggerMoveAndCast1002MenuPath)]
+        public static void TriggerMoveAndCastSkill1002()
+        {
+            TriggerMoveAndCastSkill(1002, 3.6d);
+        }
+
+        private static void TriggerMoveAndCastSkill(int skillId, double waitDuration)
+        {
             if (!EditorApplication.isPlaying)
             {
-                Debug.LogWarning("[SkillRuntimeDebug] Play Mode required. move-and-cast skillId=1001");
+                Debug.LogWarning($"[SkillRuntimeDebug] Play Mode required. move-and-cast skillId={skillId}");
                 return;
             }
 
             Scene currentScene = GetCurrentClientScene();
             if (currentScene == null)
             {
-                Debug.LogWarning("[SkillRuntimeDebug] Current scene not found. move-and-cast skillId=1001");
+                Debug.LogWarning($"[SkillRuntimeDebug] Current scene not found. move-and-cast skillId={skillId}");
                 return;
             }
 
             Unit playerUnit = UnitHelper.GetMyUnitFromCurrentScene(currentScene);
             AbilitySystemComponent playerAsc = playerUnit?.GetComponent<SkillUnit>()?.ASC.As();
-            GameplayAbilitySpec spec = playerAsc?.Abilities?.FindAbilityById(1001);
+            GameplayAbilitySpec spec = playerAsc?.Abilities?.FindAbilityById(skillId);
             Unit monsterUnit = FindNearestMonster(currentScene, playerUnit);
             AbilitySystemComponent monsterAsc = monsterUnit?.GetComponent<SkillUnit>()?.ASC.As();
             if (playerUnit == null || playerAsc == null || spec == null || monsterUnit == null || monsterAsc == null)
             {
-                Debug.LogWarning("[SkillRuntimeDebug] Move-and-cast setup failed. skillId=1001");
+                Debug.LogWarning($"[SkillRuntimeDebug] Move-and-cast setup failed. skillId={skillId}");
                 return;
             }
 
@@ -67,6 +81,8 @@ namespace ET.Client.Editor
             moveCastPlayerAsc = playerAsc;
             moveCastMonsterAsc = monsterAsc;
             moveCastSpec = spec;
+            moveCastSkillId = skillId;
+            moveCastWaitDuration = waitDuration;
             moveCastStartPosition = GetUnitWorldPosition(playerUnit);
             moveCastTargetPosition = CalculateCastPosition(playerUnit, monsterUnit, 1.5f);
             moveCastHealthBefore = monsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
@@ -137,6 +153,7 @@ namespace ET.Client.Editor
                     string beforeState = DescribeState(moveCastSpec);
                     bool castSuccess = moveCastPlayerAsc.TryActivateAbility(moveCastSpec, moveCastMonsterAsc);
                     string afterState = DescribeState(moveCastSpec);
+                    Debug.LogWarning($"[SkillRuntimeDebug] move-and-cast skillId={moveCastSkillId} castSuccess={castSuccess} before={beforeState} after={afterState}");
                     moveCastSkillTriggered = castSuccess;
                     moveCastWaitStartTime = EditorApplication.timeSinceStartup;
                     moveCastState = MoveCastState.WaitingDamage;
@@ -146,13 +163,14 @@ namespace ET.Client.Editor
                 case MoveCastState.WaitingDamage:
                 {
                     double waitElapsed = EditorApplication.timeSinceStartup - moveCastWaitStartTime;
-                    if (waitElapsed < 1.2d)
+                    if (waitElapsed < moveCastWaitDuration)
                     {
                         return;
                     }
 
                     float healthAfter = moveCastMonsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
                     float damage = moveCastHealthBefore >= 0f && healthAfter >= 0f ? moveCastHealthBefore - healthAfter : 0f;
+                    Debug.LogWarning($"[SkillRuntimeDebug] move-and-cast skillId={moveCastSkillId} success={moveCastSkillTriggered} wait={moveCastWaitDuration:0.0}s hpBefore={moveCastHealthBefore:0.##} hpAfter={healthAfter:0.##} damage={damage:0.##}");
                     CleanupMoveCastState();
                     return;
                 }
@@ -175,6 +193,8 @@ namespace ET.Client.Editor
             moveCastWaitStartTime = 0d;
             moveCastHealthBefore = 0f;
             moveCastSkillTriggered = false;
+            moveCastSkillId = 0;
+            moveCastWaitDuration = 0d;
         }
 
         private static void TriggerSkill(int skillId)

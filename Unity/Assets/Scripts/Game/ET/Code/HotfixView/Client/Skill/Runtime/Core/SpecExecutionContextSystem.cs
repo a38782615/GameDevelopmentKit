@@ -539,6 +539,15 @@ namespace ET.Client
                 }
             }
 
+            if (effectData?.durationType != EffectDurationType.Instant)
+            {
+                SpecExecutionContext ownedContext = self.CreateOwnedEffectContext(effectSpec);
+                if (ownedContext != null)
+                {
+                    effectSpec.Context = ownedContext;
+                }
+            }
+
             var handler = effectSpec.GetEffectHandler();
             if (handler == null)
             {

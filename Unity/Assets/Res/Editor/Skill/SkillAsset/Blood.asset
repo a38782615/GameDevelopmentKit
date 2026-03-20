@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1002
   nodes:
-  - rid: 8915324534274916772
   - rid: 8915324534274916773
   - rid: 8915324534274916774
   - rid: 8915324534274916775
   - rid: 8915324534274916776
-  - rid: 8915324534274916777
-  - rid: 8915324534274916778
-  - rid: 8915324534274916779
   - rid: 8915324534274916780
   - rid: 8915324534274916781
+  - rid: 8915324534274916778
+  - rid: 8915324534274916779
+  - rid: 8915324534274916772
+  - rid: 8915324534274916777
   connections:
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
     outputPortId: 2287012
@@ -83,7 +83,7 @@ MonoBehaviour:
           type: 3}
         particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_attack_02.prefab
         particleBindingName: down
-        particleOffset: {x: 0, y: 0, z: 0}
+        particleOffset: {x: 5, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
@@ -248,7 +248,7 @@ MonoBehaviour:
         cancelOnAbilityEnd: 1
         damageType: 0
         damageSourceType: 0
-        damageFixedValue: 3
+        damageFixedValue: 20
         damageFormula: 
         damageMMCType: 0
         damageSetByCallerKey: 
@@ -309,7 +309,7 @@ MonoBehaviour:
         guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
         nodeType: 4
         position:
-          x: -452
+          x: -452.66666
           y: -1786.6667
         targetType: 1
         searchShapeType: 1
@@ -317,7 +317,7 @@ MonoBehaviour:
         positionSource: 0
         positionBindingName: center
         searchCircleRadius: 5
-        searchSectorRadius: 2
+        searchSectorRadius: 5
         searchSectorAngle: 180
         searchLineDirectionOffsetAngle: 0
         searchLineDirectionWidth: 1

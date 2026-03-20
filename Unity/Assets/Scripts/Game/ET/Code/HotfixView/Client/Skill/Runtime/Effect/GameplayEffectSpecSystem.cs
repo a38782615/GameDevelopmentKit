@@ -95,10 +95,17 @@ namespace ET.Client
         public static void Execute(this GameplayEffectSpec self)
         {
             var context = self.GetContext();
-            if (context == null) return;
+            if (context == null)
+            {
+                return;
+            }
 
             var target = self.GetEffectTarget(context);
-            if (target == null || !self.CanApplyTo(target)) return;
+            bool canApply = target != null && self.CanApplyTo(target);
+            if (!canApply)
+            {
+                return;
+            }
 
             self.IsRunning = true;
             var effectData = self.EffectNodeData;
@@ -183,7 +190,6 @@ namespace ET.Client
                         self.Target = target;
                         self.IsApplied = true;
                         self.ActivationTime = UnityEngine.Time.time;
-
                         if (!self.Tags.GrantedTags.IsEmpty)
                             target.OwnedTags.AddTags(self.Tags.GrantedTags);
                         if (!self.Tags.RemoveGameplayEffectsWithTags.IsEmpty)
@@ -678,7 +684,7 @@ namespace ET.Client
                     continue;
                 }
 
-                if (!effect.Tags.AssetTags.Equals(self.Tags.AssetTags))
+                if (!self.MatchesStackIdentity(effect))
                 {
                     continue;
                 }
@@ -697,6 +703,28 @@ namespace ET.Client
             }
 
             return null;
+        }
+
+        private static bool MatchesStackIdentity(this GameplayEffectSpec self, GameplayEffectSpec other)
+        {
+            if (self == null || other == null)
+            {
+                return false;
+            }
+
+            BuffEffectNodeData selfBuff = self.EffectNodeData as BuffEffectNodeData;
+            BuffEffectNodeData otherBuff = other.EffectNodeData as BuffEffectNodeData;
+            if (selfBuff != null && otherBuff != null)
+            {
+                if (selfBuff.buffId > 0 || otherBuff.buffId > 0)
+                {
+                    return selfBuff.buffId > 0 && selfBuff.buffId == otherBuff.buffId;
+                }
+
+                return self.NodeGuid == other.NodeGuid;
+            }
+
+            return other.Tags.AssetTags.Equals(self.Tags.AssetTags);
         }
 
         private static void RemoveEffectsWithTags(this GameplayEffectSpec self, AbilitySystemComponent target, GameplayTagSet tags)

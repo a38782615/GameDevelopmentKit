@@ -50,7 +50,7 @@ namespace ET.Client
                 }
 
                 if (effect.EffectNodeData?.nodeType != spec.EffectNodeData?.nodeType) continue;
-                if (!effect.Tags.AssetTags.Equals(spec.Tags.AssetTags)) continue;
+                if (!spec.MatchesStackIdentity(effect)) continue;
 
                 switch (stackType)
                 {
@@ -64,6 +64,28 @@ namespace ET.Client
             }
 
             return null;
+        }
+
+        private static bool MatchesStackIdentity(this GameplayEffectSpec spec, GameplayEffectSpec other)
+        {
+            if (spec == null || other == null)
+            {
+                return false;
+            }
+
+            BuffEffectNodeData specBuff = spec.EffectNodeData as BuffEffectNodeData;
+            BuffEffectNodeData otherBuff = other.EffectNodeData as BuffEffectNodeData;
+            if (specBuff != null && otherBuff != null)
+            {
+                if (specBuff.buffId > 0 || otherBuff.buffId > 0)
+                {
+                    return specBuff.buffId > 0 && specBuff.buffId == otherBuff.buffId;
+                }
+
+                return spec.NodeGuid == other.NodeGuid;
+            }
+
+            return other.Tags.AssetTags.Equals(spec.Tags.AssetTags);
         }
 
         public static bool RemoveEffect(this GameplayEffectContainerComponent self, GameplayEffectSpec spec)

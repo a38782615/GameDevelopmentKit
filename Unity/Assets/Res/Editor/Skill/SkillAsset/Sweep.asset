@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1001
   nodes:
-  - rid: 8915324534274916797
-  - rid: 8915324534274916798
   - rid: 8915324534274916799
   - rid: 8915324534274916800
   - rid: 8915324534274916801
   - rid: 8915324534274916802
-  - rid: 8915324534274916803
   - rid: 8915324534274916804
   - rid: 8915324534274916805
+  - rid: 8915324534274916798
+  - rid: 8915324534274916803
+  - rid: 8915324534274916797
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -73,7 +73,7 @@ MonoBehaviour:
         positionSource: 0
         positionBindingName: center
         searchCircleRadius: 5
-        searchSectorRadius: 2
+        searchSectorRadius: 5
         searchSectorAngle: 180
         searchLineDirectionOffsetAngle: 0
         searchLineDirectionWidth: 1

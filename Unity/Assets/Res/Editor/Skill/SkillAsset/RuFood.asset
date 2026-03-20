@@ -16,13 +16,13 @@ MonoBehaviour:
   nodes:
   - rid: 8915324534274916806
   - rid: 8915324534274916807
-  - rid: 8915324534274916808
   - rid: 8915324534274916809
   - rid: 8915324534274916810
   - rid: 8915324534274916811
   - rid: 8915324534274916812
   - rid: 8915324534274916813
   - rid: 8915324534274916814
+  - rid: 8915324534274916808
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -153,8 +153,8 @@ MonoBehaviour:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
         nodeType: 12
         position:
-          x: 677.3334
-          y: -1998.6667
+          x: 676.6666
+          y: -1998
         targetType: 1
         requiredTags:
           _tags: []
