@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1001
   nodes:
-  - rid: 8915324449508032657
-  - rid: 8915324449508032660
-  - rid: 8915324449508032658
-  - rid: 8915324449508032661
-  - rid: 8915324449508032655
-  - rid: 8915324449508032662
-  - rid: 8915324449508032663
-  - rid: 8915324449508032656
-  - rid: 8915324449508032659
+  - rid: 8915324534274916797
+  - rid: 8915324534274916798
+  - rid: 8915324534274916799
+  - rid: 8915324534274916800
+  - rid: 8915324534274916801
+  - rid: 8915324534274916802
+  - rid: 8915324534274916803
+  - rid: 8915324534274916804
+  - rid: 8915324534274916805
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -59,73 +59,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324449508032655
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
-        nodeType: 10
-        position:
-          x: -1130.6666
-          y: -2232
-        targetType: 1
-        assetTags:
-          _tags: []
-        grantedTags:
-          _tags:
-          - _name: CD.Sweep
-            _hashCode: -303359587
-            _shortName: Sweep
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
-            - CD
-        applicationRequiredTags:
-          _tags: []
-        applicationImmunityTags:
-          _tags: []
-        removeGameEffectsWithTags:
-          _tags: []
-        durationType: 1
-        duration: 1
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          _tags: []
-        cancelOnAbilityEnd: 0
-        cooldownType: 0
-        maxCharges: 2
-        chargeTime: 10
-    - rid: 8915324449508032656
-      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
-        nodeType: 12
-        position:
-          x: 731.3334
-          y: -2490.6665
-        targetType: 1
-        requiredTags:
-          _tags: []
-        immunityTags:
-          _tags: []
-        destroyWithNode: 0
-        positionSource: 0
-        particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
-          type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_attack_02.prefab
-        particleBindingName: down
-        particleOffset: {x: 5, y: 0, z: 0}
-        particleScale: {x: 1, y: 1, z: 1}
-        attachToTarget: 0
-        particleLoop: 0
-    - rid: 8915324449508032657
+    - rid: 8915324534274916797
       type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
@@ -163,79 +97,7 @@ MonoBehaviour:
             - unitType
         searchExcludeTags:
           _tags: []
-    - rid: 8915324449508032658
-      type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: c353e286-8ef0-460a-b917-887f2aeb390a
-        nodeType: 14
-        position:
-          x: 1213.3334
-          y: -2354
-        targetType: 1
-        requiredTags:
-          _tags: []
-        immunityTags:
-          _tags: []
-        destroyWithNode: 0
-        positionSource: 2
-        positionBindingName: head
-        textType: 0
-        fixedText: 
-        contextDataKey: DamageResult
-        textColor: {r: 1, g: 0, b: 0, a: 1}
-        criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
-        missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-        fontSize: 45
-        criticalFontSize: 60
-        duration: 1.5
-        offset: {x: 0, y: 0}
-        moveDirection: {x: 0, y: 1}
-    - rid: 8915324449508032659
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
-        nodeType: 3
-        position:
-          x: -1130.6666
-          y: -2479.3333
-        targetType: 1
-        assetTags:
-          _tags: []
-        grantedTags:
-          _tags: []
-        applicationRequiredTags:
-          _tags: []
-        applicationImmunityTags:
-          _tags: []
-        removeGameEffectsWithTags:
-          _tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers:
-        - attrType: 1003
-          operation: 0
-          magnitudeSourceType: 0
-          fixedValue: -10
-          formula: 
-          mmcType: 0
-          setByCallerKey: 
-          mmcCaptureAttribute: 200
-          mmcAttributeSource: 0
-          mmcCoefficient: 1
-          mmcUseSnapshot: 1
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          _tags: []
-        cancelOnAbilityEnd: 1
-    - rid: 8915324449508032660
+    - rid: 8915324534274916798
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: f8947676-1084-4228-b991-1509cc7fe851
@@ -284,7 +146,34 @@ MonoBehaviour:
         enableHitKnockback: 1
         knockbackDistance: 1
         knockbackSpeed: 12
-    - rid: 8915324449508032661
+    - rid: 8915324534274916799
+      type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: c353e286-8ef0-460a-b917-887f2aeb390a
+        nodeType: 14
+        position:
+          x: 1213.3334
+          y: -2354
+        targetType: 1
+        requiredTags:
+          _tags: []
+        immunityTags:
+          _tags: []
+        destroyWithNode: 0
+        positionSource: 2
+        positionBindingName: head
+        textType: 0
+        fixedText: 
+        contextDataKey: DamageResult
+        textColor: {r: 1, g: 0, b: 0, a: 1}
+        criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
+        missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+        fontSize: 45
+        criticalFontSize: 60
+        duration: 1.5
+        offset: {x: 0, y: 0}
+        moveDirection: {x: 0, y: 1}
+    - rid: 8915324534274916800
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 2cfdacd2-0186-49dd-b177-4eb8c0ad87bd
@@ -294,27 +183,18 @@ MonoBehaviour:
           y: -2142.6665
         targetType: 1
         endType: 0
-    - rid: 8915324449508032662
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 8915324534274916801
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
-        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-        nodeType: 0
+        guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+        nodeType: 10
         position:
-          x: -843.3334
-          y: -2479.3333
+          x: -1130.6666
+          y: -2232
         targetType: 1
-        skillId: 1001
         assetTags:
           _tags: []
-        cancelAbilitiesWithTags:
-          _tags: []
-        blockAbilitiesWithTags:
-          _tags: []
-        activationOwnedTags:
-          _tags: []
-        activationRequiredTags:
-          _tags: []
-        activationBlockedTags:
+        grantedTags:
           _tags:
           - _name: CD.Sweep
             _hashCode: -303359587
@@ -322,10 +202,31 @@ MonoBehaviour:
             _ancestorHashCodes: aba22dbc
             _ancestorNames:
             - CD
-        ongoingBlockedTags:
+        applicationRequiredTags:
           _tags: []
-        eventOutputPorts: []
-    - rid: 8915324449508032663
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 1
+        duration: 1
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 0
+        cooldownType: 0
+        maxCharges: 2
+        chargeTime: 10
+    - rid: 8915324534274916802
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -352,3 +253,102 @@ MonoBehaviour:
           endTime: 48
           portIdValue: 2287012
           legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
+    - rid: 8915324534274916803
+      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
+        nodeType: 12
+        position:
+          x: 731.3334
+          y: -2490.6665
+        targetType: 1
+        requiredTags:
+          _tags: []
+        immunityTags:
+          _tags: []
+        destroyWithNode: 0
+        positionSource: 0
+        particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
+          type: 3}
+        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_attack_02.prefab
+        particleBindingName: down
+        particleOffset: {x: 5, y: 0, z: 0}
+        particleScale: {x: 1, y: 1, z: 1}
+        attachToTarget: 0
+        particleLoop: 0
+    - rid: 8915324534274916804
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+        nodeType: 3
+        position:
+          x: -1130.6666
+          y: -2479.3333
+        targetType: 1
+        assetTags:
+          _tags: []
+        grantedTags:
+          _tags: []
+        applicationRequiredTags:
+          _tags: []
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers:
+        - attrType: 1003
+          operation: 0
+          magnitudeSourceType: 0
+          fixedValue: -10
+          formula: 
+          mmcType: 0
+          setByCallerKey: 
+          mmcCaptureAttribute: 200
+          mmcAttributeSource: 0
+          mmcCoefficient: 1
+          mmcUseSnapshot: 1
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 1
+    - rid: 8915324534274916805
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+        nodeType: 0
+        position:
+          x: -843.3334
+          y: -2480
+        targetType: 1
+        skillId: 1001
+        assetTags:
+          _tags: []
+        cancelAbilitiesWithTags:
+          _tags: []
+        blockAbilitiesWithTags:
+          _tags: []
+        activationOwnedTags:
+          _tags: []
+        activationRequiredTags:
+          _tags: []
+        activationBlockedTags:
+          _tags:
+          - _name: CD.Sweep
+            _hashCode: -303359587
+            _shortName: Sweep
+            _ancestorHashCodes: aba22dbc
+            _ancestorNames:
+            - CD
+        ongoingBlockedTags:
+          _tags: []
+        eventOutputPorts: []

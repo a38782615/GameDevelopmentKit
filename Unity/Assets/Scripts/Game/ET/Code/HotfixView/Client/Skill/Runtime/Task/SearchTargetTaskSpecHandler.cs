@@ -58,7 +58,19 @@ namespace ET.Client
                 foreach (AbilitySystemComponent findTarget in foundTargets)
                 {
                     SpecExecutionContext targetContext = context.CreateWithParentInput(findTarget);
-                    targetContext.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.ForEachTarget);
+                    if (targetContext == null)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        targetContext.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.ForEachTarget);
+                    }
+                    finally
+                    {
+                        targetContext.Dispose();
+                    }
                 }
             }
 

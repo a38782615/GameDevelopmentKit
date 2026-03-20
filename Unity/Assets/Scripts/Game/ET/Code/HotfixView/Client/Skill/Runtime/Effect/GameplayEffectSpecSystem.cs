@@ -28,6 +28,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this GameplayEffectSpec self)
         {
+            self.DisposeOwnedExecutionContext();
             self.Modifiers?.Clear();
             self.SetByCallerValues?.Clear();
             self.SnapshotValues?.Clear();
@@ -41,15 +42,22 @@ namespace ET.Client
             self.SkillId = skillId;
             self.NodeGuid = nodeGuid;
             self.Context = context;
-            self.Source = context.Caster;
-            self.Level = context.AbilityLevel;
+            self.Source = context?.GetCaster();
+            self.Level = context?.GetAbilityLevel() ?? 1;
             self.IsRunning = false;
             self.IsCancelled = false;
             self.IsApplied = false;
             self.IsExpired = false;
             self.WasRefreshed = false;
             self.IsRemoved = false;
+            self.HasExecutedCompleteFlow = false;
+            self.ElapsedTime = 0f;
+            self.PeriodTimer = 0f;
+            self.StackCount = 1;
             self.TriggeredCueIds.Clear();
+            self.Modifiers.Clear();
+            self.SetByCallerValues.Clear();
+            self.SnapshotValues.Clear();
 
             var effectData = self.EffectNodeData;
             if (effectData != null)
@@ -78,6 +86,8 @@ namespace ET.Client
         public static void OnInitialize(this GameplayEffectSpec self)
         {
             // 基类空实现，子类通过扩展方法覆盖
+            AEffectHandler handler = self.ResolveEffectHandler();
+            handler?.OnInitialize();
         }
 
         // ============ 执行入口 ============
@@ -97,6 +107,11 @@ namespace ET.Client
             if (effectData?.durationType == EffectDurationType.Instant)
             {
                 self.ExecuteInitialFlow(target, context);
+                if (hasRuntimeFollowup && self.ShouldExecuteCompleteImmediatelyForRuntimeFollowup())
+                {
+                    self.ExecuteCompleteFlow(context);
+                }
+
                 if (hasRuntimeFollowup)
                 {
                     var container = target.EffectContainer;
@@ -199,57 +214,84 @@ namespace ET.Client
         private static void ExecuteInitialFlow(this GameplayEffectSpec self, AbilitySystemComponent target, SpecExecutionContext ctx)
         {
             AEffectHandler handler = self.ResolveEffectHandler();
-            ctx = handler?.GetExecutionContext() ?? ctx;
+            SpecExecutionContext executionContext = self.ResolveExecutionContext(handler, ctx);
 
-            var targetAttr = target?.Attributes;
-            if (self.EffectNodeData?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
+            try
             {
-                var calcContext = self.CreateCalculationContext(target);
-                foreach (var modifier in self.Modifiers)
+                var targetAttr = target?.Attributes;
+                if (self.EffectNodeData?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
                 {
-                    var attribute = targetAttr.GetAttribute(modifier.TargetAttrType);
-                    if (attribute == null) continue;
-                    float v = attribute.BaseValue;
-                    float magnitude = modifier.CalculateMagnitude(calcContext);
-                    switch (modifier.Operation)
+                    var calcContext = self.CreateCalculationContext(target);
+                    foreach (var modifier in self.Modifiers)
                     {
-                        case ModifierOperation.Add:
-                            v += magnitude;
-                            break;
-                        case ModifierOperation.Multiply:
-                            v *= magnitude;
-                            break;
-                        case ModifierOperation.Divide:
-                            if (math.abs(magnitude) > 0.0001f) v /= magnitude;
-                            break;
-                        case ModifierOperation.Override:
-                            v = magnitude;
-                            break;
+                        var attribute = targetAttr.GetAttribute(modifier.TargetAttrType);
+                        if (attribute == null) continue;
+                        float v = attribute.BaseValue;
+                        float magnitude = modifier.CalculateMagnitude(calcContext);
+                        switch (modifier.Operation)
+                        {
+                            case ModifierOperation.Add:
+                                v += magnitude;
+                                break;
+                            case ModifierOperation.Multiply:
+                                v *= magnitude;
+                                break;
+                            case ModifierOperation.Divide:
+                                if (math.abs(magnitude) > 0.0001f) v /= magnitude;
+                                break;
+                            case ModifierOperation.Override:
+                                v = magnitude;
+                                break;
+                        }
+                        targetAttr.SetBaseValue(attribute.NumericType, v);
                     }
-                    targetAttr.SetBaseValue(attribute.NumericType, v);
                 }
-            }
 
-            handler?.OnInitialHook(target);
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Initial);
+                handler?.OnInitialHook(target);
+                executionContext.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Initial);
+            }
+            finally
+            {
+                self.DisposeTemporaryExecutionContext(ctx, executionContext);
+            }
         }
 
         private static void ExecutePeriodicFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
             AEffectHandler handler = self.ResolveEffectHandler();
-            ctx = handler?.GetExecutionContext() ?? ctx;
+            SpecExecutionContext executionContext = self.ResolveExecutionContext(handler, ctx);
 
-            handler?.OnPeriodicHook();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Periodic);
+            try
+            {
+                handler?.OnPeriodicHook();
+                executionContext.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Periodic);
+            }
+            finally
+            {
+                self.DisposeTemporaryExecutionContext(ctx, executionContext);
+            }
         }
 
         private static void ExecuteCompleteFlow(this GameplayEffectSpec self, SpecExecutionContext ctx)
         {
-            AEffectHandler handler = self.ResolveEffectHandler();
-            ctx = handler?.GetExecutionContext() ?? ctx;
+            if (self.HasExecutedCompleteFlow)
+            {
+                return;
+            }
 
-            handler?.OnCompleteHook();
-            ctx.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Complete);
+            self.HasExecutedCompleteFlow = true;
+            AEffectHandler handler = self.ResolveEffectHandler();
+            SpecExecutionContext executionContext = self.ResolveExecutionContext(handler, ctx);
+
+            try
+            {
+                handler?.OnCompleteHook();
+                executionContext.ExecuteConnectedNodes(self.SkillId, self.NodeGuid, SkillPortId.Effect.Complete);
+            }
+            finally
+            {
+                self.DisposeTemporaryExecutionContext(ctx, executionContext);
+            }
         }
 
         private static AEffectHandler ResolveEffectHandler(this GameplayEffectSpec self)
@@ -269,6 +311,40 @@ namespace ET.Client
             handler.Spec = self;
             handler.NodeData = self.EffectNodeData;
             return handler;
+        }
+
+        private static SpecExecutionContext ResolveExecutionContext(this GameplayEffectSpec self, AEffectHandler handler, SpecExecutionContext defaultContext)
+        {
+            SpecExecutionContext executionContext = handler?.GetExecutionContext();
+            return executionContext ?? defaultContext;
+        }
+
+        private static void DisposeTemporaryExecutionContext(this GameplayEffectSpec self, SpecExecutionContext defaultContext, SpecExecutionContext executionContext)
+        {
+            if (executionContext != null && executionContext != defaultContext && !executionContext.IsDisposed)
+            {
+                executionContext.Dispose();
+            }
+        }
+
+        private static void DisposeOwnedExecutionContext(this GameplayEffectSpec self)
+        {
+            SpecExecutionContext context = self.Context.As();
+            if (context == null)
+            {
+                return;
+            }
+
+            if (context.GetOwnerEffectSpec() != self)
+            {
+                return;
+            }
+
+            self.Context = default;
+            if (!context.IsDisposed)
+            {
+                context.Dispose();
+            }
         }
 
         // ============ Tick ============
@@ -696,7 +772,6 @@ namespace ET.Client
             self.SetByCallerValues?.Clear();
             self.SnapshotValues?.Clear();
             self.TriggeredCueIds?.Clear();
-            EffectDispatcherComponent.Instance.Get(self.HandName).Reset();
         }
 
 
@@ -705,7 +780,13 @@ namespace ET.Client
         /// </summary>
         public static AbilitySystemComponent GetSource(this GameplayEffectSpec self)
         {
-            return self.GetParent<GameplayEffectContainerComponent>()?.GetASC;
+            AbilitySystemComponent source = self?.Source.As();
+            if (source != null)
+            {
+                return source;
+            }
+
+            return self?.GetParent<GameplayEffectContainerComponent>()?.GetASC;
         }
 
         /// <summary>
@@ -721,7 +802,7 @@ namespace ET.Client
         /// </summary>
         public static SpecExecutionContext GetContext(this GameplayEffectSpec self)
         {
-            return self.Context;
+            return self.Context.As();
         }
 
         /// <summary>
@@ -743,6 +824,12 @@ namespace ET.Client
         }
 
         private static bool HasRuntimeFollowup(this GameplayEffectSpec self)
+        {
+            var damageSpec = self.GetComponent<DamageEffectSpec>();
+            return damageSpec != null && damageSpec.HasRuntimeFollowup;
+        }
+
+        private static bool ShouldExecuteCompleteImmediatelyForRuntimeFollowup(this GameplayEffectSpec self)
         {
             var damageSpec = self.GetComponent<DamageEffectSpec>();
             return damageSpec != null && damageSpec.HasRuntimeFollowup;

@@ -15,7 +15,7 @@ namespace ET.Client
         // ============ 基础标识 ============
         public string SkillId;
         public string NodeGuid;
-        public SpecExecutionContext Context;
+        public EntityRef<SpecExecutionContext> Context;
         public EntityRef<AbilitySystemComponent> Source;
         public EntityRef<AbilitySystemComponent> Target;
         public int Level = 1;
@@ -37,6 +37,7 @@ namespace ET.Client
         public bool IsExpired;
         public bool WasRefreshed;
         public bool IsRemoved;
+        public bool HasExecutedCompleteFlow;
         public float ElapsedTime;
         public float PeriodTimer;
         public List<long> TriggeredCueIds = new List<long>(); // GameplayCueSpec Entity Ids

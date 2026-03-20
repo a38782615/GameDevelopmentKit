@@ -38,7 +38,7 @@ namespace ET.Client
 
         public override void Execute()
         {
-            if (Spec.Context == null)
+            if (Spec.GetContext() == null)
             {
                 Log.Warning("[CooldownEffect] Context is null");
                 return;

@@ -13,5 +13,7 @@ namespace ET.Client
     {
         public ProjectileController _projectileController;
         public GameObject _projectileObject;
+        public Vector2 ExpectedTargetPosition;
+        public bool HasTriggeredHit;
     }
 }

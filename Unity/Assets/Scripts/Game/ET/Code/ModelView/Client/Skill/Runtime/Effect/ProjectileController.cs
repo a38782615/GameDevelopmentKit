@@ -215,7 +215,7 @@ namespace ET.Client
             // 使用Physics2D.OverlapCircleAll检测碰撞
             var colliders = Physics2D.OverlapCircleAll(_currentPosition, _data.CollisionRadius);
 #if UNITY_EDITOR
-            if (_data.SkillId == "1010" && colliders.Length != _diagLastOverlapCount)
+            if ((_data.SkillId == "1010" || _data.SkillId == "7001") && colliders.Length != _diagLastOverlapCount)
             {
                 _diagLastOverlapCount = colliders.Length;
                 System.Text.StringBuilder builder = new System.Text.StringBuilder();
@@ -232,6 +232,8 @@ namespace ET.Client
                     builder.Append(mappedAsc?.Owner != null ? mappedAsc.Owner.name : "null");
                 }
 
+                SkillDiagFileLogger.Log(
+                    $"[DiagSkill{_data.SkillId}] projectile overlapCount={colliders.Length} pos={_currentPosition} targets={builder}");
             }
 #endif
 
@@ -253,8 +255,10 @@ namespace ET.Client
                 _hitTargets.Add(asc);
                 _hitCount++;
 #if UNITY_EDITOR
-                if (_data.SkillId == "1010")
+                if (_data.SkillId == "1010" || _data.SkillId == "7001")
                 {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagSkill{_data.SkillId}] projectile hit target={asc.Owner?.name ?? "null"} pos={_currentPosition} hitCount={_hitCount} bounceCount={_bounceCount}");
                 }
 #endif
 
@@ -339,6 +343,13 @@ namespace ET.Client
                         if (distToTarget < _data.CollisionRadius || _traveledDistance >= _totalDistance)
                         {
                             _reachedTarget = true;
+#if UNITY_EDITOR
+                            if (_data.SkillId == "1010" || _data.SkillId == "7001")
+                            {
+                                SkillDiagFileLogger.Log(
+                                    $"[DiagSkill{_data.SkillId}] projectile reach-target flyOver pos={_currentPosition} end={_endPosition} traveled={_traveledDistance:0.###} total={_totalDistance:0.###}");
+                            }
+#endif
                             OnReachTarget?.Invoke(_endPosition);
                         }
                     }
@@ -355,8 +366,10 @@ namespace ET.Client
                     if (_flightProgress >= 1f || Vector2.Distance(_currentPosition, _endPosition) < 0.1f)
                     {
                         #if UNITY_EDITOR
-                        if (_data.SkillId == "1010")
+                        if (_data.SkillId == "1010" || _data.SkillId == "7001")
                         {
+                            SkillDiagFileLogger.Log(
+                                $"[DiagSkill{_data.SkillId}] projectile reach-target pos={_currentPosition} end={_endPosition} progress={_flightProgress:0.###} distance={Vector2.Distance(_currentPosition, _endPosition):0.###}");
                         }
                         #endif
                         OnReachTarget?.Invoke(_endPosition);
@@ -655,6 +668,13 @@ namespace ET.Client
                 return;
             }
 
+#if UNITY_EDITOR
+            if (_data.SkillId == "1010" || _data.SkillId == "7001")
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagSkill{_data.SkillId}] projectile destroy pos={_currentPosition} end={_endPosition} traveled={_traveledDistance:0.###} total={_totalDistance:0.###} reached={_reachedTarget} hitCount={_hitCount} bounceCount={_bounceCount}");
+            }
+#endif
             _initialized = false;
             enabled = false;
             OnDestroy?.Invoke();

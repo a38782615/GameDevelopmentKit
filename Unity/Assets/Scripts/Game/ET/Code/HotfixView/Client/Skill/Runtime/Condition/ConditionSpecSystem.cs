@@ -2,6 +2,7 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(ConditionSpec))]
     [FriendOf(typeof(ConditionSpec))]
+    [FriendOf(typeof(SpecExecutionContext))]
     public static partial class ConditionSpecSystem
     {
         [EntitySystem]
@@ -30,7 +31,8 @@ namespace ET.Client
 
         public static bool Evaluate(this ConditionSpec self)
         {
-            if (self.Context == null) return false;
+            SpecExecutionContext context = self.Context;
+            if (context == null) return false;
 
             var nodeData = self.ConditionNodeData;
             if (nodeData == null) return false;
@@ -48,12 +50,12 @@ namespace ET.Client
 
         public static SpecExecutionContext GetContext(this ConditionSpec self)
         {
-            return self.Context;
+            return self.Context.As();
         }
 
         public static AbilitySystemComponent GetConditionTarget(this ConditionSpec self)
         {
-            var context = self.Context;
+            SpecExecutionContext context = self.Context;
             var nodeData = self.NodeData;
             if (context == null)
                 return null;

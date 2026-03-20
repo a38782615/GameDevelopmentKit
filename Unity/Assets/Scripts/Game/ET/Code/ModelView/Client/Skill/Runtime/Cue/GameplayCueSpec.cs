@@ -27,7 +27,7 @@ namespace ET.Client
         /// <summary>
         /// 实际触发该 Cue 的执行上下文
         /// </summary>
-        public SpecExecutionContext Context;
+        public EntityRef<SpecExecutionContext> Context;
 
         /// <summary>
         /// 是否正在执行

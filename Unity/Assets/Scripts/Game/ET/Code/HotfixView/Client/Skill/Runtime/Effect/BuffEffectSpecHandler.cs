@@ -12,11 +12,13 @@ namespace ET.Client
             var selfSpec = Spec.GetComponent<BuffEffectSpec>();
             return selfSpec;
         }
+
         public BuffEffectNodeData GetNode()
         {
             var nodeData = NodeData as BuffEffectNodeData;
             return nodeData;
         }
+
         public override SpecExecutionContext GetContext()
         {
             return Spec.GetContext();
@@ -24,25 +26,38 @@ namespace ET.Client
 
         public override SpecExecutionContext GetExecutionContext()
         {
-            var Context = GetContext();
-            if (Context == null)
+            SpecExecutionContext context = GetContext();
+            if (context == null)
             {
                 return null;
             }
-            // Buff 的目标就是 Target（Buff 持有者）
-            var currentTarget = Spec.Target.As() ?? Context.GetTargetByType(NodeData?.targetType ?? TargetType.ParentInput);
 
-            return new SpecExecutionContext
+            GameplayAbilitySpec abilitySpec = context.GetAbilitySpec();
+            if (abilitySpec == null)
             {
-                AbilitySpec = Context.AbilitySpec,
-                OwnerEffectSpec = Spec,
-                Caster = Context.Caster,
-                MainTarget = Context.MainTarget,
-                ParentInputTarget = currentTarget,  // 将 Buff 的目标作为 ParentInputTarget 传递
-                AbilityLevel = Context?.AbilityLevel ?? 1,
-                StackCount = Spec.StackCount  // 传递 Buff 的堆叠层数
-            };
+                return null;
+            }
+
+            AbilitySystemComponent currentTarget = Spec.Target.As() ?? context.GetTargetByType(NodeData?.targetType ?? TargetType.ParentInput);
+            SpecExecutionContext executionContext = abilitySpec.AddChild<SpecExecutionContext>();
+            executionContext.OwnerEffectSpec = Spec;
+            executionContext.Caster = context.Caster;
+            executionContext.MainTarget = context.MainTarget;
+            executionContext.ParentInputTarget = currentTarget;
+            executionContext.ProjectileObject = context.ProjectileObject;
+            executionContext.PlacementObject = context.PlacementObject;
+            executionContext.AbilityLevel = context.AbilityLevel;
+            executionContext.StackCount = Spec.StackCount;
+            executionContext.Targets.AddRange(context.Targets);
+
+            foreach (var kvp in context.CustomData)
+            {
+                executionContext.CustomData[kvp.Key] = kvp.Value;
+            }
+
+            return executionContext;
         }
+
         public override void Execute()
         {
             Spec.Execute();
@@ -52,27 +67,31 @@ namespace ET.Client
         {
             Spec.TickEffect(deltaTime);
         }
+
         public override void Cancel()
         {
             Spec.CancelEffect();
         }
+
         public override void Reset()
         {
             Spec.ResetEffect();
         }
+
         public override void OnInitialize()
         {
         }
+
         public override void OnInitialHook(AbilitySystemComponent target)
         {
         }
+
         public override void OnPeriodicHook()
         {
-
         }
+
         public override void OnCompleteHook()
         {
         }
-
     }
 }

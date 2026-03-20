@@ -34,72 +34,6 @@ namespace ET.Client
             self.ActiveCue = null;
         }
 
-        // ============ 初始化 ============
-
-        public static void InitCue(this GameplayCueSpec self, string skillId, string nodeGuid, GameplayAbilitySpec contextOwner, string cueName)
-        {
-            self.SkillId = skillId;
-            self.NodeGuid = nodeGuid;
-            self.ContextOwner = contextOwner;
-            self.IsRunning = false;
-            self.IsCancelled = false;
-            self.HandName = cueName;
-
-            var cueData = self.CueNodeData;
-            if (cueData != null)
-                self.Tags = new CueTagContainer(cueData);
-
-            self.GetCue().OnInitialize();
-        }
-
-        // ============ 执行 ============
-
-        public static void ExecuteCue(this GameplayCueSpec self)
-        {
-            var context = self.GetContext();
-            if (context == null) return;
-
-            var target = self.GetCueTarget();
-
-            if (!self.CanPlayOnTarget(target)) return;
-
-            self.GetCue().PlayCue(target);
-        }
-
-        public static void TickCue(this GameplayCueSpec self, float deltaTime)
-        {
-            if (!self.IsRunning || self.ActiveCue == null) return;
-
-            if (self.ActiveCue.IsExpired)
-            {
-                self.IsRunning = false;
-                self.ActiveCue = null;
-            }
-        }
-
-        public static void CancelCue(this GameplayCueSpec self)
-        {
-            self.IsCancelled = true;
-            self.IsRunning = false;
-            self.GetCue().StopCue();
-        }
-
-        public static void StopCuePublic(this GameplayCueSpec self)
-        {
-            if (!self.IsRunning) return;
-            self.IsRunning = false;
-            self.GetCue().StopCue();
-        }
-
-        public static void ResetCue(this GameplayCueSpec self)
-        {
-            self.IsRunning = false;
-            self.IsCancelled = false;
-            self.ActiveCue = null;
-        }
-
-        // ============ 检查方法 ============
-
         public static bool CanPlayOnTarget(this GameplayCueSpec self, AbilitySystemComponent target)
         {
             if (target == null) return true; // 无目标时允许播放（世界空间Cue）
@@ -129,8 +63,9 @@ namespace ET.Client
             return context?.GetTargetByType(nodeData.targetType);
         }
 
-        public static List<AbilitySystemComponent> GetCueTargets(this GameplayCueSpec self, SpecExecutionContext context)
+        public static List<AbilitySystemComponent> GetCueTargets(this GameplayCueSpec self)
         {
+            var context = self.GetContext();
             var nodeData = self.NodeData;
             if (nodeData == null)
             {
@@ -162,14 +97,15 @@ namespace ET.Client
         /// </summary>
         public static SpecExecutionContext GetContext(this GameplayCueSpec self)
         {
-            if (self.Context != null)
+            SpecExecutionContext context = self.Context;
+            if (context != null)
             {
-                return self.Context;
+                return context;
             }
 
             var gameplayAbilitySpec = self.ContextOwner.As();
             if (gameplayAbilitySpec == null) return null;
-            return gameplayAbilitySpec.Context;
+            return gameplayAbilitySpec.Context.As();
         }
 
 

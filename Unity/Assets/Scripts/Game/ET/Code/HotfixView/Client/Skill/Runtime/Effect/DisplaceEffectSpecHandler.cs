@@ -74,8 +74,9 @@ namespace ET.Client
             selfSpec._movedDistance = 0f;
 
             var Context = GetContext();
-            Vector3 casterPos = Context?.Caster.As().Owner != null
-                ? Context.Caster.As().Owner.transform.position
+            AbilitySystemComponent caster = Context?.GetCaster();
+            Vector3 casterPos = caster?.Owner != null
+                ? caster.Owner.transform.position
                 : selfSpec._startPosition;
 
             switch (nodeData.displaceType)
@@ -134,8 +135,9 @@ namespace ET.Client
                 case DisplaceType.Pull:
                     {
                         // 吸引：检查是否到达最小距离
-                        Vector3 casterPos = Context?.Caster.As().Owner != null
-                            ? Context.Caster.As().Owner.transform.position
+                        AbilitySystemComponent caster = Context?.GetCaster();
+                        Vector3 casterPos = caster?.Owner != null
+                            ? caster.Owner.transform.position
                             : selfSpec._targetPoint;
                         float distToCaster = Vector3.Distance(currentPos, casterPos);
                         if (distToCaster <= nodeData.minDistance)

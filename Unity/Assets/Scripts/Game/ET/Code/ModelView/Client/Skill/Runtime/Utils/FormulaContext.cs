@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 
 namespace ET.Client
-{    
+{
     /// <summary>
     /// 公式计算上下文
     /// </summary>
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
+    [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
     public class FormulaContext : Object
     {
         /// <summary>
@@ -42,11 +43,10 @@ namespace ET.Client
         {
             return new FormulaContext
             {
-                CasterAttributes = execContext.Caster.As().Attributes,
-                TargetAttributes = target?.Attributes ?? execContext.MainTarget.As
-                ()?.Attributes,
-                Level = execContext.AbilityLevel,
-                StackCount = 1
+                CasterAttributes = execContext?.Caster.As()?.Attributes,
+                TargetAttributes = target?.Attributes ?? execContext?.MainTarget.As()?.Attributes,
+                Level = execContext?.AbilityLevel ?? 1,
+                StackCount = execContext?.StackCount ?? 1
             };
         }
     }

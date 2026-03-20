@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1010
   nodes:
-  - rid: 8915324449508032606
-  - rid: 8915324449508032607
-  - rid: 8915324449508032608
-  - rid: 8915324449508032609
-  - rid: 8915324449508032610
-  - rid: 8915324449508032611
-  - rid: 8915324449508032612
-  - rid: 8915324449508032605
+  - rid: 8915324534274916740
+  - rid: 8915324534274916741
+  - rid: 8915324534274916742
+  - rid: 8915324534274916743
+  - rid: 8915324534274916744
+  - rid: 8915324534274916745
+  - rid: 8915324534274916746
+  - rid: 8915324534274916747
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -54,52 +54,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324449508032605
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
-        nodeType: 3
-        position:
-          x: -1195.3334
-          y: -2013.3334
-        targetType: 1
-        assetTags:
-          _tags: []
-        grantedTags:
-          _tags: []
-        applicationRequiredTags:
-          _tags: []
-        applicationImmunityTags:
-          _tags: []
-        removeGameEffectsWithTags:
-          _tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers:
-        - attrType: 1003
-          operation: 0
-          magnitudeSourceType: 0
-          fixedValue: -100
-          formula: 
-          mmcType: 0
-          setByCallerKey: 
-          mmcCaptureAttribute: 200
-          mmcAttributeSource: 0
-          mmcCoefficient: 1
-          mmcUseSnapshot: 1
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          _tags: []
-        cancelOnAbilityEnd: 1
-    - rid: 8915324449508032606
+    - rid: 8915324534274916740
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
@@ -148,7 +103,7 @@ MonoBehaviour:
         enableHitKnockback: 0
         knockbackDistance: 1
         knockbackSpeed: 12
-    - rid: 8915324449508032607
+    - rid: 8915324534274916741
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
@@ -175,7 +130,7 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324449508032608
+    - rid: 8915324534274916742
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
@@ -185,7 +140,7 @@ MonoBehaviour:
           y: -1987.3334
         targetType: 1
         endType: 0
-    - rid: 8915324449508032609
+    - rid: 8915324534274916743
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -208,7 +163,7 @@ MonoBehaviour:
           portIdValue: 2715463
           legacyPortId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
         timeCues: []
-    - rid: 8915324449508032610
+    - rid: 8915324534274916744
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -251,7 +206,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324449508032611
+    - rid: 8915324534274916745
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -282,7 +237,7 @@ MonoBehaviour:
         ongoingBlockedTags:
           _tags: []
         eventOutputPorts: []
-    - rid: 8915324449508032612
+    - rid: 8915324534274916746
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
@@ -343,3 +298,48 @@ MonoBehaviour:
         canBounceToSameTarget: 0
         excludeSourceCamp: 1
         bounceAngleOffset: 50
+    - rid: 8915324534274916747
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+        nodeType: 3
+        position:
+          x: -1195.3334
+          y: -2013.3334
+        targetType: 1
+        assetTags:
+          _tags: []
+        grantedTags:
+          _tags: []
+        applicationRequiredTags:
+          _tags: []
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers:
+        - attrType: 1003
+          operation: 0
+          magnitudeSourceType: 0
+          fixedValue: -100
+          formula: 
+          mmcType: 0
+          setByCallerKey: 
+          mmcCaptureAttribute: 200
+          mmcAttributeSource: 0
+          mmcCoefficient: 1
+          mmcUseSnapshot: 1
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 1

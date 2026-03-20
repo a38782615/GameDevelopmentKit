@@ -63,6 +63,7 @@
 - 本次修改完成且验证通过后，默认应及时将本次改动提交到 git；除非用户明确要求暂不提交，或当前任务明确只保留工作区改动不生成提交。
 - 如果用户要求任务完成后发送邮件通知，默认优先使用 `$task-complete-email` skill；在实现、验证、必要提交全部完成后执行，向 `atomom@163.com` 发送完成邮件。
 - 每次提交前，必须优先使用 AIBridgeCLI 走 `focus --raw`、`compile --raw --timeout <ms>` 检查 Unity 编译是否成功；若编译失败或结果不清晰，再用 `get_logs --raw` 查看 Unity Console，确认成功后才能提交。
+- 每次编译之前，必须先停止 Unity Play 模式，再执行 `compile --raw --timeout <ms>` 或其他编译检查命令。
 - 每次处理完任务后，必须检查本次改动涉及文件中的中文注释或中文字符串编码是否正常；如果发现乱码，先修复乱码，再进入 Unity Play 模式做验证。
 
 ### Don't

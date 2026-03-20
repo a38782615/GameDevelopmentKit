@@ -5,7 +5,7 @@ namespace ET.Client
     {
         public string SkillId;
         public string NodeGuid;
-        public SpecExecutionContext Context;
+        public EntityRef<SpecExecutionContext> Context;
         public EntityRef<AbilitySystemComponent> Source;
         public string HandName;
 

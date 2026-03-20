@@ -68,7 +68,7 @@ namespace ET.Client
         public string AbilityNodeGuid;
 
         // ============ 执行相关 ============
-        public SpecExecutionContext Context;
+        public EntityRef<SpecExecutionContext> Context;
 
         /// <summary>
         /// 正在执行的Effect列表（技能管理持续/周期Effect）

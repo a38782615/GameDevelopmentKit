@@ -192,6 +192,11 @@ namespace ET.Client
                         _connectionCache[connectionKey] = connections;
                     }
 
+                    if (ContainsEquivalentConnection(connections, connection))
+                    {
+                        continue;
+                    }
+
                     connections.Add(connection);
                 }
             }
@@ -324,6 +329,34 @@ namespace ET.Client
         private string GetConnectionKey(string skillId, string nodeGuid, int portId)
         {
             return $"{skillId}:{nodeGuid}:{portId}";
+        }
+
+        private static bool ContainsEquivalentConnection(List<ConnectionData> connections, ConnectionData candidate)
+        {
+            if (connections == null || candidate == null)
+            {
+                return false;
+            }
+
+            foreach (ConnectionData existing in connections)
+            {
+                if (existing == null)
+                {
+                    continue;
+                }
+
+                if (existing.outputNodeGuid != candidate.outputNodeGuid)
+                {
+                    continue;
+                }
+
+                if (existing.inputNodeGuid == candidate.inputNodeGuid && existing.inputPortId == candidate.inputPortId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

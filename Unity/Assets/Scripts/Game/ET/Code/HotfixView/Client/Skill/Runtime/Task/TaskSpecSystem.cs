@@ -2,6 +2,7 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(TaskSpec))]
     [FriendOf(typeof(TaskSpec))]
+    [FriendOf(typeof(SpecExecutionContext))]
     public static partial class TaskSpecSystem
     {
         [EntitySystem]
@@ -41,12 +42,12 @@ namespace ET.Client
 
         public static SpecExecutionContext GetContext(this TaskSpec self)
         {
-            return self.Context;
+            return self.Context.As();
         }
 
         public static AbilitySystemComponent GetTaskTarget(this TaskSpec self)
         {
-            var context = self.Context;
+            SpecExecutionContext context = self.Context;
             var nodeData = self.NodeData;
             if (context == null)
                 return null;

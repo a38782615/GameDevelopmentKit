@@ -3,13 +3,35 @@ using UnityEngine;
 
 namespace ET.Client
 {
+    [EntitySystemOf(typeof(SpecExecutionContext))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
     [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayCueContainerComponent))]
+    [FriendOf(typeof(SpecExecutionContext))]
     public static partial class SpecExecutionContextSystem
     {
+        [EntitySystem]
+        private static void Awake(this SpecExecutionContext self)
+        {
+        }
+
+        [EntitySystem]
+        private static void Destroy(this SpecExecutionContext self)
+        {
+            self.OwnerEffectSpec = default;
+            self.Caster = default;
+            self.MainTarget = default;
+            self.ParentInputTarget = default;
+            self.Targets.Clear();
+            self.ProjectileObject = null;
+            self.PlacementObject = null;
+            self.AbilityLevel = 1;
+            self.StackCount = 1;
+            self.CustomData.Clear();
+        }
+
         // ============ ASC 获取 ============
 
         public static AbilitySystemComponent GetCaster(this SpecExecutionContext self)
@@ -27,14 +49,94 @@ namespace ET.Client
             return self.ParentInputTarget.As();
         }
 
+        public static void SetCaster(this SpecExecutionContext self, AbilitySystemComponent caster)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.Caster = caster;
+        }
+
+        public static void SetMainTarget(this SpecExecutionContext self, AbilitySystemComponent mainTarget)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.MainTarget = mainTarget;
+        }
+
+        public static void SetParentInputTarget(this SpecExecutionContext self, AbilitySystemComponent parentInputTarget)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.ParentInputTarget = parentInputTarget;
+        }
+
         public static GameplayAbilitySpec GetAbilitySpec(this SpecExecutionContext self)
         {
-            return self.AbilitySpec.As();
+            return self?.GetParent<GameplayAbilitySpec>();
         }
 
         public static GameplayEffectSpec GetOwnerEffectSpec(this SpecExecutionContext self)
         {
             return self.OwnerEffectSpec.As();
+        }
+
+        public static void SetAbilityLevel(this SpecExecutionContext self, int abilityLevel)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.AbilityLevel = abilityLevel;
+        }
+
+        public static int GetAbilityLevel(this SpecExecutionContext self)
+        {
+            return self?.AbilityLevel ?? 1;
+        }
+
+        public static int GetStackCount(this SpecExecutionContext self)
+        {
+            return self?.StackCount ?? 1;
+        }
+
+        public static GameObject GetProjectileObject(this SpecExecutionContext self)
+        {
+            return self?.ProjectileObject;
+        }
+
+        public static void SetProjectileObject(this SpecExecutionContext self, GameObject projectileObject)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.ProjectileObject = projectileObject;
+        }
+
+        public static GameObject GetPlacementObject(this SpecExecutionContext self)
+        {
+            return self?.PlacementObject;
+        }
+
+        public static void SetPlacementObject(this SpecExecutionContext self, GameObject placementObject)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.PlacementObject = placementObject;
         }
 
         // ============ 目标管理 ============
@@ -140,9 +242,13 @@ namespace ET.Client
         /// </summary>
         public static SpecExecutionContext CreateWithParentInput(this SpecExecutionContext self, AbilitySystemComponent parentInputTarget)
         {
-            // 创建一个新的上下文实例（临时使用，不挂载到Entity树）
-            var newContext = new SpecExecutionContext();
-            newContext.AbilitySpec = self.AbilitySpec;
+            GameplayAbilitySpec abilitySpec = self.GetAbilitySpec();
+            if (abilitySpec == null)
+            {
+                return null;
+            }
+
+            SpecExecutionContext newContext = abilitySpec.AddChild<SpecExecutionContext>();
             newContext.OwnerEffectSpec = self.OwnerEffectSpec;
             newContext.Caster = self.Caster;
             newContext.MainTarget = self.MainTarget;
@@ -157,6 +263,43 @@ namespace ET.Client
                 newContext.CustomData[kvp.Key] = kvp.Value;
 
             return newContext;
+        }
+
+        public static SpecExecutionContext CreateOwnedEffectContext(this SpecExecutionContext self, GameplayEffectSpec ownerEffectSpec)
+        {
+            if (self == null || ownerEffectSpec == null)
+            {
+                return null;
+            }
+
+            if (self.GetOwnerEffectSpec() == ownerEffectSpec)
+            {
+                return self;
+            }
+
+            GameplayAbilitySpec abilitySpec = self.GetAbilitySpec();
+            if (abilitySpec == null)
+            {
+                return null;
+            }
+
+            SpecExecutionContext effectContext = abilitySpec.AddChild<SpecExecutionContext>();
+            effectContext.OwnerEffectSpec = ownerEffectSpec;
+            effectContext.Caster = self.Caster;
+            effectContext.MainTarget = self.MainTarget;
+            effectContext.ParentInputTarget = self.ParentInputTarget;
+            effectContext.ProjectileObject = self.ProjectileObject;
+            effectContext.PlacementObject = self.PlacementObject;
+            effectContext.AbilityLevel = self.AbilityLevel;
+            effectContext.StackCount = self.StackCount;
+            effectContext.Targets.AddRange(self.Targets);
+
+            foreach ((string key, object value) in self.CustomData)
+            {
+                effectContext.CustomData[key] = value;
+            }
+
+            return effectContext;
         }
 
         // ============ 位置获取 ============
@@ -271,11 +414,25 @@ namespace ET.Client
                 return;
 
             var connectedNodes = SkillDataCenter.Instance.GetConnectedNodes(skillId, nodeGuid, outputPortId);
+#if UNITY_EDITOR
+            if (skillId == "1010" || skillId == "7001")
+            {
+                SkillDiagFileLogger.Log(
+                    $"[DiagSkill{skillId}] execute-connected from={nodeGuid} port={outputPortId} count={connectedNodes?.Count ?? 0}");
+            }
+#endif
             if (connectedNodes == null || connectedNodes.Count == 0)
                 return;
 
             foreach (var nodeData in connectedNodes)
             {
+#if UNITY_EDITOR
+                if (skillId == "1010" || skillId == "7001")
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagSkill{skillId}] execute-node guid={nodeData.guid} type={nodeData.nodeType} targetType={nodeData.targetType}");
+                }
+#endif
                 self.ExecuteNode(skillId, nodeData);
             }
         }
@@ -354,7 +511,48 @@ namespace ET.Client
             if (container == null) return;
 
             var effectSpec = container.AddChild<GameplayEffectSpec>();
-            self.InitializeEffectSpec(effectSpec, skillId, nodeData);
+            effectSpec.AttachEffectComponent(nodeData.nodeType);
+            effectSpec.SkillId = skillId;
+            effectSpec.NodeGuid = nodeData.guid;
+            effectSpec.Context = self;
+            effectSpec.Source = self.Caster;
+            effectSpec.Level = self.AbilityLevel;
+            effectSpec.IsRunning = false;
+            effectSpec.IsCancelled = false;
+            effectSpec.IsApplied = false;
+            effectSpec.IsExpired = false;
+            effectSpec.WasRefreshed = false;
+            effectSpec.IsRemoved = false;
+            effectSpec.ElapsedTime = 0f;
+            effectSpec.PeriodTimer = 0f;
+            effectSpec.StackCount = 1;
+            effectSpec.TriggeredCueIds.Clear();
+            effectSpec.Modifiers.Clear();
+            effectSpec.SetByCallerValues.Clear();
+            effectSpec.SnapshotValues.Clear();
+
+            var effectData = effectSpec.EffectNodeData;
+            if (effectData != null)
+            {
+                effectSpec.Tags = new EffectTagContainer(effectData);
+            }
+
+            if (caster.Attributes != null)
+            {
+                effectSpec.SnapshotValues = caster.Attributes.CreateSnapshot();
+            }
+
+            effectSpec.Duration = FormulaEvaluator.EvaluateSimple(effectData?.duration, 0f);
+            effectSpec.Period = FormulaEvaluator.EvaluateSimple(effectData?.period, 1f);
+
+            if (effectData?.attributeModifiers != null)
+            {
+                foreach (var modData in effectData.attributeModifiers)
+                {
+                    effectSpec.Modifiers.Add(AttributeModifier.FromData(modData));
+                }
+            }
+
             var handler = effectSpec.GetEffectHandler();
             if (handler == null)
             {
@@ -364,6 +562,8 @@ namespace ET.Client
                 }
                 return;
             }
+
+            handler.OnInitialize();
 
             handler.Execute();
 
@@ -434,7 +634,38 @@ namespace ET.Client
             if (cueContainer == null) return null;
 
             var cueSpec = cueContainer.AddChild<GameplayCueSpec>();
-            self.InitializeCueSpec(cueSpec, skillId, nodeData);
+            switch (nodeData.nodeType)
+            {
+                case NodeType.ParticleCue:
+                    cueSpec.HandName = "ParticleCueSpecHandler";
+                    cueSpec.EnsureCueComponent<ParticleCueSpec>();
+                    break;
+                case NodeType.SoundCue:
+                    cueSpec.HandName = "SoundCueSpecHandler";
+                    cueSpec.EnsureCueComponent<SoundCueSpec>();
+                    break;
+                case NodeType.FloatingTextCue:
+                    cueSpec.HandName = "FloatingTextCueSpecHandler";
+                    cueSpec.EnsureCueComponent<FloatingTextCueSpec>();
+                    break;
+                default:
+                    cueSpec.HandName = string.Empty;
+                    break;
+            }
+
+            cueSpec.SkillId = skillId;
+            cueSpec.NodeGuid = nodeData.guid;
+            cueSpec.ContextOwner = self.GetAbilitySpec();
+            cueSpec.Context = self;
+            cueSpec.IsRunning = false;
+            cueSpec.IsCancelled = false;
+            cueSpec.ActiveCue = null;
+
+            var cueData = cueSpec.CueNodeData;
+            if (cueData != null)
+            {
+                cueSpec.Tags = new CueTagContainer(cueData);
+            }
 
             var handler = cueSpec.GetCueHandler();
             if (handler == null)
@@ -445,6 +676,8 @@ namespace ET.Client
                 }
                 return null;
             }
+
+            handler.OnInitialize();
 
             var target = nodeData == null ? self.GetMainTarget() : self.GetTargetByType(nodeData.targetType);
             if (self.CanPlayCueOnTarget(cueSpec, target))
@@ -508,52 +741,6 @@ namespace ET.Client
             }
         }
 
-        private static void InitializeEffectSpec(this SpecExecutionContext self, GameplayEffectSpec effectSpec, string skillId, NodeData nodeData)
-        {
-            effectSpec.SkillId = skillId;
-            effectSpec.NodeGuid = nodeData.guid;
-            effectSpec.Context = self;
-            effectSpec.Source = self.Caster;
-            effectSpec.Level = self.AbilityLevel;
-            effectSpec.IsRunning = false;
-            effectSpec.IsCancelled = false;
-            effectSpec.IsApplied = false;
-            effectSpec.IsExpired = false;
-            effectSpec.WasRefreshed = false;
-            effectSpec.ElapsedTime = 0f;
-            effectSpec.PeriodTimer = 0f;
-            effectSpec.StackCount = 1;
-            effectSpec.TriggeredCueIds.Clear();
-            effectSpec.Modifiers.Clear();
-            effectSpec.SetByCallerValues.Clear();
-            effectSpec.SnapshotValues.Clear();
-
-            var effectData = effectSpec.EffectNodeData;
-            if (effectData != null)
-            {
-                effectSpec.Tags = new EffectTagContainer(effectData);
-            }
-
-            var source = self.GetCaster();
-            if (source?.Attributes != null)
-            {
-                effectSpec.SnapshotValues = source.Attributes.CreateSnapshot();
-            }
-
-            effectSpec.Duration = FormulaEvaluator.EvaluateSimple(effectData?.duration, 0f);
-            effectSpec.Period = FormulaEvaluator.EvaluateSimple(effectData?.period, 1f);
-
-            if (effectData?.attributeModifiers != null)
-            {
-                foreach (var modData in effectData.attributeModifiers)
-                {
-                    effectSpec.Modifiers.Add(AttributeModifier.FromData(modData));
-                }
-            }
-
-            effectSpec.AttachEffectComponent(nodeData.nodeType);
-            effectSpec.GetEffectHandler()?.OnInitialize();
-        }
 
         private static AEffectHandler GetEffectHandler(this GameplayEffectSpec effectSpec)
         {
@@ -574,26 +761,6 @@ namespace ET.Client
             return handler;
         }
 
-        private static void InitializeCueSpec(this SpecExecutionContext self, GameplayCueSpec cueSpec, string skillId, NodeData nodeData)
-        {
-            cueSpec.SkillId = skillId;
-            cueSpec.NodeGuid = nodeData.guid;
-            cueSpec.ContextOwner = self.AbilitySpec;
-            cueSpec.Context = self;
-            cueSpec.IsRunning = false;
-            cueSpec.IsCancelled = false;
-            cueSpec.ActiveCue = null;
-
-            cueSpec.AttachCueComponent(nodeData.nodeType);
-
-            var cueData = cueSpec.CueNodeData;
-            if (cueData != null)
-            {
-                cueSpec.Tags = new CueTagContainer(cueData);
-            }
-
-            cueSpec.GetCueHandler()?.OnInitialize();
-        }
 
         private static ACueHandler GetCueHandler(this GameplayCueSpec cueSpec)
         {
@@ -683,29 +850,6 @@ namespace ET.Client
                     return;
             }
         }
-
-        private static void AttachCueComponent(this GameplayCueSpec spec, NodeType nodeType)
-        {
-            switch (nodeType)
-            {
-                case NodeType.ParticleCue:
-                    spec.HandName = "ParticleCueSpecHandler";
-                    spec.EnsureCueComponent<ParticleCueSpec>();
-                    return;
-                case NodeType.SoundCue:
-                    spec.HandName = "SoundCueSpecHandler";
-                    spec.EnsureCueComponent<SoundCueSpec>();
-                    return;
-                case NodeType.FloatingTextCue:
-                    spec.HandName = "FloatingTextCueSpecHandler";
-                    spec.EnsureCueComponent<FloatingTextCueSpec>();
-                    return;
-                default:
-                    spec.HandName = string.Empty;
-                    return;
-            }
-        }
-
         private static void EnsureEffectComponent<T>(this GameplayEffectSpec spec) where T : Entity, IAwake, new()
         {
             if (spec.GetComponent<T>() == null)

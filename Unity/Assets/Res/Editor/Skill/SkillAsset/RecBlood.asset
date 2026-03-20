@@ -14,18 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324449508032675
-  - rid: 8915324449508032678
-  - rid: 8915324449508032679
-  - rid: 8915324449508032677
-  - rid: 8915324449508032676
-  - rid: 8915324449508032693
-  - rid: 8915324449508032673
+  - rid: 8915324534274916790
+  - rid: 8915324534274916791
+  - rid: 8915324534274916792
+  - rid: 8915324534274916793
+  - rid: 8915324534274916794
+  - rid: 8915324534274916795
+  - rid: 8915324534274916796
   connections:
-  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortId: 1003
-    inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
-    inputPortId: 7001
   - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3001
     inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -46,65 +42,68 @@ MonoBehaviour:
     outputPortId: 3004
     inputNodeGuid: 011aad56-e96c-41eb-9d85-e793d74a40bb
     inputPortId: 7001
+  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+    outputPortId: 1003
+    inputNodeGuid: 3cc340e3-1583-428e-ada4-c4e8539725d6
+    inputPortId: 7001
   references:
     version: 2
     RefIds:
-    - rid: 8915324449508032673
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 8915324534274916790
+      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
-        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
-        nodeType: 3
+        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
+        nodeType: 12
         position:
-          x: -1223.3334
-          y: -2020.6667
+          x: -304
+          y: -2072
         targetType: 1
+        requiredTags:
+          _tags: []
+        immunityTags:
+          _tags: []
+        destroyWithNode: 0
+        positionSource: 0
+        particlePrefab: {fileID: 3966591633886693288, guid: 876bc2ad5530efd4881e54e3550d1f48,
+          type: 3}
+        particlePrefabPath: Assets/Res/Prefab/Effect/ef_skill_zhanshi_huifunengliang.prefab
+        particleBindingName: down
+        particleOffset: {x: 0, y: 0, z: 0}
+        particleScale: {x: 1, y: 1, z: 1}
+        attachToTarget: 0
+        particleLoop: 0
+    - rid: 8915324534274916791
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+        nodeType: 0
+        position:
+          x: -924.6666
+          y: -1886.6667
+        targetType: 1
+        skillId: 1007
         assetTags:
           _tags: []
-        grantedTags:
+        cancelAbilitiesWithTags:
           _tags: []
-        applicationRequiredTags:
+        blockAbilitiesWithTags:
           _tags: []
-        applicationImmunityTags:
+        activationOwnedTags:
           _tags: []
-        removeGameEffectsWithTags:
+        activationRequiredTags:
           _tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers:
-        - attrType: 1003
-          operation: 0
-          magnitudeSourceType: 0
-          fixedValue: 100
-          formula: 
-          mmcType: 0
-          setByCallerKey: 
-          mmcCaptureAttribute: 200
-          mmcAttributeSource: 0
-          mmcCoefficient: 1
-          mmcUseSnapshot: 1
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
+        activationBlockedTags:
+          _tags:
+          - _name: CD.RecBlood
+            _hashCode: 1163914435
+            _shortName: "\u56DE\u8840"
+            _ancestorHashCodes: aba22dbc
+            _ancestorNames:
+            - CD
+        ongoingBlockedTags:
           _tags: []
-        cancelOnAbilityEnd: 1
-    - rid: 8915324449508032675
-      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
-        nodeType: 7
-        position:
-          x: -333.3333
-          y: -1780
-        targetType: 1
-        endType: 0
-    - rid: 8915324449508032676
+        eventOutputPorts: []
+    - rid: 8915324534274916792
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -147,94 +146,23 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324449508032677
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 8915324534274916793
+      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
-        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-        nodeType: 0
+        guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
+        nodeType: 7
         position:
-          x: -924.6666
-          y: -1886.6667
+          x: -333.3333
+          y: -1780
         targetType: 1
-        skillId: 1007
-        assetTags:
-          _tags: []
-        cancelAbilitiesWithTags:
-          _tags: []
-        blockAbilitiesWithTags:
-          _tags: []
-        activationOwnedTags:
-          _tags: []
-        activationRequiredTags:
-          _tags: []
-        activationBlockedTags:
-          _tags:
-          - _name: CD.RecBlood
-            _hashCode: 1163914435
-            _shortName: "\u56DE\u8840"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
-            - CD
-        ongoingBlockedTags:
-          _tags: []
-        eventOutputPorts: []
-    - rid: 8915324449508032678
-      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
-        nodeType: 12
-        position:
-          x: -304
-          y: -2072
-        targetType: 1
-        requiredTags:
-          _tags: []
-        immunityTags:
-          _tags: []
-        destroyWithNode: 0
-        positionSource: 0
-        particlePrefab: {fileID: 3966591633886693288, guid: 876bc2ad5530efd4881e54e3550d1f48,
-          type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_skill_zhanshi_huifunengliang.prefab
-        particleBindingName: down
-        particleOffset: {x: 0, y: 0, z: 0}
-        particleScale: {x: 1, y: 1, z: 1}
-        attachToTarget: 0
-        particleLoop: 0
-    - rid: 8915324449508032679
-      type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
-        nodeType: 14
-        position:
-          x: -313.3333
-          y: -1951.3334
-        targetType: 1
-        requiredTags:
-          _tags: []
-        immunityTags:
-          _tags: []
-        destroyWithNode: 0
-        positionSource: 2
-        positionBindingName: head
-        textType: 1
-        fixedText: 
-        contextDataKey: Heal
-        textColor: {r: 0, g: 1, b: 0.10971928, a: 1}
-        criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
-        missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-        fontSize: 45
-        criticalFontSize: 60
-        duration: 1.5
-        offset: {x: 0, y: 0}
-        moveDirection: {x: 0, y: 1}
-    - rid: 8915324449508032693
+        endType: 0
+    - rid: 8915324534274916794
       type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 6d127270-5aeb-4542-9183-8d2d028d6786
         nodeType: 2
         position:
-          x: -551.3333
+          x: -550.6666
           y: -2050
         targetType: 1
         assetTags:
@@ -273,3 +201,75 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
+    - rid: 8915324534274916795
+      type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
+        nodeType: 14
+        position:
+          x: -303.3333
+          y: -1952.6667
+        targetType: 1
+        requiredTags:
+          _tags: []
+        immunityTags:
+          _tags: []
+        destroyWithNode: 0
+        positionSource: 2
+        positionBindingName: head
+        textType: 1
+        fixedText: 
+        contextDataKey: Heal
+        textColor: {r: 0.2525789, g: 0.9622642, b: 0.11801341, a: 1}
+        criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
+        missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+        fontSize: 45
+        criticalFontSize: 60
+        duration: 1.5
+        offset: {x: 0, y: 0}
+        moveDirection: {x: 0, y: 1}
+    - rid: 8915324534274916796
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 3cc340e3-1583-428e-ada4-c4e8539725d6
+        nodeType: 3
+        position:
+          x: -1256
+          y: -2008
+        targetType: 1
+        assetTags:
+          _tags: []
+        grantedTags:
+          _tags: []
+        applicationRequiredTags:
+          _tags: []
+        applicationImmunityTags:
+          _tags: []
+        removeGameEffectsWithTags:
+          _tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers:
+        - attrType: 1003
+          operation: 0
+          magnitudeSourceType: 0
+          fixedValue: 100
+          formula: 
+          mmcType: 0
+          setByCallerKey: 
+          mmcCaptureAttribute: 1006
+          mmcAttributeSource: 0
+          mmcCoefficient: 1
+          mmcUseSnapshot: 1
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          _tags: []
+        cancelOnAbilityEnd: 0

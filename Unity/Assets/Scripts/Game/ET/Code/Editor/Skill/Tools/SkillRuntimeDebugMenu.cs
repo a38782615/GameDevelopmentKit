@@ -15,6 +15,7 @@ namespace ET.Client.Editor
         }
 
         private const string TriggerMoveAndCast1001MenuPath = "SkillEditor/Runtime/Move To Monster And Cast Skill 1001";
+        private const string TriggerSkill7001MenuPath = "SkillEditor/Runtime/Trigger Skill 7001";
         private const string TriggerSkill1008MenuPath = "SkillEditor/Runtime/Trigger Skill 1008";
         private const string TriggerSkill1010MenuPath = "SkillEditor/Runtime/Trigger Skill 1010";
 
@@ -87,6 +88,12 @@ namespace ET.Client.Editor
 
             EditorApplication.update -= UpdateMoveCast1001;
             EditorApplication.update += UpdateMoveCast1001;
+        }
+
+        [MenuItem(TriggerSkill7001MenuPath)]
+        public static void TriggerSkill7001()
+        {
+            TriggerSkill(7001);
         }
 
         [MenuItem(TriggerSkill1008MenuPath)]

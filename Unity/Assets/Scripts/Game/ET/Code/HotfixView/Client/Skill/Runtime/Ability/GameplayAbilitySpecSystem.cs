@@ -32,6 +32,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this GameplayAbilitySpec self)
         {
+            self.DisposeExecutionContexts();
             self.RunningEffects.Clear();
             self.PendingRemoveEffects.Clear();
         }
@@ -312,19 +313,18 @@ namespace ET.Client
                 }
             }
 
+            self.DisposeExecutionContexts();
+
             // 创建执行上下文
-            self.Context = new SpecExecutionContext();
-            self.Context.AbilitySpec = self;
-            self.Context.Caster = asc;
-            self.Context.AbilityLevel = self.Level;
+            SpecExecutionContext context = self.AddChild<SpecExecutionContext>();
+            context.SetCaster(asc);
+            context.SetAbilityLevel(self.Level);
             if (target != null)
             {
-                self.Context.MainTarget = target;
-                if (!self.Context.Targets.Contains(target))
-                {
-                    self.Context.Targets.Add(target);
-                }
+                context.SetMainTarget(target);
+                context.AddTarget(target);
             }
+            self.Context = context;
 
             // 重置播放时间和时间效果/Cue状态
             self.CurrentPlayTime = 0f;
@@ -337,9 +337,9 @@ namespace ET.Client
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
             {
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
-                self.Context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
+                context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
+                context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
+                context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
             }
 
             EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnActivated()
@@ -388,6 +388,7 @@ namespace ET.Client
                 Spec = self,
                 End = wasCancelled
             });
+            self.DisposeExecutionContexts();
             self.State = AbilityState.Inactive;
         }
 
@@ -425,7 +426,8 @@ namespace ET.Client
         public static void OnGameplayEvent(this GameplayAbilitySpec self, GameplayEventType gameplayEvent)
         {
             if (self.AbilityNodeData?.eventOutputPorts == null) return;
-            var context = self.Context;
+            SpecExecutionContext context = self.Context;
+            if (context == null) return;
             foreach (var portData in self.AbilityNodeData.eventOutputPorts)
             {
                 if (portData.eventType == gameplayEvent)
@@ -442,7 +444,8 @@ namespace ET.Client
             if (self.State != AbilityState.Active) return;
 
             self.CurrentPlayTime += deltaTime;
-            var context = self.Context;
+            SpecExecutionContext context = self.Context;
+            if (context == null) return;
 
             // 检查时间效果触发
             self.GetTimeEffectRuntime()?.CheckTriggers(self.SkillId, self.AnimationNodeGuid, self.CurrentPlayTime, context);
@@ -474,6 +477,30 @@ namespace ET.Client
                 foreach (var effect in self.PendingRemoveEffects)
                     self.RunningEffects.Remove(effect);
                 self.PendingRemoveEffects.Clear();
+            }
+        }
+
+        private static void DisposeExecutionContexts(this GameplayAbilitySpec self)
+        {
+            self.Context = default;
+            using ListComponent<long> removeChildIds = ListComponent<long>.Create();
+            foreach (Entity child in self.Children.Values)
+            {
+                if (child is SpecExecutionContext context)
+                {
+                    GameplayEffectSpec ownerEffectSpec = context.GetOwnerEffectSpec();
+                    if (ownerEffectSpec != null && !ownerEffectSpec.IsDisposed && !ownerEffectSpec.IsRemoved)
+                    {
+                        continue;
+                    }
+
+                    removeChildIds.Add(child.Id);
+                }
+            }
+
+            foreach (long childId in removeChildIds)
+            {
+                self.RemoveChild(childId);
             }
         }
 

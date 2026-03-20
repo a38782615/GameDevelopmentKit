@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1009
   nodes:
-  - rid: 8915324449508032623
-  - rid: 8915324449508032624
-  - rid: 8915324449508032625
-  - rid: 8915324449508032626
-  - rid: 8915324449508032627
-  - rid: 8915324449508032628
+  - rid: 8915324534274916758
+  - rid: 8915324534274916759
+  - rid: 8915324534274916760
+  - rid: 8915324534274916761
+  - rid: 8915324534274916762
+  - rid: 8915324534274916763
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -44,7 +44,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324449508032623
+    - rid: 8915324534274916758
       type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
@@ -89,7 +89,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           _tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324449508032624
+    - rid: 8915324534274916759
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
@@ -99,7 +99,7 @@ MonoBehaviour:
           y: -1856.6667
         targetType: 1
         endType: 0
-    - rid: 8915324449508032625
+    - rid: 8915324534274916760
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -119,7 +119,7 @@ MonoBehaviour:
           portIdValue: 2000539
           legacyPortId: f41c85e0-7f26-494e-9ffc-4a06c980f811
         timeCues: []
-    - rid: 8915324449508032626
+    - rid: 8915324534274916761
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -162,7 +162,7 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324449508032627
+    - rid: 8915324534274916762
       type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 632c75e2-152b-4376-8e9e-62c0e74f92d0
@@ -208,7 +208,7 @@ MonoBehaviour:
           _tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
-    - rid: 8915324449508032628
+    - rid: 8915324534274916763
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330

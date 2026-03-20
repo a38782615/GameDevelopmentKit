@@ -8,13 +8,9 @@ namespace ET.Client
     /// Spec执行上下文 - 提供执行所需的所有信息
     /// 在整个技能执行过程中传递
     /// </summary>
-    public partial class SpecExecutionContext : Object
+    [ChildOf(typeof(GameplayAbilitySpec))]
+    public partial class SpecExecutionContext : Entity, IAwake, IDestroy
     {
-        /// <summary>
-        /// 所属的技能Spec Entity Id
-        /// </summary>
-        public EntityRef<GameplayAbilitySpec> AbilitySpec;
-
         /// <summary>
         /// 当前触发执行的EffectSpec Entity Id（用于管理Cue生命周期，如Buff）
         /// </summary>

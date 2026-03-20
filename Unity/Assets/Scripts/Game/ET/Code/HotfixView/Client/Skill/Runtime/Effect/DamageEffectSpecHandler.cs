@@ -27,21 +27,33 @@ namespace ET.Client
         {
             if (target == null)
             {
+#if UNITY_EDITOR
+                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
+                {
+                    SkillDiagFileLogger.Log($"[DiagSkill{Spec.SkillId}] damage skip target=null");
+                }
+#endif
                 return;
             }
 
-            var nodeData = GetNode();
+            DamageEffectNodeData nodeData = GetNode();
             if (nodeData == null)
             {
+#if UNITY_EDITOR
+                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
+                {
+                    SkillDiagFileLogger.Log($"[DiagSkill{Spec.SkillId}] damage skip nodeData=null");
+                }
+#endif
                 return;
             }
 
-            var context = GetContext();
+            SpecExecutionContext context = GetContext();
             float baseDamage = CalculateDamage(nodeData, target);
 
             if (nodeData.damageMultiplyByStackCount)
             {
-                int stackCount = context?.StackCount ?? 1;
+                int stackCount = context?.GetStackCount() ?? 1;
                 baseDamage *= stackCount;
             }
 
@@ -64,12 +76,19 @@ namespace ET.Client
                 AttrCmp healthAttr = target.Attributes.GetAttribute(global::ET.NumericType.Hp);
                 if (healthAttr != null)
                 {
-                    healthAttr.BaseValue -= baseDamage;
+                    target.Attributes.SetBaseValue(healthAttr.NumericType, healthAttr.CurrentValue - baseDamage);
                 }
 
                 SpecExecutionContext executionContext = GetExecutionContext();
-                var damageResult = new DamageResult(baseDamage, false, false, nodeData.damageType);
+                DamageResult damageResult = new DamageResult(baseDamage, false, false, nodeData.damageType);
                 executionContext.SetCustomData("DamageResult", damageResult);
+#if UNITY_EDITOR
+                if (Spec?.SkillId == "1010" || Spec?.SkillId == "7001")
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[DiagSkill{Spec.SkillId}] damage applied node={Spec.NodeGuid} target={target.Owner?.name ?? "null"} damage={baseDamage:0.##} hasExecutionContext={(executionContext != null)} hasDamageResult={executionContext?.HasCustomData("DamageResult") ?? false}");
+                }
+#endif
             }
 
             if (baseDamage > 0f)
@@ -80,7 +99,7 @@ namespace ET.Client
 
         private float CalculateDamage(DamageEffectNodeData nodeData, AbilitySystemComponent target)
         {
-            var context = GetContext();
+            SpecExecutionContext context = GetContext();
             switch (nodeData.damageSourceType)
             {
                 case ModifierMagnitudeSourceType.FixedValue:
@@ -89,10 +108,10 @@ namespace ET.Client
                 case ModifierMagnitudeSourceType.Formula:
                     return FormulaEvaluator.Evaluate(nodeData.damageFormula, new FormulaContext
                     {
-                        CasterAttributes = context?.Caster.As()?.Attributes,
+                        CasterAttributes = context?.GetCaster()?.Attributes,
                         TargetAttributes = target.Attributes,
                         Level = Spec.Level,
-                        StackCount = context?.StackCount ?? 1
+                        StackCount = context?.GetStackCount() ?? 1
                     });
 
                 case ModifierMagnitudeSourceType.SetByCaller:
@@ -250,8 +269,8 @@ namespace ET.Client
             Vector3 targetPosition = targetTransform.position;
             Vector3 casterPosition = targetPosition;
 
-            var context = GetContext();
-            GameObject casterObject = context?.Caster.As()?.Owner;
+            SpecExecutionContext context = GetContext();
+            GameObject casterObject = context?.GetCaster()?.Owner;
             if (casterObject != null)
             {
                 casterPosition = casterObject.transform.position;
@@ -291,5 +310,6 @@ namespace ET.Client
 
             unit.Position = new float3(nextPosition.x, nextPosition.y, nextPosition.z);
         }
+
     }
 }

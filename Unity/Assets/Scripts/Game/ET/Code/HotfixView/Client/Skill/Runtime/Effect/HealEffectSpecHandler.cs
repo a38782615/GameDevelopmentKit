@@ -27,7 +27,6 @@ namespace ET.Client
 
         public override void OnInitialize()
         {
-            Spec.OnInitialize();
         }
 
         public override void Execute()
@@ -81,7 +80,7 @@ namespace ET.Client
             float baseHeal = CalculateHeal(healNodeData, target);
             if (healNodeData.healMultiplyByStackCount)
             {
-                int stackCount = GetContext()?.StackCount ?? 1;
+                int stackCount = GetContext()?.GetStackCount() ?? 1;
                 baseHeal *= stackCount;
             }
 
@@ -137,10 +136,10 @@ namespace ET.Client
 
                     return FormulaEvaluator.Evaluate(nodeData.healFormula, new FormulaContext
                     {
-                        CasterAttributes = context?.Caster.As().Attributes,
+                        CasterAttributes = context?.GetCaster()?.Attributes,
                         TargetAttributes = target.Attributes,
                         Level = Spec.Level,
-                        StackCount = context?.StackCount ?? 1
+                        StackCount = context?.GetStackCount() ?? 1
                     });
 
                 case ModifierMagnitudeSourceType.SetByCaller:

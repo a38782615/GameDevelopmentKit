@@ -96,11 +96,11 @@ namespace ET.Client.Editor
                 }
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                EditorUtility.DisplayDialog("导入完成", $"已导入 {imported} 个技能", "确定");
+                Debug.LogFormat($"已导入 {imported} 个技能", "确定");
             }
             else
             {
-                EditorUtility.DisplayDialog("导入失败", "未找到可导入的技能数据", "确定");
+                Debug.LogErrorFormat("导入失败", "未找到可导入的技能数据", "确定");
             }
         }
 
