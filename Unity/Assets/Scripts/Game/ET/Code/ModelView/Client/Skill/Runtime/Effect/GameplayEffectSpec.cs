@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -45,7 +46,7 @@ namespace ET.Client
         public EffectNodeData EffectNodeData => NodeData as EffectNodeData;
 
         public float RemainingTime => EffectNodeData?.durationType == EffectDurationType.Duration
-            ? Math.Max(0f, Duration - ElapsedTime)
+            ? math.max(0f, Duration - ElapsedTime)
             : -1f;
 
         public string HandName;

@@ -215,7 +215,7 @@ namespace ET
 
         private static quaternion GetFacingRotation(float2 faceV, quaternion currentRotation)
         {
-            if (Math.Abs(faceV.x) <= 0.01f)
+            if (math.abs(faceV.x) <= 0.01f)
             {
                 return currentRotation;
             }

@@ -229,7 +229,7 @@ namespace ET
                     faceV.y = 0;
                 }
 
-                if (Math.Abs(faceV.x) > 0.01 || Math.Abs(faceV.z) > 0.01)
+                if (math.abs(faceV.x) > 0.01 || math.abs(faceV.z) > 0.01)
                 {
                     self.To = quaternion.LookRotation(faceV, math.up());
                 }
@@ -245,7 +245,7 @@ namespace ET
                     faceV.y = 0;
                 }
 
-                if (Math.Abs(faceV.x) > 0.01 || Math.Abs(faceV.z) > 0.01)
+                if (math.abs(faceV.x) > 0.01 || math.abs(faceV.z) > 0.01)
                 {
                     self.To = quaternion.LookRotation(faceV, math.up());
                     unit.Rotation = self.To;

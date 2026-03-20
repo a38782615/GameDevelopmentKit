@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -217,7 +218,7 @@ namespace ET.Client
                             attribute.BaseValue *= magnitude;
                             break;
                         case ModifierOperation.Divide:
-                            if (Math.Abs(magnitude) > 0.0001f) attribute.BaseValue /= magnitude;
+                            if (math.abs(magnitude) > 0.0001f) attribute.BaseValue /= magnitude;
                             break;
                         case ModifierOperation.Override:
                             attribute.BaseValue = magnitude;
@@ -494,7 +495,7 @@ namespace ET.Client
                 return false;
             }
 
-            int newStack = stackLimit > 0 ? Math.Min(self.StackCount + count, stackLimit) : self.StackCount + count;
+            int newStack = stackLimit > 0 ? math.min(self.StackCount + count, stackLimit) : self.StackCount + count;
             if (newStack == self.StackCount) return false;
 
             self.StackCount = newStack;
@@ -505,7 +506,7 @@ namespace ET.Client
 
         public static bool RemoveStack(this GameplayEffectSpec self, int count = 1)
         {
-            int newStack = Math.Max(0, self.StackCount - count);
+            int newStack = math.max(0, self.StackCount - count);
             if (newStack == self.StackCount) return false;
 
             self.StackCount = newStack;

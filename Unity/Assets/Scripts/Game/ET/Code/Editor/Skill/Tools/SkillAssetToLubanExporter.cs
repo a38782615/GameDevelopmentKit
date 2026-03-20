@@ -8,6 +8,7 @@ using System.Xml;
 using MiniExcelLibs;
 
 using UnityEditor;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client.Editor
@@ -173,7 +174,7 @@ namespace ET.Client.Editor
                 {
                     int nodeCount = skill.nodes?.Count ?? 0;
                     int connCount = skill.connections?.Count ?? 0;
-                    int maxRows = Math.Max(Math.Max(nodeCount, connCount), 1);
+                    int maxRows = math.max(math.max(nodeCount, connCount), 1);
 
                     for (int i = 0; i < maxRows; i++)
                     {

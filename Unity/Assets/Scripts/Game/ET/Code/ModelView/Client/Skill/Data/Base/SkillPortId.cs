@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -129,7 +130,7 @@ namespace ET.Client
                     return 0;
                 }
 
-                return Math.Abs(hash);
+                return math.abs(hash);
             }
         }
     }
