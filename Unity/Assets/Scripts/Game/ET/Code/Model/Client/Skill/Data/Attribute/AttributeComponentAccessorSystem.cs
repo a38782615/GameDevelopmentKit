@@ -58,8 +58,37 @@ namespace ET.Client
                 return false;
             }
 
+            var max = self.GetMax(numericType);
+            if (max > -1)
+            {
+                attribute.SetClamp(0, self.GetAttrCmp(max).CurrentValue);
+            }
             attribute.BaseValue = value;
             return true;
+        }
+
+        private static int GetMax(this global::ET.AttributeComponent self, int numericType)
+        {
+            if (numericType == NumericType.Hp)
+            {
+                return NumericType.MaxHp;
+            }
+            else if (numericType == NumericType.Mp)
+            {
+                return NumericType.MaxMp;
+            }
+            else if (numericType == NumericType.Mode)
+            {
+                return NumericType.ModeMax;
+            }
+            else if (numericType == NumericType.Level)
+            {
+                return NumericType.MaxLevel;
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         public static bool SetCurrentValue(this global::ET.AttributeComponent self, int numericType, float value)

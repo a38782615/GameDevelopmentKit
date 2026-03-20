@@ -184,7 +184,7 @@ namespace ET.Client
                                 var attribute = target.Attributes.GetAttribute(modifier.TargetAttrType);
                                 if (attribute != null)
                                 {
-                                    attribute.AddModifier(modifier, self);
+                                    attribute.AddModifier(modifier, self, self.StackCount);
                                     attribute.Recalculate(modContext);
                                 }
                             }
@@ -201,29 +201,32 @@ namespace ET.Client
             AEffectHandler handler = self.ResolveEffectHandler();
             ctx = handler?.GetExecutionContext() ?? ctx;
 
+            var targetAttr = target?.Attributes;
             if (self.EffectNodeData?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
             {
                 var calcContext = self.CreateCalculationContext(target);
                 foreach (var modifier in self.Modifiers)
                 {
-                    var attribute = target.Attributes.GetAttribute(modifier.TargetAttrType);
+                    var attribute = targetAttr.GetAttribute(modifier.TargetAttrType);
                     if (attribute == null) continue;
+                    float v = attribute.BaseValue;
                     float magnitude = modifier.CalculateMagnitude(calcContext);
                     switch (modifier.Operation)
                     {
                         case ModifierOperation.Add:
-                            attribute.BaseValue += magnitude;
+                            v += magnitude;
                             break;
                         case ModifierOperation.Multiply:
-                            attribute.BaseValue *= magnitude;
+                            v *= magnitude;
                             break;
                         case ModifierOperation.Divide:
-                            if (math.abs(magnitude) > 0.0001f) attribute.BaseValue /= magnitude;
+                            if (math.abs(magnitude) > 0.0001f) v /= magnitude;
                             break;
                         case ModifierOperation.Override:
-                            attribute.BaseValue = magnitude;
+                            v = magnitude;
                             break;
                     }
+                    targetAttr.SetBaseValue(attribute.NumericType, v);
                 }
             }
 
@@ -523,6 +526,7 @@ namespace ET.Client
             foreach (var modifier in self.Modifiers)
             {
                 var attribute = target.Attributes.GetAttribute(modifier.TargetAttrType);
+                attribute?.UpdateModifierSourceProperties(self, self.StackCount);
                 attribute?.MarkDirty();
                 attribute?.Recalculate();
             }

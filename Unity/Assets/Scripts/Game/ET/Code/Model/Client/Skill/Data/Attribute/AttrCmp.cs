@@ -75,6 +75,7 @@ namespace ET.Client
             {
                 float newValue = ClampSilent(value);
                 WriteCurrentValue(newValue, true);
+                ClampDependentAttributes();
             }
         }
 
@@ -83,6 +84,7 @@ namespace ET.Client
             float newValue = ClampSilent(value);
             WriteBaseValue(newValue, false);
             WriteCurrentValue(newValue, false);
+            ClampDependentAttributes();
         }
 
         public void SetNumericType(int value)
@@ -115,13 +117,17 @@ namespace ET.Client
             CurrentValue = BaseValue;
         }
 
-        public void AddModifier(AttributeModifier modifier, object source = null)
+        public void AddModifier(AttributeModifier modifier, object source = null, int stackCount = 1)
         {
             activeModifiers ??= new List<ActiveModifier>();
             activeModifiers.Add(new ActiveModifier
             {
                 Modifier = modifier,
                 Source = source,
+                SourceProperties = new ModifierSourceProperties
+                {
+                    StackCount = math.max(1, stackCount),
+                },
                 AppliedTime = global::ET.TimeInfo.Instance.ClientNow(),
             });
             MarkDirty();
@@ -158,6 +164,27 @@ namespace ET.Client
             }
 
             return removed;
+        }
+
+        public void UpdateModifierSourceProperties(object source, int stackCount)
+        {
+            if (activeModifiers == null)
+            {
+                return;
+            }
+
+            int normalizedStackCount = math.max(1, stackCount);
+            for (int index = 0; index < activeModifiers.Count; ++index)
+            {
+                ActiveModifier activeModifier = activeModifiers[index];
+                if (!ReferenceEquals(activeModifier.Source, source))
+                {
+                    continue;
+                }
+
+                activeModifier.SourceProperties.StackCount = normalizedStackCount;
+                activeModifiers[index] = activeModifier;
+            }
         }
 
         public void ClearModifiers()
@@ -209,7 +236,7 @@ namespace ET.Client
             {
                 AttributeModifier modifier = activeModifier.Modifier;
                 float magnitude = modifier.CalculateMagnitude(context);
-                int stackCount = GetStackCount(activeModifier.Source);
+                int stackCount = activeModifier.SourceProperties.StackCount;
 
                 switch (modifier.Operation)
                 {
@@ -347,6 +374,16 @@ namespace ET.Client
         private float ClampSilent(float value)
         {
             float result = value;
+            if (numericType == global::ET.NumericType.Hp)
+            {
+                NumericComponent numericComponent = GetNumericComponent();
+                float maxHealth = numericComponent?.GetAsFloat(global::ET.NumericType.MaxHp) ?? 0f;
+                if (maxHealth > 0f)
+                {
+                    result = math.min(result, maxHealth);
+                }
+            }
+
             if (hasMinValue)
             {
                 result = math.max(result, minValue);
@@ -358,6 +395,38 @@ namespace ET.Client
             }
 
             return result;
+        }
+
+        private void ClampDependentAttributes()
+        {
+            if (numericType != global::ET.NumericType.MaxHp)
+            {
+                return;
+            }
+
+            global::ET.AttributeComponent attributeComponent = GetParent<global::ET.AttributeComponent>();
+            AttrCmp healthAttribute = attributeComponent?.GetAttrCmp(global::ET.NumericType.Hp);
+            if (healthAttribute == null)
+            {
+                return;
+            }
+
+            float maxHealth = maxValue;
+            if (maxHealth <= 0f)
+            {
+                return;
+            }
+
+            if (healthAttribute.BaseValue > maxHealth + Epsilon)
+            {
+                healthAttribute.BaseValue = maxHealth;
+                return;
+            }
+
+            if (healthAttribute.CurrentValue > maxHealth + Epsilon)
+            {
+                healthAttribute.CurrentValue = maxHealth;
+            }
         }
 
         private void WriteBaseValue(float value, bool publishEvent)
@@ -408,30 +477,19 @@ namespace ET.Client
         {
             return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
         }
-
-        private static int GetStackCount(object source)
-        {
-            if (source == null)
-            {
-                return 1;
-            }
-
-            var stackCountProperty = source.GetType().GetProperty("StackCount");
-            if (stackCountProperty == null)
-            {
-                return 1;
-            }
-
-            object value = stackCountProperty.GetValue(source);
-            return value is int stackCount ? stackCount : 1;
-        }
     }
 
     public struct ActiveModifier
     {
         public AttributeModifier Modifier;
         public object Source;
+        public ModifierSourceProperties SourceProperties;
         public long AppliedTime;
+    }
+
+    public struct ModifierSourceProperties
+    {
+        public int StackCount;
     }
 
     public enum AggregatorMode

@@ -110,7 +110,7 @@ namespace ET.Client
                 return;
             }
 
-            healthAttr.BaseValue = newHealth;
+            target.Attributes.SetBaseValue(healthAttr.NumericType, newHealth);
 
             SpecExecutionContext executionContext = GetExecutionContext();
             executionContext.SetCustomData("Heal", actualHeal);
