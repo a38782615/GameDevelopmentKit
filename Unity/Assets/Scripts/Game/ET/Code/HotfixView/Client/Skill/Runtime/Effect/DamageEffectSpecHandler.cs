@@ -6,6 +6,7 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.DamageEffectSpec))]
+    [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
     public partial class DamageEffectSpecHandler : AEffectHandler
     {
         public DamageEffectSpec SelfSpec()
@@ -165,6 +166,7 @@ namespace ET.Client
         public override void OnInitialize()
         {
             DamageEffectSpec selfSpec = SelfSpec();
+            SpecExecutionContext context = GetContext();
             DamageEffectNodeData nodeData = GetNode();
             if (selfSpec == null)
             {
@@ -179,6 +181,15 @@ namespace ET.Client
 
             if (selfSpec.HasRuntimeFollowup)
             {
+                if (context != null)
+                {
+                    SpecExecutionContext effectContext = context.CreateOwnedEffectContext(Spec);
+                    if (effectContext != null)
+                    {
+                        Spec.Context = effectContext;
+                    }
+                }
+
                 selfSpec.KnockbackSpeed = Mathf.Max(0.01f, nodeData.knockbackSpeed);
                 Spec.Duration = nodeData.knockbackDistance / selfSpec.KnockbackSpeed;
             }
