@@ -59,6 +59,7 @@ namespace ET.Client
 
         public static void Tick(this GameplayCueContainerComponent self, float deltaTime)
         {
+            _ = deltaTime;
             self.IsUpdating = true;
 
             for (int i = 0; i < self.ActiveCues.Count; i++)
@@ -69,7 +70,6 @@ namespace ET.Client
                     continue;
                 }
 
-                self.TickCue(cue);
                 if (!cue.IsRunning && !self.PendingRemove.Contains(cue))
                 {
                     self.PendingRemove.Add(cue);
@@ -118,20 +118,6 @@ namespace ET.Client
             if (!cue.IsDisposed)
             {
                 cue.Dispose();
-            }
-        }
-
-        private static void TickCue(this GameplayCueContainerComponent self, GameplayCueSpec cueSpec)
-        {
-            if (!cueSpec.IsRunning || cueSpec.ActiveCue == null)
-            {
-                return;
-            }
-
-            if (cueSpec.ActiveCue.IsExpired)
-            {
-                cueSpec.IsRunning = false;
-                cueSpec.ActiveCue = null;
             }
         }
 

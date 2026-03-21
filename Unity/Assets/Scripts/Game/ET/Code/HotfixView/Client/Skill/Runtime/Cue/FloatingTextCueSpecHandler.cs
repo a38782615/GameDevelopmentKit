@@ -92,24 +92,26 @@ namespace ET.Client
             Vector3 worldPosition = context.GetPosition(floatSpec.PositionSource, floatSpec.PositionBindingName);
             worldPosition += new Vector3(floatSpec.Offset.x, floatSpec.Offset.y, 0f);
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager == null)
+            ActiveCueComponent activeCue = Spec.EnsureActiveCueComponent(false);
+            if (activeCue == null)
             {
                 return;
             }
 
-            Spec.ActiveCue = manager.PlayFloatingTextCue(
+            bool played = activeCue.PlayFloatingText(
                 displayText,
                 worldPosition,
                 finalColor,
                 finalFontSize,
                 floatSpec.Duration,
                 floatSpec.TextType);
-
-            if (Spec.ActiveCue != null)
+            if (!played)
             {
-                Spec.IsRunning = true;
+                Spec.RemoveActiveCueComponent();
+                return;
             }
+
+            Spec.IsRunning = true;
         }
 
         private string GetDisplayText(DamageResult? damageResult)
@@ -131,10 +133,10 @@ namespace ET.Client
                 }
                 else
                 {
-                    text = "-" + Mathf.RoundToInt(dr.Damage);
+                    text = $"-{Mathf.RoundToInt(dr.Damage)}";
                     if (dr.IsCritical)
                     {
-                        text = "暴击! " + text;
+                        text = $"暴击! {text}";
                     }
                 }
             }
@@ -160,12 +162,12 @@ namespace ET.Client
                     switch (floatSpec.TextType)
                     {
                         case FloatingTextType.Damage:
-                            text = "-" + numText;
+                            text = $"-{numText}";
                             break;
                         case FloatingTextType.Heal:
                         case FloatingTextType.Experience:
                         case FloatingTextType.Gold:
-                            text = "+" + numText;
+                            text = $"+{numText}";
                             break;
                         default:
                             text = numText;
@@ -184,22 +186,12 @@ namespace ET.Client
 
         public override void StopCue()
         {
-            if (Spec.ActiveCue == null)
+            if (Spec.GetActiveCue() == null)
             {
                 return;
             }
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager != null)
-            {
-                manager.StopCue(Spec.ActiveCue);
-            }
-            else
-            {
-                Spec.ActiveCue.Stop();
-            }
-
-            Spec.ActiveCue = null;
+            Spec.RemoveActiveCueComponent();
         }
 
         public override void Reset()

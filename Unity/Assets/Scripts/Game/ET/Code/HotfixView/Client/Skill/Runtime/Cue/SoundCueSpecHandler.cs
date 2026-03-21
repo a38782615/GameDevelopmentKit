@@ -1,7 +1,6 @@
-using UnityEngine;
-
 namespace ET.Client
 {
+    [FriendOf(typeof(ActiveCueComponent))]
     [FriendOf(typeof(GameplayCueSpec))]
     public partial class SoundCueSpecHandler : ACueHandler
     {
@@ -49,38 +48,30 @@ namespace ET.Client
                 return;
             }
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager == null)
+            ActiveCueComponent activeCue = Spec.EnsureActiveCueComponent(nodeData.soundLoop);
+            if (activeCue == null)
             {
                 return;
             }
 
-            AbilitySystemComponent source = Spec.GetCueTarget();
-            Spec.ActiveCue = manager.PlaySoundCue(nodeData, source, target);
-            if (Spec.ActiveCue != null)
+            activeCue.PlaySound(nodeData, target);
+            if (activeCue.AttachedAudioSource == null)
             {
-                Spec.IsRunning = true;
+                Spec.RemoveActiveCueComponent();
+                return;
             }
+
+            Spec.IsRunning = true;
         }
 
         public override void StopCue()
         {
-            if (Spec.ActiveCue == null)
+            if (Spec.GetActiveCue() == null)
             {
                 return;
             }
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager != null)
-            {
-                manager.StopCue(Spec.ActiveCue);
-            }
-            else
-            {
-                Spec.ActiveCue.Stop();
-            }
-
-            Spec.ActiveCue = null;
+            Spec.RemoveActiveCueComponent();
         }
 
         public override void Reset()

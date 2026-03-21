@@ -654,7 +654,7 @@ namespace ET.Client
             cueSpec.Context = self;
             cueSpec.IsRunning = false;
             cueSpec.IsCancelled = false;
-            cueSpec.ActiveCue = null;
+            cueSpec.ActiveCueComponent = default;
 
             var cueData = cueSpec.CueNodeData;
             if (cueData != null)

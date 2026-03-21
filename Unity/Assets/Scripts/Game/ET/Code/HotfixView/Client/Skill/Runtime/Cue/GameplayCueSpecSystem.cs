@@ -3,10 +3,11 @@ using System.Collections.Generic;
 namespace ET.Client
 {
     [EntitySystemOf(typeof(GameplayCueSpec))]
+    [FriendOf(typeof(ActiveCueComponent))]
     [FriendOf(typeof(GameplayCueSpec))]
     [FriendOf(typeof(SpecExecutionContext))]
-    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
-    [FriendOfAttribute(typeof(ET.Client.GameplayAbilitySpec))]
+    [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(GameplayAbilitySpec))]
     public static partial class GameplayCueSpecSystem
     {
         [EntitySystem]
@@ -17,67 +18,92 @@ namespace ET.Client
         [EntitySystem]
         private static void Update(this GameplayCueSpec self)
         {
-            if (!self.IsRunning || self.ActiveCue == null) return;
-
-            if (self.ActiveCue.IsExpired)
+            ActiveCueComponent activeCue = self.GetActiveCue();
+            if (!self.IsRunning || activeCue == null)
             {
-                self.IsRunning = false;
-                self.ActiveCue = null;
+                return;
             }
+
+            activeCue.Tick(UnityEngine.Time.deltaTime);
+            if (!activeCue.IsExpired)
+            {
+                return;
+            }
+
+            self.IsRunning = false;
+            self.RemoveActiveCueComponent();
         }
 
         [EntitySystem]
         private static void Destroy(this GameplayCueSpec self)
         {
             if (self.IsRunning)
+            {
                 self.GetCue().StopCue();
-            self.ActiveCue = null;
+            }
+
+            self.RemoveActiveCueComponent();
+            self.Context = default;
+            self.ContextOwner = default;
         }
 
         public static bool CanPlayOnTarget(this GameplayCueSpec self, AbilitySystemComponent target)
         {
-            if (target == null) return true; // 无目标时允许播放（世界空间Cue）
-
-            if (!self.Tags.RequiredTags.IsEmpty)
+            if (target == null)
             {
-                if (!target.OwnedTags.HasAllTags(self.Tags.RequiredTags))
-                    return false;
+                return true;
             }
 
-            if (!self.Tags.ImmunityTags.IsEmpty)
+            if (!self.Tags.RequiredTags.IsEmpty && !target.OwnedTags.HasAllTags(self.Tags.RequiredTags))
             {
-                if (target.OwnedTags.HasAnyTags(self.Tags.ImmunityTags))
-                    return false;
+                return false;
+            }
+
+            if (!self.Tags.ImmunityTags.IsEmpty && target.OwnedTags.HasAnyTags(self.Tags.ImmunityTags))
+            {
+                return false;
             }
 
             return true;
         }
 
-        // ============ 辅助方法 ============
-
         public static AbilitySystemComponent GetCueTarget(this GameplayCueSpec self)
         {
-            var context = self.GetContext();
-            var nodeData = self.NodeData;
-            if (nodeData == null) return context?.GetMainTarget();
+            SpecExecutionContext context = self.GetContext();
+            NodeData nodeData = self.NodeData;
+            if (nodeData == null)
+            {
+                return context?.GetMainTarget();
+            }
+
             return context?.GetTargetByType(nodeData.targetType);
         }
 
         public static List<AbilitySystemComponent> GetCueTargets(this GameplayCueSpec self)
         {
-            var context = self.GetContext();
-            var nodeData = self.NodeData;
+            SpecExecutionContext context = self.GetContext();
+            NodeData nodeData = self.NodeData;
+            if (context == null)
+            {
+                return null;
+            }
+
             if (nodeData == null)
             {
-                var result = new List<AbilitySystemComponent>();
-                foreach (var id in context.Targets)
+                List<AbilitySystemComponent> result = new List<AbilitySystemComponent>();
+                foreach (EntityRef<AbilitySystemComponent> ignored in context.Targets)
                 {
-                    var asc = context.GetTargetByType(TargetType.MainTarget);
-                    if (asc != null) result.Add(asc);
+                    AbilitySystemComponent asc = context.GetTargetByType(TargetType.MainTarget);
+                    if (asc != null)
+                    {
+                        result.Add(asc);
+                    }
                 }
+
                 return result;
             }
-            return context?.GetTargetsByType(nodeData.targetType);
+
+            return context.GetTargetsByType(nodeData.targetType);
         }
 
         public static UnityEngine.Transform GetTargetTransform(this GameplayCueSpec self, AbilitySystemComponent target)
@@ -87,14 +113,10 @@ namespace ET.Client
 
         public static UnityEngine.Vector3 GetTargetPosition(this GameplayCueSpec self, AbilitySystemComponent target)
         {
-            var transform = self.GetTargetTransform(target);
+            UnityEngine.Transform transform = self.GetTargetTransform(target);
             return transform != null ? transform.position : UnityEngine.Vector3.zero;
         }
 
-
-        /// <summary>
-        /// 获取执行上下文
-        /// </summary>
         public static SpecExecutionContext GetContext(this GameplayCueSpec self)
         {
             SpecExecutionContext context = self.Context;
@@ -103,15 +125,61 @@ namespace ET.Client
                 return context;
             }
 
-            var gameplayAbilitySpec = self.ContextOwner.As();
-            if (gameplayAbilitySpec == null) return null;
+            GameplayAbilitySpec gameplayAbilitySpec = self.ContextOwner.As();
+            if (gameplayAbilitySpec == null)
+            {
+                return null;
+            }
+
             return gameplayAbilitySpec.Context.As();
         }
 
+        public static ActiveCueComponent GetActiveCue(this GameplayCueSpec self)
+        {
+            return self?.ActiveCueComponent.As();
+        }
+
+        public static ActiveCueComponent EnsureActiveCueComponent(this GameplayCueSpec self, bool isLooping)
+        {
+            if (self == null)
+            {
+                return null;
+            }
+
+            ActiveCueComponent activeCue = self.ActiveCueComponent;
+            if (activeCue == null)
+            {
+                activeCue = self.AddComponent<ActiveCueComponent>();
+                self.ActiveCueComponent = activeCue;
+            }
+
+            activeCue.ResetForPlay(isLooping);
+            return activeCue;
+        }
+
+        public static void RemoveActiveCueComponent(this GameplayCueSpec self)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            ActiveCueComponent activeCue = self.ActiveCueComponent;
+            if (activeCue != null)
+            {
+                activeCue.Stop();
+                if (!activeCue.IsDisposed)
+                {
+                    self.RemoveComponent<ActiveCueComponent>();
+                }
+            }
+
+            self.ActiveCueComponent = default;
+        }
 
         public static ACueHandler GetCue(this GameplayCueSpec self)
         {
-            var cue = CueDispatcherComponent.Instance.Get(self.HandName);
+            ACueHandler cue = CueDispatcherComponent.Instance.Get(self.HandName);
             cue.Spec = self;
             return cue;
         }

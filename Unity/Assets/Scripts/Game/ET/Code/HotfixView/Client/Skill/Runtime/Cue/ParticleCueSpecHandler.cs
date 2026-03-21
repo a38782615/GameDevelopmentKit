@@ -84,43 +84,32 @@ namespace ET.Client
                 }
             }
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager == null)
+            ActiveCueComponent activeCue = Spec.EnsureActiveCueComponent(selfSpec.ParticleLoop);
+            if (activeCue == null)
             {
                 return;
             }
 
-            Spec.ActiveCue = manager.PlayParticleCue(
+            activeCue.PlayParticleEffect(
                 selfSpec.ParticleEntityId,
-                position,
-                adjustedScale,
-                attachTransform,
-                selfSpec.ParticleLoop);
+                new UGFEntityEffectInitData
+                {
+                    Position = position,
+                    Scale = adjustedScale,
+                    AttachTransform = attachTransform
+                });
 
-            if (Spec.ActiveCue != null)
-            {
-                Spec.IsRunning = true;
-            }
+            Spec.IsRunning = true;
         }
 
         public override void StopCue()
         {
-            if (Spec.ActiveCue == null)
+            if (Spec.GetActiveCue() == null)
             {
                 return;
             }
 
-            GameplayCueManager manager = Spec.GetGameplayCueManager();
-            if (manager != null)
-            {
-                manager.StopCue(Spec.ActiveCue);
-            }
-            else
-            {
-                Spec.ActiveCue.Stop();
-            }
-
-            Spec.ActiveCue = null;
+            Spec.RemoveActiveCueComponent();
         }
 
         public override void Reset()
