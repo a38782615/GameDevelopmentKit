@@ -34,35 +34,50 @@ namespace ET.Client
                 return null;
             }
 
-            ActiveGameplayCue activeCue = new ActiveGameplayCue
-            {
-                IsLooping = cueData.particleLoop
-            };
+            Vector3 position = Vector3.zero;
+            Transform parent = null;
+            float facingDirection = 1f;
 
-            GameObject particleObject = this.LoadAndInstantiateParticle(cueData, target);
-            if (particleObject != null)
+            if (target?.Owner != null)
             {
-                activeCue.AttachedObject = particleObject;
+                Transform targetTransform = target.Owner.transform;
+                facingDirection = targetTransform.localScale.x >= 0 ? 1f : -1f;
 
-                if (!cueData.particleLoop)
+                if (!string.IsNullOrEmpty(cueData.particleBindingName))
                 {
-                    activeCue.Duration = this.GetParticleSystemDuration(particleObject);
+                    Transform bindingPoint = targetTransform.Find(cueData.particleBindingName);
+                    if (bindingPoint != null)
+                    {
+                        targetTransform = bindingPoint;
+                    }
+                }
+
+                Vector3 adjustedOffset = cueData.particleOffset;
+                adjustedOffset.x *= facingDirection;
+                position = targetTransform.position + adjustedOffset;
+
+                if (cueData.attachToTarget)
+                {
+                    parent = targetTransform;
                 }
             }
 
-            this.m_ActiveCues.Add(activeCue);
-            return activeCue;
+            Vector3 scale = cueData.particleScale;
+            scale.x *= facingDirection;
+            return this.PlayParticleCue(cueData.particleEntityId, position, scale, parent, cueData.particleLoop);
         }
 
         public ActiveGameplayCue PlayParticleCue(
-            GameObject prefab,
+            int particleEntityId,
             Vector3 position,
             Vector3 scale,
             Transform attachTransform,
             bool isLoop)
         {
+            GameObject prefab = SkillNodeRuntimeAssetResolver.GetEntityPrefab(particleEntityId);
             if (prefab == null)
             {
+                Log.Warning($"[ParticleCue] Entity prefab not found. entityId={particleEntityId}");
                 return null;
             }
 
@@ -215,50 +230,6 @@ namespace ET.Client
         protected override void Destroy()
         {
             this.Clear();
-        }
-
-        private GameObject LoadAndInstantiateParticle(ParticleCueNodeData cueData, AbilitySystemComponent target)
-        {
-            if (cueData.particlePrefab == null)
-            {
-                return null;
-            }
-
-            Vector3 position = Vector3.zero;
-            Quaternion rotation = Quaternion.identity;
-            Transform parent = null;
-            float facingDirection = 1f;
-
-            if (target?.Owner != null)
-            {
-                Transform targetTransform = target.Owner.transform;
-                facingDirection = targetTransform.localScale.x >= 0 ? 1f : -1f;
-
-                if (!string.IsNullOrEmpty(cueData.particleBindingName))
-                {
-                    Transform bindingPoint = targetTransform.Find(cueData.particleBindingName);
-                    if (bindingPoint != null)
-                    {
-                        targetTransform = bindingPoint;
-                    }
-                }
-
-                Vector3 adjustedOffset = cueData.particleOffset;
-                adjustedOffset.x *= facingDirection;
-                position = targetTransform.position + adjustedOffset;
-                rotation = targetTransform.rotation;
-
-                if (cueData.attachToTarget)
-                {
-                    parent = targetTransform;
-                }
-            }
-
-            GameObject instance = global::UnityEngine.Object.Instantiate(cueData.particlePrefab, position, rotation, parent);
-            Vector3 scale = cueData.particleScale;
-            scale.x *= facingDirection;
-            instance.transform.localScale = scale;
-            return instance;
         }
 
         private float GetParticleSystemDuration(GameObject particleObject)

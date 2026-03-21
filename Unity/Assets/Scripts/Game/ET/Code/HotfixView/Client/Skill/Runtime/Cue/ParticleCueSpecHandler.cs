@@ -37,7 +37,7 @@ namespace ET.Client
             var nodeData = GetNode();
             if (nodeData != null)
             {
-                selfSpec.ParticlePrefab = nodeData.particlePrefab;
+                selfSpec.ParticleEntityId = nodeData.particleEntityId;
                 selfSpec.PositionSource = nodeData.positionSource;
                 selfSpec.ParticleBindingName = nodeData.particleBindingName;
                 selfSpec.ParticleOffset = nodeData.particleOffset;
@@ -103,7 +103,7 @@ namespace ET.Client
 
             // 播放粒子特效
             Spec.ActiveCue = GameplayCueManager.GetOrCreate().PlayParticleCue(
-                nodeData.particlePrefab,
+                selfSpec.ParticleEntityId,
                 position,
                 adjustedScale,
                 attachTransform,
@@ -132,7 +132,7 @@ namespace ET.Client
             {
                 return;
             }
-            selfSpec.ParticlePrefab = null;
+            selfSpec.ParticleEntityId = 0;
             selfSpec.PositionSource = PositionSourceType.ParentInput;
             selfSpec.ParticleBindingName = "";
             selfSpec.ParticleOffset = Vector3.zero;

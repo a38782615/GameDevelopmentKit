@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Game;
 using UnityEngine;
 #if Spine
 using Spine.Unity;
@@ -52,7 +53,10 @@ namespace ET.Client
             switch (node)
             {
                 case ParticleCueNodeData particleNode:
-                    particleNode.particlePrefab = await LoadAssetOrKeepAsync(particleNode.particlePrefab, particleNode.particlePrefabPath);
+                    if (particleNode.particleEntityId > 0)
+                    {
+                        await PreloadEntityPrefabAsync(particleNode.particleEntityId);
+                    }
                     break;
                 case SoundCueNodeData soundNode:
                     soundNode.soundClip = await LoadAssetOrKeepAsync(soundNode.soundClip, soundNode.soundClipPath);
@@ -72,6 +76,23 @@ namespace ET.Client
 #endif
                     break;
             }
+        }
+
+        public static GameObject GetEntityPrefab(int entityId)
+        {
+            if (entityId <= 0)
+            {
+                return null;
+            }
+
+            DREntity drEntity = GameEntry.Tables?.DTEntity?.GetOrDefault(entityId);
+            if (drEntity == null)
+            {
+                return null;
+            }
+
+            string assetPath = AssetUtility.GetEntityAsset(drEntity.AssetName);
+            return LoadedAssets.TryGetValue(assetPath, out UnityEngine.Object loadedAsset) ? loadedAsset as GameObject : null;
         }
 
         private static async UniTask<TAsset> LoadAssetOrKeepAsync<TAsset>(TAsset currentAsset, string assetPath) where TAsset : UnityEngine.Object
@@ -117,6 +138,19 @@ namespace ET.Client
                 Log.Error($"[SkillAssetResolver] Load asset failed. path={assetPath} type={typeof(TAsset).Name} error={e}");
                 return null;
             }
+        }
+
+        private static async UniTask PreloadEntityPrefabAsync(int entityId)
+        {
+            DREntity drEntity = GameEntry.Tables?.DTEntity?.GetOrDefault(entityId);
+            if (drEntity == null)
+            {
+                Log.Warning($"[SkillAssetResolver] Entity config not found. entityId={entityId}");
+                return;
+            }
+
+            string assetPath = AssetUtility.GetEntityAsset(drEntity.AssetName);
+            await LoadAssetAsync<GameObject>(assetPath);
         }
     }
 }

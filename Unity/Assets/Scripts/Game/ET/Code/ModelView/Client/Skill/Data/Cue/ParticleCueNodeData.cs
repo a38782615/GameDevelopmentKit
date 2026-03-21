@@ -17,8 +17,7 @@ namespace ET.Client
         /// <summary>
         /// 粒子特效预制体
         /// </summary>
-        public GameObject particlePrefab;
-        public string particlePrefabPath = "";
+        public int particleEntityId = 0;
         public string particleBindingName = "";
         public Vector3 particleOffset = Vector3.zero;
         public Vector3 particleScale = Vector3.one;

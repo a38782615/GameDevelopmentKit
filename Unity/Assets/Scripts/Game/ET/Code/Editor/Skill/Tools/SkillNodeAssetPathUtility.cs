@@ -27,9 +27,6 @@ namespace ET.Client.Editor
         {
             switch (node)
             {
-                case ParticleCueNodeData particleNode:
-                    SyncAssetPath(ref particleNode.particlePrefabPath, particleNode.particlePrefab);
-                    break;
                 case SoundCueNodeData soundNode:
                     SyncAssetPath(ref soundNode.soundClipPath, soundNode.soundClip);
                     break;
@@ -51,9 +48,6 @@ namespace ET.Client.Editor
         {
             switch (node)
             {
-                case ParticleCueNodeData particleNode:
-                    RestoreAssetReference(ref particleNode.particlePrefab, particleNode.particlePrefabPath);
-                    break;
                 case SoundCueNodeData soundNode:
                     RestoreAssetReference(ref soundNode.soundClip, soundNode.soundClipPath);
                     break;
@@ -75,9 +69,6 @@ namespace ET.Client.Editor
         {
             switch (node)
             {
-                case ParticleCueNodeData particleNode:
-                    SetAssetPath(jsonObject, nameof(ParticleCueNodeData.particlePrefab), nameof(ParticleCueNodeData.particlePrefabPath), particleNode.particlePrefab);
-                    break;
                 case SoundCueNodeData soundNode:
                     SetAssetPath(jsonObject, nameof(SoundCueNodeData.soundClip), nameof(SoundCueNodeData.soundClipPath), soundNode.soundClip);
                     break;
