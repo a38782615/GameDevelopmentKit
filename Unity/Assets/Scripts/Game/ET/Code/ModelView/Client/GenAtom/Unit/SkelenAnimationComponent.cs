@@ -12,6 +12,7 @@ namespace ET.Client
         public bool IsListening;
         public bool IsStunned;
         public string StandAnimationName = "Stand";
+        public string MoveAnimationName = "Move";
         public string StunAnimationName = "Stun";
 #if Spine
         public SkeletonAnimation SkeletonAnimation;
