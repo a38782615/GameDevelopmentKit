@@ -14,41 +14,9 @@ namespace ET
         public void Awake()
         {
             this.m_TypeSystems = new(InstanceQueueIndex.Max);
-            foreach (Type type in CodeTypes.Instance.GetTypes(typeof (UGFUIFormSystemAttribute)))
-            {
-                SystemObject obj = (SystemObject)Activator.CreateInstance(type);
-
-                if (obj is not ISystemType iSystemType)
-                {
-                    continue;
-                }
-
-                TypeSystems.OneTypeSystems oneTypeSystems = this.m_TypeSystems.GetOrCreateOneTypeSystems(iSystemType.Type());
-                oneTypeSystems.Map.Add(iSystemType.SystemType(), obj);
-                int index = iSystemType.GetInstanceQueueIndex();
-                if (index > InstanceQueueIndex.None && index < InstanceQueueIndex.Max)
-                {
-                    oneTypeSystems.QueueFlag[index] = true;
-                }
-            }
-            
-            foreach (Type type in CodeTypes.Instance.GetTypes(typeof (UGFUIWidgetSystemAttribute)))
-            {
-                SystemObject obj = (SystemObject)Activator.CreateInstance(type);
-
-                if (obj is not ISystemType iSystemType)
-                {
-                    continue;
-                }
-
-                TypeSystems.OneTypeSystems oneTypeSystems = this.m_TypeSystems.GetOrCreateOneTypeSystems(iSystemType.Type());
-                oneTypeSystems.Map.Add(iSystemType.SystemType(), obj);
-                int index = iSystemType.GetInstanceQueueIndex();
-                if (index > InstanceQueueIndex.None && index < InstanceQueueIndex.Max)
-                {
-                    oneTypeSystems.QueueFlag[index] = true;
-                }
-            }
+            this.RegisterSystems(typeof(UGFUIFormSystemAttribute));
+            this.RegisterSystems(typeof(UGFUIWidgetSystemAttribute));
+            this.RegisterSystems(typeof(UGFEntitySystemAttribute));
             
             foreach (var kv in CodeTypes.Instance.GetTypes())
             {
@@ -79,6 +47,27 @@ namespace ET
                             throw new Exception($"long hash add to monoToWidgetType fail: {type.FullName} {sameHashType.FullName}", e);
                         }
                     }
+                }
+            }
+        }
+
+        private void RegisterSystems(Type attributeType)
+        {
+            foreach (Type type in CodeTypes.Instance.GetTypes(attributeType))
+            {
+                SystemObject obj = (SystemObject)Activator.CreateInstance(type);
+
+                if (obj is not ISystemType iSystemType)
+                {
+                    continue;
+                }
+
+                TypeSystems.OneTypeSystems oneTypeSystems = this.m_TypeSystems.GetOrCreateOneTypeSystems(iSystemType.Type());
+                oneTypeSystems.Map.Add(iSystemType.SystemType(), obj);
+                int index = iSystemType.GetInstanceQueueIndex();
+                if (index > InstanceQueueIndex.None && index < InstanceQueueIndex.Max)
+                {
+                    oneTypeSystems.QueueFlag[index] = true;
                 }
             }
         }
