@@ -268,37 +268,10 @@ namespace ET.Client
 
             activeCue.AttachedEffectEntity = effectEntity;
             activeCue.AttachedObject = effectEntity.CachedTransform != null ? effectEntity.CachedTransform.gameObject : null;
-            if (!isLoop && activeCue.AttachedObject != null)
+            if (!isLoop)
             {
-                activeCue.Duration = self.GetParticleSystemDuration(activeCue.AttachedObject);
+                activeCue.Duration = effectEntity.GetParticleSystemDuration();
             }
-        }
-
-        private static float GetParticleSystemDuration(this GameplayCueManager self, GameObject particleObject)
-        {
-            ParticleSystem[] particleSystems = particleObject.GetComponentsInChildren<ParticleSystem>();
-            if (particleSystems == null || particleSystems.Length == 0)
-            {
-                return 0f;
-            }
-
-            float maxDuration = 0f;
-            foreach (ParticleSystem ps in particleSystems)
-            {
-                ParticleSystem.MainModule main = ps.main;
-                if (main.loop)
-                {
-                    continue;
-                }
-
-                float totalDuration = main.startDelay.constantMax + main.duration + main.startLifetime.constantMax;
-                if (totalDuration > maxDuration)
-                {
-                    maxDuration = totalDuration;
-                }
-            }
-
-            return maxDuration;
         }
 
         private static AudioSource PlaySound(this GameplayCueManager self, SoundCueNodeData cueData, AbilitySystemComponent target)

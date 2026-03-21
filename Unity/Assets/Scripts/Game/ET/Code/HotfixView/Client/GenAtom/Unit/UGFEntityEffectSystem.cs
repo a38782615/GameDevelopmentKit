@@ -37,5 +37,37 @@ namespace ET.Client
 
             self.CachedTransform.SetParent(null, false);
         }
+
+        public static float GetParticleSystemDuration(this UGFEntityEffect self)
+        {
+            if (self?.CachedTransform == null)
+            {
+                return 0f;
+            }
+
+            ParticleSystem[] particleSystems = self.CachedTransform.GetComponentsInChildren<ParticleSystem>();
+            if (particleSystems == null || particleSystems.Length == 0)
+            {
+                return 0f;
+            }
+
+            float maxDuration = 0f;
+            foreach (ParticleSystem particleSystem in particleSystems)
+            {
+                ParticleSystem.MainModule main = particleSystem.main;
+                if (main.loop)
+                {
+                    continue;
+                }
+
+                float totalDuration = main.startDelay.constantMax + main.duration + main.startLifetime.constantMax;
+                if (totalDuration > maxDuration)
+                {
+                    maxDuration = totalDuration;
+                }
+            }
+
+            return maxDuration;
+        }
     }
 }
