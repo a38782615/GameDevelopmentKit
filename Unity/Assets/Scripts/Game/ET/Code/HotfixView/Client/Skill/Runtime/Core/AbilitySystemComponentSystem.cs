@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace ET.Client
 {
     [EntitySystemOf(typeof(AbilitySystemComponent))]
@@ -250,6 +253,82 @@ namespace ET.Client
             return abilityContainer.GetActiveAbilities().Count > 0;
         }
 
+        public static bool IsCasting(this AbilitySystemComponent self, GameplayAbilitySpec whitelistSpec)
+        {
+            if (whitelistSpec == null)
+            {
+                return self.IsCasting();
+            }
+
+            int skillId = GetAbilitySkillId(whitelistSpec);
+            if (skillId > 0)
+            {
+                return self.IsCasting(skillId);
+            }
+
+            AbilityContainerComponent abilityContainer = self?.Abilities;
+            if (abilityContainer == null)
+            {
+                return false;
+            }
+
+            foreach (EntityRef<GameplayAbilitySpec> activeAbilityRef in abilityContainer.GetActiveAbilities())
+            {
+                GameplayAbilitySpec activeAbility = activeAbilityRef.As();
+                if (activeAbility == whitelistSpec)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsCasting(this AbilitySystemComponent self, params int[] whitelistSkillIds)
+        {
+            AbilityContainerComponent abilityContainer = self?.Abilities;
+            if (abilityContainer == null)
+            {
+                return false;
+            }
+
+            IReadOnlyList<EntityRef<GameplayAbilitySpec>> activeAbilities = abilityContainer.GetActiveAbilities();
+            if (activeAbilities.Count == 0)
+            {
+                return false;
+            }
+
+            if (whitelistSkillIds == null || whitelistSkillIds.Length == 0)
+            {
+                return true;
+            }
+
+            foreach (EntityRef<GameplayAbilitySpec> activeAbilityRef in activeAbilities)
+            {
+                GameplayAbilitySpec activeAbility = activeAbilityRef.As();
+                if (activeAbility == null)
+                {
+                    continue;
+                }
+
+                int activeSkillId = GetAbilitySkillId(activeAbility);
+                if (activeSkillId <= 0)
+                {
+                    continue;
+                }
+
+                foreach (int whitelistSkillId in whitelistSkillIds)
+                {
+                    if (whitelistSkillId > 0 && activeSkillId == whitelistSkillId)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private static bool RequiresMainTarget(this GameplayAbilitySpec self)
         {
             SkillData graphData = self?.GraphData;
@@ -343,6 +422,22 @@ namespace ET.Client
             Unit unit = target.GetParent<SkillUnit>()?.Unit.As();
             UnityEngine.Vector3 position = GetWorldPosition(unit, target);
             return $"cfg={unit?.ConfigId ?? 0} id={unit?.Id ?? 0} pos={position}";
+        }
+
+        private static int GetAbilitySkillId(GameplayAbilitySpec spec)
+        {
+            if (spec == null)
+            {
+                return 0;
+            }
+
+            int skillId = spec.AbilityNodeData?.skillId ?? 0;
+            if (skillId > 0)
+            {
+                return skillId;
+            }
+
+            return int.TryParse(spec.SkillId, out skillId) ? skillId : 0;
         }
     }
 }

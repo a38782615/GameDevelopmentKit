@@ -14,13 +14,13 @@ namespace ET.Client
                 return 1;
             }
 
-            if (asc.IsCasting())
+            GameplayAbilitySpec spec = aiComponent.FindPreferredAbility(aiConfig);
+            if (spec == null)
             {
                 return 1;
             }
 
-            GameplayAbilitySpec spec = aiComponent.FindPreferredAbility(aiConfig);
-            if (spec == null)
+            if (asc.IsCasting(spec))
             {
                 return 1;
             }
