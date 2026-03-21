@@ -224,7 +224,7 @@ MonoBehaviour:
         textColor: {r: 0.2525789, g: 0.9622642, b: 0.11801341, a: 1}
         criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
         missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-        fontSize: 45
+        fontSize: 5
         criticalFontSize: 60
         duration: 1.5
         offset: {x: 0, y: 0}

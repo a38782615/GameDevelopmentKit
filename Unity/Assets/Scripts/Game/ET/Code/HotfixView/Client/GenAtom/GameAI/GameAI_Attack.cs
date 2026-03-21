@@ -20,7 +20,7 @@ namespace ET.Client
                 return 1;
             }
 
-            if (asc.IsCasting(spec))
+            if (asc.IsCasting(7001))
             {
                 return 1;
             }

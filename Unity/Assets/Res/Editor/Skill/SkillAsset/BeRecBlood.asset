@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 2001
   nodes:
-  - rid: 8915324534274916817
   - rid: 8915324534274916818
   - rid: 8915324534274916819
-  - rid: 8915324534274916816
+  - rid: 8915324534274916817
   - rid: 8915324534274916815
+  - rid: 8915324534274916816
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     outputPortId: 3002
@@ -91,7 +91,7 @@ MonoBehaviour:
         nodeType: 14
         position:
           x: 1148.6667
-          y: 207.33333
+          y: 206.66667
         targetType: 1
         requiredTags:
           _tags: []
@@ -106,7 +106,7 @@ MonoBehaviour:
         textColor: {r: 0.040635824, g: 1, b: 0, a: 1}
         criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
         missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-        fontSize: 45
+        fontSize: 5
         criticalFontSize: 60
         duration: 1.5
         offset: {x: 0, y: 0}

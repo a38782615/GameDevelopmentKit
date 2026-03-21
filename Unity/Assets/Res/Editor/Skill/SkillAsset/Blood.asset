@@ -198,7 +198,7 @@ MonoBehaviour:
         textColor: {r: 1, g: 0, b: 0, a: 1}
         criticalColor: {r: 1, g: 0.5, b: 0, a: 1}
         missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-        fontSize: 45
+        fontSize: 5
         criticalFontSize: 60
         duration: 1.5
         offset: {x: 0, y: 0}
