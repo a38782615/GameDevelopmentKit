@@ -18,8 +18,6 @@ namespace ET.Client
 
         public bool IsLooping { get; set; }
 
-        public UnityEngine.GameObject AttachedObject { get; set; }
-
         public EntityRef<UGFEntity> AttachedEffectEntity { get; set; }
 
         public UnityEngine.AudioSource AttachedAudioSource { get; set; }
@@ -77,12 +75,6 @@ namespace ET.Client
             {
                 effectEntity.Dispose();
                 AttachedEffectEntity = default;
-                AttachedObject = null;
-            }
-            else if (AttachedObject != null)
-            {
-                UnityEngine.Object.Destroy(AttachedObject);
-                AttachedObject = null;
             }
 
             if (AttachedAudioSource != null)

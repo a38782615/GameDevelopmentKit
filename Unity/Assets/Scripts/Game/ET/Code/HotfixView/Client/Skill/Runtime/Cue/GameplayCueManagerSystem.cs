@@ -267,7 +267,6 @@ namespace ET.Client
             }
 
             activeCue.AttachedEffectEntity = effectEntity;
-            activeCue.AttachedObject = effectEntity.CachedTransform != null ? effectEntity.CachedTransform.gameObject : null;
             if (!isLoop)
             {
                 activeCue.Duration = effectEntity.GetParticleSystemDuration();
