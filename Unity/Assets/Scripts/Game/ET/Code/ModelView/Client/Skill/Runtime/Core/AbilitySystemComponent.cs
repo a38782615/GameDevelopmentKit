@@ -17,7 +17,9 @@ namespace ET.Client
         /// <summary>
         /// 标签容器
         /// </summary>
-        public GameplayTagContainer OwnedTags;
+        public EntityRef<GameTagsComponent> OwnedTagsRef;
+
+        public GameTagsComponent OwnedTags => this.OwnedTagsRef;
 
         /// <summary>
         /// 所属的GameObject（View层引用）

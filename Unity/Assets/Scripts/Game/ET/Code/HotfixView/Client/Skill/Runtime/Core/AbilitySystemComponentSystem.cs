@@ -11,7 +11,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this AbilitySystemComponent self)
         {
-            self.OwnedTags = new GameplayTagContainer();
+            self.OwnedTagsRef = self.AddComponent<GameTagsComponent>();
 
             // 添加子组件
             self.AddComponent<AbilityContainerComponent>();
@@ -96,6 +96,7 @@ namespace ET.Client
         {
             SkillHudManager.Instance?.UnregisterUnit(self);
             self.OwnedTags?.Clear();
+            self.OwnedTagsRef = default;
             self.IsInitialized = false;
         }
 
