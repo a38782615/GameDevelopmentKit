@@ -10,6 +10,7 @@ namespace ET.Client
             SkillHudManager.Instance?.ClearSceneHud();
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
+            scene.AddComponent<GameplayCueManager>();
             scene.AddComponent<FightInputComponent>();
             await UniTask.CompletedTask;
         }

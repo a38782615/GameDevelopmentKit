@@ -1,27 +1,23 @@
-
 using UnityEngine;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 飘字Cue Spec
-    /// 显示伤害、治疗、状态等飘字
-    /// </summary>
-    [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
+    [FriendOf(typeof(GameplayCueSpec))]
     public partial class SoundCueSpecHandler : ACueHandler
     {
         public SoundCueNodeData GetNode()
         {
-            var nodeData = NodeData as SoundCueNodeData;
-            return nodeData;
+            return NodeData as SoundCueNodeData;
         }
+
         public SoundCueSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<SoundCueSpec>();
+            SoundCueSpec selfSpec = Spec.GetComponent<SoundCueSpec>();
             if (selfSpec == null)
             {
                 selfSpec = Spec.AddComponent<SoundCueSpec>();
             }
+
             return selfSpec;
         }
 
@@ -29,34 +25,38 @@ namespace ET.Client
         {
             return Spec.GetContext();
         }
-        // ============ 初始化 ============
 
         public override void OnInitialize()
         {
-            var selfSpec = SelfSpec();
-            var nodeData = GetNode();
-            if (nodeData != null)
+            SoundCueSpec selfSpec = SelfSpec();
+            SoundCueNodeData nodeData = GetNode();
+            if (nodeData == null)
             {
-                selfSpec.SoundClip = nodeData.soundClip;
-                selfSpec.SoundVolume = nodeData.soundVolume;
-                selfSpec.SoundLoop = nodeData.soundLoop;
-                Spec.DestroyWithNode = nodeData.destroyWithNode;
+                return;
             }
-        }
 
-        // ============ 执行 ============
+            selfSpec.SoundClip = nodeData.soundClip;
+            selfSpec.SoundVolume = nodeData.soundVolume;
+            selfSpec.SoundLoop = nodeData.soundLoop;
+            Spec.DestroyWithNode = nodeData.destroyWithNode;
+        }
 
         public override void PlayCue(AbilitySystemComponent target)
         {
-            var nodeData = GetNode();
+            SoundCueNodeData nodeData = GetNode();
             if (nodeData == null)
+            {
                 return;
+            }
 
-            var source = Spec.GetCueTarget();
+            GameplayCueManager manager = Spec.GetGameplayCueManager();
+            if (manager == null)
+            {
+                return;
+            }
 
-            // 播放音效
-            Spec.ActiveCue = GameplayCueManager.GetOrCreate().PlaySoundCue(nodeData, source, target);
-
+            AbilitySystemComponent source = Spec.GetCueTarget();
+            Spec.ActiveCue = manager.PlaySoundCue(nodeData, source, target);
             if (Spec.ActiveCue != null)
             {
                 Spec.IsRunning = true;
@@ -65,20 +65,32 @@ namespace ET.Client
 
         public override void StopCue()
         {
-            if (Spec.ActiveCue != null)
+            if (Spec.ActiveCue == null)
             {
-                GameplayCueManager.GetOrCreate().StopCue(Spec.ActiveCue);
-                Spec.ActiveCue = null;
+                return;
             }
+
+            GameplayCueManager manager = Spec.GetGameplayCueManager();
+            if (manager != null)
+            {
+                manager.StopCue(Spec.ActiveCue);
+            }
+            else
+            {
+                Spec.ActiveCue.Stop();
+            }
+
+            Spec.ActiveCue = null;
         }
 
         public override void Reset()
         {
-            var selfSpec = SelfSpec();
+            SoundCueSpec selfSpec = SelfSpec();
             if (selfSpec == null)
             {
                 return;
             }
+
             selfSpec.SoundClip = null;
             selfSpec.SoundVolume = 1f;
             selfSpec.SoundLoop = false;

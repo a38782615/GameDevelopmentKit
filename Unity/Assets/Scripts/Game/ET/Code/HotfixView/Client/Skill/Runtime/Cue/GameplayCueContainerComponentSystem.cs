@@ -2,8 +2,7 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(GameplayCueContainerComponent))]
     [FriendOf(typeof(GameplayCueContainerComponent))]
-    [FriendOfAttribute(typeof(ET.Client.GameplayCueSpec))]
-
+    [FriendOf(typeof(GameplayCueSpec))]
     public static partial class GameplayCueContainerComponentSystem
     {
         [EntitySystem]
@@ -17,7 +16,6 @@ namespace ET.Client
         [EntitySystem]
         private static void Update(this GameplayCueContainerComponent self)
         {
-            GameplayCueManager.GetOrCreate().TickOncePerFrame(UnityEngine.Time.deltaTime);
             self.Tick(UnityEngine.Time.deltaTime);
         }
 
@@ -27,53 +25,37 @@ namespace ET.Client
             self.Clear();
         }
 
-        // ============ Cue管理 ============
-
         public static void AddCue(this GameplayCueContainerComponent self, GameplayCueSpec cue)
         {
-            if (cue == null || self.ActiveCues.Contains(cue)) return;
+            if (cue == null || self.ActiveCues.Contains(cue))
+            {
+                return;
+            }
+
             self.ActiveCues.Add(cue);
         }
 
         public static bool RemoveCue(this GameplayCueContainerComponent self, GameplayCueSpec cue)
         {
-            if (cue == null || !self.ActiveCues.Contains(cue)) return false;
+            if (cue == null || !self.ActiveCues.Contains(cue))
+            {
+                return false;
+            }
 
             if (self.IsUpdating)
             {
                 if (!self.PendingRemove.Contains(cue))
+                {
                     self.PendingRemove.Add(cue);
+                }
             }
             else
             {
                 self.RemoveCueInternal(cue);
             }
+
             return true;
         }
-
-        private static void RemoveCueInternal(this GameplayCueContainerComponent self, GameplayCueSpec cue)
-        {
-            if (cue == null)
-            {
-                self.ActiveCues.RemoveAll(cueRef => cueRef.As() == null);
-                self.PendingRemove.RemoveAll(cueRef => cueRef.As() == null);
-                return;
-            }
-
-            if (cue.IsRunning)
-            {
-                self.StopCue(cue, true);
-            }
-
-            self.ActiveCues.Remove(cue);
-            self.PendingRemove.Remove(cue);
-            if (!cue.IsDisposed)
-            {
-                cue.Dispose();
-            }
-        }
-
-        // ============ 更新 ============
 
         public static void Tick(this GameplayCueContainerComponent self, float deltaTime)
         {
@@ -81,13 +63,17 @@ namespace ET.Client
 
             for (int i = 0; i < self.ActiveCues.Count; i++)
             {
-                var cue = self.ActiveCues[i].As();
-                if (cue == null) continue;
+                GameplayCueSpec cue = self.ActiveCues[i].As();
+                if (cue == null)
+                {
+                    continue;
+                }
 
                 self.TickCue(cue);
-
                 if (!cue.IsRunning && !self.PendingRemove.Contains(cue))
+                {
                     self.PendingRemove.Add(cue);
+                }
             }
 
             self.IsUpdating = false;
@@ -113,6 +99,28 @@ namespace ET.Client
             self.PendingRemove.Clear();
         }
 
+        private static void RemoveCueInternal(this GameplayCueContainerComponent self, GameplayCueSpec cue)
+        {
+            if (cue == null)
+            {
+                self.ActiveCues.RemoveAll(cueRef => cueRef.As() == null);
+                self.PendingRemove.RemoveAll(cueRef => cueRef.As() == null);
+                return;
+            }
+
+            if (cue.IsRunning)
+            {
+                self.StopCue(cue, true);
+            }
+
+            self.ActiveCues.Remove(cue);
+            self.PendingRemove.Remove(cue);
+            if (!cue.IsDisposed)
+            {
+                cue.Dispose();
+            }
+        }
+
         private static void TickCue(this GameplayCueContainerComponent self, GameplayCueSpec cueSpec)
         {
             if (!cueSpec.IsRunning || cueSpec.ActiveCue == null)
@@ -134,7 +142,7 @@ namespace ET.Client
                 return;
             }
 
-            var handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
+            ACueHandler handler = CueDispatcherComponent.Instance.Get(cueSpec.HandName);
             if (handler == null)
             {
                 Log.Error($"CueHandler not found: {cueSpec.HandName}");
