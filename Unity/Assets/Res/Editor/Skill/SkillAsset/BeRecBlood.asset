@@ -16,8 +16,8 @@ MonoBehaviour:
   nodes:
   - rid: 8915324534274916818
   - rid: 8915324534274916819
-  - rid: 8915324534274916817
   - rid: 8915324534274916815
+  - rid: 8915324534274916817
   - rid: 8915324534274916816
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
@@ -49,15 +49,15 @@ MonoBehaviour:
           y: 226.66667
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         healSourceType: 0
         healFixedValue: 2
@@ -94,9 +94,9 @@ MonoBehaviour:
           y: 206.66667
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 0
         positionBindingName: head
@@ -117,25 +117,25 @@ MonoBehaviour:
         guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
         nodeType: 10
         position:
-          x: 370.66666
-          y: 484.66666
+          x: 348.66666
+          y: 489.99997
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.BeRecBlood
-            _hashCode: -1099994396
-            _shortName: "\u88AB\u52A8\u56DE\u8840"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.BeRecBlood
+            HashCode: -1099994396
+            ShortName: "\u88AB\u52A8\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 3
         isPeriodic: 0
@@ -149,7 +149,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -164,15 +164,15 @@ MonoBehaviour:
           y: 114.66667
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 2
         duration: 10
         isPeriodic: 1
@@ -186,12 +186,12 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags:
-          - _name: CD.BeRecBlood
-            _hashCode: -1099994396
-            _shortName: "\u88AB\u52A8\u56DE\u8840"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.BeRecBlood
+            HashCode: -1099994396
+            ShortName: "\u88AB\u52A8\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         cancelOnAbilityEnd: 1
         buffId: 0
@@ -206,19 +206,19 @@ MonoBehaviour:
         targetType: 1
         skillId: 2001
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags: []
+          Tags: []
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts:
         - eventType: 2
           customEventTag: 

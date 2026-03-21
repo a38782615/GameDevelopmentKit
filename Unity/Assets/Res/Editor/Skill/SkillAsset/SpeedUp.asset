@@ -54,15 +54,15 @@ MonoBehaviour:
           y: -2011.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -87,7 +87,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
     - rid: 8915324534274916759
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -129,21 +129,21 @@ MonoBehaviour:
           y: -1747.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.SpeedUp
-            _hashCode: -605747253
-            _shortName: "\u6025\u901F"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.SpeedUp
+            HashCode: -605747253
+            ShortName: "\u6025\u901F"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 10
         isPeriodic: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -172,15 +172,15 @@ MonoBehaviour:
           y: -1890.6667
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 7
         isPeriodic: 0
@@ -205,7 +205,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
     - rid: 8915324534274916763
@@ -219,23 +219,23 @@ MonoBehaviour:
         targetType: 1
         skillId: 1009
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.SpeedUp
-            _hashCode: -605747253
-            _shortName: "\u6025\u901F"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.SpeedUp
+            HashCode: -605747253
+            ShortName: "\u6025\u901F"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts: []

@@ -59,9 +59,9 @@ MonoBehaviour:
           y: -2072.6667
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 0
         particleEntityId: 50004
@@ -84,25 +84,25 @@ MonoBehaviour:
         targetType: 1
         skillId: 1007
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.RecBlood
-            _hashCode: 1163914435
-            _shortName: "\u56DE\u8840"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.RecBlood
+            HashCode: 1163914435
+            ShortName: "\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts: []
     - rid: 8915324534274916792
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -114,21 +114,21 @@ MonoBehaviour:
           y: -1801.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.RecBlood
-            _hashCode: 1163914435
-            _shortName: "\u56DE\u8840"
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.RecBlood
+            HashCode: 1163914435
+            ShortName: "\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 3
         isPeriodic: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -167,15 +167,15 @@ MonoBehaviour:
           y: -2050
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         healSourceType: 0
         healFixedValue: 10
@@ -212,9 +212,9 @@ MonoBehaviour:
           y: -1952.6667
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 2
         positionBindingName: head
@@ -239,15 +239,15 @@ MonoBehaviour:
           y: -2008
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -272,5 +272,5 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0

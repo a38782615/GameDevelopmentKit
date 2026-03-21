@@ -21,8 +21,8 @@ MonoBehaviour:
   - rid: 8915324534274916798
   - rid: 8915324534274916797
   - rid: 8915324534274916800
-  - rid: 8915324534274916803
   - rid: 8915324534274916799
+  - rid: 8915324534274916803
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -88,15 +88,15 @@ MonoBehaviour:
         searchLineAbsoluteLength: 10
         maxTargets: 999
         searchTargetTags:
-          _tags:
-          - _name: unitType.monster
-            _hashCode: -2021655864
-            _shortName: monster
-            _ancestorHashCodes: 6c74655f
-            _ancestorNames:
+          Tags:
+          - Name: unitType.monster
+            HashCode: -2021655864
+            ShortName: monster
+            AncestorHashCodes: 6c74655f
+            AncestorNames:
             - unitType
         searchExcludeTags:
-          _tags: []
+          Tags: []
     - rid: 8915324534274916798
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
@@ -107,15 +107,15 @@ MonoBehaviour:
           y: -2340.6665
         targetType: 0
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -129,7 +129,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
         damageType: 0
         damageSourceType: 2
@@ -156,9 +156,9 @@ MonoBehaviour:
           y: -2354.6665
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 2
         positionBindingName: head
@@ -193,21 +193,21 @@ MonoBehaviour:
           y: -2232
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.Sweep
-            _hashCode: -303359587
-            _shortName: Sweep
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.Sweep
+            HashCode: -303359587
+            ShortName: Sweep
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 1
         isPeriodic: 0
@@ -221,7 +221,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -263,9 +263,9 @@ MonoBehaviour:
           y: -2491.3333
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 0
         particleEntityId: 50006
@@ -287,15 +287,15 @@ MonoBehaviour:
           y: -2479.3333
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -320,7 +320,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
     - rid: 8915324534274916805
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -333,23 +333,23 @@ MonoBehaviour:
         targetType: 1
         skillId: 1001
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.Sweep
-            _hashCode: -303359587
-            _shortName: Sweep
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.Sweep
+            HashCode: -303359587
+            ShortName: Sweep
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts: []

@@ -74,9 +74,9 @@ MonoBehaviour:
           y: -1998.6667
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 0
         particleEntityId: 50006
@@ -98,15 +98,15 @@ MonoBehaviour:
           y: -2019.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
     - rid: 8915324534274916774
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -143,21 +143,21 @@ MonoBehaviour:
           y: -1825.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.Blood
-            _hashCode: 274000851
-            _shortName: Blood
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.Blood
+            HashCode: 274000851
+            ShortName: Blood
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 3
         isPeriodic: 0
@@ -171,7 +171,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -186,9 +186,9 @@ MonoBehaviour:
           y: -1531.3334
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 2
         positionBindingName: head
@@ -223,15 +223,15 @@ MonoBehaviour:
           y: -1761.3334
         targetType: 0
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
         damageType: 0
         damageSourceType: 0
@@ -272,22 +272,22 @@ MonoBehaviour:
           y: -1761.3334
         targetType: 0
         assetTags:
-          _tags:
-          - _name: Buff.DeBuff.Dot
-            _hashCode: -637848644
-            _shortName: Dot
-            _ancestorHashCodes: 6f57da37077b2413
-            _ancestorNames:
+          Tags:
+          - Name: Buff.DeBuff.Dot
+            HashCode: -637848644
+            ShortName: Dot
+            AncestorHashCodes: 6f57da37077b2413
+            AncestorNames:
             - Buff
             - Buff.DeBuff
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 10
         isPeriodic: 1
@@ -301,7 +301,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
     - rid: 8915324534274916779
@@ -333,15 +333,15 @@ MonoBehaviour:
         searchLineAbsoluteLength: 10
         maxTargets: 999
         searchTargetTags:
-          _tags:
-          - _name: unitType.monster
-            _hashCode: -2021655864
-            _shortName: monster
-            _ancestorHashCodes: 6c74655f
-            _ancestorNames:
+          Tags:
+          - Name: unitType.monster
+            HashCode: -2021655864
+            ShortName: monster
+            AncestorHashCodes: 6c74655f
+            AncestorNames:
             - unitType
         searchExcludeTags:
-          _tags: []
+          Tags: []
     - rid: 8915324534274916780
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
@@ -380,35 +380,35 @@ MonoBehaviour:
         targetType: 1
         skillId: 1002
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags:
-          - _name: Skill.Running
-            _hashCode: -51601538
-            _shortName: Running
-            _ancestorHashCodes: fdea404e
-            _ancestorNames:
+          Tags:
+          - Name: Skill.Running
+            HashCode: -51601538
+            ShortName: Running
+            AncestorHashCodes: fdea404e
+            AncestorNames:
             - Skill
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.Blood
-            _hashCode: 274000851
-            _shortName: Blood
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.Blood
+            HashCode: 274000851
+            ShortName: Blood
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
-          - _name: Skill.Running
-            _hashCode: -51601538
-            _shortName: Running
-            _ancestorHashCodes: fdea404e
-            _ancestorNames:
+          - Name: Skill.Running
+            HashCode: -51601538
+            ShortName: Running
+            AncestorHashCodes: fdea404e
+            AncestorNames:
             - Skill
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts: []

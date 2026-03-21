@@ -98,30 +98,30 @@ MonoBehaviour:
         targetType: 1
         skillId: 7001
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.FireCircle
-            _hashCode: 522143731
-            _shortName: FireCircle
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.FireCircle
+            HashCode: 522143731
+            ShortName: FireCircle
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         ongoingBlockedTags:
-          _tags:
-          - _name: Buff.DeBuff.Stun
-            _hashCode: 1791562953
-            _shortName: Stun
-            _ancestorHashCodes: 6f57da37077b2413
-            _ancestorNames:
+          Tags:
+          - Name: Buff.DeBuff.Stun
+            HashCode: 1791562953
+            ShortName: Stun
+            AncestorHashCodes: 6f57da37077b2413
+            AncestorNames:
             - Buff
             - Buff.DeBuff
         eventOutputPorts: []
@@ -135,15 +135,15 @@ MonoBehaviour:
           y: -1840
         targetType: 2
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 2
         duration: 0
         isPeriodic: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         launchPositionSource: 0
         launchBindingName: center
@@ -177,9 +177,9 @@ MonoBehaviour:
         isPiercing: 0
         maxPierceCount: 1
         collisionTargetTags:
-          _tags: []
+          Tags: []
         collisionExcludeTags:
-          _tags: []
+          Tags: []
         isBouncing: 1
         bounceTargetMode: 0
         maxBounceCount: 3
@@ -197,21 +197,21 @@ MonoBehaviour:
           y: -1747.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.FireCircle
-            _hashCode: 522143731
-            _shortName: FireCircle
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.FireCircle
+            HashCode: 522143731
+            ShortName: FireCircle
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 3
         isPeriodic: 0
@@ -225,7 +225,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -240,15 +240,15 @@ MonoBehaviour:
           y: -2003.3334
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -273,7 +273,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
     - rid: 8915324534274916770
       type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -285,15 +285,15 @@ MonoBehaviour:
           y: -1810
         targetType: 0
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -307,7 +307,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
         damageType: 0
         damageSourceType: 0
@@ -334,9 +334,9 @@ MonoBehaviour:
           y: -1810
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 2
         positionBindingName: head

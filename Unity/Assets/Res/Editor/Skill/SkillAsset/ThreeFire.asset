@@ -82,9 +82,9 @@ MonoBehaviour:
           y: -2239.3333
         targetType: 1
         requiredTags:
-          _tags: []
+          Tags: []
         immunityTags:
-          _tags: []
+          Tags: []
         destroyWithNode: 0
         positionSource: 2
         positionBindingName: head
@@ -109,15 +109,15 @@ MonoBehaviour:
           y: -2239.3333
         targetType: 0
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
         damageType: 0
         damageSourceType: 0
@@ -168,15 +168,15 @@ MonoBehaviour:
           y: -2405.3333
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 0
         duration: 0
         isPeriodic: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 1
     - rid: 8915324534274916752
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -213,21 +213,21 @@ MonoBehaviour:
           y: -2188.6665
         targetType: 1
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags:
-          - _name: CD.ThreeFire
-            _hashCode: 960327319
-            _shortName: ThreeFire
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.ThreeFire
+            HashCode: 960327319
+            ShortName: ThreeFire
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 1
         duration: 1
         isPeriodic: 0
@@ -241,7 +241,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         cooldownType: 0
         maxCharges: 2
@@ -257,25 +257,25 @@ MonoBehaviour:
         targetType: 1
         skillId: 1008
         assetTags:
-          _tags: []
+          Tags: []
         cancelAbilitiesWithTags:
-          _tags: []
+          Tags: []
         blockAbilitiesWithTags:
-          _tags: []
+          Tags: []
         activationOwnedTags:
-          _tags: []
+          Tags: []
         activationRequiredTags:
-          _tags: []
+          Tags: []
         activationBlockedTags:
-          _tags:
-          - _name: CD.ThreeFire
-            _hashCode: 960327319
-            _shortName: ThreeFire
-            _ancestorHashCodes: aba22dbc
-            _ancestorNames:
+          Tags:
+          - Name: CD.ThreeFire
+            HashCode: 960327319
+            ShortName: ThreeFire
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
             - CD
         ongoingBlockedTags:
-          _tags: []
+          Tags: []
         eventOutputPorts: []
     - rid: 8915324534274916754
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
@@ -310,15 +310,15 @@ MonoBehaviour:
           y: -2305.3333
         targetType: 2
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 2
         duration: 0
         isPeriodic: 0
@@ -332,7 +332,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         launchPositionSource: 0
         launchBindingName: center
@@ -352,9 +352,9 @@ MonoBehaviour:
         isPiercing: 0
         maxPierceCount: 1
         collisionTargetTags:
-          _tags: []
+          Tags: []
         collisionExcludeTags:
-          _tags: []
+          Tags: []
         isBouncing: 0
         bounceTargetMode: 0
         maxBounceCount: 3
@@ -372,15 +372,15 @@ MonoBehaviour:
           y: -2131.3333
         targetType: 2
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 2
         duration: 0
         isPeriodic: 0
@@ -394,7 +394,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         launchPositionSource: 0
         launchBindingName: center
@@ -414,9 +414,9 @@ MonoBehaviour:
         isPiercing: 0
         maxPierceCount: 1
         collisionTargetTags:
-          _tags: []
+          Tags: []
         collisionExcludeTags:
-          _tags: []
+          Tags: []
         isBouncing: 0
         bounceTargetMode: 0
         maxBounceCount: 3
@@ -434,15 +434,15 @@ MonoBehaviour:
           y: -1951.3334
         targetType: 2
         assetTags:
-          _tags: []
+          Tags: []
         grantedTags:
-          _tags: []
+          Tags: []
         applicationRequiredTags:
-          _tags: []
+          Tags: []
         applicationImmunityTags:
-          _tags: []
+          Tags: []
         removeGameEffectsWithTags:
-          _tags: []
+          Tags: []
         durationType: 2
         duration: 0
         isPeriodic: 0
@@ -456,7 +456,7 @@ MonoBehaviour:
         stackExpirationPolicy: 0
         stackOverflowPolicy: 0
         ongoingRequiredTags:
-          _tags: []
+          Tags: []
         cancelOnAbilityEnd: 0
         launchPositionSource: 0
         launchBindingName: center
@@ -476,9 +476,9 @@ MonoBehaviour:
         isPiercing: 0
         maxPierceCount: 1
         collisionTargetTags:
-          _tags: []
+          Tags: []
         collisionExcludeTags:
-          _tags: []
+          Tags: []
         isBouncing: 0
         bounceTargetMode: 0
         maxBounceCount: 3
