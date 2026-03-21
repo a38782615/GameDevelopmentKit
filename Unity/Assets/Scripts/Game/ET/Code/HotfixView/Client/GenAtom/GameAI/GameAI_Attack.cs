@@ -14,8 +14,18 @@ namespace ET.Client
                 return 1;
             }
 
+            if (asc.IsCasting())
+            {
+                return 1;
+            }
+
             GameplayAbilitySpec spec = aiComponent.FindPreferredAbility(aiConfig);
             if (spec == null)
+            {
+                return 1;
+            }
+
+            if (!spec.CanActivate())
             {
                 return 1;
             }
