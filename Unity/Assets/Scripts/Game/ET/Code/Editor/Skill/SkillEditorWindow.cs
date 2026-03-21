@@ -451,8 +451,6 @@ namespace ET.Client.Editor
             try
             {
                 // 1. 导出所有技能到 Excel
-                EditorUtility.DisplayProgressBar("导出到 Luban", "正在导出技能到 Excel...", 0.3f);
-
                 var guids = AssetDatabase.FindAssets("t:SkillGraphData", new[] { SkillAssetTreeView.RootPath });
                 var skills = new List<SkillGraphData>();
                 foreach (var guid in guids)

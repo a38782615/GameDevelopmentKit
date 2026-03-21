@@ -14,5 +14,85 @@
     "AssetName": "Monster/Monster2000001",
     "EntityGroupName": "Monster",
     "Priority": 90
+  },
+  {
+    "Id": 50001,
+    "CSName": "ef_fashi_gandian_buff",
+    "Desc": "",
+    "AssetName": "Effect/ef_fashi_gandian_buff",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50002,
+    "CSName": "ef_fashi_huoyandan01",
+    "Desc": "",
+    "AssetName": "Effect/ef_fashi_huoyandan01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50003,
+    "CSName": "ef_fashi_Shanghaijiacheng_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_fashi_Shanghaijiacheng_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50004,
+    "CSName": "ef_skill_zhanshi_huifunengliang",
+    "Desc": "",
+    "AssetName": "Effect/ef_skill_zhanshi_huifunengliang",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50005,
+    "CSName": "ef_Xuanyun_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_Xuanyun_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50006,
+    "CSName": "ef_Zhanshi_attack_02",
+    "Desc": "",
+    "AssetName": "Effect/ef_Zhanshi_attack_02",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50007,
+    "CSName": "ef_zhanshi_jcjt_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_zhanshi_jcjt_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50008,
+    "CSName": "ef_zhanshi_xfz_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_zhanshi_xfz_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50009,
+    "CSName": "ef_Zhanshi_zhandounuhou_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_Zhanshi_zhandounuhou_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
+  },
+  {
+    "Id": 50010,
+    "CSName": "ef_Zhanshi_zhentianpaoxiao_01",
+    "Desc": "",
+    "AssetName": "Effect/ef_Zhanshi_zhentianpaoxiao_01",
+    "EntityGroupName": "Effect",
+    "Priority": 10
   }
 ]

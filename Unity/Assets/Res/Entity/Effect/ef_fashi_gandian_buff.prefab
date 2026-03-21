@@ -17179,6 +17179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907201811655853501}
   - component: {fileID: 7596531838472353037}
+  - component: {fileID: -2553890114147503916}
   m_Layer: 0
   m_Name: ef_fashi_gandian_buff
   m_TagString: Untagged
@@ -17238,6 +17239,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-2553890114147503916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7929333103632110889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b7720be5eeafb418409460808440d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8072174724531839588
 GameObject:
   m_ObjectHideFlags: 0

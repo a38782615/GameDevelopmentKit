@@ -4,7 +4,6 @@ using UnityEngine;
 namespace ET.Client
 {
     [ChildOf(typeof(GameplayEffectSpec))]
-    [EnableMethod]
     public class ProjectileEntity : UGFEntity, IAwake<ProjectileInitData>, IUGFEntityOnShow, IUGFEntityOnUpdate, IUGFEntityOnHide
     {
         public ProjectileInitData InitData;

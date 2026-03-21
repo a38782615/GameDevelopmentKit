@@ -16,12 +16,12 @@ MonoBehaviour:
   nodes:
   - rid: 8915324534274916764
   - rid: 8915324534274916765
-  - rid: 8915324534274916766
   - rid: 8915324534274916768
   - rid: 8915324534274916769
   - rid: 8915324534274916771
-  - rid: 8915324534274916767
   - rid: 8915324534274916770
+  - rid: 8915324534274916766
+  - rid: 8915324534274916767
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -93,8 +93,8 @@ MonoBehaviour:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
         position:
-          x: -880.6666
-          y: -1851.3334
+          x: -881.3334
+          y: -1854.6667
         targetType: 1
         skillId: 7001
         assetTags:
@@ -167,9 +167,10 @@ MonoBehaviour:
         flyOver: 0
         offsetAngle: 0
         curveHeight: 0
+        projectileEntityId: 50001
         projectilePrefab: {fileID: 7929333103632110889, guid: 238de9af254672643bf9dfb3907eb776,
           type: 3}
-        projectilePrefabPath: Assets/Res/Prefab/Effect/ef_fashi_gandian_buff.prefab
+        projectilePrefabPath: Assets/Res/Entity/Effect/ef_fashi_gandian_buff.prefab
         speed: 3
         maxDistance: 10
         collisionRadius: 0.5

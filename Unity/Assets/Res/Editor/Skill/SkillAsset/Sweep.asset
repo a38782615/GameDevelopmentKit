@@ -270,7 +270,7 @@ MonoBehaviour:
         positionSource: 0
         particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_attack_02.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_attack_02.prefab
         particleBindingName: down
         particleOffset: {x: 5, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
