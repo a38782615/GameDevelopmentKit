@@ -342,9 +342,10 @@ MonoBehaviour:
         flyOver: 1
         offsetAngle: 30
         curveHeight: 0
+        projectileEntityId: 50002
         projectilePrefab: {fileID: 7076030624160698024, guid: 1eb2b694ad798b44eb5697467b59523d,
           type: 3}
-        projectilePrefabPath: Assets/Res/Prefab/Effect/ef_fashi_huoyandan01.prefab
+        projectilePrefabPath: Assets/Res/Entity/Effect/ef_fashi_huoyandan01.prefab
         speed: 10
         maxDistance: 10
         collisionRadius: 0.5
@@ -403,9 +404,10 @@ MonoBehaviour:
         flyOver: 1
         offsetAngle: 0
         curveHeight: 0
+        projectileEntityId: 50002
         projectilePrefab: {fileID: 7076030624160698024, guid: 1eb2b694ad798b44eb5697467b59523d,
           type: 3}
-        projectilePrefabPath: Assets/Res/Prefab/Effect/ef_fashi_huoyandan01.prefab
+        projectilePrefabPath: Assets/Res/Entity/Effect/ef_fashi_huoyandan01.prefab
         speed: 10
         maxDistance: 10
         collisionRadius: 0.5
@@ -429,7 +431,7 @@ MonoBehaviour:
         nodeType: 8
         position:
           x: 1022.66675
-          y: -1978
+          y: -1951.3334
         targetType: 2
         assetTags:
           _tags: []
@@ -464,9 +466,10 @@ MonoBehaviour:
         flyOver: 1
         offsetAngle: -30
         curveHeight: 0
+        projectileEntityId: 50002
         projectilePrefab: {fileID: 7076030624160698024, guid: 1eb2b694ad798b44eb5697467b59523d,
           type: 3}
-        projectilePrefabPath: Assets/Res/Prefab/Effect/ef_fashi_huoyandan01.prefab
+        projectilePrefabPath: Assets/Res/Entity/Effect/ef_fashi_huoyandan01.prefab
         speed: 10
         maxDistance: 10
         collisionRadius: 0.5

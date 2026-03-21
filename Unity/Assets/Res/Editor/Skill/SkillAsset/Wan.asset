@@ -18,10 +18,10 @@ MonoBehaviour:
   - rid: 8915324534274916783
   - rid: 8915324534274916784
   - rid: 8915324534274916785
-  - rid: 8915324534274916786
   - rid: 8915324534274916787
   - rid: 8915324534274916788
   - rid: 8915324534274916789
+  - rid: 8915324534274916786
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -207,9 +207,10 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50010
         particlePrefab: {fileID: 6869347943692573679, guid: b77df2ac5f8751f4d9fcd60e620d7416,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_zhentianpaoxiao_01.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_zhentianpaoxiao_01.prefab
         particleBindingName: down
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}

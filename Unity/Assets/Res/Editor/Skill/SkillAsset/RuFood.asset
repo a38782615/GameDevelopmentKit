@@ -162,9 +162,10 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50007
         particlePrefab: {fileID: 4096110671821974305, guid: 0c1f9f97159d5c34d951a3510d95628c,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_zhanshi_jcjt_01.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_zhanshi_jcjt_01.prefab
         particleBindingName: down
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
@@ -195,9 +196,10 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 1
         positionSource: 2
+        particleEntityId: 0
         particlePrefab: {fileID: 4321741288478946800, guid: 969424356221a284cb141a046878636f,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Xuanyun_01.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Xuanyun_01.prefab
         particleBindingName: head
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}

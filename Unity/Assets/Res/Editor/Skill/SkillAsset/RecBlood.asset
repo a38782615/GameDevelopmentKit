@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324534274916790
   - rid: 8915324534274916791
   - rid: 8915324534274916792
   - rid: 8915324534274916793
   - rid: 8915324534274916794
   - rid: 8915324534274916795
   - rid: 8915324534274916796
+  - rid: 8915324534274916790
   connections:
   - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3001
@@ -55,8 +55,8 @@ MonoBehaviour:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
         nodeType: 12
         position:
-          x: -304
-          y: -2072
+          x: -303.3333
+          y: -2072.6667
         targetType: 1
         requiredTags:
           _tags: []
@@ -64,9 +64,10 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50004
         particlePrefab: {fileID: 3966591633886693288, guid: 876bc2ad5530efd4881e54e3550d1f48,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_skill_zhanshi_huifunengliang.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_skill_zhanshi_huifunengliang.prefab
         particleBindingName: down
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}

@@ -22,8 +22,8 @@ MonoBehaviour:
   - rid: 8915324534274916781
   - rid: 8915324534274916778
   - rid: 8915324534274916779
-  - rid: 8915324534274916772
   - rid: 8915324534274916777
+  - rid: 8915324534274916772
   connections:
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
     outputPortId: 2287012
@@ -79,6 +79,7 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50006
         particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
           type: 3}
         particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_attack_02.prefab

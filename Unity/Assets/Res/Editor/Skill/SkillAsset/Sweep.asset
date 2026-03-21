@@ -15,14 +15,14 @@ MonoBehaviour:
   SkillId: 1001
   nodes:
   - rid: 8915324534274916799
-  - rid: 8915324534274916800
   - rid: 8915324534274916801
   - rid: 8915324534274916802
   - rid: 8915324534274916804
   - rid: 8915324534274916805
   - rid: 8915324534274916798
-  - rid: 8915324534274916803
   - rid: 8915324534274916797
+  - rid: 8915324534274916800
+  - rid: 8915324534274916803
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -260,7 +260,7 @@ MonoBehaviour:
         nodeType: 12
         position:
           x: 731.3334
-          y: -2490.6665
+          y: -2491.3333
         targetType: 1
         requiredTags:
           _tags: []
@@ -268,6 +268,7 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50006
         particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
           type: 3}
         particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_attack_02.prefab

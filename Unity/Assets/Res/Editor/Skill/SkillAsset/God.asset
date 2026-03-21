@@ -16,12 +16,12 @@ MonoBehaviour:
   nodes:
   - rid: 8915324534274916820
   - rid: 8915324534274916821
-  - rid: 8915324534274916822
   - rid: 8915324534274916823
   - rid: 8915324534274916824
   - rid: 8915324534274916825
   - rid: 8915324534274916826
   - rid: 8915324534274916827
+  - rid: 8915324534274916822
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -124,9 +124,10 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 0
         positionSource: 0
+        particleEntityId: 50009
         particlePrefab: {fileID: 3338625181417467303, guid: 422fb7f3ee7a2b844afff2b4a294ce2f,
           type: 3}
-        particlePrefabPath: Assets/Res/Prefab/Effect/ef_Zhanshi_zhandounuhou_01.prefab
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_zhandounuhou_01.prefab
         particleBindingName: down
         particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
