@@ -17,12 +17,12 @@ MonoBehaviour:
   - rid: 8915324534274916806
   - rid: 8915324534274916807
   - rid: 8915324534274916809
-  - rid: 8915324534274916810
-  - rid: 8915324534274916811
   - rid: 8915324534274916812
   - rid: 8915324534274916813
   - rid: 8915324534274916814
   - rid: 8915324534274916808
+  - rid: 8915324534274916811
+  - rid: 8915324534274916810
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -196,7 +196,7 @@ MonoBehaviour:
           _tags: []
         destroyWithNode: 1
         positionSource: 2
-        particleEntityId: 0
+        particleEntityId: 50005
         particlePrefab: {fileID: 4321741288478946800, guid: 969424356221a284cb141a046878636f,
           type: 3}
         particlePrefabPath: Assets/Res/Entity/Effect/ef_Xuanyun_01.prefab

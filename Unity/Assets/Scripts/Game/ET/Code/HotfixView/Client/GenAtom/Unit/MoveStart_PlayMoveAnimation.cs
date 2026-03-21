@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 namespace ET.Client
 {
     [Event(SceneType.Current)]
+    [FriendOfAttribute(typeof(ET.Client.SkelenAnimationComponent))]
+
     public class MoveStart_PlayMoveAnimation : AEvent<Scene, MoveStart>
     {
         protected override async UniTask Run(Scene scene, MoveStart args)
