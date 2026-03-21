@@ -88,6 +88,7 @@ namespace ET.Client
         /// <summary>
         /// 飞行物预制体
         /// </summary>
+        public int projectileEntityId = 0;
         public GameObject projectilePrefab;
         public string projectilePrefabPath = "";
 

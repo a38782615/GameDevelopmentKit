@@ -58,7 +58,10 @@ namespace ET.Client
                     soundNode.soundClip = await LoadAssetOrKeepAsync(soundNode.soundClip, soundNode.soundClipPath);
                     break;
                 case ProjectileEffectNodeData projectileNode:
-                    projectileNode.projectilePrefab = await LoadAssetOrKeepAsync(projectileNode.projectilePrefab, projectileNode.projectilePrefabPath);
+                    if (projectileNode.projectileEntityId <= 0)
+                    {
+                        projectileNode.projectilePrefab = await LoadAssetOrKeepAsync(projectileNode.projectilePrefab, projectileNode.projectilePrefabPath);
+                    }
                     break;
                 case PlacementEffectNodeData placementNode:
                     placementNode.placementPrefab = await LoadAssetOrKeepAsync(placementNode.placementPrefab, placementNode.placementPrefabPath);

@@ -1,12 +1,16 @@
+using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace ET.Client
 {
-    [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
-    [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
-    [FriendOfAttribute(typeof(ET.Client.ProjectileEffectSpec))]
+    [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(GameplayEffectSpec))]
+    [FriendOf(typeof(ProjectileEffectSpec))]
     public partial class ProjectileEffectSpecHandler : AEffectHandler
     {
+        private const string LegacyProjectileEntityGroupName = "Effect";
+
         public ProjectileEffectSpec SelfSpec()
         {
             if (Spec == null || Spec.IsDisposed)
@@ -73,14 +77,9 @@ namespace ET.Client
         public override void OnInitialHook(AbilitySystemComponent target)
         {
             ProjectileEffectNodeData nodeData = GetNode();
-            if (nodeData == null)
-            {
-                return;
-            }
-
             ProjectileEffectSpec selfSpec = SelfSpec();
             SpecExecutionContext context = GetContext();
-            if (selfSpec == null || context == null)
+            if (nodeData == null || selfSpec == null || context == null)
             {
                 return;
             }
@@ -103,9 +102,36 @@ namespace ET.Client
                 direction = RotateVector2(direction, -nodeData.offsetAngle);
             }
 
-            SpawnProjectile(launchPosition, targetPosition, direction, targetUnit);
+            SpawnProjectileAsync(launchPosition, targetPosition, direction, targetUnit).Forget();
+        }
 
-            context.SetProjectileObject(selfSpec._projectileObject);
+        public override void Cancel()
+        {
+            ProjectileEffectSpec selfSpec = SelfSpec();
+            if (selfSpec == null)
+            {
+                if (Spec != null && !Spec.IsDisposed)
+                {
+                    Spec.CancelEffect();
+                }
+
+                return;
+            }
+
+            ProjectileEntity projectileEntity = selfSpec.ProjectileEntity.As();
+            if (projectileEntity != null)
+            {
+                projectileEntity.Cancel();
+            }
+
+            selfSpec.ProjectileEntity = default;
+            selfSpec.ProjectileObject = null;
+            GetContext()?.SetProjectileObject(null);
+
+            if (Spec != null && !Spec.IsDisposed)
+            {
+                Spec.CancelEffect();
+            }
         }
 
         private AbilitySystemComponent GetTargetUnitFromPositionSource(PositionSourceType sourceType)
@@ -124,32 +150,22 @@ namespace ET.Client
             }
         }
 
-        private void SpawnProjectile(Vector2 launchPosition, Vector2 targetPosition, Vector2 direction, AbilitySystemComponent targetUnit)
+        private async UniTaskVoid SpawnProjectileAsync(Vector2 launchPosition, Vector2 targetPosition, Vector2 direction, AbilitySystemComponent targetUnit)
         {
             ProjectileEffectNodeData nodeData = GetNode();
             ProjectileEffectSpec selfSpec = SelfSpec();
-            if (selfSpec == null)
+            if (nodeData == null || selfSpec == null || Spec == null || Spec.IsDisposed)
             {
                 return;
             }
 
-            if (nodeData.projectilePrefab != null)
+            ProjectileEntity currentProjectile = selfSpec.ProjectileEntity.As();
+            if (currentProjectile != null)
             {
-                selfSpec._projectileObject = UnityEngine.Object.Instantiate(nodeData.projectilePrefab, launchPosition, Quaternion.identity);
-            }
-            else
-            {
-                selfSpec._projectileObject = new GameObject("Projectile");
-                selfSpec._projectileObject.transform.position = launchPosition;
+                currentProjectile.Cancel();
             }
 
-            ProjectileController controller = selfSpec._projectileObject.GetComponent<ProjectileController>();
-            if (controller == null)
-            {
-                controller = selfSpec._projectileObject.AddComponent<ProjectileController>();
-            }
-
-            controller.Initialize(new ProjectileInitData
+            ProjectileInitData initData = new ProjectileInitData
             {
                 LaunchPosition = launchPosition,
                 TargetPosition = targetPosition,
@@ -166,9 +182,6 @@ namespace ET.Client
                 CollisionTargetTags = nodeData.collisionTargetTags,
                 CollisionExcludeTags = nodeData.collisionExcludeTags,
                 TargetBindingName = nodeData.targetBindingName,
-                SkillId = Spec.SkillId,
-                NodeGuid = Spec.NodeGuid,
-                Context = Spec.GetContext(),
                 SourceASC = Spec.Source,
                 IsBouncing = nodeData.isBouncing,
                 BounceTargetMode = nodeData.bounceTargetMode,
@@ -177,126 +190,47 @@ namespace ET.Client
                 CanBounceToSameTarget = nodeData.canBounceToSameTarget,
                 ExcludeSourceCamp = nodeData.excludeSourceCamp,
                 BounceAngleOffset = nodeData.bounceAngleOffset
-            });
+            };
 
-            selfSpec._projectileController = controller;
-            controller.OnHit += OnProjectileHit;
-            controller.OnReachTarget += OnProjectileReachTarget;
-            controller.OnBounce += OnProjectileBounce;
-            controller.OnDestroy += OnProjectileDestroy;
-        }
-
-        private void OnProjectileHit(AbilitySystemComponent hitTarget, Vector2 hitPosition)
-        {
-            if (hitTarget == null)
-            {
-                return;
-            }
-
-            SpecExecutionContext context = GetContext();
-            ProjectileEffectSpec selfSpec = SelfSpec();
-
-            if (context == null || selfSpec == null)
-            {
-                return;
-            }
-
-            selfSpec.HasTriggeredHit = true;
-            SpecExecutionContext hitContext = context.CreateWithParentInput(hitTarget);
-
-            if (hitContext == null)
-            {
-                return;
-            }
+            ProjectileEntity projectileEntity = Spec.AddChild<ProjectileEntity, ProjectileInitData>(initData);
+            selfSpec.ProjectileEntity = projectileEntity;
 
             try
             {
-                hitContext.SetCustomData("HitPosition", hitPosition);
-                hitContext.SetProjectileObject(selfSpec._projectileObject);
-                hitContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnHit);
+                if (nodeData.projectileEntityId > 0)
+                {
+                    await projectileEntity.ShowEntityAsync(nodeData.projectileEntityId);
+                }
+                else if (!string.IsNullOrWhiteSpace(nodeData.projectilePrefabPath))
+                {
+                    await projectileEntity.ShowEntityAsync(nodeData.projectilePrefabPath, LegacyProjectileEntityGroupName);
+                }
+                else
+                {
+                    Log.Warning($"[ProjectileEffect] Missing projectile entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
+                    projectileEntity.Dispose();
+                    selfSpec.ProjectileEntity = default;
+                    selfSpec.ProjectileObject = null;
+                    GetContext()?.SetProjectileObject(null);
+                    Spec.CancelEffect();
+                    return;
+                }
             }
-            finally
+            catch (Exception e)
             {
-                hitContext.Dispose();
-            }
-        }
+                Log.Error($"[ProjectileEffect] Spawn projectile failed. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} error={e}");
+                if (!projectileEntity.IsDisposed)
+                {
+                    projectileEntity.Dispose();
+                }
 
-        private void OnProjectileReachTarget(Vector2 position)
-        {
-            SpecExecutionContext ctx = GetExecutionContext();
-            ProjectileEffectSpec selfSpec = SelfSpec();
+                if (selfSpec.ProjectileEntity.As() == projectileEntity)
+                {
+                    selfSpec.ProjectileEntity = default;
+                }
 
-            if (ctx == null || selfSpec == null)
-            {
-                return;
-            }
-
-            TryTriggerPositionFallbackHit(selfSpec, position);
-            ctx.SetCustomData("ReachPosition", position);
-            ctx.SetProjectileObject(selfSpec._projectileObject);
-            ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
-        }
-
-        private void OnProjectileBounce(AbilitySystemComponent nextTarget, Vector2 bouncePosition)
-        {
-            if (nextTarget == null)
-            {
-                return;
-            }
-
-            SpecExecutionContext context = GetContext();
-            ProjectileEffectSpec selfSpec = SelfSpec();
-            if (context == null || selfSpec == null)
-            {
-                return;
-            }
-
-            SpecExecutionContext bounceContext = context.CreateWithParentInput(nextTarget);
-            if (bounceContext == null)
-            {
-                return;
-            }
-
-            try
-            {
-                bounceContext.SetCustomData("BouncePosition", bouncePosition);
-                bounceContext.SetProjectileObject(selfSpec._projectileObject);
-                bounceContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnBounce);
-            }
-            finally
-            {
-                bounceContext.Dispose();
-            }
-        }
-
-        private void OnProjectileDestroy()
-        {
-            ProjectileEffectSpec selfSpec = SelfSpec();
-            Vector2? projectilePosition = null;
-            if (selfSpec?._projectileObject != null)
-            {
-                projectilePosition = selfSpec._projectileObject.transform.position;
-            }
-
-            TryTriggerPositionFallbackHit(selfSpec, projectilePosition);
-
-            if (selfSpec != null)
-            {
-                selfSpec._projectileController = null;
-                selfSpec._projectileObject = null;
-            }
-
-            if (Spec != null && !Spec.IsDisposed)
-            {
-                Spec.RemoveEffect();
-            }
-        }
-
-        public override void Cancel()
-        {
-            ProjectileEffectSpec selfSpec = SelfSpec();
-            if (selfSpec == null)
-            {
+                selfSpec.ProjectileObject = null;
+                GetContext()?.SetProjectileObject(null);
                 if (Spec != null && !Spec.IsDisposed)
                 {
                     Spec.CancelEffect();
@@ -305,59 +239,23 @@ namespace ET.Client
                 return;
             }
 
-            if (selfSpec._projectileController != null)
+            if (Spec == null || Spec.IsDisposed || projectileEntity.IsDisposed)
             {
-                selfSpec._projectileController.OnHit -= OnProjectileHit;
-                selfSpec._projectileController.OnReachTarget -= OnProjectileReachTarget;
-                selfSpec._projectileController.OnBounce -= OnProjectileBounce;
-                selfSpec._projectileController.OnDestroy -= OnProjectileDestroy;
-
-                if (selfSpec._projectileController.gameObject != null)
-                {
-                    UnityEngine.Object.Destroy(selfSpec._projectileController.gameObject);
-                }
-
-                selfSpec._projectileController = null;
-                selfSpec._projectileObject = null;
+                return;
             }
 
-            Spec.CancelEffect();
+            selfSpec.ProjectileObject = projectileEntity.CachedTransform != null
+                ? projectileEntity.CachedTransform.gameObject
+                : null;
+            GetContext()?.SetProjectileObject(selfSpec.ProjectileObject);
         }
 
-        private Vector2 RotateVector2(Vector2 v, float degrees)
+        private Vector2 RotateVector2(Vector2 value, float degrees)
         {
             float radians = degrees * Mathf.Deg2Rad;
             float cos = Mathf.Cos(radians);
             float sin = Mathf.Sin(radians);
-            return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
-        }
-
-        private void TryTriggerPositionFallbackHit(ProjectileEffectSpec selfSpec, Vector2? projectilePosition)
-        {
-            ProjectileEffectNodeData nodeData = GetNode();
-            if (selfSpec == null
-                || selfSpec.HasTriggeredHit
-                || !projectilePosition.HasValue
-                || nodeData == null
-                || nodeData.projectileTargetType != ProjectileTargetType.Position)
-            {
-                return;
-            }
-
-            float fallbackRadius = Mathf.Max(nodeData.collisionRadius, 0.75f);
-            if (Vector2.Distance(projectilePosition.Value, selfSpec.ExpectedTargetPosition) > fallbackRadius)
-            {
-                return;
-            }
-
-            AbilitySystemComponent fallbackTarget = GetContext()?.GetMainTarget();
-            if (fallbackTarget == null)
-            {
-                return;
-            }
-
-            selfSpec.HasTriggeredHit = true;
-            OnProjectileHit(fallbackTarget, projectilePosition.Value);
+            return new Vector2(value.x * cos - value.y * sin, value.x * sin + value.y * cos);
         }
     }
 }

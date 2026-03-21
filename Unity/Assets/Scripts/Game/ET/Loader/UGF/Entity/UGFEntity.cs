@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Game;
 using MongoDB.Bson.Serialization.Attributes;
 using UnityEngine;
+using UnityGameFramework.Extension;
 using GameEntry = Game.GameEntry;
 
 namespace ET
@@ -95,6 +96,28 @@ namespace ET
             if(this.m_UGFEntity == null)
             {
                 throw new Exception($"UGFEntity ShowEntityAsync failed! entityTypeId:'{entityTypeId}'.");
+            }
+        }
+
+        public async UniTask ShowEntityAsync(string entityAssetName, string entityGroupName, int priority = 0)
+        {
+            if (this.m_Cts == null)
+            {
+                this.m_Cts = ObjectPool.Instance.Fetch<CancellationTokenSourcePlus>();
+            }
+
+            this.m_UGFEntity = await GameEntry.Entity.ShowEntityAsync(
+                GameEntry.Entity.GenerateSerialId(),
+                typeof(ETMonoUGFEntity),
+                entityAssetName,
+                entityGroupName,
+                priority,
+                ETMonoUGFEntityData.Create(this),
+                cancellationToken: this.m_Cts.MallocToken());
+            this.m_Cts.FreeToken();
+            if (this.m_UGFEntity == null)
+            {
+                throw new Exception($"UGFEntity ShowEntityAsync failed! entityAssetName:'{entityAssetName}' entityGroupName:'{entityGroupName}'.");
             }
         }
 

@@ -357,6 +357,11 @@ namespace ET.Client.Editor
             {
                 if (node is ProjectileEffectNodeData projectileNode)
                 {
+                    if (projectileNode.projectileEntityId > 0)
+                    {
+                        return $"entity:{projectileNode.projectileEntityId}";
+                    }
+
                     return projectileNode.projectilePrefabPath;
                 }
             }
