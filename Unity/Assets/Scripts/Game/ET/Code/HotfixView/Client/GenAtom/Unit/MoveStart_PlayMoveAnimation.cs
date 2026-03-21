@@ -22,6 +22,12 @@ namespace ET.Client
                 return;
             }
 
+            AbilitySystemComponent asc = unit.GetComponent<SkillUnit>()?.ASC.As();
+            if (asc != null && asc.IsCasting())
+            {
+                return;
+            }
+
             animationComponent.PlayAnimation(animationComponent.MoveAnimationName, true);
             await UniTask.CompletedTask;
         }

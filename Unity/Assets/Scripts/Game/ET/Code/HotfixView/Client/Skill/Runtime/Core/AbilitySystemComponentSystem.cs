@@ -239,6 +239,17 @@ namespace ET.Client
             return self.OwnedTags.HasNoneTags(tags);
         }
 
+        public static bool IsCasting(this AbilitySystemComponent self)
+        {
+            AbilityContainerComponent abilityContainer = self?.Abilities;
+            if (abilityContainer == null)
+            {
+                return false;
+            }
+
+            return abilityContainer.GetActiveAbilities().Count > 0;
+        }
+
         private static bool RequiresMainTarget(this GameplayAbilitySpec self)
         {
             SkillData graphData = self?.GraphData;
