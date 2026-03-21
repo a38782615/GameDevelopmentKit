@@ -47,6 +47,19 @@ namespace ET.Client.Editor
                 particleCueNode.NotifyConnectedTracksUpdateDuration();
             }));
 
+            var prefabField = new ObjectField("特效预制体")
+            {
+                objectType = typeof(GameObject),
+                value = data.particlePrefab
+            };
+            prefabField.RegisterValueChangedCallback(evt =>
+            {
+                data.particlePrefab = evt.newValue as GameObject;
+                particleCueNode.SyncUIFromData();
+                particleCueNode.NotifyConnectedTracksUpdateDuration();
+            });
+            particleContent.Add(prefabField);
+
             var offsetContainer = new VisualElement { style = { marginBottom = 8 } };
             offsetContainer.Add(new Label("偏移") { style = { marginBottom = 4 } });
             offsetContainer.Add(CreateFloatField("X", data.particleOffset.x, value =>

@@ -55,13 +55,17 @@ namespace ET.Client.Editor
 
         public static float GetParticleDuration(ParticleCueNodeData data)
         {
-            if (data == null || data.particleEntityId <= 0 || data.particleLoop)
+            if (data == null || data.particleLoop)
             {
                 return -1f;
             }
 
 #if UNITY_EDITOR
-            GameObject particlePrefab = GetParticleEntityPrefab(data.particleEntityId);
+            GameObject particlePrefab = data.particlePrefab;
+            if (particlePrefab == null && data.particleEntityId > 0)
+            {
+                particlePrefab = GetParticleEntityPrefab(data.particleEntityId);
+            }
             if (particlePrefab == null)
             {
                 return -1f;
