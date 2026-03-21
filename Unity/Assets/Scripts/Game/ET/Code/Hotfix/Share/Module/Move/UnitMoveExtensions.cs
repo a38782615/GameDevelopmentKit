@@ -8,6 +8,11 @@ namespace ET
     {
         public static void AddMoveComponentByMode(this Unit unit)
         {
+            if (unit.GetComponent<MoveRestrictionComponent>() == null)
+            {
+                unit.AddComponent<MoveRestrictionComponent>();
+            }
+
             if (global::ET.ModeDefine.Is2D)
             {
                 unit.RemoveComponent<MoveComponent>();
@@ -29,8 +34,18 @@ namespace ET
             unit.AddComponent<MoveComponent>();
         }
 
+        public static bool IsMoveAllowed(this Unit unit)
+        {
+            return unit?.GetComponent<MoveRestrictionComponent>().IsMoveAllowed() != false;
+        }
+
         public static UniTask<bool> MoveAlongPathAsync(this Unit unit, List<float3> path, float speed, int turnTime = 100)
         {
+            if (unit == null || !unit.IsMoveAllowed())
+            {
+                return UniTask.FromResult(false);
+            }
+
             unit.AddMoveComponentByMode();
 
             if (global::ET.ModeDefine.Is2D)
@@ -65,6 +80,11 @@ namespace ET
 
         public static bool FlashMoveTo(this Unit unit, float3 target)
         {
+            if (unit == null || !unit.IsMoveAllowed())
+            {
+                return false;
+            }
+
             unit.AddMoveComponentByMode();
 
             if (global::ET.ModeDefine.Is2D)

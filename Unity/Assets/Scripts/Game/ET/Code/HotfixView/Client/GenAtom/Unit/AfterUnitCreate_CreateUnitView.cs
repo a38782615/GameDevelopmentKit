@@ -50,6 +50,14 @@ namespace ET.Client
                 }
 
                 skelenAnimationComponent.Bind();
+
+                UnitMoveRestrictionComponent moveRestrictionComponent = unit.GetComponent<UnitMoveRestrictionComponent>();
+                if (moveRestrictionComponent == null)
+                {
+                    moveRestrictionComponent = unit.AddComponent<UnitMoveRestrictionComponent>();
+                }
+
+                moveRestrictionComponent.Bind();
             }
 
             unit.AddComponent<Collider2DComponent>().Bind(viewGameObject, asc);
