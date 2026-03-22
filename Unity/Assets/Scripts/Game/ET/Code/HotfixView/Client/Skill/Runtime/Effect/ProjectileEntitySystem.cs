@@ -4,19 +4,19 @@ namespace ET.Client
 {
     [FriendOf(typeof(AbilitySystemComponent))]
     [FriendOf(typeof(GameplayEffectSpec))]
-    [FriendOf(typeof(ProjectileEntity))]
+    [FriendOf(typeof(UGFEntityProjectile))]
     [FriendOf(typeof(ProjectileEffectSpec))]
-    [EntitySystemOf(typeof(ProjectileEntity))]
+    [EntitySystemOf(typeof(UGFEntityProjectile))]
     public static partial class ProjectileEntitySystem
     {
         [EntitySystem]
-        private static void Awake(this ProjectileEntity self, ProjectileInitData initData)
+        private static void Awake(this UGFEntityProjectile self, ProjectileInitData initData)
         {
             self.InitData = initData;
         }
 
         [UGFEntitySystem]
-        private static void UGFEntityOnShow(this ProjectileEntity self)
+        private static void UGFEntityOnShow(this UGFEntityProjectile self)
         {
             self.InitializeRuntimeState();
 
@@ -29,7 +29,7 @@ namespace ET.Client
         }
 
         [UGFEntitySystem]
-        private static void UGFEntityOnHide(this ProjectileEntity self, bool isShutdown)
+        private static void UGFEntityOnHide(this UGFEntityProjectile self, bool isShutdown)
         {
             self.Initialized = false;
             self.DestroyRequested = true;
@@ -52,7 +52,7 @@ namespace ET.Client
         }
 
         [UGFEntitySystem]
-        private static void UGFEntityOnUpdate(this ProjectileEntity self, float elapseSeconds, float realElapseSeconds)
+        private static void UGFEntityOnUpdate(this UGFEntityProjectile self, float elapseSeconds, float realElapseSeconds)
         {
             if (!self.CanContinue())
             {
@@ -84,7 +84,7 @@ namespace ET.Client
             }
         }
 
-        public static void Cancel(this ProjectileEntity self)
+        public static void Cancel(this UGFEntityProjectile self)
         {
             if (self == null || self.IsDisposed)
             {
@@ -96,7 +96,7 @@ namespace ET.Client
             self.Dispose();
         }
 
-        private static void InitializeRuntimeState(this ProjectileEntity self)
+        private static void InitializeRuntimeState(this UGFEntityProjectile self)
         {
             self.Initialized = true;
             self.DestroyRequested = false;
@@ -121,12 +121,12 @@ namespace ET.Client
             }
         }
 
-        private static bool CanContinue(this ProjectileEntity self)
+        private static bool CanContinue(this UGFEntityProjectile self)
         {
             return self != null && !self.IsDisposed && self.Initialized && !self.DestroyRequested;
         }
 
-        private static void UpdatePosition(this ProjectileEntity self, float deltaTime)
+        private static void UpdatePosition(this UGFEntityProjectile self, float deltaTime)
         {
             float moveDistance = self.InitData.Speed * deltaTime;
             self.TraveledDistance += moveDistance;
@@ -140,7 +140,7 @@ namespace ET.Client
             self.UpdatePositionForPosition(moveDistance);
         }
 
-        private static void UpdatePositionForUnit(this ProjectileEntity self, float moveDistance)
+        private static void UpdatePositionForUnit(this UGFEntityProjectile self, float moveDistance)
         {
             AbilitySystemComponent targetUnit = self.InitData.TargetUnit.As();
             if (targetUnit?.Owner != null)
@@ -164,7 +164,7 @@ namespace ET.Client
             self.CurrentPosition = Vector2.MoveTowards(self.CurrentPosition, self.EndPosition, moveDistance);
         }
 
-        private static void UpdatePositionForPosition(this ProjectileEntity self, float moveDistance)
+        private static void UpdatePositionForPosition(this UGFEntityProjectile self, float moveDistance)
         {
             if (self.InitData.FlyOver)
             {
@@ -196,7 +196,7 @@ namespace ET.Client
             self.CurrentPosition += self.CurrentDirection * moveDistance;
         }
 
-        private static void CheckCollision(this ProjectileEntity self)
+        private static void CheckCollision(this UGFEntityProjectile self)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(self.CurrentPosition, self.InitData.CollisionRadius);
             AbilitySystemComponent sourceAsc = self.InitData.SourceASC.As();
@@ -276,7 +276,7 @@ namespace ET.Client
             }
         }
 
-        private static void CheckReachTarget(this ProjectileEntity self)
+        private static void CheckReachTarget(this UGFEntityProjectile self)
         {
             if (self.InitData.TargetType == ProjectileTargetType.Unit)
             {
@@ -331,7 +331,7 @@ namespace ET.Client
             }
         }
 
-        private static bool TryBounceToNextTarget(this ProjectileEntity self, AbilitySystemComponent currentTarget, Collider2D hitCollider)
+        private static bool TryBounceToNextTarget(this UGFEntityProjectile self, AbilitySystemComponent currentTarget, Collider2D hitCollider)
         {
             self.BounceCount++;
 
@@ -380,7 +380,7 @@ namespace ET.Client
             return true;
         }
 
-        private static AbilitySystemComponent FindNextBounceCandidate(this ProjectileEntity self, AbilitySystemComponent currentTarget)
+        private static AbilitySystemComponent FindNextBounceCandidate(this UGFEntityProjectile self, AbilitySystemComponent currentTarget)
         {
             Collider2D[] colliders = Physics2D.OverlapCircleAll(self.CurrentPosition, self.InitData.BounceSearchRadius);
             AbilitySystemComponent nearestTarget = null;
@@ -420,7 +420,7 @@ namespace ET.Client
             return nearestTarget;
         }
 
-        private static void DestroyProjectile(this ProjectileEntity self)
+        private static void DestroyProjectile(this UGFEntityProjectile self)
         {
             if (!self.CanContinue())
             {
@@ -441,7 +441,7 @@ namespace ET.Client
             self.Dispose();
         }
 
-        private static bool IsValidTarget(this ProjectileEntity self, AbilitySystemComponent target)
+        private static bool IsValidTarget(this UGFEntityProjectile self, AbilitySystemComponent target)
         {
             if (target == null || target.IsDisposed)
             {
@@ -461,7 +461,7 @@ namespace ET.Client
             return true;
         }
 
-        private static bool ShouldExcludeSourceCamp(this ProjectileEntity self, AbilitySystemComponent target)
+        private static bool ShouldExcludeSourceCamp(this UGFEntityProjectile self, AbilitySystemComponent target)
         {
             if (!self.InitData.ExcludeSourceCamp)
             {
@@ -477,7 +477,7 @@ namespace ET.Client
             return target.OwnedTags.HasTagExact(sourceCampTag);
         }
 
-        private static GameplayTag GetCampTag(this ProjectileEntity self, AbilitySystemComponent asc)
+        private static GameplayTag GetCampTag(this UGFEntityProjectile self, AbilitySystemComponent asc)
         {
             if (asc?.OwnedTags == null || asc.OwnedTags.IsEmpty)
             {
@@ -497,7 +497,7 @@ namespace ET.Client
             return GameplayTag.None;
         }
 
-        private static Vector2 GetTargetUnitPosition(this ProjectileEntity self)
+        private static Vector2 GetTargetUnitPosition(this UGFEntityProjectile self)
         {
             AbilitySystemComponent targetUnit = self.InitData.TargetUnit.As();
             if (targetUnit?.Owner == null)
@@ -518,12 +518,12 @@ namespace ET.Client
             return targetTransform.position;
         }
 
-        private static Vector2 GetPerpendicular(this ProjectileEntity self, Vector2 direction)
+        private static Vector2 GetPerpendicular(this UGFEntityProjectile self, Vector2 direction)
         {
             return new Vector2(direction.y, -direction.x);
         }
 
-        private static Vector2 RotateVector2(this ProjectileEntity self, Vector2 direction, float degrees)
+        private static Vector2 RotateVector2(this UGFEntityProjectile self, Vector2 direction, float degrees)
         {
             float radians = degrees * Mathf.Deg2Rad;
             float cos = Mathf.Cos(radians);
@@ -531,7 +531,7 @@ namespace ET.Client
             return new Vector2(direction.x * cos - direction.y * sin, direction.x * sin + direction.y * cos);
         }
 
-        private static Vector2 GetReflectDirection(this ProjectileEntity self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        private static Vector2 GetReflectDirection(this UGFEntityProjectile self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
         {
             Vector2 surfaceNormal = self.GetSurfaceNormal(hitCollider, currentTarget);
             Vector2 reflectDirection = Vector2.Reflect(self.CurrentDirection.normalized, surfaceNormal).normalized;
@@ -543,7 +543,7 @@ namespace ET.Client
             return reflectDirection;
         }
 
-        private static Vector2 GetSurfaceNormal(this ProjectileEntity self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        private static Vector2 GetSurfaceNormal(this UGFEntityProjectile self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
         {
             if (hitCollider != null)
             {
@@ -567,7 +567,7 @@ namespace ET.Client
             return -self.CurrentDirection.normalized;
         }
 
-        private static void UpdateRotation(this ProjectileEntity self)
+        private static void UpdateRotation(this UGFEntityProjectile self)
         {
             if (self.CachedTransform == null || self.CurrentDirection.sqrMagnitude <= 0.001f)
             {
@@ -578,7 +578,7 @@ namespace ET.Client
             self.CachedTransform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
 
-        private static GameplayEffectSpec GetEffectSpec(this ProjectileEntity self)
+        private static GameplayEffectSpec GetEffectSpec(this UGFEntityProjectile self)
         {
             if (self == null)
             {
@@ -588,17 +588,17 @@ namespace ET.Client
             return self.GetParent<GameplayEffectSpec>();
         }
 
-        private static ProjectileEffectSpec GetProjectileSpec(this ProjectileEntity self)
+        private static ProjectileEffectSpec GetProjectileSpec(this UGFEntityProjectile self)
         {
             return self.GetEffectSpec()?.GetComponent<ProjectileEffectSpec>();
         }
 
-        private static GameObject GetProjectileObject(this ProjectileEntity self)
+        private static GameObject GetProjectileObject(this UGFEntityProjectile self)
         {
             return self?.CachedTransform != null ? self.CachedTransform.gameObject : null;
         }
 
-        private static void TriggerHit(this ProjectileEntity self, AbilitySystemComponent hitTarget, Vector2 hitPosition)
+        private static void TriggerHit(this UGFEntityProjectile self, AbilitySystemComponent hitTarget, Vector2 hitPosition)
         {
             if (hitTarget == null)
             {
@@ -633,7 +633,7 @@ namespace ET.Client
             }
         }
 
-        private static void TriggerReachTarget(this ProjectileEntity self, Vector2 position)
+        private static void TriggerReachTarget(this UGFEntityProjectile self, Vector2 position)
         {
             GameplayEffectSpec effectSpec = self.GetEffectSpec();
             ProjectileEffectSpec projectileSpec = self.GetProjectileSpec();
@@ -649,7 +649,7 @@ namespace ET.Client
             context.ExecuteConnectedNodes(effectSpec.SkillId, effectSpec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
         }
 
-        private static void TriggerBounce(this ProjectileEntity self, AbilitySystemComponent nextTarget, Vector2 bouncePosition)
+        private static void TriggerBounce(this UGFEntityProjectile self, AbilitySystemComponent nextTarget, Vector2 bouncePosition)
         {
             if (nextTarget == null)
             {
@@ -681,7 +681,7 @@ namespace ET.Client
             }
         }
 
-        private static void TryTriggerPositionFallbackHit(this ProjectileEntity self, Vector2 projectilePosition)
+        private static void TryTriggerPositionFallbackHit(this UGFEntityProjectile self, Vector2 projectilePosition)
         {
             ProjectileEffectSpec projectileSpec = self.GetProjectileSpec();
             GameplayEffectSpec effectSpec = self.GetEffectSpec();

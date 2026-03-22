@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ET.Client
 {
     [ChildOf(typeof(GameplayEffectSpec))]
-    public class ProjectileEntity : UGFEntity, IAwake<ProjectileInitData>, IUGFEntityOnShow, IUGFEntityOnUpdate, IUGFEntityOnHide
+    public class UGFEntityProjectile : UGFEntity, IAwake<ProjectileInitData>, IUGFEntityOnShow, IUGFEntityOnUpdate, IUGFEntityOnHide
     {
         public ProjectileInitData InitData;
         public bool Initialized;

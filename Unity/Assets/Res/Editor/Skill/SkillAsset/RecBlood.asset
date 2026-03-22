@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324534274916791
   - rid: 8915324534274916792
   - rid: 8915324534274916793
-  - rid: 8915324534274916794
-  - rid: 8915324534274916795
   - rid: 8915324534274916796
+  - rid: 8915324534274916795
   - rid: 8915324534274916790
+  - rid: 8915324534274916791
+  - rid: 8915324534274916794
   connections:
   - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3001
@@ -79,8 +79,8 @@ MonoBehaviour:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
         position:
-          x: -924.6666
-          y: -1886.6667
+          x: -932.6666
+          y: -1930
         targetType: 1
         skillId: 1007
         assetTags:
@@ -163,8 +163,8 @@ MonoBehaviour:
         guid: 6d127270-5aeb-4542-9183-8d2d028d6786
         nodeType: 2
         position:
-          x: -550.6666
-          y: -2050
+          x: -556.6666
+          y: -1986
         targetType: 1
         assetTags:
           Tags: []

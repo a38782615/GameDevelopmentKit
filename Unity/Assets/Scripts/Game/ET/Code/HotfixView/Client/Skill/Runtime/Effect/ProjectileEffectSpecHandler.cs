@@ -118,7 +118,7 @@ namespace ET.Client
                 return;
             }
 
-            ProjectileEntity projectileEntity = selfSpec.ProjectileEntity.As();
+            UGFEntityProjectile projectileEntity = selfSpec.ProjectileEntity.As();
             if (projectileEntity != null)
             {
                 projectileEntity.Cancel();
@@ -159,7 +159,7 @@ namespace ET.Client
                 return;
             }
 
-            ProjectileEntity currentProjectile = selfSpec.ProjectileEntity.As();
+            UGFEntityProjectile currentProjectile = selfSpec.ProjectileEntity.As();
             if (currentProjectile != null)
             {
                 currentProjectile.Cancel();
@@ -192,7 +192,7 @@ namespace ET.Client
                 BounceAngleOffset = nodeData.bounceAngleOffset
             };
 
-            ProjectileEntity projectileEntity = Spec.AddChild<ProjectileEntity, ProjectileInitData>(initData);
+            UGFEntityProjectile projectileEntity = Spec.AddChild<UGFEntityProjectile, ProjectileInitData>(initData);
             selfSpec.ProjectileEntity = projectileEntity;
 
             try

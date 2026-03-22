@@ -322,9 +322,9 @@ namespace ET.Client
                 case PositionSourceType.ParentInput:
                     return self.GetParentInputTarget()?.Owner;
                 case PositionSourceType.Projectile:
-                    return self.ProjectileObject;
+                    return self.GetProjectileObject();
                 case PositionSourceType.Placement:
-                    return self.PlacementObject;
+                    return self.GetPlacementObject();
                 default:
                     return null;
             }
