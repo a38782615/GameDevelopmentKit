@@ -18,7 +18,14 @@ namespace ET
         {
             self.BiomeMap = new BiomeMap(new float2(self.Width, self.Height));
             self.BiomeMap.SetPointNum(self.PointNum);
-            self.BiomeMap.Init(self.MapSeed, self.CheckIsland);
+            if (self.TxtTexture == null)
+            {
+                self.BiomeMap.Init(self.MapSeed);
+            }
+            else
+            {
+                self.BiomeMap.Init(self.MapSeed, self.CheckIsland);
+            }
 
             NoisyEdges noisyEdge = new NoisyEdges(self.MapSeed);
             noisyEdge.BuildNoisyEdges(self.BiomeMap);
@@ -39,6 +46,8 @@ namespace ET
         {
             int x = Convert.ToInt32(q.x / self.Width * self.TxtWidth);
             int y = Convert.ToInt32(q.y / self.Height * self.TxtHeight);
+            x = math.clamp(x, 0, self.TxtTexture.width - 1);
+            y = math.clamp(y, 0, self.TxtTexture.height - 1);
             Color textureColor = self.TxtTexture.GetPixel(x, y);
             if (self.IsLake)
             {
