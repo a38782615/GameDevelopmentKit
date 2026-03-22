@@ -117,7 +117,7 @@ namespace ET.Client
             state.UnitType = unitType;
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
-            state.HeadOffset = CalculateHeadOffset(owner);
+            state.HeadOffset = GetPositionFromObject(owner, "head");
         }
 
         public void UnregisterUnit(AbilitySystemComponent asc)
@@ -640,38 +640,32 @@ namespace ET.Client
             state.Material = null;
         }
 
-        private static float CalculateHeadOffset(GameObject owner)
+        private static float GetPositionFromObject(GameObject obj, string bindingName)
         {
-            if (owner == null)
-            {
+            if (obj == null) return DefaultHeadOffset;
+
+            if (string.IsNullOrEmpty(bindingName))
                 return DefaultHeadOffset;
-            }
 
-            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
-            if (renderers.Length > 0)
-            {
-                Bounds bounds = renderers[0].bounds;
-                for (int index = 1; index < renderers.Length; ++index)
-                {
-                    bounds.Encapsulate(renderers[index].bounds);
-                }
+            Transform bindingPoint = obj.transform.Find(bindingName);
+            if (bindingPoint != null)
+                return bindingPoint.position.y;
 
-                return Mathf.Max(DefaultHeadOffset, bounds.max.y - owner.transform.position.y);
-            }
-
-            Collider2D[] colliders = owner.GetComponentsInChildren<Collider2D>(true);
-            if (colliders.Length > 0)
-            {
-                Bounds bounds = colliders[0].bounds;
-                for (int index = 1; index < colliders.Length; ++index)
-                {
-                    bounds.Encapsulate(colliders[index].bounds);
-                }
-
-                return Mathf.Max(DefaultHeadOffset, bounds.max.y - owner.transform.position.y);
-            }
+            bindingPoint = FindChildRecursive(obj.transform, bindingName);
+            if (bindingPoint != null)
+                return bindingPoint.position.y;
 
             return DefaultHeadOffset;
+        }
+        private static Transform FindChildRecursive(Transform parent, string name)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == name) return child;
+                var found = FindChildRecursive(child, name);
+                if (found != null) return found;
+            }
+            return null;
         }
 
         private static Color ResolveTextColor(FloatingTextType textType, Color customColor)
