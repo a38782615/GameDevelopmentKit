@@ -39,7 +39,7 @@ namespace ET
 
             drawMap.View = GameObject.Find("Map");
             drawMap.Init();
-            drawMap.GenMap(self.BiomeMap);
+            drawMap.GenMap(self.BiomeMap, self.RenderWidth, self.RenderHeight);
         }
 
         public static bool CheckIsland(this GenMap self, float2 q)

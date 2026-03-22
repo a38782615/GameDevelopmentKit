@@ -9,10 +9,6 @@ namespace ET
     {
         public GameObject View;
         public readonly List<EntityRef<DrawCarpet>> Grounds = new List<EntityRef<DrawCarpet>>();
-        public KDTree KDTree;
-        public KDQuery Query;
-        public readonly List<float3> CenterIdxs = new List<float3>();
         public readonly Dictionary<int2, MapNode> Map = new Dictionary<int2, MapNode>();
-        public readonly List<int> QueryResult = new List<int>();
     }
 }

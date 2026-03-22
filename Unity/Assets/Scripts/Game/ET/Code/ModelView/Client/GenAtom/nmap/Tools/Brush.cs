@@ -7,6 +7,8 @@ namespace ET
     public struct MapNode
     {
         public int2 Pos;
+        public float2 WorldPosition;
+        public float2 WorldSize;
         public MapCenter MapCenter;
     }
 

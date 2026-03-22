@@ -10,6 +10,8 @@ namespace ET
         public Texture2D TxtTexture;
         public int Width = 800;
         public int Height = 600;
+        public int RenderWidth = 200;
+        public int RenderHeight = 150;
         public int TxtWidth = 400;
         public int TxtHeight = 200;
         public int PointNum = 1000;
