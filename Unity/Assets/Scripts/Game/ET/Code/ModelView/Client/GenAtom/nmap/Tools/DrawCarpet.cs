@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET
 {
-    [EnableClass]
-    public partial class DrawCarpet
+    [ChildOf(typeof(DrawMap))]
+    [EnableMethod]
+    [FriendOf(typeof(MapLogic))]
+    public partial class DrawCarpet : Entity, IAwake
     {
         [StaticField]
         public static string[] mainNames = { "noise_rocky", "Ground_noise_water_shallow", "forest_ground_noise" };
+
         [StaticField]
         public static string[] overNames = { "blocky", "water", "grass" };
 
@@ -17,109 +19,121 @@ namespace ET
         public MeshFilter meshFilter;
         public Texture2D mainTexture;
         public Texture2D overlayTexture;
-        private MaterialPropertyBlock m_matPropBlock;
-        private MapLogic m_mapLogic;
         public GameObject View;
-        List<Vector3> s_vertices;
-        List<Vector2> m_uv;
-        List<Vector2> m_uv2;
+        public int CarType;
 
-        public DrawCarpet()
-        {
-            s_vertices = new List<Vector3>();
-            m_uv = new List<Vector2>();
-            m_uv2 = new List<Vector2>();
-        }
+        private MaterialPropertyBlock m_matPropBlock;
+        private EntityRef<MapLogic> m_mapLogic;
+        private readonly List<Vector3> s_vertices = new List<Vector3>();
+        private readonly List<Vector2> m_uv = new List<Vector2>();
+        private readonly List<Vector2> m_uv2 = new List<Vector2>();
 
         public int OrderInLayer
         {
-            get { return m_meshRenderer.sortingOrder; }
-            set { m_meshRenderer.sortingOrder = value; }
+            get { return this.m_meshRenderer.sortingOrder; }
+            set { this.m_meshRenderer.sortingOrder = value; }
         }
 
         public int SortingLayerID
         {
-            get { return m_meshRenderer.sortingLayerID; }
-            set { m_meshRenderer.sortingLayerID = value; }
+            get { return this.m_meshRenderer.sortingLayerID; }
+            set { this.m_meshRenderer.sortingLayerID = value; }
         }
 
         public string SortingLayerName
         {
-            get { return m_meshRenderer.sortingLayerName; }
-            set { m_meshRenderer.sortingLayerName = value; }
+            get { return this.m_meshRenderer.sortingLayerName; }
+            set { this.m_meshRenderer.sortingLayerName = value; }
         }
 
-        public int CarType;
         public void Init(int type)
         {
-            CarType = type;
-            mainTexture = Resources.Load<Texture2D>("Sprites/" + mainNames[type]);
-            overlayTexture = Resources.Load<Texture2D>("Sprites/" + overNames[type]);
-            meshFilter = View.GetComponent<MeshFilter>();
-            m_meshRenderer = View.GetComponent<MeshRenderer>();
-            if (m_meshRenderer != null)
+            this.CarType = type;
+            this.mainTexture = Resources.Load<Texture2D>($"Sprites/{mainNames[type]}");
+            this.overlayTexture = Resources.Load<Texture2D>($"Sprites/{overNames[type]}");
+            this.meshFilter = this.View.GetComponent<MeshFilter>();
+            this.m_meshRenderer = this.View.GetComponent<MeshRenderer>();
+            if (this.m_meshRenderer != null)
             {
-                SortingLayerID = 0;
-                OrderInLayer = type;
+                this.SortingLayerID = 0;
+                this.OrderInLayer = type;
             }
 
-            if (m_mapLogic == null)
+            MapLogic mapLogic = this.m_mapLogic.As();
+            if (mapLogic == null)
             {
-                m_mapLogic = new MapLogic();
+                mapLogic = this.AddChild<MapLogic>();
+                this.m_mapLogic = mapLogic;
             }
 
-            m_mapLogic.Clear();
-            meshFilter.sharedMesh = new Mesh
+            mapLogic.Init();
+            mapLogic.Clear();
+
+            this.meshFilter.sharedMesh = new Mesh
             {
                 hideFlags = HideFlags.HideAndDontSave,
-                name = View.name + "_mesh"
+                name = $"{this.View.name}_mesh"
             };
-            meshFilter.sharedMesh.Clear();
-            if (m_matPropBlock == null)
+            this.meshFilter.sharedMesh.Clear();
+            if (this.m_matPropBlock == null)
             {
-                m_matPropBlock = new MaterialPropertyBlock();
+                this.m_matPropBlock = new MaterialPropertyBlock();
             }
 
-            m_meshRenderer.GetPropertyBlock(m_matPropBlock);
-            if (mainTexture != null)
+            this.m_meshRenderer.GetPropertyBlock(this.m_matPropBlock);
+            if (this.mainTexture != null)
             {
-                m_matPropBlock.SetTexture("_MainTex", mainTexture);
+                this.m_matPropBlock.SetTexture("_MainTex", this.mainTexture);
             }
 
-            if (overlayTexture != null)
+            if (this.overlayTexture != null)
             {
-                m_matPropBlock.SetTexture("_Texture2DCover", overlayTexture);
+                this.m_matPropBlock.SetTexture("_Texture2DCover", this.overlayTexture);
             }
 
-            m_meshRenderer.SetPropertyBlock(m_matPropBlock);
+            this.m_meshRenderer.SetPropertyBlock(this.m_matPropBlock);
         }
-
 
         public void GenMap()
         {
-            m_mapLogic.CreateMap();
-            Render();
+            MapLogic mapLogic = this.m_mapLogic.As();
+            if (mapLogic == null)
+            {
+                return;
+            }
+
+            mapLogic.CreateMap();
+            this.Render();
         }
 
-        private void Render()
-        {
-            var mesh = meshFilter.sharedMesh;
-            mesh.SetVertices(DrawUtil.ToList(m_mapLogic.s_vertices, s_vertices));
-            mesh.SetTriangles(m_mapLogic.s_triangles, 0);
-            mesh.SetUVs(0, DrawUtil.ToList(m_mapLogic.m_uv, m_uv));
-            mesh.SetUVs(1, DrawUtil.ToList(m_mapLogic.m_uv2, m_uv2));
-        }
         public void Clear()
         {
-            m_mapLogic.Map.Clear();
+            MapLogic mapLogic = this.m_mapLogic.As();
+            mapLogic?.Map.Clear();
         }
 
         public void Set(Func<DrawCarpet, MapNode, bool> func, MapNode node)
         {
-            if (func.Invoke(this, node))
+            MapLogic mapLogic = this.m_mapLogic.As();
+            if (mapLogic != null && func.Invoke(this, node))
             {
-                m_mapLogic.Map[node.Pos] = node;
+                mapLogic.Map[node.Pos] = node;
             }
+        }
+
+        private void Render()
+        {
+            MapLogic mapLogic = this.m_mapLogic.As();
+            if (mapLogic == null)
+            {
+                return;
+            }
+
+            Mesh mesh = this.meshFilter.sharedMesh;
+            mesh.SetVertices(DrawUtil.ToList(mapLogic.s_vertices, this.s_vertices));
+            mesh.SetTriangles(mapLogic.s_triangles, 0);
+            mesh.SetUVs(0, DrawUtil.ToList(mapLogic.m_uv, this.m_uv));
+            mesh.SetUVs(1, DrawUtil.ToList(mapLogic.m_uv2, this.m_uv2));
         }
     }
 }

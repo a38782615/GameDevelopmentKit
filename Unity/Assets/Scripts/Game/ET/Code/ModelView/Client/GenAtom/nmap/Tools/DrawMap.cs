@@ -1,111 +1,125 @@
-﻿using System.Collections.Generic;
-using ET;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET
 {
-    [EnableClass]
-    public partial class DrawMap
+    [ChildOf(typeof(GenMap))]
+    [EnableMethod]
+    [FriendOf(typeof(DrawCarpet))]
+    public partial class DrawMap : Entity, IAwake
     {
         public GameObject View;
-        private List<DrawCarpet> grounds;
 
-        KDTree kdTree;
-        KDQuery query;
-        private List<float3> centerIdxs = new List<float3>();
-        private Dictionary<int2, MapNode> m_map = new Dictionary<int2, MapNode>();
-        private List<int> m_queryResult = new List<int>();
+        private readonly List<EntityRef<DrawCarpet>> grounds = new List<EntityRef<DrawCarpet>>();
+        private KDTree kdTree;
+        private KDQuery query;
+        private readonly List<float3> centerIdxs = new List<float3>();
+        private readonly Dictionary<int2, MapNode> m_map = new Dictionary<int2, MapNode>();
+        private readonly List<int> m_queryResult = new List<int>();
+
         public void Init()
         {
-            var c = View.transform.childCount;
-            grounds = new List<DrawCarpet>(c);
-            for (int i = 0; i < c; i++)
+            this.grounds.Clear();
+
+            int childCount = this.View.transform.childCount;
+            for (int i = 0; i < childCount; i++)
             {
-                var g = new DrawCarpet();
-                g.View = View.transform.GetChild(i).gameObject;
-                grounds.Add(g);
-                g.Init(i);
+                DrawCarpet carpet = this.AddChild<DrawCarpet>();
+                carpet.View = this.View.transform.GetChild(i).gameObject;
+                this.grounds.Add(carpet);
+                carpet.Init(i);
             }
         }
 
-        public void GenMap(BiomeMap m)
+        public void GenMap(BiomeMap map)
         {
-            var self = this;
-            grounds.ForEach((e) =>
+            foreach (EntityRef<DrawCarpet> carpetRef in this.grounds)
             {
-                e.Clear();
-            });
-            kdTree = new KDTree();
-            query = new KDQuery();
-            var centers = m.MapGraph.centers;
-            foreach (var c in centers)
-            {
-                centerIdxs.Add(new float3(c.point, 0));
+                DrawCarpet carpet = carpetRef.As();
+                carpet?.Clear();
             }
 
-            kdTree.Build(centerIdxs.ToArray());
-            for (int i = 0; i < m.MapGraph.Width; i++)
+            this.centerIdxs.Clear();
+            this.m_map.Clear();
+            this.kdTree = new KDTree();
+            this.query = new KDQuery();
+
+            List<MapCenter> centers = map.MapGraph.centers;
+            foreach (MapCenter center in centers)
             {
-                for (int j = 0; j < m.MapGraph.Height; j++)
+                this.centerIdxs.Add(new float3(center.point, 0));
+            }
+
+            this.kdTree.Build(this.centerIdxs.ToArray());
+            for (int i = 0; i < map.MapGraph.Width; i++)
+            {
+                for (int j = 0; j < map.MapGraph.Height; j++)
                 {
-                    var p = new float3(i, j, 0);
-                    m_queryResult.Clear();
-                    query.KNearest(kdTree, p, 1, m_queryResult);
-                    if (m_queryResult.Count > 0)
+                    float3 point = new float3(i, j, 0);
+                    this.m_queryResult.Clear();
+                    this.query.KNearest(this.kdTree, point, 1, this.m_queryResult);
+                    if (this.m_queryResult.Count <= 0)
                     {
-                        var n = m_queryResult[0];
-                        var center = centers[n];
-                        var pos = new int2(i, j);
-                        var node = new MapNode()
-                        {
-                            MapCenter = center,
-                            Pos = pos
-                        };
-                        m_map[pos] = node;
-                        grounds.ForEach((e) =>
-                        {
-                            e.Set(self.IsGround, node);
-                        });
+                        continue;
+                    }
+
+                    int centerIndex = this.m_queryResult[0];
+                    MapCenter center = centers[centerIndex];
+                    int2 pos = new int2(i, j);
+                    MapNode node = new MapNode
+                    {
+                        MapCenter = center,
+                        Pos = pos
+                    };
+
+                    this.m_map[pos] = node;
+                    foreach (EntityRef<DrawCarpet> carpetRef in this.grounds)
+                    {
+                        DrawCarpet carpet = carpetRef.As();
+                        carpet?.Set(this.IsGround, node);
                     }
                 }
             }
 
-            grounds.ForEach((e) =>
+            foreach (EntityRef<DrawCarpet> carpetRef in this.grounds)
             {
-                e.GenMap();
-            });
+                DrawCarpet carpet = carpetRef.As();
+                carpet?.GenMap();
+            }
         }
 
         public bool IsGround(DrawCarpet carpet, MapNode node)
         {
-            bool b = false;
             if (carpet.CarType == 0)
             {
-                b = true;
-            }
-            else if (carpet.CarType == 1)
-            {
-                b = IsWater(node);
-            }
-            else if (carpet.CarType == 2)
-            {
-                b = IsGrass(node);
+                return true;
             }
 
-            return b;
+            if (carpet.CarType == 1)
+            {
+                return this.IsWater(node);
+            }
+
+            if (carpet.CarType == 2)
+            {
+                return this.IsGrass(node);
+            }
+
+            return false;
         }
 
         public bool IsWater(MapNode node)
         {
-            var b = node.MapCenter.biome == Biome.Ocean || node.MapCenter.biome == Biome.Lake || node.MapCenter.biome == Biome.TropicalRainForest || node.MapCenter.biome == Biome.Ice;
-            return b;
+            return node.MapCenter.biome == Biome.Ocean
+                || node.MapCenter.biome == Biome.Lake
+                || node.MapCenter.biome == Biome.TropicalRainForest
+                || node.MapCenter.biome == Biome.Ice;
         }
 
         public bool IsGrass(MapNode node)
         {
-            var b = node.MapCenter.biome == Biome.Grassland;
-            return b;
+            return node.MapCenter.biome == Biome.Grassland;
         }
     }
 }
