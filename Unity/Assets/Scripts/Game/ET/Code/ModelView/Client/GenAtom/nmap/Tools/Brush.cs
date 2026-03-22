@@ -89,7 +89,6 @@ namespace ET
     }
 
     [ChildOf(typeof(MapLogic))]
-    [EnableMethod]
     public partial class Brush : Entity, IAwake
     {
         [StaticField]
@@ -106,31 +105,7 @@ namespace ET
             { 216, 40 }, { 106, 41 }, { 27, 42 }, { 86, 43 }, { 80, 44 }, { 72, 45 }, { 18, 46 }, { 10, 47 }
         };
 
-        public readonly Dictionary<int, UVTileCover> m_uvMap = new Dictionary<int, UVTileCover>();
-        public readonly Dictionary<int, UVTileMain> m_uv2Map = new Dictionary<int, UVTileMain>();
-
-        public void Init()
-        {
-            this.m_uvMap.Clear();
-            this.m_uv2Map.Clear();
-
-            for (int j = 0; j < UVTileCover.TileCount; j++)
-            {
-                for (int i = 0; i < UVTileCover.TileCount; i++)
-                {
-                    UVTileCover uv = new UVTileCover(new int2(i, j));
-                    this.m_uvMap.Add(uv.Id, uv);
-                }
-            }
-
-            for (int j = 0; j < UVTileMain.TileCount; j++)
-            {
-                for (int i = 0; i < UVTileMain.TileCount; i++)
-                {
-                    UVTileMain uvTile = new UVTileMain(new int2(i, j));
-                    this.m_uv2Map.Add(uvTile.Id, uvTile);
-                }
-            }
-        }
+        public readonly Dictionary<int, UVTileCover> UVMap = new Dictionary<int, UVTileCover>();
+        public readonly Dictionary<int, UVTileMain> UV2Map = new Dictionary<int, UVTileMain>();
     }
 }
