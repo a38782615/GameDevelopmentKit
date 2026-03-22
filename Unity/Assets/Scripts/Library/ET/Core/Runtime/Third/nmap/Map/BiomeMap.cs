@@ -58,7 +58,7 @@ namespace ET
             var voronoi = new Voronoi(points, colors, new RectangleF(0, 0, Width, Height));
 
             checkIsland = checkIsland ?? IslandShape.makePerlin();
-            MapGraph = new MapGraph(checkIsland, points, voronoi, (int)Width, (int)Height, _lakeThreshold);
+            MapGraph = new MapGraph(checkIsland, points, voronoi, (int)Width, (int)Height, _lakeThreshold, seed);
         }
     }
 }

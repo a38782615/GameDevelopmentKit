@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using RectangleF = ET.Geometry.RectangleF;
 using System.Linq;
 using Unity.Mathematics;
+using Random = Unity.Mathematics.Random;
 
 namespace ET
 {
@@ -12,6 +13,7 @@ namespace ET
         List<KeyValuePair<int, MapCorner>> _cornerMap = new List<KeyValuePair<int, MapCorner>>();
         Func<float2, bool> inside;
         bool _needsMoreRandomness;
+        private Random random;
 
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -26,21 +28,28 @@ namespace ET
 
         public MapGraph(IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold)
         {
-            Init(IslandShape.makePerlin(), points, voronoi, width, height, lakeThreshold);
+            Init(IslandShape.makePerlin(), points, voronoi, width, height, lakeThreshold, 1u);
         }
 
         public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
             float lakeThreshold)
         {
-            Init(checkIsland, points, voronoi, width, height, lakeThreshold);
+            Init(checkIsland, points, voronoi, width, height, lakeThreshold, 1u);
+        }
+
+        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
+            float lakeThreshold, uint seed)
+        {
+            Init(checkIsland, points, voronoi, width, height, lakeThreshold, seed);
         }
 
         void Init(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
-            float lakeThreshold)
+            float lakeThreshold, uint seed)
         {
             Width = width;
             Height = height;
             inside = checkIsland;
+            random = Random.CreateFromIndex(seed == 0 ? 1u : seed);
             //通常来说，比较踏实的方案是先定义高度图，
             //再将海岸线所在位置设定成海平面高度。
             //这里我们没有采用这种办法，我们一开始就得到了这种方案想要生成的漂亮海岸线，
@@ -336,8 +345,7 @@ namespace ET
                             // nicer. I'm doing it here, with elevations, but I
                             // think there must be a better way. This hack is only
                             // used with square/hexagon grids.
-                            newElevation += UnityEngine.Random.value;
-                            ;
+                            newElevation += random.NextFloat();
                         }
                     }
 
@@ -555,7 +563,7 @@ namespace ET
             // move downslope. Mark the edges and corners as rivers.
             for (var i = 0; i < (Width + Height) / 4; i++)
             {
-                var q = corners[UnityEngine.Random.Range(0, corners.Count - 1)];
+                var q = corners[random.NextInt(0, corners.Count - 1)];
                 if (q.ocean || q.elevation < 0.3 || q.elevation > 0.9) continue;
                 // Bias rivers to go west: if (q.downslope.x > q.x) continue;
                 while (!q.coast)
