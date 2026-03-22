@@ -53,15 +53,17 @@ namespace ET
             float renderCellHeight = logicHeight / renderHeight;
             float worldCellWidth = logicWidth * UVTileCover.cellSize / renderWidth;
             float worldCellHeight = logicHeight * UVTileCover.cellSize / renderHeight;
+            float worldOriginX = -renderWidth * worldCellWidth * 0.5f;
+            float worldOriginY = -renderHeight * worldCellHeight * 0.5f;
             int mainTileCount = UVTileMain.TileCount * UVTileMain.TileCount;
             foreach (MapCenter center in centers)
             {
                 self.RasterizeCenter(center, renderWidth, renderHeight, logicToRenderX, logicToRenderY, renderCellWidth,
-                    renderCellHeight, worldCellWidth, worldCellHeight, mainTileCount);
+                    renderCellHeight, worldCellWidth, worldCellHeight, worldOriginX, worldOriginY, mainTileCount);
             }
 
             self.FillRasterizationGaps(centers, renderWidth, renderHeight, renderCellWidth, renderCellHeight, worldCellWidth,
-                worldCellHeight, mainTileCount);
+                worldCellHeight, worldOriginX, worldOriginY, mainTileCount);
 
             foreach (MapNode node in self.Map.Values)
             {
@@ -80,7 +82,8 @@ namespace ET
         }
 
         private static void RasterizeCenter(this DrawMap self, MapCenter center, int renderWidth, int renderHeight, float logicToRenderX,
-        float logicToRenderY, float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight, int mainTileCount)
+        float logicToRenderY, float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight,
+        float worldOriginX, float worldOriginY, int mainTileCount)
         {
             if (center == null || center.corners == null || center.corners.Count < 3)
             {
@@ -112,14 +115,15 @@ namespace ET
                     }
 
                     MapNode node = self.BuildNode(center, x, y, sampleX, sampleY, worldCellWidth, worldCellHeight,
-                        renderCellWidth, renderCellHeight, mainTileCount);
+                        worldOriginX, worldOriginY, renderCellWidth, renderCellHeight, mainTileCount);
                     self.UpsertNode(node, sampleX, sampleY);
                 }
             }
         }
 
         private static void FillRasterizationGaps(this DrawMap self, List<MapCenter> centers, int renderWidth, int renderHeight,
-        float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight, int mainTileCount)
+        float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight,
+        float worldOriginX, float worldOriginY, int mainTileCount)
         {
             for (int x = 0; x < renderWidth; x++)
             {
@@ -140,7 +144,7 @@ namespace ET
                     }
 
                     MapNode node = self.BuildNode(nearestCenter, x, y, sampleX, sampleY, worldCellWidth, worldCellHeight,
-                        renderCellWidth, renderCellHeight, mainTileCount);
+                        worldOriginX, worldOriginY, renderCellWidth, renderCellHeight, mainTileCount);
                     self.UpsertNode(node, sampleX, sampleY);
                 }
             }
@@ -163,7 +167,8 @@ namespace ET
         }
 
         private static MapNode BuildNode(this DrawMap self, MapCenter center, int x, int y, float sampleX, float sampleY,
-        float worldCellWidth, float worldCellHeight, float renderCellWidth, float renderCellHeight, int mainTileCount)
+        float worldCellWidth, float worldCellHeight, float worldOriginX, float worldOriginY, float renderCellWidth,
+        float renderCellHeight, int mainTileCount)
         {
             float2 samplePoint = new float2(sampleX, sampleY);
             MapCenter secondaryCenter = null;
@@ -229,7 +234,7 @@ namespace ET
                 MainTileId = mainTileId,
                 TransitionKind = transitionKind,
                 Pos = new int2(x, y),
-                WorldPosition = new float2(x * worldCellWidth, y * worldCellHeight),
+                WorldPosition = new float2(worldOriginX + x * worldCellWidth, worldOriginY + y * worldCellHeight),
                 WorldSize = new float2(worldCellWidth, worldCellHeight)
             };
         }

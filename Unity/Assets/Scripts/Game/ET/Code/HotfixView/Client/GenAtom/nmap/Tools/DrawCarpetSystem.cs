@@ -21,8 +21,16 @@ namespace ET
         {
             self.UnloadTexture(self.MainTexture);
             self.UnloadTexture(self.OverlayTexture);
+            self.UnloadMaterial(self.SourceMaterial);
+            if (self.RuntimeMaterial != null)
+            {
+                global::UnityEngine.Object.Destroy(self.RuntimeMaterial);
+            }
+
             self.MainTexture = null;
             self.OverlayTexture = null;
+            self.SourceMaterial = null;
+            self.RuntimeMaterial = null;
         }
 
         public static async UniTask InitAsync(this DrawCarpet self, int type)
@@ -30,15 +38,18 @@ namespace ET
             self.CarType = type;
             Texture2D mainTexture = await self.LoadTextureAsync(DrawCarpet.mainNames[type]);
             Texture2D overlayTexture = await self.LoadTextureAsync(DrawCarpet.overNames[type]);
+            Material sourceMaterial = await self.LoadMaterialAsync("Custom_SpriteOverlay");
             if (self == null || self.IsDisposed)
             {
                 self.UnloadTexture(mainTexture);
                 self.UnloadTexture(overlayTexture);
+                self.UnloadMaterial(sourceMaterial);
                 return;
             }
 
             self.MainTexture = mainTexture;
             self.OverlayTexture = overlayTexture;
+            self.SourceMaterial = sourceMaterial;
             self.MeshFilter = self.View.GetComponent<MeshFilter>();
             self.MeshRenderer = self.View.GetComponent<MeshRenderer>();
             if (self.MeshFilter == null || self.MeshRenderer == null)
@@ -51,6 +62,11 @@ namespace ET
             {
                 self.SetSortingLayerId(0);
                 self.SetOrderInLayer(type);
+                self.MeshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+                self.MeshRenderer.receiveShadows = false;
+                self.MeshRenderer.lightProbeUsage = LightProbeUsage.Off;
+                self.MeshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+                self.EnsureRuntimeMaterial();
             }
 
             MapLogic mapLogic = self.MapLogic.As();
@@ -182,12 +198,68 @@ namespace ET
             return await UGFComponent.Instance.LoadAssetAsync<Texture2D>(AssetUtility.GetNMapTextureAsset(textureName));
         }
 
+        private static async UniTask<Material> LoadMaterialAsync(this DrawCarpet self, string materialName)
+        {
+            return await UGFComponent.Instance.LoadAssetAsync<Material>(AssetUtility.GetNMapMaterialAsset(materialName));
+        }
+
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
         {
             if (texture != null)
             {
                 UGFComponent.Instance.UnloadAsset(texture);
             }
+        }
+
+        private static void UnloadMaterial(this DrawCarpet self, Material material)
+        {
+            if (material != null)
+            {
+                UGFComponent.Instance.UnloadAsset(material);
+            }
+        }
+
+        private static void EnsureRuntimeMaterial(this DrawCarpet self)
+        {
+            if (self.MeshRenderer == null)
+            {
+                return;
+            }
+
+            Material runtimeMaterial = self.RuntimeMaterial;
+            if (runtimeMaterial == null)
+            {
+                Material sourceMaterial = self.SourceMaterial;
+                if (sourceMaterial != null)
+                {
+                    runtimeMaterial = new Material(sourceMaterial)
+                    {
+                        name = $"{sourceMaterial.name}_{self.View.name}_Runtime",
+                        enableInstancing = true,
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
+                }
+                else
+                {
+                    Shader shader = Shader.Find("Shader Graphs/MapCombine");
+                    if (shader == null)
+                    {
+                        Log.Error($"nmap carpet init failed, cannot resolve map shader for view: {self.View?.name}");
+                        return;
+                    }
+
+                    runtimeMaterial = new Material(shader)
+                    {
+                        name = $"MapCombine_{self.View.name}_Runtime",
+                        enableInstancing = true,
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
+                }
+
+                self.RuntimeMaterial = runtimeMaterial;
+            }
+
+            self.MeshRenderer.sharedMaterial = runtimeMaterial;
         }
     }
 }

@@ -80,12 +80,12 @@ namespace ET
             self.Vertices.Add(new float3(px1, py0, 0));
             self.Vertices.Add(new float3(px0, py1, 0));
             self.Vertices.Add(new float3(px1, py1, 0));
-            self.Triangles.Add(vertexIdx + 3);
             self.Triangles.Add(vertexIdx + 0);
-            self.Triangles.Add(vertexIdx + 2);
-            self.Triangles.Add(vertexIdx + 0);
-            self.Triangles.Add(vertexIdx + 3);
             self.Triangles.Add(vertexIdx + 1);
+            self.Triangles.Add(vertexIdx + 2);
+            self.Triangles.Add(vertexIdx + 2);
+            self.Triangles.Add(vertexIdx + 1);
+            self.Triangles.Add(vertexIdx + 3);
 
             float u00 = tileUv0.Left;
             float v00 = tileUv0.Bottom;
