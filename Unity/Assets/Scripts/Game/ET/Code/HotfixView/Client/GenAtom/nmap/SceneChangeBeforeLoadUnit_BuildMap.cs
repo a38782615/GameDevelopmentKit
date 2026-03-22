@@ -19,8 +19,7 @@ namespace ET.Client
                 genMap = scene.AddComponent<GenMap>();
             }
 
-            genMap.Build();
-            await UniTask.CompletedTask;
+            await genMap.BuildAsync();
         }
     }
 }

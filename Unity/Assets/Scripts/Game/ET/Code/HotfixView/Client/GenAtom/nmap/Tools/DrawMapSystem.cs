@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 
 namespace ET
@@ -13,7 +14,7 @@ namespace ET
         {
         }
 
-        public static void Init(this DrawMap self)
+        public static async UniTask InitAsync(this DrawMap self)
         {
             self.Grounds.Clear();
 
@@ -23,7 +24,7 @@ namespace ET
                 DrawCarpet carpet = self.AddChild<DrawCarpet>();
                 carpet.View = self.View.transform.GetChild(i).gameObject;
                 self.Grounds.Add(carpet);
-                carpet.Init(i);
+                await carpet.InitAsync(i);
             }
         }
 

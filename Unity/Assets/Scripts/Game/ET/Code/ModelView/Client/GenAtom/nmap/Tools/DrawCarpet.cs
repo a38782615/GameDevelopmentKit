@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ET
 {
     [ChildOf(typeof(DrawMap))]
-    public partial class DrawCarpet : Entity, IAwake
+    public partial class DrawCarpet : Entity, IAwake, IDestroy
     {
         [StaticField]
         public static string[] mainNames = { "noise_rocky", "Ground_noise_water_shallow", "forest_ground_noise" };

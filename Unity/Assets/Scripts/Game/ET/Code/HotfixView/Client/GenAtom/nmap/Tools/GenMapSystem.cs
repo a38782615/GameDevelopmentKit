@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace ET
         {
         }
 
-        public static void Build(this GenMap self)
+        public static async UniTask BuildAsync(this GenMap self)
         {
             self.BiomeMap = new BiomeMap(new float2(self.Width, self.Height));
             self.BiomeMap.SetPointNum(self.PointNum);
@@ -38,7 +39,7 @@ namespace ET
             }
 
             drawMap.View = GameObject.Find("Map");
-            drawMap.Init();
+            await drawMap.InitAsync();
             drawMap.GenMap(self.BiomeMap, self.RenderWidth, self.RenderHeight);
         }
 

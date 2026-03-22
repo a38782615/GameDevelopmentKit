@@ -1,4 +1,6 @@
 using System;
+using Cysharp.Threading.Tasks;
+using Game;
 using UnityEngine;
 
 namespace ET
@@ -13,11 +15,29 @@ namespace ET
         {
         }
 
-        public static void Init(this DrawCarpet self, int type)
+        [EntitySystem]
+        private static void Destroy(this DrawCarpet self)
+        {
+            self.UnloadTexture(self.MainTexture);
+            self.UnloadTexture(self.OverlayTexture);
+            self.MainTexture = null;
+            self.OverlayTexture = null;
+        }
+
+        public static async UniTask InitAsync(this DrawCarpet self, int type)
         {
             self.CarType = type;
-            self.MainTexture = Resources.Load<Texture2D>($"Sprites/{DrawCarpet.mainNames[type]}");
-            self.OverlayTexture = Resources.Load<Texture2D>($"Sprites/{DrawCarpet.overNames[type]}");
+            Texture2D mainTexture = await self.LoadTextureAsync(DrawCarpet.mainNames[type]);
+            Texture2D overlayTexture = await self.LoadTextureAsync(DrawCarpet.overNames[type]);
+            if (self == null || self.IsDisposed)
+            {
+                self.UnloadTexture(mainTexture);
+                self.UnloadTexture(overlayTexture);
+                return;
+            }
+
+            self.MainTexture = mainTexture;
+            self.OverlayTexture = overlayTexture;
             self.MeshFilter = self.View.GetComponent<MeshFilter>();
             self.MeshRenderer = self.View.GetComponent<MeshRenderer>();
             if (self.MeshRenderer != null)
@@ -55,6 +75,7 @@ namespace ET
 
             if (self.OverlayTexture != null)
             {
+                self.MatPropBlock.SetTexture("_OverlayTex", self.OverlayTexture);
                 self.MatPropBlock.SetTexture("_Texture2DCover", self.OverlayTexture);
             }
 
@@ -131,6 +152,19 @@ namespace ET
             mesh.SetTriangles(mapLogic.Triangles, 0);
             mesh.SetUVs(0, DrawUtil.ToList(mapLogic.UV, self.UV));
             mesh.SetUVs(1, DrawUtil.ToList(mapLogic.UV2, self.UV2));
+        }
+
+        private static async UniTask<Texture2D> LoadTextureAsync(this DrawCarpet self, string textureName)
+        {
+            return await UGFComponent.Instance.LoadAssetAsync<Texture2D>(AssetUtility.GetNMapTextureAsset(textureName));
+        }
+
+        private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
+        {
+            if (texture != null)
+            {
+                UGFComponent.Instance.UnloadAsset(texture);
+            }
         }
     }
 }
