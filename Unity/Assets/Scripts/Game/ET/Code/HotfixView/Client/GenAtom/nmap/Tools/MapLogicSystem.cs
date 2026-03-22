@@ -60,7 +60,7 @@ namespace ET
 
                 int mask = self.GetMaskFromMap(x, y);
                 int coverId = Brush.MaskDic[mask];
-                int mainId = UVTileMain.GetId(new int2(x, y));
+                int mainId = item.MainTileId;
                 self.DrawOne(
                     new RectangleF(item.WorldPosition, item.WorldSize),
                     brush.UV2Map[mainId].uvRect,

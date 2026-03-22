@@ -4,12 +4,32 @@ using Unity.Mathematics;
 
 namespace ET
 {
+    public enum MapTransitionKind
+    {
+        None,
+        WaterCoast,
+        WaterInner,
+        VegetationEdge,
+        ColdEdge,
+        DryEdge,
+        TerrainEdge
+    }
+
     public struct MapNode
     {
         public int2 Pos;
         public float2 WorldPosition;
         public float2 WorldSize;
         public MapCenter MapCenter;
+        public MapCenter SecondaryCenter;
+        public MapEdge BoundaryEdge;
+        public MapCorner BoundaryCorner;
+        public float EdgeDistance;
+        public float CornerDistance;
+        public float EdgeBlend;
+        public float CornerBlend;
+        public int MainTileId;
+        public MapTransitionKind TransitionKind;
     }
 
     public struct UVTileCover
