@@ -8,7 +8,7 @@ namespace ET.Client
     [FriendOf(typeof(PlacementEffectSpec))]
     [FriendOf(typeof(UGFEntityPlacement))]
     [EntitySystemOf(typeof(UGFEntityPlacement))]
-    public static partial class PlacementEntitySystem
+    public static partial class UGFEntityPlacementSystem
     {
         [EntitySystem]
         private static void Awake(this UGFEntityPlacement self, PlacementInitData initData)

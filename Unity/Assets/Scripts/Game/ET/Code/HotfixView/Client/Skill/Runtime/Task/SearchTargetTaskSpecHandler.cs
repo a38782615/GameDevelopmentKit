@@ -92,50 +92,28 @@ namespace ET.Client
         {
             float halfAngle = angle * 0.5f;
             Vector2 forward = this.GetFacingDirection(casterTransform);
-            bool enableDiag = this.ShouldLogSkill1001();
 
             Collider2D[] colliders = Physics2D.OverlapCircleAll(center, radius);
-            if (enableDiag)
-            {
-            }
-
             foreach (Collider2D collider in colliders)
             {
                 AbilitySystemComponent asc = this.GetASCFromCollider(collider);
                 bool isValidTarget = asc != null && this.IsValidTarget(asc);
                 if (asc == null || !isValidTarget)
                 {
-                    if (enableDiag)
-                    {
-                    }
                     continue;
                 }
 
                 Vector2 toTarget = (Vector2)collider.transform.position - center;
                 if (toTarget.sqrMagnitude < 0.001f)
                 {
-                    if (enableDiag)
-                    {
-                    }
                     continue;
                 }
 
                 float angleToTarget = Vector2.Angle(forward, toTarget);
-                if (enableDiag)
-                {
-                }
-
                 if (angleToTarget <= halfAngle)
                 {
                     foundTargets.Add(asc);
-                    if (enableDiag)
-                    {
-                    }
                 }
-            }
-
-            if (enableDiag)
-            {
             }
         }
 
@@ -310,11 +288,6 @@ namespace ET.Client
             Debug.DrawLine(worldCorners[1], worldCorners[2], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
             Debug.DrawLine(worldCorners[2], worldCorners[3], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
             Debug.DrawLine(worldCorners[3], worldCorners[0], SearchTargetTaskSpec.DebugDrawColor, SearchTargetTaskSpec.DebugDrawDuration);
-        }
-
-        private bool ShouldLogSkill1001()
-        {
-            return this.Spec?.SkillId == "1001";
         }
 
         private string DescribeCollider(Collider2D collider)
