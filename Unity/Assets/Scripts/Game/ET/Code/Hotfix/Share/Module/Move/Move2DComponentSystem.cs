@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using ET.Client;
 using Unity.Mathematics;
 
 namespace ET
@@ -64,6 +65,13 @@ namespace ET
                 return false;
             }
 
+            if (self.UseMovementSimulation())
+            {
+                self.Speed = speed;
+                self.GetParent<Unit>()?.GetComponent<MovementAgent>()?.RefreshDynamicSettings();
+                return true;
+            }
+
             using ListComponent<float3> path = ListComponent<float3>.Create();
 
             self.MoveForward(false);
@@ -85,25 +93,38 @@ namespace ET
         public static async UniTask<bool> MoveToAsync(this Move2DComponent self, List<float3> target, float speed, int turnTime = 100)
         {
             self.Stop(false);
-
-            foreach (float3 value in target)
+            Unit unit = self.GetParent<Unit>();
+            if (target == null || target.Count == 0 || unit == null || unit.IsDisposed)
             {
-                self.Targets.Add(value.ToPlanar());
+                return false;
             }
 
+            self.FillTargets(target, unit.Position.ToPlanar());
             self.TurnTime = turnTime;
             self.Speed = speed;
             self.tcs = AutoResetUniTaskCompletionSource<bool>.Create();
+            AutoResetUniTaskCompletionSource<bool> tcs = self.tcs;
 
-            EventSystem.Instance.Publish(self.Scene(), new MoveStart() { Unit = self.GetParent<Unit>() });
+            EventSystem.Instance.Publish(self.Scene(), new MoveStart() { Unit = unit });
 
-            self.StartMove();
+            if (self.Targets.Count <= 1)
+            {
+                self.MoveFinish(true);
+            }
+            else if (self.UseMovementSimulation())
+            {
+                self.StartMoveWithSimulation();
+            }
+            else
+            {
+                self.StartMove();
+            }
 
-            bool moveRet = await self.tcs.Task;
+            bool moveRet = await tcs.Task;
 
             if (moveRet)
             {
-                EventSystem.Instance.Publish(self.Scene(), new MoveStop() { Unit = self.GetParent<Unit>() });
+                EventSystem.Instance.Publish(self.Scene(), new MoveStop() { Unit = unit });
             }
 
             return moveRet;
@@ -202,18 +223,15 @@ namespace ET
             if (self.TurnTime > 0)
             {
                 self.From = unit.Rotation;
-                self.To = GetFacingRotation(faceV, unit.Rotation);
+                self.To = self.GetFacingRotation(faceV, unit.Rotation);
                 return;
             }
 
-            if (self.TurnTime == 0)
-            {
-                self.To = GetFacingRotation(faceV, unit.Rotation);
-                unit.Rotation = self.To;
-            }
+            self.To = self.GetFacingRotation(faceV, unit.Rotation);
+            unit.Rotation = self.To;
         }
 
-        private static quaternion GetFacingRotation(float2 faceV, quaternion currentRotation)
+        public static quaternion GetFacingRotation(this Move2DComponent self, float2 faceV, quaternion currentRotation)
         {
             if (math.abs(faceV.x) <= 0.01f)
             {
@@ -223,13 +241,18 @@ namespace ET
             return faceV.x < 0f ? quaternion.RotateY(math.PI) : quaternion.identity;
         }
 
-        private static float2 GetFaceV(this Move2DComponent self)
+        public static float2 GetFaceV(this Move2DComponent self)
         {
             return self.NextTarget - self.PreTarget;
         }
 
         public static bool FlashTo(this Move2DComponent self, float3 target)
         {
+            if (self.UseMovementSimulation())
+            {
+                self.Stop(false);
+            }
+
             Unit unit = self.GetParent<Unit>();
             unit.Position = new float2(target.x, target.y).ToModePosition();
             return true;
@@ -237,6 +260,12 @@ namespace ET
 
         public static void Stop(this Move2DComponent self, bool ret)
         {
+            if (self.UseMovementSimulation())
+            {
+                self.MoveFinish(ret);
+                return;
+            }
+
             if (self.Targets.Count > 0)
             {
                 self.MoveForward(ret);
@@ -265,6 +294,7 @@ namespace ET
 
             Scene root = self.IScene?.Fiber?.Root;
             root?.GetComponent<TimerComponent>()?.Remove(ref self.MoveTimer);
+            self.GetParent<Unit>()?.GetComponent<MovementAgent>()?.SetVelocity(float2.zero);
 
             if (self.tcs != null)
             {
@@ -272,6 +302,41 @@ namespace ET
                 self.tcs = null;
                 tcs.TrySetResult(ret);
             }
+        }
+
+        private static void FillTargets(this Move2DComponent self, List<float3> target, float2 currentPosition)
+        {
+            self.Targets.Clear();
+            self.Targets.Add(currentPosition);
+
+            for (int i = 0; i < target.Count; ++i)
+            {
+                float2 planar = target[i].ToPlanar();
+                float2 last = self.Targets[self.Targets.Count - 1];
+                if (math.distancesq(last, planar) <= 0.000001f)
+                {
+                    continue;
+                }
+
+                self.Targets.Add(planar);
+            }
+        }
+
+        private static void StartMoveWithSimulation(this Move2DComponent self)
+        {
+            Unit unit = self.GetParent<Unit>();
+            self.BeginTime = TimeInfo.Instance.ClientNow();
+            self.StartTime = self.BeginTime;
+            self.N = 1;
+            self.From = unit.Rotation;
+            self.To = self.GetFacingRotation(self.GetFaceV(), unit.Rotation);
+            unit.Rotation = self.To;
+            unit.GetComponent<MovementAgent>()?.RefreshDynamicSettings();
+        }
+
+        private static bool UseMovementSimulation(this Move2DComponent self)
+        {
+            return global::ET.ModeDefine.Is2D && self.Scene()?.GetComponent<MovementSimulationComponent>() != null;
         }
     }
 }

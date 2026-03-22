@@ -26,6 +26,11 @@ namespace ET.Client
                 unit.AddComponent<global::ET.AttributeComponent>();
             }
 
+            if (unit.GetComponent<MovementAgent>() == null)
+            {
+                unit.AddComponent<MovementAgent>();
+            }
+
             if (unitInfo.MoveInfo != null)
             {
                 if (unitInfo.MoveInfo.Points.Count > 0)

@@ -15,6 +15,7 @@ namespace ET.Client
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
             UnitComponent unitComponent = currentScene.AddComponent<UnitComponent>();
             currentScene.AddComponent<BodyCheckComponent>();
+            currentScene.AddComponent<MovementSimulationComponent>();
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
@@ -41,6 +42,7 @@ namespace ET.Client
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
             currentScene.AddComponent<UnitComponent>();
             currentScene.AddComponent<BodyCheckComponent>();
+            currentScene.AddComponent<MovementSimulationComponent>();
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
