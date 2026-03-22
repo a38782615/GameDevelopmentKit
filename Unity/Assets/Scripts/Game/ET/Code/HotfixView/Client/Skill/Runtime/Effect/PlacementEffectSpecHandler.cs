@@ -1,31 +1,33 @@
-
+using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace ET.Client
 {
-    /// <summary>
-    /// 放置物效果 Spec。
-    /// 负责生成放置物并管理其生命周期，支持进入和离开事件。
-    /// </summary>
-    [FriendOfAttribute(typeof(ET.Client.PlacementEffectSpec))]
-    [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
+    [FriendOf(typeof(GameplayEffectSpec))]
+    [FriendOf(typeof(PlacementEffectSpec))]
     public partial class PlacementEffectSpecHandler : AEffectHandler
     {
+        private const string LegacyPlacementEntityGroupName = "Effect";
+
         public PlacementEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<PlacementEffectSpec>();
-            return selfSpec;
+            if (Spec == null || Spec.IsDisposed)
+            {
+                return null;
+            }
+
+            return Spec.GetComponent<PlacementEffectSpec>();
         }
 
         public PlacementEffectNodeData GetNode()
         {
-            var nodeData = NodeData as PlacementEffectNodeData;
-            return nodeData;
+            return NodeData as PlacementEffectNodeData;
         }
 
         public override SpecExecutionContext GetContext()
         {
-            return Spec.GetContext();
+            return Spec?.GetContext();
         }
 
         public override void Execute()
@@ -62,104 +64,21 @@ namespace ET.Client
 
         public override void OnInitialHook(AbilitySystemComponent target)
         {
-            var selfSpec = SelfSpec();
-            var nodeData = GetNode();
-            if (nodeData == null)
-            {
-                return;
-            }
-
-            var context = GetContext();
-            if (context == null)
+            PlacementEffectSpec selfSpec = SelfSpec();
+            PlacementEffectNodeData nodeData = GetNode();
+            SpecExecutionContext context = GetContext();
+            if (selfSpec == null || nodeData == null || context == null)
             {
                 return;
             }
 
             Vector3 position = context.GetPosition(nodeData.positionSource, nodeData.positionBindingName);
-            SpawnPlacement(position);
-            context.SetPlacementObject(selfSpec._placementObject);
-        }
-
-        private void SpawnPlacement(Vector3 position)
-        {
-            var selfSpec = SelfSpec();
-            var nodeData = GetNode();
-
-            if (selfSpec == null || nodeData == null)
-            {
-                return;
-            }
-
-            if (nodeData.placementPrefab != null)
-            {
-                selfSpec._placementObject = UnityEngine.Object.Instantiate(nodeData.placementPrefab, position, UnityEngine.Quaternion.identity);
-            }
-            else
-            {
-                selfSpec._placementObject = new GameObject("Placement");
-                selfSpec._placementObject.transform.position = position;
-            }
-
-            if (!nodeData.enableCollision)
-            {
-                return;
-            }
-
-            selfSpec._placementController = selfSpec._placementObject.GetComponent<PlacementController>();
-            if (selfSpec._placementController == null)
-            {
-                selfSpec._placementController = selfSpec._placementObject.AddComponent<PlacementController>();
-            }
-
-            selfSpec._placementController.Initialize(new PlacementInitData
-            {
-                CollisionRadius = nodeData.collisionRadius,
-                CollisionTargetTags = nodeData.collisionTargetTags,
-                CollisionExcludeTags = nodeData.collisionExcludeTags,
-                SourceASC = Spec.Source
-            });
-
-            selfSpec._placementController.OnEnter += OnTargetEnter;
-            selfSpec._placementController.OnExit += OnTargetExit;
-        }
-
-        private void OnTargetEnter(AbilitySystemComponent target)
-        {
-            if (target == null || Spec == null || Spec.IsDisposed)
-            {
-                return;
-            }
-
-            SpecExecutionContext context = GetContext();
-            if (context == null)
-            {
-                return;
-            }
-
-            SpecExecutionContext ctx = context.CreateWithParentInput(target);
-            if (ctx == null)
-            {
-                return;
-            }
-
-            try
-            {
-                ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.PlacementEffect.OnEnter);
-            }
-            finally
-            {
-                ctx.Dispose();
-            }
-        }
-
-        private void OnTargetExit(AbilitySystemComponent target)
-        {
-            ExecuteExitFlow(target);
+            SpawnPlacementAsync(position).Forget();
         }
 
         public override void Cancel()
         {
-            var selfSpec = SelfSpec();
+            PlacementEffectSpec selfSpec = SelfSpec();
             if (selfSpec == null)
             {
                 if (Spec != null && !Spec.IsDisposed)
@@ -170,58 +89,99 @@ namespace ET.Client
                 return;
             }
 
-            PlacementController controller = selfSpec._placementController;
-            if (controller != null)
+            UGFEntityPlacement placementEntity = selfSpec.PlacementEntity.As();
+            if (placementEntity != null)
             {
-                // Unsubscribe before replaying exit flow to avoid re-entering Cancel.
-                controller.OnEnter -= OnTargetEnter;
-                controller.OnExit -= OnTargetExit;
-                selfSpec._placementController = null;
-
-                foreach (AbilitySystemComponent target in controller.GetCurrentTargets())
-                {
-                    ExecuteExitFlow(target);
-                }
-
-                controller.ClearAllTargets();
+                placementEntity.Cancel();
             }
 
-            if (selfSpec._placementObject != null)
-            {
-                UnityEngine.Object.Destroy(selfSpec._placementObject);
-                selfSpec._placementObject = null;
-            }
+            selfSpec.PlacementEntity = default;
+            selfSpec.PlacementObject = null;
+            GetContext()?.SetPlacementObject(null);
 
-            Spec.CancelEffect();
+            if (Spec != null && !Spec.IsDisposed)
+            {
+                Spec.CancelEffect();
+            }
         }
 
-        private void ExecuteExitFlow(AbilitySystemComponent target)
+        private async UniTaskVoid SpawnPlacementAsync(Vector3 position)
         {
-            if (target == null || Spec == null || Spec.IsDisposed)
+            PlacementEffectNodeData nodeData = GetNode();
+            PlacementEffectSpec selfSpec = SelfSpec();
+            if (nodeData == null || selfSpec == null || Spec == null || Spec.IsDisposed)
             {
                 return;
             }
 
-            SpecExecutionContext context = GetContext();
-            if (context == null)
+            UGFEntityPlacement currentPlacement = selfSpec.PlacementEntity.As();
+            if (currentPlacement != null)
             {
-                return;
+                currentPlacement.Cancel();
             }
 
-            SpecExecutionContext ctx = context.CreateWithParentInput(target);
-            if (ctx == null)
+            PlacementInitData initData = new PlacementInitData
             {
-                return;
-            }
+                Position = position,
+                EnableCollision = nodeData.enableCollision,
+                CollisionRadius = nodeData.collisionRadius,
+                CollisionTargetTags = nodeData.collisionTargetTags,
+                CollisionExcludeTags = nodeData.collisionExcludeTags,
+                SourceASC = Spec.Source
+            };
+
+            UGFEntityPlacement placementEntity = Spec.AddChild<UGFEntityPlacement, PlacementInitData>(initData);
+            selfSpec.PlacementEntity = placementEntity;
 
             try
             {
-                ctx.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.PlacementEffect.OnExit);
+                if (!string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
+                {
+                    await placementEntity.ShowEntityAsync(nodeData.placementPrefabPath, LegacyPlacementEntityGroupName);
+                }
+                else
+                {
+                    Log.Warning($"[PlacementEffect] Missing placement prefab path. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
+                    placementEntity.Dispose();
+                    selfSpec.PlacementEntity = default;
+                    selfSpec.PlacementObject = null;
+                    GetContext()?.SetPlacementObject(null);
+                    Spec.CancelEffect();
+                    return;
+                }
             }
-            finally
+            catch (Exception e)
             {
-                ctx.Dispose();
+                Log.Error($"[PlacementEffect] Spawn placement failed. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} error={e}");
+                if (!placementEntity.IsDisposed)
+                {
+                    placementEntity.Dispose();
+                }
+
+                if (selfSpec.PlacementEntity.As() == placementEntity)
+                {
+                    selfSpec.PlacementEntity = default;
+                }
+
+                selfSpec.PlacementObject = null;
+                GetContext()?.SetPlacementObject(null);
+                if (Spec != null && !Spec.IsDisposed)
+                {
+                    Spec.CancelEffect();
+                }
+
+                return;
             }
+
+            if (Spec == null || Spec.IsDisposed || placementEntity.IsDisposed)
+            {
+                return;
+            }
+
+            selfSpec.PlacementObject = placementEntity.CachedTransform != null
+                ? placementEntity.CachedTransform.gameObject
+                : null;
+            GetContext()?.SetPlacementObject(selfSpec.PlacementObject);
         }
     }
 }

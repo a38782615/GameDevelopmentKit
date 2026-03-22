@@ -1,13 +1,14 @@
+using UnityEngine;
+
 namespace ET.Client
 {
-    /// <summary>
-    /// 放置物初始化数据
-    /// </summary>
     public struct PlacementInitData
     {
+        public Vector3 Position;
+        public bool EnableCollision;
         public float CollisionRadius;
         public GameplayTagSet CollisionTargetTags;
         public GameplayTagSet CollisionExcludeTags;
-        public AbilitySystemComponent SourceASC;
+        public EntityRef<AbilitySystemComponent> SourceASC;
     }
 }
