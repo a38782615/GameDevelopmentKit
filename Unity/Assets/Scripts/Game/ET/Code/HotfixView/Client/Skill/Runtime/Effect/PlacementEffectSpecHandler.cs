@@ -135,13 +135,17 @@ namespace ET.Client
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
+                if (nodeData.placementEntityId > 0)
+                {
+                    await placementEntity.ShowEntityAsync(nodeData.placementEntityId);
+                }
+                else if (!string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
                 {
                     await placementEntity.ShowEntityAsync(nodeData.placementPrefabPath, LegacyPlacementEntityGroupName);
                 }
                 else
                 {
-                    Log.Warning($"[PlacementEffect] Missing placement prefab path. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
+                    Log.Warning($"[PlacementEffect] Missing placement entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     placementEntity.Dispose();
                     selfSpec.PlacementEntity = default;
                     selfSpec.PlacementObject = null;

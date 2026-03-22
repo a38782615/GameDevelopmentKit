@@ -68,7 +68,14 @@ namespace ET.Client
                     }
                     break;
                 case PlacementEffectNodeData placementNode:
-                    placementNode.placementPrefab = await LoadAssetOrKeepAsync(placementNode.placementPrefab, placementNode.placementPrefabPath);
+                    if (placementNode.placementEntityId > 0)
+                    {
+                        await PreloadEntityPrefabAsync(placementNode.placementEntityId);
+                    }
+                    else
+                    {
+                        placementNode.placementPrefab = await LoadAssetOrKeepAsync(placementNode.placementPrefab, placementNode.placementPrefabPath);
+                    }
                     break;
                 case AnimationNodeData animationNode:
 #if Spine
