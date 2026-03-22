@@ -1,15 +1,13 @@
-﻿using ET;
-using System;
-using System.Collections.Generic;
-using RectangleF = ET.Geometry.RectangleF;
-using System.Linq;
-using Unity.Mathematics;
+﻿using RectangleF = ET.Geometry.RectangleF;
 using Random = Unity.Mathematics.Random;
+using Unity.Mathematics;
+using System.Collections.Generic;
+using System;
 
 namespace ET
 {
     [EnableClass]
-    public class Map2
+    public class TutoMap
     {
         private int _pointCount = 500;
         float _lakeThreshold = 0.3f;
@@ -19,18 +17,13 @@ namespace ET
 
         public MapGraph MapGraph { get; private set; }
         public MapCenter SelectedMapCenter { get; private set; }
-
-        public Map2()
-        {
-        }
         private Random random;
-        public void SetSeed(uint seed)
+        public TutoMap()
         {
-            random = Random.CreateFromIndex(seed);
         }
         public void Init(uint seed, Func<float2, bool> checkIsland = null)
         {
-            SetSeed(seed);
+            random = Random.CreateFromIndex(seed);
             List<uint> colors = new List<uint>();
             var points = new List<float2>();
 
@@ -44,7 +37,11 @@ namespace ET
             }
 
             for (int i = 0; i < NUM_LLOYD_RELAXATIONS; i++)
-                points = MapGraph.RelaxPoints(points, Width, Height).ToList();
+            {
+                var fp = MapGraph.RelaxPoints(points, Width, Height);
+                points.Clear();
+                points.AddRange(fp);
+            }
 
             var voronoi = new Voronoi(points, colors, new RectangleF(0, 0, Width, Height));
 

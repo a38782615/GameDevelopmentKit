@@ -11,28 +11,23 @@ namespace ET
         public GameObject View;
         private List<DrawCarpet> grounds;
 
-        public DrawMap(GameObject go)
-        {
-            View = go;
-        }
-
+        KDTree kdTree;
+        KDQuery query;
+        private List<float3> centerIdxs = new List<float3>();
+        private Dictionary<int2, MapNode> m_map = new Dictionary<int2, MapNode>();
+        private List<int> m_queryResult = new List<int>();
         public void Init()
         {
             var c = View.transform.childCount;
             grounds = new List<DrawCarpet>(c);
             for (int i = 0; i < c; i++)
             {
-                var g = new DrawCarpet(View.transform.GetChild(i).gameObject);
+                var g = new DrawCarpet();
+                g.View = View.transform.GetChild(i).gameObject;
                 grounds.Add(g);
                 g.Init(i);
             }
         }
-
-        KDTree kdTree;
-        KDQuery query;
-        private List<float3> centerIdxs = new List<float3>();
-        private Dictionary<int2, MapNode> m_map = new Dictionary<int2, MapNode>();
-        private List<int> m_queryResult = new List<int>();
 
         public void GenMap(BiomeMap m)
         {

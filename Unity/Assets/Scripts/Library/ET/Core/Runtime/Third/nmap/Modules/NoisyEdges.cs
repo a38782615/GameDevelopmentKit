@@ -20,9 +20,9 @@ namespace ET
 
         private const float SizeScale = 0.1f;
         Random random;
-        public NoisyEdges(ref Random r)
+        public NoisyEdges(uint seed)
         {
-            random = r;
+            random = Random.CreateFromIndex(seed);
         }
 
         // Build noisy line paths for each of the Voronoi edges. There are

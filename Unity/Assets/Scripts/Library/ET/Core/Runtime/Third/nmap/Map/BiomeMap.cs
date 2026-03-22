@@ -34,16 +34,12 @@ namespace ET
         private Random random;
 
         List<float2> points = new List<float2>();
-        public void SetSeed(uint seed)
-        {
-            random = Random.CreateFromIndex(seed);
-        }
 
         public void Init(uint seed, Func<float2, bool> checkIsland = null)
         {
+            random = Random.CreateFromIndex(seed);
             points.Clear();
             colors.Clear();
-            SetSeed(seed);
 
             for (int i = 0; i < _pointCount; i++)
             {

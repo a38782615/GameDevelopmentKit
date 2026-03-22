@@ -77,12 +77,6 @@ namespace ET
             return texture;
         }
 
-        public void AttachTexture(Material material, BiomeMap biomeMap, NoisyEdges noisyEdge)
-        {
-            Texture2D texture = GetTexture(biomeMap, noisyEdge);
-            material.mainTexture = texture;
-        }
-
         readonly List<float2> _edgePoints = new List<float2>();
         private void DrawNoisyPolygon(Texture2D texture, MapCenter p, List<float2> orgEdges)
         {

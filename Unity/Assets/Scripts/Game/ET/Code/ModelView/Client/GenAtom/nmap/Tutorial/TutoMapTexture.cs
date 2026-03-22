@@ -5,40 +5,49 @@ using UnityEngine;
 namespace ET
 {
     [EnableClass]
-    public class MapTexture2
+    public class TutoMapTexture
     {
+        GameObject m_plane;
+        TutoMap m_map;
         private readonly int _textureScale;
+        int textureWidth;
+        int textureHeight;
+        MapGraph mapGraph;
+        Material material;
 
-        public MapTexture2(int textureScale)
+        public TutoMapTexture(GameObject plane, TutoMap map, int textureScale)
         {
             _textureScale = textureScale;
+            m_plane = plane;
+            m_map = map;
+            textureWidth = (int)map.Width * _textureScale;
+            textureHeight = (int)map.Height * _textureScale;
+            mapGraph = m_map.MapGraph;
+            material = plane.GetComponent<Renderer>().material;
         }
 
-        public void AttachTexture(GameObject plane, Map2 map)
+        public void AttachTexture()
         {
-            var textureWidth = (int)map.Width * _textureScale;
-            var textureHeight = (int)map.Height * _textureScale;
-
             var texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB565, true);
             var colorf = BiomeProperties.Colors[Biome.Ocean];
             Color c = new Color(colorf.x, colorf.y, colorf.z, colorf.w);
             texture.SetPixels(Enumerable.Repeat(c, textureWidth * textureHeight).ToArray());
 
             //绘制陆地
-            var oceanConors = map.MapGraph.centers.Where(p => !p.water).Select(p => p.corners);
+            var oceanConors = mapGraph.centers.Where(p => !p.water).Select(p => p.corners);
             foreach (var conors in oceanConors)
                 texture.FillPolygon(
                     conors.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Beach]);
             //绘制湖泊
-            var lakeConors = map.MapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
+            var lakeConors = mapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
             foreach (var conors in lakeConors)
                 texture.FillPolygon(
                     conors.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Lake]);
 
             //绘制边缘
-            var lines = map.MapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
+            var lines = mapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
             {
                 p.v0.point.x, p.v0.point.y,
                 p.v1.point.x, p.v1.point.y
@@ -47,33 +56,30 @@ namespace ET
             foreach (var line in lines)
                 DrawLine(texture, line[0], line[1], line[2], line[3], Color.black);
             //绘制中心点
-            var points = map.MapGraph.centers.Select(p => p.point).ToList();
+            var points = mapGraph.centers.Select(p => p.point).ToList();
             foreach (var p in points)
                 texture.SetPixel((int)(p.x * _textureScale), (int)(p.y * _textureScale), Color.red);
 
             texture.Apply();
 
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
-        public void ShowElevation(GameObject plane, Map2 map)
+        public void ShowElevation()
         {
-            var textureWidth = (int)Map1.Width * _textureScale;
-            var textureHeight = (int)Map1.Height * _textureScale;
-
             var texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB565, true);
             var colorf = BiomeProperties.Colors[Biome.Ocean];
             Color c = new Color(colorf.x, colorf.y, colorf.z, colorf.w);
             texture.SetPixels(Enumerable.Repeat(c, textureWidth * textureHeight).ToArray());
 
             //绘制陆地
-            var lands = map.MapGraph.centers.Where(p => !p.ocean);
+            var lands = mapGraph.centers.Where(p => !p.ocean);
             foreach (var land in lands)
                 texture.FillPolygon(
                     land.corners.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Beach] * land.elevation);
 
             //绘制边缘
-            var lines = map.MapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
+            var lines = mapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
             {
                 p.v0.point.x, p.v0.point.y,
                 p.v1.point.x, p.v1.point.y
@@ -82,20 +88,17 @@ namespace ET
             foreach (var line in lines)
                 DrawLine(texture, line[0], line[1], line[2], line[3], Color.black);
             //绘制中心点
-            var points = map.MapGraph.centers.Select(p => p.point).ToList();
+            var points = mapGraph.centers.Select(p => p.point).ToList();
             foreach (var p in points)
                 texture.SetPixel((int)(p.x * _textureScale), (int)(p.y * _textureScale), Color.red);
 
             texture.Apply();
 
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
 
-        public void ShowRivers(GameObject plane, Map2 map)
+        public void ShowRivers()
         {
-
-            var textureWidth = (int)Map1.Width * _textureScale;
-            var textureHeight = (int)Map1.Height * _textureScale;
 
             var texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB565, true);
             var colorf = BiomeProperties.Colors[Biome.Ocean];
@@ -103,14 +106,14 @@ namespace ET
             texture.SetPixels(Enumerable.Repeat(c, textureWidth * textureHeight).ToArray());
 
             //绘制陆地
-            var lands = map.MapGraph.centers.Where(p => !p.ocean);
+            var lands = mapGraph.centers.Where(p => !p.ocean);
             foreach (var land in lands)
                 texture.FillPolygon(
                     land.corners.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Beach] * land.elevation);
 
             //绘制边缘
-            var lines = map.MapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
+            var lines = mapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
                                                                         {
                 p.v0.point.x, p.v0.point.y,
                 p.v1.point.x, p.v1.point.y
@@ -119,43 +122,40 @@ namespace ET
             foreach (var line in lines)
                 DrawLine(texture, line[0], line[1], line[2], line[3], Color.black);
             //绘制中心点
-            var points = map.MapGraph.centers.Select(p => p.point).ToList();
+            var points = mapGraph.centers.Select(p => p.point).ToList();
             foreach (var p in points)
                 texture.SetPixel((int)(p.x * _textureScale), (int)(p.y * _textureScale), Color.red);
             //绘制河流
-            foreach (var line in map.MapGraph.edges.Where(p => p.river > 0 && !p.d0.water && !p.d1.water))
+            foreach (var line in mapGraph.edges.Where(p => p.river > 0 && !p.d0.water && !p.d1.water))
                 DrawLine(texture, line.v0.point.x, line.v0.point.y, line.v1.point.x, line.v1.point.y, Color.blue, 10);
 
             texture.Apply();
 
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
 
-        public void DrawMoisture(GameObject plane, Map2 map)
+        public void DrawMoisture()
         {
-            var textureWidth = (int)Map1.Width * _textureScale;
-            var textureHeight = (int)Map1.Height * _textureScale;
-
             var texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB565, true);
             var colorf = BiomeProperties.Colors[Biome.Ocean];
             Color c = new Color(colorf.x, colorf.y, colorf.z, colorf.w);
             texture.SetPixels(Enumerable.Repeat(c, textureWidth * textureHeight).ToArray());
 
             //绘制陆地
-            var lands = map.MapGraph.centers.Where(p => !p.ocean);
+            var lands = mapGraph.centers.Where(p => !p.ocean);
             foreach (var land in lands)
                 texture.FillPolygon(
                     land.corners.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Grassland] * land.moisture);
             //绘制湖泊
-            var lakeConors = map.MapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
+            var lakeConors = mapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
             foreach (var conors in lakeConors)
                 texture.FillPolygon(
                     conors.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Lake]);
 
             //绘制边缘
-            var lines = map.MapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
+            var lines = mapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
                                                                         {
                 p.v0.point.x, p.v0.point.y,
                 p.v1.point.x, p.v1.point.y
@@ -164,19 +164,17 @@ namespace ET
             foreach (var line in lines)
                 DrawLine(texture, line[0], line[1], line[2], line[3], Color.black);
             //绘制中心点
-            var points = map.MapGraph.centers.Select(p => p.point).ToList();
+            var points = mapGraph.centers.Select(p => p.point).ToList();
             foreach (var p in points)
                 texture.SetPixel((int)(p.x * _textureScale), (int)(p.y * _textureScale), Color.red);
 
             texture.Apply();
 
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
 
-        public void DrawBiome(GameObject plane, Map2 map)
+        public void DrawBiome()
         {
-            var textureWidth = (int)Map1.Width * _textureScale;
-            var textureHeight = (int)Map1.Height * _textureScale;
 
             var texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGB565, true);
             var colorf = BiomeProperties.Colors[Biome.Ocean];
@@ -184,20 +182,20 @@ namespace ET
             texture.SetPixels(Enumerable.Repeat(c, textureWidth * textureHeight).ToArray());
 
             //绘制陆地
-            var lands = map.MapGraph.centers.Where(p => !p.ocean);
+            var lands = mapGraph.centers.Where(p => !p.ocean);
             foreach (var land in lands)
                 texture.FillPolygon(
                     land.corners.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[land.biome]);
             //绘制湖泊
-            var lakeConors = map.MapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
+            var lakeConors = mapGraph.centers.Where(p => p.water && !p.ocean).Select(p => p.corners);
             foreach (var conors in lakeConors)
                 texture.FillPolygon(
                     conors.Select(p => p.point * _textureScale).ToArray(),
                     BiomeProperties.Colors[Biome.Lake]);
 
             //绘制边缘
-            var lines = map.MapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
+            var lines = mapGraph.edges.Where(p => p.v0 != null).Select(p => new[]
                                                                         {
                 p.v0.point.x, p.v0.point.y,
                 p.v1.point.x, p.v1.point.y
@@ -206,16 +204,16 @@ namespace ET
             foreach (var line in lines)
                 DrawLine(texture, line[0], line[1], line[2], line[3], Color.black);
             //绘制中心点
-            var points = map.MapGraph.centers.Select(p => p.point).ToList();
+            var points = mapGraph.centers.Select(p => p.point).ToList();
             foreach (var p in points)
                 texture.SetPixel((int)(p.x * _textureScale), (int)(p.y * _textureScale), Color.red);
             //绘制河流
-            foreach (var line in map.MapGraph.edges.Where(p => p.river > 0 && !p.d0.water && !p.d1.water))
+            foreach (var line in mapGraph.edges.Where(p => p.river > 0 && !p.d0.water && !p.d1.water))
                 DrawLine(texture, line.v0.point.x, line.v0.point.y, line.v1.point.x, line.v1.point.y, Color.blue, 10);
 
             texture.Apply();
 
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
 
         private void DrawLine(Texture2D texture, float x0, float y0, float x1, float y1, Color color, int width = 1)

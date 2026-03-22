@@ -8,8 +8,10 @@ namespace ET
     [EnableClass]
     public partial class DrawCarpet
     {
-        public string[] mainNames = { "noise_rocky", "Ground_noise_water_shallow", "forest_ground_noise" };
-        public string[] overNames = { "blocky", "water", "grass" };
+        [StaticField]
+        public static string[] mainNames = { "noise_rocky", "Ground_noise_water_shallow", "forest_ground_noise" };
+        [StaticField]
+        public static string[] overNames = { "blocky", "water", "grass" };
 
         public MeshRenderer m_meshRenderer;
         public MeshFilter meshFilter;
@@ -22,9 +24,8 @@ namespace ET
         List<Vector2> m_uv;
         List<Vector2> m_uv2;
 
-        public DrawCarpet(GameObject go)
+        public DrawCarpet()
         {
-            View = go;
             s_vertices = new List<Vector3>();
             m_uv = new List<Vector2>();
             m_uv2 = new List<Vector2>();
@@ -108,11 +109,6 @@ namespace ET
             mesh.SetUVs(0, DrawUtil.ToList(m_mapLogic.m_uv, m_uv));
             mesh.SetUVs(1, DrawUtil.ToList(m_mapLogic.m_uv2, m_uv2));
         }
-
-        public void UpdateNode(int x, int y)
-        {
-        }
-
         public void Clear()
         {
             m_mapLogic.Map.Clear();
