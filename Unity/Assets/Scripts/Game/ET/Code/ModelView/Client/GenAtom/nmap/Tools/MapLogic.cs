@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace ET
 {
-    [ChildOf(typeof(DrawCarpet))]
+    [ComponentOf(typeof(DrawCarpet))]
     public partial class MapLogic : Entity, IAwake
     {
         public readonly List<float3> Vertices = new List<float3>();

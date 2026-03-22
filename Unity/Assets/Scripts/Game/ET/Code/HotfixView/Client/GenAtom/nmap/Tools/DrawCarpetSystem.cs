@@ -29,7 +29,7 @@ namespace ET
             MapLogic mapLogic = self.MapLogic.As();
             if (mapLogic == null)
             {
-                mapLogic = self.AddChild<MapLogic>();
+                mapLogic = self.AddComponent<MapLogic>();
                 self.MapLogic = mapLogic;
             }
 
