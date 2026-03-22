@@ -62,7 +62,11 @@ namespace ET.Client
                     soundNode.soundClip = await LoadAssetOrKeepAsync(soundNode.soundClip, soundNode.soundClipPath);
                     break;
                 case ProjectileEffectNodeData projectileNode:
-                    if (projectileNode.projectileEntityId <= 0)
+                    if (projectileNode.projectileEntityId > 0)
+                    {
+                        await PreloadEntityPrefabAsync(projectileNode.projectileEntityId);
+                    }
+                    else
                     {
                         projectileNode.projectilePrefab = await LoadAssetOrKeepAsync(projectileNode.projectilePrefab, projectileNode.projectilePrefabPath);
                     }

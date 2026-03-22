@@ -7,7 +7,7 @@ namespace ET.Client
     [FriendOf(typeof(UGFEntityProjectile))]
     [FriendOf(typeof(ProjectileEffectSpec))]
     [EntitySystemOf(typeof(UGFEntityProjectile))]
-    public static partial class ProjectileEntitySystem
+    public static partial class UGFEntityProjectileSystem
     {
         [EntitySystem]
         private static void Awake(this UGFEntityProjectile self, ProjectileInitData initData)
