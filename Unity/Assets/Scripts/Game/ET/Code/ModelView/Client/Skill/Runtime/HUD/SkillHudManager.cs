@@ -18,6 +18,7 @@ namespace ET.Client
             public float CurrentHealth;
             public float MaxHealth;
             public float HeadOffset;
+            public float HealthBarVisibleUntil;
         }
 
         [EnableClass]
@@ -47,6 +48,7 @@ namespace ET.Client
         private const float DefaultBarHeight = 0.12f;
         private const float DefaultBarYOffset = 0.28f;
         private const float DefaultHeadOffset = 1.4f;
+        private const float HealthBarVisibleDuration = 3f;
         private const float PlayerBarWidth = 1.35f;
         private const float MonsterBarWidth = 1.15f;
         private const float MinForegroundWidth = 0.02f;
@@ -118,6 +120,7 @@ namespace ET.Client
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
+            state.HealthBarVisibleUntil = 0f;
         }
 
         public void UnregisterUnit(AbilitySystemComponent asc)
@@ -161,9 +164,14 @@ namespace ET.Client
                 return;
             }
 
+            bool healthChanged = !Mathf.Approximately(state.CurrentHealth, currentHealth);
             state.Owner = owner;
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
+            if (healthChanged)
+            {
+                state.HealthBarVisibleUntil = Time.unscaledTime + HealthBarVisibleDuration;
+            }
         }
 
         public int AddFloatingText(
@@ -356,6 +364,11 @@ namespace ET.Client
 
                 float maxHealth = Mathf.Max(0f, state.MaxHealth);
                 if (maxHealth <= 0.01f)
+                {
+                    continue;
+                }
+
+                if (Time.unscaledTime > state.HealthBarVisibleUntil)
                 {
                     continue;
                 }
