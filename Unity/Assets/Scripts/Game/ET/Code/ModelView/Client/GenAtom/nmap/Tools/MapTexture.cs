@@ -77,10 +77,10 @@ namespace ET
             return texture;
         }
 
-        public void AttachTexture(GameObject plane, BiomeMap biomeMap, NoisyEdges noisyEdge)
+        public void AttachTexture(Material material, BiomeMap biomeMap, NoisyEdges noisyEdge)
         {
             Texture2D texture = GetTexture(biomeMap, noisyEdge);
-            plane.GetComponent<Renderer>().material.mainTexture = texture;
+            material.mainTexture = texture;
         }
 
         readonly List<float2> _edgePoints = new List<float2>();

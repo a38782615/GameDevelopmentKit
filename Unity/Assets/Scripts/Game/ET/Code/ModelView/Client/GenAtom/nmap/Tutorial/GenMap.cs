@@ -14,17 +14,15 @@ namespace ET
         private int _pointNum = 1000;
         private bool _isLake = true;
         private uint MapSeed = 1;
-        Unity.Mathematics.Random random;
-        public GenMap(Unity.Mathematics.Random r)
+        public GenMap(ref Unity.Mathematics.Random r)
         {
-            random = r;
             _txtTexture = GetTextTexture();
 
             BiomeMap biomeMap = new BiomeMap(new float2(Width, Height));
             biomeMap.SetPointNum(_pointNum);
             biomeMap.Init(MapSeed, CheckIsland());
             //扰乱边缘
-            NoisyEdges noisyEdge = new NoisyEdges(r);
+            NoisyEdges noisyEdge = new NoisyEdges(ref r);
             noisyEdge.BuildNoisyEdges(biomeMap);
 
             var mapGo = GameObject.Find("Map");

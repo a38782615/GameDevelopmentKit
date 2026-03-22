@@ -111,7 +111,6 @@ namespace ET
 
         public void UpdateNode(int x, int y)
         {
-            var pos = new int2(x, y);
         }
 
         public void Clear()

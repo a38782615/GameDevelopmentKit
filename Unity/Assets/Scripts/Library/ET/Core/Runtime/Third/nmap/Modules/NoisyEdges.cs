@@ -20,7 +20,7 @@ namespace ET
 
         private const float SizeScale = 0.1f;
         Random random;
-        public NoisyEdges(Random r)
+        public NoisyEdges(ref Random r)
         {
             random = r;
         }

@@ -15,19 +15,17 @@ public class MainTest : MonoBehaviour
     //            _selector.transform.localPosition = new Vector3(_map.SelectedCenter.point.x, _map.SelectedCenter.point.y, 1);
     //        }
     //    }
-
+    public GameObject go;
     void Awake()
     {
-        //Random.seed = 1;
-
+        uint seed = 1;
         _biomeMap = new BiomeMap(new float2(50, 50));
         _biomeMap.Init(1);
-
-        uint seed = 1;
         Unity.Mathematics.Random r = new Unity.Mathematics.Random(seed);
-        NoisyEdges noisyEdge = new NoisyEdges(r);
+        NoisyEdges noisyEdge = new NoisyEdges(ref r);
         noisyEdge.BuildNoisyEdges(_biomeMap);
 
-        new MapTexture(_textureScale).AttachTexture(GameObject.Find("Map"), _biomeMap, noisyEdge);
+        var mat = go.GetComponent<Renderer>().material;
+        new MapTexture(_textureScale).AttachTexture(mat, _biomeMap, noisyEdge);
     }
 }
