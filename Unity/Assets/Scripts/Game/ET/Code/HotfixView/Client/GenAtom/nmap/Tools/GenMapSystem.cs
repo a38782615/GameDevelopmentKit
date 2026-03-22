@@ -30,7 +30,7 @@ namespace ET
                 self.DrawMap = drawMap;
             }
 
-            drawMap.View = GameObject.Find("Map2d");
+            drawMap.View = GameObject.Find("Map");
             drawMap.Init();
             drawMap.GenMap(self.BiomeMap);
         }
