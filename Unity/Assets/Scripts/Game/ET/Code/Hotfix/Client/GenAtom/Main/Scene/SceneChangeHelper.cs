@@ -19,6 +19,7 @@ namespace ET.Client
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
+            await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeBeforeLoadUnit());
             // 等待CreateMyUnit的消息
             Wait_CreateMyUnit waitCreateMyUnit = await root.GetComponent<ObjectWait>().Wait<Wait_CreateMyUnit>();
             M2C_CreateMyUnit m2CCreateMyUnit = waitCreateMyUnit.Message;
@@ -46,6 +47,7 @@ namespace ET.Client
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
+            await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeBeforeLoadUnit());
 
             //创建units
             await CreateLocalUnitsFromTables(root, currentScene);
@@ -76,8 +78,6 @@ namespace ET.Client
 
             await UniTask.WhenAll(unis);
         }
-
-
         private static UnitInfo CreateUnitInfo(DRUnitConfig config, int index)
         {
             UnitInfo unitInfo = UnitInfo.Create();

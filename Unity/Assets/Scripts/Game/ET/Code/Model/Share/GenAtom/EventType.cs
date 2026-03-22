@@ -10,6 +10,10 @@ namespace ET.Client
     {
     }
 
+    public struct SceneChangeBeforeLoadUnit
+    {
+    }
+
     public struct AfterCreateClientScene
     {
     }
