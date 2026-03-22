@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client
 {
     [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(EntityBody))]
     [FriendOf(typeof(GameplayEffectSpec))]
     [FriendOf(typeof(UGFEntityProjectile))]
     [FriendOf(typeof(ProjectileEffectSpec))]
@@ -198,12 +201,20 @@ namespace ET.Client
 
         private static void CheckCollision(this UGFEntityProjectile self)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(self.CurrentPosition, self.InitData.CollisionRadius);
+            BodyCheckComponent bodyCheckComponent = self.GetBodyCheckComponent();
+            if (bodyCheckComponent == null)
+            {
+                return;
+            }
+
+            List<EntityRef<EntityBody>> bodies = new List<EntityRef<EntityBody>>();
+            bodyCheckComponent.SearchCircle(new float2(self.CurrentPosition.x, self.CurrentPosition.y), self.InitData.CollisionRadius, bodies);
             AbilitySystemComponent sourceAsc = self.InitData.SourceASC.As();
 
-            foreach (Collider2D collider in colliders)
+            foreach (EntityRef<EntityBody> bodyRef in bodies)
             {
-                AbilitySystemComponent asc = Collider2DRegistry.GetASC(collider);
+                EntityBody entityBody = bodyRef.As();
+                AbilitySystemComponent asc = entityBody?.GetAbilitySystem();
                 if (asc == null)
                 {
                     continue;
@@ -238,11 +249,7 @@ namespace ET.Client
                     {
                         if (self.BounceCount < self.InitData.MaxBounceCount)
                         {
-                            if (self.TryBounceToNextTarget(asc, collider))
-                            {
-                                return;
-                            }
-
+                            self.TryBounceToNextTarget(asc, entityBody);
                             return;
                         }
 
@@ -261,12 +268,7 @@ namespace ET.Client
 
                 if (self.InitData.IsBouncing && self.BounceCount < self.InitData.MaxBounceCount)
                 {
-                    if (self.TryBounceToNextTarget(asc, collider))
-                    {
-                        self.HitCount = 0;
-                        return;
-                    }
-
+                    self.TryBounceToNextTarget(asc, entityBody);
                     self.HitCount = 0;
                     return;
                 }
@@ -331,7 +333,7 @@ namespace ET.Client
             }
         }
 
-        private static bool TryBounceToNextTarget(this UGFEntityProjectile self, AbilitySystemComponent currentTarget, Collider2D hitCollider)
+        private static bool TryBounceToNextTarget(this UGFEntityProjectile self, AbilitySystemComponent currentTarget, EntityBody hitBody)
         {
             self.BounceCount++;
 
@@ -360,7 +362,7 @@ namespace ET.Client
                 return true;
             }
 
-            Vector2 reflectDirection = self.GetReflectDirection(hitCollider, currentTarget);
+            Vector2 reflectDirection = self.GetReflectDirection(hitBody, currentTarget);
             if (Mathf.Abs(self.InitData.BounceAngleOffset) > 0.01f)
             {
                 reflectDirection = self.RotateVector2(reflectDirection, self.InitData.BounceAngleOffset);
@@ -382,13 +384,20 @@ namespace ET.Client
 
         private static AbilitySystemComponent FindNextBounceCandidate(this UGFEntityProjectile self, AbilitySystemComponent currentTarget)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(self.CurrentPosition, self.InitData.BounceSearchRadius);
+            BodyCheckComponent bodyCheckComponent = self.GetBodyCheckComponent();
+            if (bodyCheckComponent == null)
+            {
+                return null;
+            }
+
+            List<EntityRef<EntityBody>> bodies = new List<EntityRef<EntityBody>>();
+            bodyCheckComponent.SearchCircle(new float2(self.CurrentPosition.x, self.CurrentPosition.y), self.InitData.BounceSearchRadius, bodies);
             AbilitySystemComponent nearestTarget = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (Collider2D collider in colliders)
+            foreach (EntityRef<EntityBody> bodyRef in bodies)
             {
-                AbilitySystemComponent asc = Collider2DRegistry.GetASC(collider);
+                AbilitySystemComponent asc = bodyRef.As()?.GetAbilitySystem();
                 if (asc == null || asc == self.InitData.SourceASC.As() || asc == currentTarget)
                 {
                     continue;
@@ -484,7 +493,7 @@ namespace ET.Client
                 return GameplayTag.None;
             }
 
-            var tags = asc.OwnedTags.Tags;
+            IReadOnlyList<GameplayTag> tags = asc.OwnedTags.Tags;
             for (int i = 0; i < tags.Count; i++)
             {
                 GameplayTag tag = tags[i];
@@ -531,9 +540,9 @@ namespace ET.Client
             return new Vector2(direction.x * cos - direction.y * sin, direction.x * sin + direction.y * cos);
         }
 
-        private static Vector2 GetReflectDirection(this UGFEntityProjectile self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        private static Vector2 GetReflectDirection(this UGFEntityProjectile self, EntityBody hitBody, AbilitySystemComponent currentTarget)
         {
-            Vector2 surfaceNormal = self.GetSurfaceNormal(hitCollider, currentTarget);
+            Vector2 surfaceNormal = self.GetSurfaceNormal(hitBody, currentTarget);
             Vector2 reflectDirection = Vector2.Reflect(self.CurrentDirection.normalized, surfaceNormal).normalized;
             if (reflectDirection.sqrMagnitude <= 0.0001f)
             {
@@ -543,12 +552,28 @@ namespace ET.Client
             return reflectDirection;
         }
 
-        private static Vector2 GetSurfaceNormal(this UGFEntityProjectile self, Collider2D hitCollider, AbilitySystemComponent currentTarget)
+        private static Vector2 GetSurfaceNormal(this UGFEntityProjectile self, EntityBody hitBody, AbilitySystemComponent currentTarget)
         {
-            if (hitCollider != null)
+            if (hitBody != null)
             {
-                Vector2 closestPoint = hitCollider.ClosestPoint(self.CurrentPosition - (self.CurrentDirection.normalized * self.InitData.CollisionRadius));
-                Vector2 surfaceNormal = (self.CurrentPosition - closestPoint).normalized;
+                float2 projectilePosition = new float2(self.CurrentPosition.x, self.CurrentPosition.y);
+                float2 bodyCenter = hitBody.GetCenter();
+                float2 closestPoint;
+
+                if (hitBody.IsCircle())
+                {
+                    float2 toProjectile = projectilePosition - bodyCenter;
+                    float2 normal = math.normalizesafe(toProjectile, new float2(-self.CurrentDirection.x, -self.CurrentDirection.y));
+                    closestPoint = bodyCenter + normal * (hitBody.Width * 0.5f);
+                }
+                else
+                {
+                    float2 halfExtents = new float2(hitBody.Width * 0.5f, hitBody.Height * 0.5f);
+                    float2 offset = projectilePosition - bodyCenter;
+                    closestPoint = bodyCenter + math.clamp(offset, -halfExtents, halfExtents);
+                }
+
+                Vector2 surfaceNormal = new Vector2(self.CurrentPosition.x - closestPoint.x, self.CurrentPosition.y - closestPoint.y).normalized;
                 if (surfaceNormal.sqrMagnitude > 0.0001f)
                 {
                     return surfaceNormal;
@@ -591,6 +616,12 @@ namespace ET.Client
         private static ProjectileEffectSpec GetProjectileSpec(this UGFEntityProjectile self)
         {
             return self.GetEffectSpec()?.GetComponent<ProjectileEffectSpec>();
+        }
+
+        private static BodyCheckComponent GetBodyCheckComponent(this UGFEntityProjectile self)
+        {
+            Unit unit = self.InitData.SourceASC.As()?.GetParent<SkillUnit>()?.Unit.As();
+            return unit?.Scene()?.GetComponent<BodyCheckComponent>();
         }
 
         private static GameObject GetProjectileObject(this UGFEntityProjectile self)

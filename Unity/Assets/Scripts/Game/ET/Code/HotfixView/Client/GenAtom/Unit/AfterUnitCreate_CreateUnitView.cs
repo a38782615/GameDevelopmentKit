@@ -11,6 +11,11 @@ namespace ET.Client
         protected override async UniTask Run(Scene scene, AfterUnitCreate args)
         {
             Unit unit = args.Unit;
+            if (unit.GetComponent<EntityBody>() == null)
+            {
+                unit.AddComponent<EntityBody>();
+            }
+
             var skillUnit = unit.AddComponent<SkillUnit>();
             // Unit View层
             // 这里资源需要卸载，Demo就不搞了
@@ -59,8 +64,6 @@ namespace ET.Client
 
                 moveRestrictionComponent.Bind();
             }
-
-            unit.AddComponent<Collider2DComponent>().Bind(viewGameObject, asc);
             await UniTask.CompletedTask;
         }
 

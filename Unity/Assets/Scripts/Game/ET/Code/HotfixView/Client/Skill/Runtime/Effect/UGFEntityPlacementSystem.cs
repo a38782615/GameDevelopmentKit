@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client
@@ -111,12 +112,21 @@ namespace ET.Client
                 return;
             }
 
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(self.CachedTransform.position, self.InitData.CollisionRadius);
+            BodyCheckComponent bodyCheckComponent = self.GetBodyCheckComponent();
+            if (bodyCheckComponent == null)
+            {
+                return;
+            }
+
+            Vector3 position = self.CachedTransform.position;
+            float2 center = global::ET.ModeDefine.Is2D ? new float2(position.x, position.y) : new float2(position.x, position.z);
+            List<EntityRef<EntityBody>> bodies = new List<EntityRef<EntityBody>>();
+            bodyCheckComponent.SearchCircle(center, self.InitData.CollisionRadius, bodies);
             HashSet<long> targetsInRange = new HashSet<long>();
 
-            foreach (Collider2D collider in colliders)
+            foreach (EntityRef<EntityBody> bodyRef in bodies)
             {
-                AbilitySystemComponent asc = Collider2DRegistry.GetASC(collider);
+                AbilitySystemComponent asc = bodyRef.As()?.GetAbilitySystem();
                 if (!self.IsValidTarget(asc))
                 {
                     continue;
@@ -259,6 +269,12 @@ namespace ET.Client
         private static GameObject GetPlacementObject(this UGFEntityPlacement self)
         {
             return self?.CachedTransform != null ? self.CachedTransform.gameObject : null;
+        }
+
+        private static BodyCheckComponent GetBodyCheckComponent(this UGFEntityPlacement self)
+        {
+            Unit unit = self.InitData.SourceASC.As()?.GetParent<SkillUnit>()?.Unit.As();
+            return unit?.Scene()?.GetComponent<BodyCheckComponent>();
         }
     }
 }

@@ -21,7 +21,10 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
         Position = _buf.ReadInt();
+        Shape = _buf.ReadInt();
+        Width = _buf.ReadInt();
         Height = _buf.ReadInt();
+        Weight = _buf.ReadInt();
         PostInit();
     }
 
@@ -52,9 +55,21 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
     /// </summary>
     public readonly int Position;
     /// <summary>
+    /// 形状
+    /// </summary>
+    public readonly int Shape;
+    /// <summary>
+    /// 宽度
+    /// </summary>
+    public readonly int Width;
+    /// <summary>
     /// 身高
     /// </summary>
     public readonly int Height;
+    /// <summary>
+    /// 体重
+    /// </summary>
+    public readonly int Weight;
     public const int __ID__ = -1701961452;
     public override int GetTypeId() => __ID__;
 
@@ -72,7 +87,10 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","
         + "Position:" + Position + ","
+        + "Shape:" + Shape + ","
+        + "Width:" + Width + ","
         + "Height:" + Height + ","
+        + "Weight:" + Weight + ","
         + "}";
     }
 
