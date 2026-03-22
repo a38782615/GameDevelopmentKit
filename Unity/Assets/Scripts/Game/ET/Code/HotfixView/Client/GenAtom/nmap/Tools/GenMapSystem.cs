@@ -2,6 +2,8 @@ using System;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityScene = UnityEngine.SceneManagement.Scene;
+using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace ET
 {
@@ -38,7 +40,14 @@ namespace ET
                 self.DrawMap = drawMap;
             }
 
-            drawMap.View = GameObject.Find("Map");
+            drawMap.View = self.FindMapRoot();
+            if (drawMap.View == null)
+            {
+                Scene currentScene = self.GetParent<Scene>();
+                Log.Error($"nmap build failed, cannot find Map root in scene: {currentScene?.Name}");
+                return;
+            }
+
             await drawMap.InitAsync();
             drawMap.GenMap(self.BiomeMap, self.RenderWidth, self.RenderHeight);
         }
@@ -56,6 +65,27 @@ namespace ET
             }
 
             return textureColor == Color.white;
+        }
+
+        private static GameObject FindMapRoot(this GenMap self)
+        {
+            string sceneName = self.GetParent<Scene>()?.Name;
+            if (!string.IsNullOrEmpty(sceneName))
+            {
+                UnityScene unityScene = UnitySceneManager.GetSceneByName(sceneName);
+                if (unityScene.IsValid() && unityScene.isLoaded)
+                {
+                    foreach (GameObject rootObject in unityScene.GetRootGameObjects())
+                    {
+                        if (rootObject.name == "Map")
+                        {
+                            return rootObject;
+                        }
+                    }
+                }
+            }
+
+            return GameObject.Find("Map");
         }
     }
 }

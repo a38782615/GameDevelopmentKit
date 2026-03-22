@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace ET
 {
@@ -40,6 +41,12 @@ namespace ET
             self.OverlayTexture = overlayTexture;
             self.MeshFilter = self.View.GetComponent<MeshFilter>();
             self.MeshRenderer = self.View.GetComponent<MeshRenderer>();
+            if (self.MeshFilter == null || self.MeshRenderer == null)
+            {
+                Log.Error($"nmap carpet init failed, missing renderer components on view: {self.View?.name}");
+                return;
+            }
+
             if (self.MeshRenderer != null)
             {
                 self.SetSortingLayerId(0);
@@ -56,12 +63,20 @@ namespace ET
             mapLogic.Init();
             mapLogic.Clear();
 
-            self.MeshFilter.sharedMesh = new Mesh
+            Mesh mesh = self.MeshFilter.sharedMesh;
+            if (mesh == null)
             {
-                hideFlags = HideFlags.HideAndDontSave,
-                name = $"{self.View.name}_mesh"
-            };
-            self.MeshFilter.sharedMesh.Clear();
+                mesh = new Mesh
+                {
+                    hideFlags = HideFlags.HideAndDontSave,
+                    name = $"{self.View.name}_mesh"
+                };
+                self.MeshFilter.sharedMesh = mesh;
+            }
+
+            mesh.indexFormat = IndexFormat.UInt32;
+            mesh.MarkDynamic();
+            mesh.Clear();
             if (self.MatPropBlock == null)
             {
                 self.MatPropBlock = new MaterialPropertyBlock();
@@ -142,16 +157,24 @@ namespace ET
         private static void Render(this DrawCarpet self)
         {
             MapLogic mapLogic = self.MapLogic.As();
-            if (mapLogic == null)
+            if (mapLogic == null || self.MeshFilter == null)
             {
                 return;
             }
 
             Mesh mesh = self.MeshFilter.sharedMesh;
+            if (mesh == null)
+            {
+                return;
+            }
+
+            mesh.Clear();
             mesh.SetVertices(DrawUtil.ToList(mapLogic.Vertices, self.Vertices));
             mesh.SetTriangles(mapLogic.Triangles, 0);
             mesh.SetUVs(0, DrawUtil.ToList(mapLogic.UV, self.UV));
             mesh.SetUVs(1, DrawUtil.ToList(mapLogic.UV2, self.UV2));
+            mesh.RecalculateBounds();
+            mesh.RecalculateNormals();
         }
 
         private static async UniTask<Texture2D> LoadTextureAsync(this DrawCarpet self, string textureName)
