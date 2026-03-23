@@ -420,24 +420,35 @@ namespace ET
         private static int ComputeMainTileId(MapCenter primaryCenter, MapCenter secondaryCenter, int x, int y,
         MapTransitionKind transitionKind, float edgeBlend, float cornerBlend, int mainTileCount)
         {
-            int hash = primaryCenter != null ? primaryCenter.index * 73856093 : 0;
-            hash ^= x * 19349663;
-            hash ^= y * 83492791;
-            hash ^= ((int)transitionKind + 1) * 265443576;
-            hash ^= (int)(math.round(edgeBlend * 10f) * 374761393);
-            hash ^= (int)(math.round(cornerBlend * 10f) * 668265263);
-            if (secondaryCenter != null)
-            {
-                hash ^= secondaryCenter.index * 1597334677;
-            }
-
-            int positive = hash & int.MaxValue;
-            if (mainTileCount <= 0)
+            if (mainTileCount <= 0 || primaryCenter == null)
             {
                 return 0;
             }
 
-            return positive % mainTileCount;
+            // 让同一个 Voronoi center 内的主地块纹理保持稳定，只做低频变化，
+            // 否则按单格随机会把分区轮廓抹平，看起来不像维诺图。
+            int coarseX = x >> 2;
+            int coarseY = y >> 2;
+            int hash = primaryCenter.index * 73856093;
+            hash ^= ((int)primaryCenter.biome + 1) * 19349663;
+            hash ^= coarseX * 83492791;
+            hash ^= coarseY * 265443576;
+
+            if (secondaryCenter != null && transitionKind != MapTransitionKind.None)
+            {
+                hash ^= secondaryCenter.index * 374761393;
+                hash ^= ((int)secondaryCenter.biome + 1) * 668265263;
+                hash ^= ((int)transitionKind + 1) * 1597334677;
+                hash ^= (int)(math.round(edgeBlend * 8f) * 1103515245);
+                hash ^= (int)(math.round(cornerBlend * 8f) * 122949829);
+            }
+
+            return HashToTileId(hash, mainTileCount);
+        }
+
+        private static int HashToTileId(int hash, int mainTileCount)
+        {
+            return (hash & int.MaxValue) % mainTileCount;
         }
 
         private static bool IsWaterBiome(Biome biome)

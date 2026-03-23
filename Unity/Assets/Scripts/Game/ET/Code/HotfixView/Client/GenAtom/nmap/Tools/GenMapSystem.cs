@@ -23,7 +23,7 @@ namespace ET
             self.BiomeMap.SetPointNum(self.PointNum);
             if (self.TxtTexture == null)
             {
-                self.BiomeMap.Init(self.MapSeed);
+                self.BiomeMap.Init(self.MapSeed, self.CreateDefaultIslandShape());
             }
             else
             {
@@ -65,6 +65,25 @@ namespace ET
             }
 
             return textureColor == Color.white;
+        }
+
+        private static Func<float2, bool> CreateDefaultIslandShape(this GenMap self)
+        {
+            float width = math.max(1f, self.Width);
+            float height = math.max(1f, self.Height);
+            float2 seedOffset = new float2(
+                (self.MapSeed % 997u) * 0.0137f + 7.13f,
+                ((self.MapSeed / 997u) % 991u) * 0.0179f + 11.29f);
+            return q =>
+            {
+                float2 normalized = new float2(q.x / width * 2f - 1f, q.y / height * 2f - 1f);
+                float edgeDistance = math.max(math.abs(normalized.x), math.abs(normalized.y));
+                float radialDistance = math.length(normalized);
+                float continentNoise = Perlin.Fbm(normalized * 1.8f + seedOffset, 4) * 0.24f;
+                float coastNoise = Perlin.Fbm(normalized * 3.2f + seedOffset * 1.9f + new float2(13.1f, 5.7f), 3) * 0.12f;
+                float landScore = 0.6f - edgeDistance * 0.48f - radialDistance * 0.16f + continentNoise + coastNoise;
+                return landScore > 0.08f;
+            };
         }
 
         private static GameObject FindMapRoot(this GenMap self)
