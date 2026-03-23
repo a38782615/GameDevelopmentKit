@@ -28,7 +28,6 @@ namespace ET
         public float CornerDistance;
         public float EdgeBlend;
         public float CornerBlend;
-        public int MainTileId;
         public MapTransitionKind TransitionKind;
     }
 

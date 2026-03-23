@@ -9,6 +9,7 @@
       <Resource Name="GameHot" FileSystem="GameData" LoadType="0" Packed="False" />
       <Resource Name="Luban" FileSystem="GameData" LoadType="0" Packed="False" />
       <Resource Name="Res/Localization/ChineseSimplified/Localization" LoadType="0" Packed="False" />
+      <Resource Name="Res/Prefab/map/Map" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Materials/skeleton_D" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Skeleton" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/SkeletonController" LoadType="0" Packed="False" />
@@ -429,6 +430,7 @@
       <Asset Guid="fb1f428dbf5a5a647b1b69e59ee6ebdf" ResourceName="UI.UXTool" />
       <Asset Guid="fbd12d1b2c9fb0945a8a9e4ff9775374" ResourceName="UI.UXTool" />
       <Asset Guid="fc0279e1e3104d746b1beb55dd323656" ResourceName="Res/UI/UISprite/SkillIcon" />
+      <Asset Guid="fca460194eeecbe41bfe17a006fd64ba" ResourceName="Res/Prefab/map/Map" />
       <Asset Guid="fcad5af85f5a54eb3884cdfb6efc7d27" ResourceName="UI.UIForm.LockStep" />
       <Asset Guid="fcda869ef3a73904589baeb0d201ed90" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="fd1d4b0d1a3e96e45b20a0f97b4a2268" ResourceName="Res/UI/UISprite/SkillIcon" />

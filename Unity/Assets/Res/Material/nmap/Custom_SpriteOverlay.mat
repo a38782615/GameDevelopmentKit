@@ -51,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2DCover:
-        m_Texture: {fileID: 2800000, guid: 9629cab92065bae4e9967f45568c505b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7131b2aa13331624596ea766e1ded8e7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ungerground:

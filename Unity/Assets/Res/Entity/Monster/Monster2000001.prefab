@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7006154904536515296}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9073943052002995254}
   - component: {fileID: 2937990356895202955}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,7 +118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9112059001431619146}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6729050893927252669}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Monster2000001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 1174985251952980123}
   - component: {fileID: 1250434502430511957}
   - component: {fileID: 8032320034970784735}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Skelen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -318,7 +318,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094211161496238398}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: down
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -220,7 +220,6 @@ namespace ET
             MapTransitionKind transitionKind = ClassifyTransition(center, secondaryCenter, boundaryEdge, boundaryCorner);
             float edgeBlend = secondaryCenter == null ? 0f : ComputeBlend(edgeDistance, GetEdgeBlendWidth(renderCellWidth, renderCellHeight, transitionKind));
             float cornerBlend = boundaryCorner == null ? 0f : ComputeBlend(cornerDistance, GetCornerBlendRadius(renderCellWidth, renderCellHeight, transitionKind));
-            int mainTileId = ComputeMainTileId(center, secondaryCenter, x, y, transitionKind, edgeBlend, cornerBlend, mainTileCount);
             return new MapNode
             {
                 MapCenter = center,
@@ -231,7 +230,6 @@ namespace ET
                 CornerDistance = cornerDistance,
                 EdgeBlend = edgeBlend,
                 CornerBlend = cornerBlend,
-                MainTileId = mainTileId,
                 TransitionKind = transitionKind,
                 Pos = new int2(x, y),
                 WorldPosition = new float2(worldOriginX + x * worldCellWidth, worldOriginY + y * worldCellHeight),
