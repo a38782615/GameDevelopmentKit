@@ -11,6 +11,8 @@ namespace ET
     [EntitySystemOf(typeof(DrawCarpet))]
     public static partial class DrawCarpetSystem
     {
+        private const int BaseSortingOrder = -100;
+
         [EntitySystem]
         private static void Awake(this DrawCarpet self)
         {
@@ -61,7 +63,7 @@ namespace ET
             if (self.MeshRenderer != null)
             {
                 self.SetSortingLayerId(0);
-                self.SetOrderInLayer(type);
+                self.SetOrderInLayer(BaseSortingOrder + type);
                 self.MeshRenderer.shadowCastingMode = ShadowCastingMode.Off;
                 self.MeshRenderer.receiveShadows = false;
                 self.MeshRenderer.lightProbeUsage = LightProbeUsage.Off;
