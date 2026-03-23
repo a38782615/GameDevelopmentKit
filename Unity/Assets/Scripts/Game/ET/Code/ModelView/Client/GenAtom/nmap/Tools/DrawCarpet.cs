@@ -16,6 +16,7 @@ namespace ET
         public MeshFilter MeshFilter;
         public Texture2D MainTexture;
         public Texture2D OverlayTexture;
+        public Material SourceMaterial;
         public Material RuntimeMaterial;
         public GameObject View;
         public int CarType;
