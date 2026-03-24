@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Game;
+using TMPro;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -94,11 +95,86 @@ namespace ET.Editor
             raycastGraphic.color = new Color(0f, 0f, 0f, 0f);
             raycastGraphic.raycastTarget = true;
 
+            RectTransform mapControlsRect = CreateMapControlsPanel(root.transform);
+            CreateReloadSceneButton(mapControlsRect);
+            CreateRerenderMapButton(mapControlsRect);
+
             RectTransform panelRect = CreatePanel(root.transform);
             RectTransform skillGridRect = CreateSkillGrid(panelRect);
             CreateSkillItemTemplate(skillGridRect);
-            CreateReloadSceneButton(root.transform);
             return root;
+        }
+
+        private static RectTransform CreateMapControlsPanel(Transform parent)
+        {
+            GameObject panel = new GameObject("MapControls", typeof(RectTransform), typeof(Image));
+            panel.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = panel.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0f, 1f);
+            rectTransform.anchorMax = new Vector2(0f, 1f);
+            rectTransform.pivot = new Vector2(0f, 1f);
+            rectTransform.anchoredPosition = new Vector2(24f, -24f);
+            rectTransform.sizeDelta = new Vector2(420f, 268f);
+
+            Image image = panel.GetComponent<Image>();
+            image.color = new Color(0.05f, 0.08f, 0.12f, 0.92f);
+
+            TextMeshProUGUI title = CreateTMPText("Title", panel.transform, "Lake Controls", 24f, TextAlignmentOptions.Left);
+            RectTransform titleRect = title.rectTransform;
+            titleRect.anchorMin = new Vector2(0f, 1f);
+            titleRect.anchorMax = new Vector2(1f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.anchoredPosition = new Vector2(0f, -16f);
+            titleRect.sizeDelta = new Vector2(-32f, 30f);
+            title.color = new Color(0.95f, 0.97f, 1f, 0.98f);
+
+            CreateMapControlRow(
+                panel.transform,
+                "LakeInlandMaskRow",
+                "Inland Range",
+                -60f,
+                "LakeInlandMaskTight_Toggle",
+                "Tight",
+                false,
+                "LakeInlandMaskDefault_Toggle",
+                "Default",
+                true,
+                "LakeInlandMaskWide_Toggle",
+                "Wide",
+                false);
+
+            CreateMapControlRow(
+                panel.transform,
+                "LakeCarveThresholdRow",
+                "Carve Threshold",
+                -116f,
+                "LakeCarveThresholdSparse_Toggle",
+                "Sparse",
+                false,
+                "LakeCarveThresholdDefault_Toggle",
+                "Default",
+                true,
+                "LakeCarveThresholdDense_Toggle",
+                "Dense",
+                false);
+
+            CreateMapControlRow(
+                panel.transform,
+                "LakeCarveStrengthRow",
+                "Carve Strength",
+                -172f,
+                "LakeCarveStrengthShallow_Toggle",
+                "Shallow",
+                false,
+                "LakeCarveStrengthDefault_Toggle",
+                "Default",
+                true,
+                "LakeCarveStrengthDeep_Toggle",
+                "Deep",
+                false);
+
+            return rectTransform;
         }
 
         private static RectTransform CreatePanel(Transform parent)
@@ -208,6 +284,139 @@ namespace ET.Editor
             label.color = new Color(0.95f, 0.97f, 1f, 0.95f);
         }
 
+        private static void CreateRerenderMapButton(Transform parent)
+        {
+            GameObject buttonObject = new GameObject(
+                "RerenderMap_Button",
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Button));
+            buttonObject.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = buttonObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(1f, 0f);
+            rectTransform.anchorMax = new Vector2(1f, 0f);
+            rectTransform.pivot = new Vector2(1f, 0f);
+            rectTransform.anchoredPosition = new Vector2(-24f, 24f);
+            rectTransform.sizeDelta = new Vector2(190f, 52f);
+
+            Image image = buttonObject.GetComponent<Image>();
+            image.color = new Color(0.2f, 0.37f, 0.26f, 0.98f);
+
+            Button button = buttonObject.GetComponent<Button>();
+            ColorBlock colors = button.colors;
+            colors.normalColor = image.color;
+            colors.highlightedColor = new Color(0.24f, 0.44f, 0.31f, 1f);
+            colors.pressedColor = new Color(0.14f, 0.29f, 0.2f, 1f);
+            colors.selectedColor = colors.highlightedColor;
+            colors.disabledColor = new Color(0.2f, 0.37f, 0.26f, 0.45f);
+            button.colors = colors;
+
+            TextMeshProUGUI label = CreateTMPText("Label", buttonObject.transform, "Apply + Render", 20f, TextAlignmentOptions.Center);
+            RectTransform labelRectTransform = label.rectTransform;
+            labelRectTransform.anchorMin = Vector2.zero;
+            labelRectTransform.anchorMax = Vector2.one;
+            labelRectTransform.offsetMin = new Vector2(10f, 6f);
+            labelRectTransform.offsetMax = new Vector2(-10f, -6f);
+            label.color = new Color(0.97f, 0.99f, 0.98f, 0.98f);
+        }
+
+        private static void CreateMapControlRow(
+            Transform parent,
+            string rowName,
+            string label,
+            float anchoredY,
+            string option0Name,
+            string option0Label,
+            bool option0IsOn,
+            string option1Name,
+            string option1Label,
+            bool option1IsOn,
+            string option2Name,
+            string option2Label,
+            bool option2IsOn)
+        {
+            GameObject rowObject = new GameObject(rowName, typeof(RectTransform), typeof(ToggleGroup));
+            rowObject.transform.SetParent(parent, false);
+
+            RectTransform rowRect = rowObject.GetComponent<RectTransform>();
+            rowRect.anchorMin = new Vector2(0f, 1f);
+            rowRect.anchorMax = new Vector2(1f, 1f);
+            rowRect.pivot = new Vector2(0.5f, 1f);
+            rowRect.anchoredPosition = new Vector2(0f, anchoredY);
+            rowRect.sizeDelta = new Vector2(-28f, 44f);
+
+            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 18f, TextAlignmentOptions.Left);
+            RectTransform labelRect = rowLabel.rectTransform;
+            labelRect.anchorMin = new Vector2(0f, 0f);
+            labelRect.anchorMax = new Vector2(0f, 1f);
+            labelRect.pivot = new Vector2(0f, 0.5f);
+            labelRect.anchoredPosition = new Vector2(16f, 0f);
+            labelRect.sizeDelta = new Vector2(128f, 0f);
+            rowLabel.color = new Color(0.84f, 0.89f, 0.95f, 0.94f);
+
+            ToggleGroup toggleGroup = rowObject.GetComponent<ToggleGroup>();
+            toggleGroup.allowSwitchOff = false;
+
+            CreateToggleOption(rowObject.transform, toggleGroup, option0Name, option0Label, new Vector2(174f, 0f), option0IsOn);
+            CreateToggleOption(rowObject.transform, toggleGroup, option1Name, option1Label, new Vector2(260f, 0f), option1IsOn);
+            CreateToggleOption(rowObject.transform, toggleGroup, option2Name, option2Label, new Vector2(346f, 0f), option2IsOn);
+        }
+
+        private static void CreateToggleOption(Transform parent, ToggleGroup group, string name, string label, Vector2 anchoredPosition, bool isOn)
+        {
+            GameObject toggleObject = new GameObject(
+                name,
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Toggle));
+            toggleObject.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = toggleObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0f, 0.5f);
+            rectTransform.pivot = new Vector2(0f, 0.5f);
+            rectTransform.anchoredPosition = anchoredPosition;
+            rectTransform.sizeDelta = new Vector2(78f, 32f);
+
+            Image background = toggleObject.GetComponent<Image>();
+            background.color = new Color(0.12f, 0.17f, 0.23f, 0.98f);
+
+            Toggle toggle = toggleObject.GetComponent<Toggle>();
+            toggle.group = group;
+            toggle.isOn = isOn;
+            toggle.transition = Selectable.Transition.ColorTint;
+            ColorBlock colors = toggle.colors;
+            colors.normalColor = background.color;
+            colors.highlightedColor = new Color(0.17f, 0.24f, 0.31f, 1f);
+            colors.pressedColor = new Color(0.11f, 0.16f, 0.21f, 1f);
+            colors.selectedColor = new Color(0.23f, 0.33f, 0.42f, 1f);
+            colors.disabledColor = new Color(0.12f, 0.17f, 0.23f, 0.45f);
+            toggle.colors = colors;
+            toggle.targetGraphic = background;
+
+            GameObject indicatorObject = new GameObject("Indicator", typeof(RectTransform), typeof(Image));
+            indicatorObject.transform.SetParent(toggleObject.transform, false);
+            RectTransform indicatorRect = indicatorObject.GetComponent<RectTransform>();
+            indicatorRect.anchorMin = new Vector2(0f, 0.5f);
+            indicatorRect.anchorMax = new Vector2(0f, 0.5f);
+            indicatorRect.pivot = new Vector2(0f, 0.5f);
+            indicatorRect.anchoredPosition = new Vector2(8f, 0f);
+            indicatorRect.sizeDelta = new Vector2(10f, 10f);
+            Image indicator = indicatorObject.GetComponent<Image>();
+            indicator.color = new Color(0.48f, 0.9f, 0.66f, 1f);
+            indicator.raycastTarget = false;
+            toggle.graphic = indicator;
+
+            TextMeshProUGUI optionLabel = CreateTMPText("Label", toggleObject.transform, label, 16f, TextAlignmentOptions.Center);
+            RectTransform labelRect = optionLabel.rectTransform;
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(18f, 0f);
+            labelRect.offsetMax = new Vector2(-6f, 0f);
+            optionLabel.color = new Color(0.95f, 0.97f, 1f, 0.96f);
+        }
+
         private static void CreateIcon(Transform parent)
         {
             GameObject icon = new GameObject("Icon_Image", typeof(RectTransform), typeof(Image));
@@ -311,6 +520,39 @@ namespace ET.Editor
             textComponent.verticalOverflow = VerticalWrapMode.Truncate;
             textComponent.raycastTarget = false;
             return textComponent;
+        }
+
+        private static TextMeshProUGUI CreateTMPText(string name, Transform parent, string text, float fontSize, TextAlignmentOptions alignment)
+        {
+            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+            textObject.transform.SetParent(parent, false);
+
+            TextMeshProUGUI textComponent = textObject.GetComponent<TextMeshProUGUI>();
+            textComponent.text = text;
+            textComponent.font = GetDefaultTMPFont();
+            textComponent.fontSize = fontSize;
+            textComponent.alignment = alignment;
+            textComponent.enableWordWrapping = false;
+            textComponent.overflowMode = TextOverflowModes.Ellipsis;
+            textComponent.raycastTarget = false;
+            return textComponent;
+        }
+
+        private static TMP_FontAsset GetDefaultTMPFont()
+        {
+            TMP_FontAsset font = TMP_Settings.defaultFontAsset;
+            if (font != null)
+            {
+                return font;
+            }
+
+            font = AssetDatabase.GetBuiltinExtraResource<TMP_FontAsset>("Arial SDF.asset");
+            if (font == null)
+            {
+                throw new InvalidOperationException("Default TMP font not found.");
+            }
+
+            return font;
         }
 
         private static void StretchToParent(RectTransform rectTransform)
@@ -418,8 +660,19 @@ namespace ET.Editor
                 throw new InvalidOperationException("MonoUIFormSkill component not found.");
             }
 
+            Transform mapControls = FindRequiredChild(root.transform, "MapControls");
+            Button reloadSceneButton = GetRequiredComponent<Button>(FindRequiredChild(mapControls, "ReloadScene_Button"));
+            Button rerenderMapButton = GetRequiredComponent<Button>(FindRequiredChild(mapControls, "RerenderMap_Button"));
+            Toggle lakeInlandMaskTightToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskTight_Toggle"));
+            Toggle lakeInlandMaskDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskDefault_Toggle"));
+            Toggle lakeInlandMaskWideToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskWide_Toggle"));
+            Toggle lakeCarveThresholdSparseToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdSparse_Toggle"));
+            Toggle lakeCarveThresholdDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdDefault_Toggle"));
+            Toggle lakeCarveThresholdDenseToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdDense_Toggle"));
+            Toggle lakeCarveStrengthShallowToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthShallow_Toggle"));
+            Toggle lakeCarveStrengthDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthDefault_Toggle"));
+            Toggle lakeCarveStrengthDeepToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthDeep_Toggle"));
             RectTransform panelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "Panel_RectTransform"));
-            Button reloadSceneButton = GetRequiredComponent<Button>(FindRequiredChild(root.transform, "ReloadScene_Button"));
             Transform skillGrid = FindRequiredChild(panelRectTransform, "SkillGrid_RectTransform_GridLayoutGroup");
             RectTransform skillGridRectTransform = GetRequiredComponent<RectTransform>(skillGrid);
             GridLayoutGroup skillGridLayoutGroup = GetRequiredComponent<GridLayoutGroup>(skillGrid);
@@ -439,8 +692,18 @@ namespace ET.Editor
             Text nameText = GetRequiredComponent<Text>(FindRequiredChild(castButtonTransform, "Name_Text"));
             Text stateText = GetRequiredComponent<Text>(FindRequiredChild(castButtonTransform, "State_Text"));
 
-            TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);
             TrySetObjectReference(formComponent, "m_ReloadSceneButton", reloadSceneButton);
+            TrySetObjectReference(formComponent, "m_RerenderMapButton", rerenderMapButton);
+            TrySetObjectReference(formComponent, "m_LakeInlandMaskTightToggle", lakeInlandMaskTightToggle);
+            TrySetObjectReference(formComponent, "m_LakeInlandMaskDefaultToggle", lakeInlandMaskDefaultToggle);
+            TrySetObjectReference(formComponent, "m_LakeInlandMaskWideToggle", lakeInlandMaskWideToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveThresholdSparseToggle", lakeCarveThresholdSparseToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveThresholdDefaultToggle", lakeCarveThresholdDefaultToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveThresholdDenseToggle", lakeCarveThresholdDenseToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveStrengthShallowToggle", lakeCarveStrengthShallowToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveStrengthDefaultToggle", lakeCarveStrengthDefaultToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveStrengthDeepToggle", lakeCarveStrengthDeepToggle);
+            TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);
             TrySetObjectReference(formComponent, "m_SkillGridRectTransform", skillGridRectTransform);
             TrySetObjectReference(formComponent, "m_SkillGridGridLayoutGroup", skillGridLayoutGroup);
             TrySetObjectReference(formComponent, "m_ItemTemplateSkillItemTemplate", itemComponent);

@@ -7,9 +7,29 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUISkillItem m_ItemTemplateSkillItemTemplate;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveStrengthDeepToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveStrengthDefaultToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveStrengthShallowToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveThresholdDefaultToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveThresholdDenseToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeCarveThresholdSparseToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeInlandMaskDefaultToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeInlandMaskTightToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Toggle m_LakeInlandMaskWideToggle;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_PanelRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Button m_ReloadSceneButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Button m_RerenderMapButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.GridLayoutGroup m_SkillGridGridLayoutGroup;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
@@ -17,8 +37,18 @@ namespace ET.Client
 
 
         public ET.Client.MonoUISkillItem ItemTemplateSkillItemTemplate => m_ItemTemplateSkillItemTemplate;
+        public UnityEngine.UI.Toggle LakeCarveStrengthDeepToggle => m_LakeCarveStrengthDeepToggle;
+        public UnityEngine.UI.Toggle LakeCarveStrengthDefaultToggle => m_LakeCarveStrengthDefaultToggle;
+        public UnityEngine.UI.Toggle LakeCarveStrengthShallowToggle => m_LakeCarveStrengthShallowToggle;
+        public UnityEngine.UI.Toggle LakeCarveThresholdDefaultToggle => m_LakeCarveThresholdDefaultToggle;
+        public UnityEngine.UI.Toggle LakeCarveThresholdDenseToggle => m_LakeCarveThresholdDenseToggle;
+        public UnityEngine.UI.Toggle LakeCarveThresholdSparseToggle => m_LakeCarveThresholdSparseToggle;
+        public UnityEngine.UI.Toggle LakeInlandMaskDefaultToggle => m_LakeInlandMaskDefaultToggle;
+        public UnityEngine.UI.Toggle LakeInlandMaskTightToggle => m_LakeInlandMaskTightToggle;
+        public UnityEngine.UI.Toggle LakeInlandMaskWideToggle => m_LakeInlandMaskWideToggle;
         public UnityEngine.RectTransform PanelRectTransform => m_PanelRectTransform;
         public UnityEngine.UI.Button ReloadSceneButton => m_ReloadSceneButton;
+        public UnityEngine.UI.Button RerenderMapButton => m_RerenderMapButton;
         public UnityEngine.UI.GridLayoutGroup SkillGridGridLayoutGroup => m_SkillGridGridLayoutGroup;
         public UnityEngine.RectTransform SkillGridRectTransform => m_SkillGridRectTransform;
 
@@ -32,8 +62,18 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_ItemTemplateSkillItemTemplate == null) return true;
+            if (this.m_LakeCarveStrengthDeepToggle == null) return true;
+            if (this.m_LakeCarveStrengthDefaultToggle == null) return true;
+            if (this.m_LakeCarveStrengthShallowToggle == null) return true;
+            if (this.m_LakeCarveThresholdDefaultToggle == null) return true;
+            if (this.m_LakeCarveThresholdDenseToggle == null) return true;
+            if (this.m_LakeCarveThresholdSparseToggle == null) return true;
+            if (this.m_LakeInlandMaskDefaultToggle == null) return true;
+            if (this.m_LakeInlandMaskTightToggle == null) return true;
+            if (this.m_LakeInlandMaskWideToggle == null) return true;
             if (this.m_PanelRectTransform == null) return true;
             if (this.m_ReloadSceneButton == null) return true;
+            if (this.m_RerenderMapButton == null) return true;
             if (this.m_SkillGridGridLayoutGroup == null) return true;
             if (this.m_SkillGridRectTransform == null) return true;
             return false;

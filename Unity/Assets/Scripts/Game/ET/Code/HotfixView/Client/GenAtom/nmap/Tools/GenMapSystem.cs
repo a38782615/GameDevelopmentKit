@@ -18,9 +18,13 @@ namespace ET
         {
         }
 
-        public static async UniTask BuildAsync(this GenMap self)
+        public static async UniTask BuildAsync(this GenMap self, bool regenerateSeed = true)
         {
-            self.MapSeed = GenerateRandomSeed();
+            if (regenerateSeed || self.MapSeed == 0u)
+            {
+                self.MapSeed = GenerateRandomSeed();
+            }
+
             self.BiomeMap = new BiomeMap(new float2(self.Width, self.Height));
             self.BiomeMap.SetPointNum(self.PointNum);
             if (self.TxtTexture == null)
@@ -82,6 +86,11 @@ namespace ET
         {
             float width = math.max(1f, self.Width);
             float height = math.max(1f, self.Height);
+            float lakeInlandMaskRange = math.clamp(self.LakeInlandMaskRange, 0.65f, 0.92f);
+            float lakeEdgeMaskRange = math.clamp(lakeInlandMaskRange - 0.08f, 0.5f, 0.88f);
+            float lakeCarveThreshold = math.clamp(self.LakeCarveThreshold, 0.35f, 0.72f);
+            float lakeDetailThreshold = math.saturate(lakeCarveThreshold + 0.02f);
+            float lakeCarveStrength = math.clamp(self.LakeCarveStrength, 0f, 1f);
             float2 seedOffset = new float2(
                 (self.MapSeed % 997u) * 0.0137f + 7.13f,
                 ((self.MapSeed / 997u) % 991u) * 0.0179f + 11.29f);
@@ -97,16 +106,16 @@ namespace ET
 
                 // 只在地图腹地施加“湖盆挖空”，避免把沿海切得过碎或直接打通到海洋。
                 float inlandMask =
-                    math.saturate((0.82f - radialDistance) / 0.24f) *
-                    math.saturate((0.74f - edgeDistance) / 0.18f);
+                    math.saturate((lakeInlandMaskRange - radialDistance) / 0.24f) *
+                    math.saturate((lakeEdgeMaskRange - edgeDistance) / 0.18f);
                 inlandMask *= inlandMask;
 
                 // 低频噪声决定湖盆的大轮廓，高频噪声决定边缘破碎度。
                 float lakeBase = Perlin.Fbm(normalized * 4.1f + seedOffset * 2.7f + new float2(19.3f, 41.7f), 3);
                 float lakeDetail = Perlin.Fbm(normalized * 8.2f + seedOffset * 4.9f + new float2(-27.4f, 13.6f), 2);
                 float lakeCarve =
-                    math.saturate((lakeBase - 0.56f) * 1.9f + (lakeDetail - 0.58f) * 0.9f);
-                landScore -= lakeCarve * inlandMask * 0.42f;
+                    math.saturate((lakeBase - lakeCarveThreshold) * 1.9f + (lakeDetail - lakeDetailThreshold) * 0.9f);
+                landScore -= lakeCarve * inlandMask * lakeCarveStrength;
 
                 return landScore > 0.08f;
             };

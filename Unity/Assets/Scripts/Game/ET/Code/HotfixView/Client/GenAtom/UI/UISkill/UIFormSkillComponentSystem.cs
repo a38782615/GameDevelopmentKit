@@ -8,6 +8,7 @@ namespace ET.Client
     [EntitySystemOf(typeof(UIFormSkillComponent))]
     [FriendOf(typeof(UIFormSkillComponent))]
     [FriendOf(typeof(GameplayAbilitySpec))]
+    [FriendOf(typeof(GenMap))]
     public static partial class UIFormSkillComponentSystem
     {
         private const float RefreshInterval = 0.2f;
@@ -18,6 +19,15 @@ namespace ET.Client
         private const float SkillCellHeight = 160f;
         private const float SkillCellSpacingX = 20f;
         private const float SkillCellSpacingY = 20f;
+        private const float LakeInlandMaskTight = 0.76f;
+        private const float LakeInlandMaskDefault = 0.82f;
+        private const float LakeInlandMaskWide = 0.88f;
+        private const float LakeCarveThresholdSparse = 0.62f;
+        private const float LakeCarveThresholdDefault = 0.56f;
+        private const float LakeCarveThresholdDense = 0.5f;
+        private const float LakeCarveStrengthShallow = 0.3f;
+        private const float LakeCarveStrengthDefault = 0.42f;
+        private const float LakeCarveStrengthDeep = 0.54f;
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkillComponent self)
@@ -27,6 +37,13 @@ namespace ET.Client
             {
                 self.View.ReloadSceneButton.SetAsync(self.ReloadCurrentSceneAsync);
             }
+
+            if (self.View?.RerenderMapButton != null)
+            {
+                self.View.RerenderMapButton.SetAsync(self.RerenderMapAsync);
+            }
+
+            self.SyncMapParameterSelections();
             self.SyncSkillList();
             self.RefreshSkillLayout();
 #if UNITY_EDITOR
@@ -49,6 +66,12 @@ namespace ET.Client
             {
                 self.View.ReloadSceneButton.onClick.RemoveAllListeners();
             }
+
+            if (self.View?.RerenderMapButton != null)
+            {
+                self.View.RerenderMapButton.onClick.RemoveAllListeners();
+            }
+
             self.DestroySkillItems();
             self.DisposeSkillCells();
             self.SkillSpecs.Clear();
@@ -119,6 +142,18 @@ namespace ET.Client
             }
 
             await SceneChangeHelper.SceneChangeTo2(root, currentScene.Name, currentScene.Id);
+        }
+
+        private static async UniTask RerenderMapAsync(this UIFormSkillComponent self)
+        {
+            GenMap genMap = self.GetGenMap();
+            if (genMap == null || genMap.IsDisposed)
+            {
+                return;
+            }
+
+            self.ApplyLakeParameterSelections(genMap);
+            await genMap.BuildAsync(false);
         }
 
         private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
@@ -501,6 +536,148 @@ namespace ET.Client
             }
 
             return Tables.Instance.DTSkill.GetOrDefault(skillId);
+        }
+
+        private static GenMap GetGenMap(this UIFormSkillComponent self)
+        {
+            Scene currentScene = self.Scene();
+            if (currentScene == null || currentScene.IsDisposed)
+            {
+                return null;
+            }
+
+            return currentScene.GetComponent<GenMap>();
+        }
+
+        private static void SyncMapParameterSelections(this UIFormSkillComponent self)
+        {
+            MonoUIFormSkill view = self.View;
+            GenMap genMap = self.GetGenMap();
+            if (object.ReferenceEquals(view, null) || genMap == null)
+            {
+                return;
+            }
+
+            self.SetLakeInlandMaskSelection(self.ResolveNearestOption(genMap.LakeInlandMaskRange, LakeInlandMaskTight, LakeInlandMaskDefault, LakeInlandMaskWide));
+            self.SetLakeCarveThresholdSelection(self.ResolveNearestOption(genMap.LakeCarveThreshold, LakeCarveThresholdSparse, LakeCarveThresholdDefault, LakeCarveThresholdDense));
+            self.SetLakeCarveStrengthSelection(self.ResolveNearestOption(genMap.LakeCarveStrength, LakeCarveStrengthShallow, LakeCarveStrengthDefault, LakeCarveStrengthDeep));
+        }
+
+        private static void ApplyLakeParameterSelections(this UIFormSkillComponent self, GenMap genMap)
+        {
+            if (genMap == null)
+            {
+                return;
+            }
+
+            genMap.LakeInlandMaskRange = self.GetSelectedLakeInlandMaskValue();
+            genMap.LakeCarveThreshold = self.GetSelectedLakeCarveThresholdValue();
+            genMap.LakeCarveStrength = self.GetSelectedLakeCarveStrengthValue();
+        }
+
+        private static void SetLakeInlandMaskSelection(this UIFormSkillComponent self, int option)
+        {
+            MonoUIFormSkill view = self.View;
+            if (object.ReferenceEquals(view, null))
+            {
+                return;
+            }
+
+            view.LakeInlandMaskTightToggle?.SetIsOnWithoutNotify(option == 0);
+            view.LakeInlandMaskDefaultToggle?.SetIsOnWithoutNotify(option == 1);
+            view.LakeInlandMaskWideToggle?.SetIsOnWithoutNotify(option == 2);
+        }
+
+        private static void SetLakeCarveThresholdSelection(this UIFormSkillComponent self, int option)
+        {
+            MonoUIFormSkill view = self.View;
+            if (object.ReferenceEquals(view, null))
+            {
+                return;
+            }
+
+            view.LakeCarveThresholdSparseToggle?.SetIsOnWithoutNotify(option == 0);
+            view.LakeCarveThresholdDefaultToggle?.SetIsOnWithoutNotify(option == 1);
+            view.LakeCarveThresholdDenseToggle?.SetIsOnWithoutNotify(option == 2);
+        }
+
+        private static void SetLakeCarveStrengthSelection(this UIFormSkillComponent self, int option)
+        {
+            MonoUIFormSkill view = self.View;
+            if (object.ReferenceEquals(view, null))
+            {
+                return;
+            }
+
+            view.LakeCarveStrengthShallowToggle?.SetIsOnWithoutNotify(option == 0);
+            view.LakeCarveStrengthDefaultToggle?.SetIsOnWithoutNotify(option == 1);
+            view.LakeCarveStrengthDeepToggle?.SetIsOnWithoutNotify(option == 2);
+        }
+
+        private static float GetSelectedLakeInlandMaskValue(this UIFormSkillComponent self)
+        {
+            MonoUIFormSkill view = self.View;
+            if (view?.LakeInlandMaskWideToggle != null && view.LakeInlandMaskWideToggle.isOn)
+            {
+                return LakeInlandMaskWide;
+            }
+
+            if (view?.LakeInlandMaskTightToggle != null && view.LakeInlandMaskTightToggle.isOn)
+            {
+                return LakeInlandMaskTight;
+            }
+
+            return LakeInlandMaskDefault;
+        }
+
+        private static float GetSelectedLakeCarveThresholdValue(this UIFormSkillComponent self)
+        {
+            MonoUIFormSkill view = self.View;
+            if (view?.LakeCarveThresholdSparseToggle != null && view.LakeCarveThresholdSparseToggle.isOn)
+            {
+                return LakeCarveThresholdSparse;
+            }
+
+            if (view?.LakeCarveThresholdDenseToggle != null && view.LakeCarveThresholdDenseToggle.isOn)
+            {
+                return LakeCarveThresholdDense;
+            }
+
+            return LakeCarveThresholdDefault;
+        }
+
+        private static float GetSelectedLakeCarveStrengthValue(this UIFormSkillComponent self)
+        {
+            MonoUIFormSkill view = self.View;
+            if (view?.LakeCarveStrengthShallowToggle != null && view.LakeCarveStrengthShallowToggle.isOn)
+            {
+                return LakeCarveStrengthShallow;
+            }
+
+            if (view?.LakeCarveStrengthDeepToggle != null && view.LakeCarveStrengthDeepToggle.isOn)
+            {
+                return LakeCarveStrengthDeep;
+            }
+
+            return LakeCarveStrengthDefault;
+        }
+
+        private static int ResolveNearestOption(this UIFormSkillComponent self, float value, float option0, float option1, float option2)
+        {
+            float distance0 = Mathf.Abs(value - option0);
+            float distance1 = Mathf.Abs(value - option1);
+            float distance2 = Mathf.Abs(value - option2);
+            if (distance0 <= distance1 && distance0 <= distance2)
+            {
+                return 0;
+            }
+
+            if (distance2 < distance1)
+            {
+                return 2;
+            }
+
+            return 1;
         }
     }
 }
