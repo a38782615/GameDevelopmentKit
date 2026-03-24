@@ -92,7 +92,22 @@ namespace ET
                 float radialDistance = math.length(normalized);
                 float continentNoise = Perlin.Fbm(normalized * 1.8f + seedOffset, 4) * 0.24f;
                 float coastNoise = Perlin.Fbm(normalized * 3.2f + seedOffset * 1.9f + new float2(13.1f, 5.7f), 3) * 0.12f;
+                // 先构造大陆主体，让边缘更容易坍缩成海岸。
                 float landScore = 0.6f - edgeDistance * 0.48f - radialDistance * 0.16f + continentNoise + coastNoise;
+
+                // 只在地图腹地施加“湖盆挖空”，避免把沿海切得过碎或直接打通到海洋。
+                float inlandMask =
+                    math.saturate((0.82f - radialDistance) / 0.24f) *
+                    math.saturate((0.74f - edgeDistance) / 0.18f);
+                inlandMask *= inlandMask;
+
+                // 低频噪声决定湖盆的大轮廓，高频噪声决定边缘破碎度。
+                float lakeBase = Perlin.Fbm(normalized * 4.1f + seedOffset * 2.7f + new float2(19.3f, 41.7f), 3);
+                float lakeDetail = Perlin.Fbm(normalized * 8.2f + seedOffset * 4.9f + new float2(-27.4f, 13.6f), 2);
+                float lakeCarve =
+                    math.saturate((lakeBase - 0.56f) * 1.9f + (lakeDetail - 0.58f) * 0.9f);
+                landScore -= lakeCarve * inlandMask * 0.42f;
+
                 return landScore > 0.08f;
             };
         }
