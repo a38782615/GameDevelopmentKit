@@ -16,6 +16,8 @@ namespace ET
 
         public static async UniTask InitAsync(this DrawMap self)
         {
+            // DrawMap 视图下的每个子节点都对应一层 DrawCarpet。
+            // 初始化阶段先把这些图层实体挂起来，后续统一分发地图节点。
             self.Grounds.Clear();
 
             int childCount = self.View.transform.childCount;
@@ -36,6 +38,7 @@ namespace ET
 
         public static void GenMap(this DrawMap self, BiomeMap map, int renderWidth, int renderHeight)
         {
+            // 清掉上一次生成结果，避免旧节点和旧贴图残留。
             foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
             {
                 DrawCarpet carpet = carpetRef.As();
@@ -44,6 +47,7 @@ namespace ET
 
             self.Map.Clear();
 
+            // 先准备逻辑坐标到渲染网格、再到世界坐标的换算参数。
             List<MapCenter> centers = map.MapGraph.centers;
             float logicWidth = map.MapGraph.Width;
             float logicHeight = map.MapGraph.Height;
@@ -58,13 +62,16 @@ namespace ET
             int mainTileCount = UVTileMain.TileCount * UVTileMain.TileCount;
             foreach (MapCenter center in centers)
             {
+                // 逐个把 Voronoi 多边形离散成渲染格子。
                 self.RasterizeCenter(center, renderWidth, renderHeight, logicToRenderX, logicToRenderY, renderCellWidth,
                     renderCellHeight, worldCellWidth, worldCellHeight, worldOriginX, worldOriginY, mainTileCount);
             }
 
+            // 离散化后如果还有空洞，再按最近中心点补齐。
             self.FillRasterizationGaps(centers, renderWidth, renderHeight, renderCellWidth, renderCellHeight, worldCellWidth,
                 worldCellHeight, worldOriginX, worldOriginY, mainTileCount);
 
+            // 把结果节点分发给所有图层，由各图层自行决定是否接收。
             foreach (MapNode node in self.Map.Values)
             {
                 foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
@@ -74,6 +81,7 @@ namespace ET
                 }
             }
 
+            // 节点收集完成后，再统一生成图层内容。
             foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
             {
                 DrawCarpet carpet = carpetRef.As();
@@ -81,15 +89,17 @@ namespace ET
             }
         }
 
-        private static void RasterizeCenter(this DrawMap self, MapCenter center, int renderWidth, int renderHeight, float logicToRenderX,
-        float logicToRenderY, float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight,
-        float worldOriginX, float worldOriginY, int mainTileCount)
+        private static void RasterizeCenter(this DrawMap self, MapCenter center, int renderWidth, int renderHeight,
+        float logicToRenderX, float logicToRenderY, float renderCellWidth, float renderCellHeight, float worldCellWidth,
+        float worldCellHeight, float worldOriginX, float worldOriginY, int mainTileCount)
         {
+            // 少于 3 个角点说明无法构成有效多边形。
             if (center == null || center.corners == null || center.corners.Count < 3)
             {
                 return;
             }
 
+            // 先求包围盒，避免对整张图做无意义遍历。
             float2 min = center.corners[0].point;
             float2 max = min;
             for (int i = 1; i < center.corners.Count; i++)
@@ -105,6 +115,7 @@ namespace ET
             int endY = math.min(renderHeight - 1, (int)math.ceil(max.y * logicToRenderY));
             for (int x = startX; x <= endX; x++)
             {
+                // 用格子中心点做采样。
                 float sampleX = (x + 0.5f) * renderCellWidth;
                 for (int y = startY; y <= endY; y++)
                 {
@@ -114,6 +125,7 @@ namespace ET
                         continue;
                     }
 
+                    // 每个命中的格子都会被包装成一个带边界信息的 MapNode。
                     MapNode node = self.BuildNode(center, x, y, sampleX, sampleY, worldCellWidth, worldCellHeight,
                         worldOriginX, worldOriginY, renderCellWidth, renderCellHeight, mainTileCount);
                     self.UpsertNode(node, sampleX, sampleY);
@@ -122,9 +134,10 @@ namespace ET
         }
 
         private static void FillRasterizationGaps(this DrawMap self, List<MapCenter> centers, int renderWidth, int renderHeight,
-        float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight,
-        float worldOriginX, float worldOriginY, int mainTileCount)
+        float renderCellWidth, float renderCellHeight, float worldCellWidth, float worldCellHeight, float worldOriginX,
+        float worldOriginY, int mainTileCount)
         {
+            // 用最近中心点给所有空格兜底，保证最终网格没有未归属节点。
             for (int x = 0; x < renderWidth; x++)
             {
                 float sampleX = (x + 0.5f) * renderCellWidth;
@@ -155,6 +168,7 @@ namespace ET
             int2 pos = node.Pos;
             if (self.Map.TryGetValue(pos, out MapNode currentNode))
             {
+                // 同一个格子若被多个中心覆盖，保留离采样点更近的那个。
                 float currentDistance = math.distancesq(new float2(sampleX, sampleY), currentNode.MapCenter.point);
                 float nextDistance = math.distancesq(new float2(sampleX, sampleY), node.MapCenter.point);
                 if (currentDistance <= nextDistance)
@@ -170,6 +184,8 @@ namespace ET
         float worldCellWidth, float worldCellHeight, float worldOriginX, float worldOriginY, float renderCellWidth,
         float renderCellHeight, int mainTileCount)
         {
+            // MapNode 是渲染层使用的离散单元，除了主中心点，
+            // 还会记录最近边、最近角、次中心点和混合强度。
             float2 samplePoint = new float2(sampleX, sampleY);
             MapCenter secondaryCenter = null;
             MapEdge boundaryEdge = null;
@@ -193,6 +209,7 @@ namespace ET
                     continue;
                 }
 
+                // 最近边决定主要的跨地貌过渡信息。
                 edgeDistance = distance;
                 boundaryEdge = edge;
                 secondaryCenter = otherCenter;
@@ -213,13 +230,18 @@ namespace ET
                     continue;
                 }
 
+                // 最近角点用于角落过渡补偿。
                 cornerDistance = distance;
                 boundaryCorner = corner;
             }
 
             MapTransitionKind transitionKind = ClassifyTransition(center, secondaryCenter, boundaryEdge, boundaryCorner);
-            float edgeBlend = secondaryCenter == null ? 0f : ComputeBlend(edgeDistance, GetEdgeBlendWidth(renderCellWidth, renderCellHeight, transitionKind));
-            float cornerBlend = boundaryCorner == null ? 0f : ComputeBlend(cornerDistance, GetCornerBlendRadius(renderCellWidth, renderCellHeight, transitionKind));
+            float edgeBlend = secondaryCenter == null
+                ? 0f
+                : ComputeBlend(edgeDistance, GetEdgeBlendWidth(renderCellWidth, renderCellHeight, transitionKind));
+            float cornerBlend = boundaryCorner == null
+                ? 0f
+                : ComputeBlend(cornerDistance, GetCornerBlendRadius(renderCellWidth, renderCellHeight, transitionKind));
             return new MapNode
             {
                 MapCenter = center,
@@ -239,6 +261,7 @@ namespace ET
 
         private static MapCenter FindNearestCenter(List<MapCenter> centers, float sampleX, float sampleY)
         {
+            // 空洞填充阶段不再求点在多边形内，只做最近中心点回退。
             MapCenter nearestCenter = null;
             float bestDistance = float.MaxValue;
             float2 samplePoint = new float2(sampleX, sampleY);
@@ -259,6 +282,7 @@ namespace ET
 
         private static bool ContainsPoint(MapCenter center, float x, float y)
         {
+            // 先判断是否正好落在边上，避免射线法在边界点上抖动。
             int cornerCount = center.corners.Count;
             for (int i = 0, j = cornerCount - 1; i < cornerCount; j = i, i++)
             {
@@ -270,6 +294,7 @@ namespace ET
                 }
             }
 
+            // 再用奇偶规则判断点是否位于多边形内部。
             bool oddNodes = false;
             for (int i = 0, j = cornerCount - 1; i < cornerCount; j = i, i++)
             {
@@ -293,6 +318,7 @@ namespace ET
 
         private static bool IsPointOnSegment(float2 point, float2 from, float2 to)
         {
+            // 叉积判断共线，点积判断是否落在线段范围内。
             float2 segment = to - from;
             float2 offset = point - from;
             float cross = segment.x * offset.y - segment.y * offset.x;
@@ -313,6 +339,7 @@ namespace ET
 
         private static MapCenter GetOtherCenter(MapEdge edge, MapCenter currentCenter)
         {
+            // 取出边另一侧的中心点，用于识别边界另一面的 biome。
             if (edge == null)
             {
                 return null;
@@ -333,6 +360,7 @@ namespace ET
 
         private static float DistancePointToSegment(float2 point, float2 start, float2 end)
         {
+            // 采样点到边界线段的最短距离，用来计算边缘混合强度。
             float2 segment = end - start;
             float segmentLengthSq = math.lengthsq(segment);
             if (segmentLengthSq <= 0.0001f)
@@ -347,6 +375,7 @@ namespace ET
 
         private static float ComputeBlend(float distance, float blendWidth)
         {
+            // 距离越近混合越强，超出混合带宽后归零。
             if (blendWidth <= 0.0001f || distance == float.MaxValue)
             {
                 return 0f;
@@ -355,8 +384,10 @@ namespace ET
             return math.saturate(1f - distance / blendWidth);
         }
 
-        private static float GetEdgeBlendWidth(float renderCellWidth, float renderCellHeight, MapTransitionKind transitionKind)
+        private static float GetEdgeBlendWidth(float renderCellWidth, float renderCellHeight,
+        MapTransitionKind transitionKind)
         {
+            // 不同过渡类型使用不同宽度，水岸通常需要更宽的缓冲带。
             float baseWidth = math.max(renderCellWidth, renderCellHeight);
             return transitionKind switch
             {
@@ -370,13 +401,17 @@ namespace ET
             };
         }
 
-        private static float GetCornerBlendRadius(float renderCellWidth, float renderCellHeight, MapTransitionKind transitionKind)
+        private static float GetCornerBlendRadius(float renderCellWidth, float renderCellHeight,
+        MapTransitionKind transitionKind)
         {
             return GetEdgeBlendWidth(renderCellWidth, renderCellHeight, transitionKind) * 0.8f;
         }
 
-        private static MapTransitionKind ClassifyTransition(MapCenter primaryCenter, MapCenter secondaryCenter, MapEdge edge, MapCorner corner)
+        private static MapTransitionKind ClassifyTransition(MapCenter primaryCenter, MapCenter secondaryCenter,
+        MapEdge edge, MapCorner corner)
         {
+            // 先按水陆，再按植被、寒冷、干旱等大类边界分类，
+            // 分类结果会直接影响混合宽度和图层判定。
             if (primaryCenter == null || secondaryCenter == null)
             {
                 return corner != null && corner.coast ? MapTransitionKind.WaterCoast : MapTransitionKind.None;
@@ -423,8 +458,8 @@ namespace ET
                 return 0;
             }
 
-            // 让同一个 Voronoi center 内的主地块纹理保持稳定，只做低频变化，
-            // 否则按单格随机会把分区轮廓抹平，看起来不像维诺图。
+            // 让同一个 Voronoi center 内的主地块纹理保持稳定，
+            // 只做低频变化，避免按单格随机把区域纹理打散。
             int coarseX = x >> 2;
             int coarseY = y >> 2;
             int hash = primaryCenter.index * 73856093;
@@ -446,6 +481,7 @@ namespace ET
 
         private static int HashToTileId(int hash, int mainTileCount)
         {
+            // 把任意哈希映射到主贴图索引范围内。
             return (hash & int.MaxValue) % mainTileCount;
         }
 
@@ -472,11 +508,13 @@ namespace ET
 
         private static bool IsDryBiome(Biome biome)
         {
-            return biome == Biome.Beach || biome == Biome.SubtropicalDesert || biome == Biome.TemperateDesert || biome == Biome.Scorched;
+            return biome == Biome.Beach || biome == Biome.SubtropicalDesert || biome == Biome.TemperateDesert ||
+                biome == Biome.Scorched;
         }
 
         public static bool IsGround(this DrawMap self, DrawCarpet carpet, MapNode node)
         {
+            // 由 DrawCarpet 的层类型决定当前节点是否属于这一层。
             if (carpet.CarType == 0)
             {
                 return true;
@@ -497,6 +535,7 @@ namespace ET
 
         public static bool IsWater(this DrawMap self, MapNode node)
         {
+            // 主中心是水则直接为水；否则允许通过边界混合把靠近水域的格子扩成水边。
             if (IsWaterBiome(node.MapCenter.biome))
             {
                 return true;
@@ -515,6 +554,7 @@ namespace ET
 
         public static bool IsGrass(this DrawMap self, MapNode node)
         {
+            // 草地图层只处理非水域节点，并根据绿色 biome 与过渡权重控制覆盖。
             if (IsWaterBiome(node.MapCenter.biome))
             {
                 return false;
@@ -534,7 +574,8 @@ namespace ET
                 return false;
             }
 
-            return node.TransitionKind == MapTransitionKind.VegetationEdge || node.TransitionKind == MapTransitionKind.TerrainEdge
+            return node.TransitionKind == MapTransitionKind.VegetationEdge ||
+                node.TransitionKind == MapTransitionKind.TerrainEdge
                 ? blend >= 0.72f
                 : false;
         }
