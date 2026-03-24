@@ -8,9 +8,17 @@ using Random = Unity.Mathematics.Random;
 
 namespace ET
 {
+    // MapGraph 是地图生成的核心结果对象。
+    // 它把 Voronoi 输出转换成可计算的拓扑图，并在这张图上继续推导：
+    // 1. 海洋/海岸/湖泊
+    // 2. 高程与下坡方向
+    // 3. 流域与河流
+    // 4. 湿度与最终群系
     public class MapGraph
     {
+        // 用近似 x 坐标做桶分组，避免 Voronoi 重复角点被反复创建。
         List<KeyValuePair<int, MapCorner>> _cornerMap = new List<KeyValuePair<int, MapCorner>>();
+        // 岛屿判定函数：true 表示陆地，false 表示水域。
         Func<float2, bool> inside;
         bool _needsMoreRandomness;
         private Random random;
@@ -21,6 +29,7 @@ namespace ET
         public List<MapCorner> corners = new List<MapCorner>();
         public List<MapEdge> edges = new List<MapEdge>();
 
+        // 只返回内陆角点。海洋和海岸角点在后续重分布时不参与排序。
         private List<MapCorner> LandCorners
         {
             get { return corners.Where(p => !p.ocean && !p.coast).ToList(); }
@@ -50,56 +59,42 @@ namespace ET
             Height = height;
             inside = checkIsland;
             random = Random.CreateFromIndex(seed == 0 ? 1u : seed);
-            //通常来说，比较踏实的方案是先定义高度图，
-            //再将海岸线所在位置设定成海平面高度。
-            //这里我们没有采用这种办法，我们一开始就得到了这种方案想要生成的漂亮海岸线，
-            //可以从它来倒推计算高度图。
-            //我将海拔高度定义为与海岸线之间的距离。我本来希望用多边形的中心点来计算高度，但后来发现用顶角效果更好。顶角间的边可以视为山脊与峡谷。
-            //计算出顶角高度(Corner.elevation)后，
-            //求顶角高度平均值就能算出多边形的高度(Center.elevation)。参看函数
+            // 生成顺序是先搭建图，再逐步往图上附加地理属性。
+            // 这里不是“先有高度图再裁海岸线”，而是先从岛屿形状和 Voronoi 拓扑出发，
+            // 反推适合当前海岸线的高度、水流和湿度分布。
             BuildGraph(points, voronoi);
+
+            // 先在角点层级计算高程，再回写到多边形中心。
             AssignCornerElevations();
             AssignOceanCoastAndLand(lakeThreshold);
             RedistributeElevations();
             AssignPolygonElevations();
-            // Determine downslope paths.
-            CalculateDownslopes();
 
-            // Determine watersheds: for every corner, where does it flow
-            // out into the ocean? 
+            // 高程稳定后，才能得到水流方向和流域。
+            CalculateDownslopes();
             CalculateWatersheds();
 
-            // Create rivers.
+            // 河流依赖下坡链路，因此在流域之后生成。
             CreateRivers();
 
-            // Determine moisture at corners, starting at rivers
-            // and lakes, but not oceans. Then redistribute
-            // moisture to cover the entire range evenly from 0.0
-            // to 1.0. Then assign polygon moisture as the average
-            // of the corner moisture.
+            // 湿度先在角点传播，再聚合到多边形中心。
             AssignCornerMoisture();
             RedistributeMoisture();
             AssignPolygonMoisture();
 
+            // 最终用高度和湿度共同决定群系类型。
             centers.ForEach(p => p.biome = GetBiome(p));
         }
 
         private void BuildGraph(IEnumerable<float2> points, ET.Voronoi voronoi)
         {
-            // Build graph data structure in 'edges', 'centers', 'corners',
-            // based on information in the Voronoi results: point.neighbors
-            // will be a list of neighboring points of the same type (corner
-            // or center); point.edges will be a list of edges that include
-            // that point. Each edge connects to four points: the Voronoi edge
-            // edge.{v0,v1} and its dual Delaunay triangle edge edge.{d0,d1}.
-            // For boundary polygons, the Delaunay edge will have one null
-            // point, and the Voronoi edge may be null.
+            // 把 Voronoi 的几何结果转换成项目自己的图结构：
+            // center 表示多边形中心，corner 表示多边形顶点，edge 同时连接二者。
             var libedges = voronoi.Edges();
 
             var centerLookup = new Dictionary<float2?, MapCenter>();
 
-            // Build Center objects for each of the points, and a lookup map
-            // to find those Center objects again as we build the graph
+            // 每个采样点先对应一个 MapCenter，后面通过坐标回查。
             foreach (var point in points)
             {
                 var p = new MapCenter { index = centers.Count, point = point };
@@ -107,8 +102,7 @@ namespace ET
                 centerLookup[point] = p;
             }
 
-            // Workaround for Voronoi lib bug: we need to call region()
-            // before Edges or neighboringSites are available
+            // 这里先触发一次 Region，是对 Voronoi 库行为的兼容处理。
             foreach (var p in centers)
             {
                 voronoi.Region(p.point);
@@ -119,14 +113,14 @@ namespace ET
                 var dedge = libedge.DelaunayLine();
                 var vedge = libedge.VoronoiEdge();
 
-                // Fill the graph data. Make an Edge object corresponding to
-                // the edge from the voronoi library.
+                // 一条逻辑边同时记录：
+                // v0/v1: Voronoi 顶点
+                // d0/d1: 这条边两侧的多边形中心
                 var edge = new MapEdge
                 {
                     index = edges.Count,
                     river = 0,
 
-                    // Edges point to corners. Edges point to centers. 
                     v0 = MakeCorner(vedge.p0),
                     v1 = MakeCorner(vedge.p1),
                     d0 = centerLookup[dedge.p0],
@@ -139,7 +133,7 @@ namespace ET
 
                 edges.Add(edge);
 
-                // Centers point to edges. Corners point to edges.
+                // 建立 center <-> edge、corner <-> edge 的直接引用。
                 if (edge.d0 != null)
                 {
                     edge.d0.borders.Add(edge);
@@ -160,21 +154,21 @@ namespace ET
                     edge.v1.protrudes.Add(edge);
                 }
 
-                // Centers point to centers.
+                // 由共享边得到相邻多边形。
                 if (edge.d0 != null && edge.d1 != null)
                 {
                     AddToCenterList(edge.d0.neighbors, edge.d1);
                     AddToCenterList(edge.d1.neighbors, edge.d0);
                 }
 
-                // Corners point to corners
+                // 由同一条 Voronoi 边得到相邻角点。
                 if (edge.v0 != null && edge.v1 != null)
                 {
                     AddToCornerList(edge.v0.adjacent, edge.v1);
                     AddToCornerList(edge.v1.adjacent, edge.v0);
                 }
 
-                // Centers point to corners
+                // 多边形中心记录它拥有的角点。
                 if (edge.d0 != null)
                 {
                     AddToCornerList(edge.d0.corners, edge.v0);
@@ -187,7 +181,7 @@ namespace ET
                     AddToCornerList(edge.d1.corners, edge.v1);
                 }
 
-                // Corners point to centers
+                // 角点反向记录它接触到的多边形。
                 if (edge.v0 != null)
                 {
                     AddToCenterList(edge.v0.touches, edge.d0);
@@ -201,7 +195,8 @@ namespace ET
                 }
             }
 
-            // TODO: use edges to determine these
+            // 有些边界角点不会完整出现在 Voronoi 返回值里，这里手补四个外框角，
+            // 否则后面的多边形填充会缺口。
             var topLeft = centers.OrderBy(p => p.point.x + p.point.y).First();
             AddCorner(topLeft, 0, 0);
 
@@ -214,7 +209,7 @@ namespace ET
             var bottomLeft = centers.OrderByDescending(p => p.point.x + Height - p.point.y).First();
             AddCorner(bottomLeft, Width, 0);
 
-            // required for polygon fill
+            // 多边形角点按顺时针排序，便于后续渲染和填充。
             foreach (var center in centers)
             {
                 center.corners.Sort(ClockwiseComparison(center));
@@ -223,12 +218,14 @@ namespace ET
 
         private static void AddCorner(MapCenter topLeft, int x, int y)
         {
+            // 如果这个中心点本身不在外框角上，就补一个边界角点进去。
             if (topLeft.point.x != x || topLeft.point.y != y)
                 topLeft.corners.Add(new MapCorner { ocean = true, point = new float2(x, y) });
         }
 
         private Comparison<MapCorner> ClockwiseComparison(MapCenter mapCenter)
         {
+            // 用叉积符号比较相对中心点的旋转方向，达到极角排序的效果。
             Comparison<MapCorner> result =
                 (a, b) =>
                 {
@@ -240,18 +237,13 @@ namespace ET
 
         private MapCorner MakeCorner(float2? nullablePoint)
         {
-            // The Voronoi library generates multiple Point objects for
-            // corners, and we need to canonicalize to one Corner object.
-            // To make lookup fast, we keep an array of Points, bucketed by
-            // x value, and then we only have to look at other Points in
-            // nearby buckets. When we fail to find one, we'll create a new
-            // Corner object.
-
             if (nullablePoint == null)
                 return null;
 
             var point = nullablePoint.Value;
 
+            // Voronoi 库可能为同一个几何顶点返回多个实例。
+            // 这里按近似 x 坐标分桶，再做距离判定，把它们规范成同一个 MapCorner。
             for (var i = (int)(point.x - 1); i <= (int)(point.x + 1); i++)
             {
                 foreach (var kvp in _cornerMap.Where(p => p.Key == i))
@@ -274,6 +266,7 @@ namespace ET
 
         private void AddToCornerList(List<MapCorner> v, MapCorner x)
         {
+            // 图结构里大量依赖唯一邻接关系，这里统一防空、防重复。
             if (x != null && v.IndexOf(x) < 0)
                 v.Add(x);
         }
@@ -288,16 +281,9 @@ namespace ET
 
         private void AssignCornerElevations()
         {
-            // Determine elevations and water at Voronoi corners. By
-            // construction, we have no local minima. This is important for
-            // the downslope vectors later, which are used in the river
-            // construction algorithm. Also by construction, inlets/bays
-            // push low elevation areas inland, which means many rivers end
-            // up flowing out through them. Also by construction, lakes
-            // often end up on river paths because they don't raise the
-            // elevation as much as other terrain does.
-
-            //var q:Corner, s:Corner;
+            // 先在角点层级求“离海岸有多远”。
+            // 边界角点高度固定为 0，然后向内做广度扩散；
+            // 这样天然不会出现封闭低洼点，后面的河流总能找到下坡路径。
             var queue = new Queue<MapCorner>();
 
             foreach (var q in corners)
@@ -307,7 +293,7 @@ namespace ET
 
             foreach (var q in corners)
             {
-                // The edges of the map are elevation 0
+                // 外框边界直接视为海平面。
                 if (q.border)
                 {
                     q.elevation = 0;
@@ -319,38 +305,25 @@ namespace ET
                 }
             }
 
-            // Traverse the graph and assign elevations to each point. As we
-            // move away from the map border, increase the elevations. This
-            // guarantees that rivers always have a way down to the coast by
-            // going downhill (no local minima).
             while (queue.Any())
             {
                 var q = queue.Dequeue();
 
                 foreach (var s in q.adjacent)
                 {
-                    // Every step up is epsilon over water or 1 over land. The
-                    // number doesn't matter because we'll rescale the
-                    // elevations later.
+                    // 经过水域只加很小的高度，经过陆地则显著抬高。
+                    // 后面还会做一次重分布，所以这里只关注相对次序。
                     var newElevation = 0.01f + q.elevation;
                     if (!q.water && !s.water)
                     {
                         newElevation += 1;
                         if (_needsMoreRandomness)
                         {
-                            // HACK: the map looks nice because of randomness of
-                            // points, randomness of rivers, and randomness of
-                            // edges. Without random point selection, I needed to
-                            // inject some more randomness to make maps look
-                            // nicer. I'm doing it here, with elevations, but I
-                            // think there must be a better way. This hack is only
-                            // used with square/hexagon grids.
+                            // 仅在规则网格模式下额外加入扰动，避免地形层次过于机械。
                             newElevation += random.NextFloat();
                         }
                     }
 
-                    // If this point changed, we'll add it to the queue so
-                    // that we can process its neighbors too.
                     if (newElevation < s.elevation)
                     {
                         s.elevation = newElevation;
@@ -362,20 +335,19 @@ namespace ET
 
         private void AssignOceanCoastAndLand(float lakeThreshold)
         {
-            // Compute polygon attributes 'ocean' and 'water' based on the
-            // corner attributes. Count the water corners per
-            // polygon. Oceans are all polygons connected to the edge of the
-            // map. In the first pass, mark the edges of the map as ocean;
-            // in the second pass, mark any water-containing polygon
-            // connected an ocean as ocean.
+            // 先把角点级别的水信息汇总到多边形中心，再从中心反写回角点。
+            // 这里区分三个概念：
+            // water: 任何水域
+            // ocean: 与地图外边界连通的水域
+            // coast: 同时接触海洋和陆地的过渡带
             var queue = new Queue<MapCenter>();
-            //var p:Center, q:Corner, r:Center, numWater:int;
 
             foreach (var p in centers)
             {
                 var numWater = 0;
                 foreach (var q in p.corners)
                 {
+                    // 接触外框的多边形直接判定为海洋起点。
                     if (q.border)
                     {
                         p.border = true;
@@ -391,6 +363,7 @@ namespace ET
                 p.water = (p.ocean || numWater >= p.corners.Count * lakeThreshold);
             }
 
+            // 用 BFS 把与海洋连通的水域都标成 ocean。
             while (queue.Any())
             {
                 var p = queue.Dequeue();
@@ -404,9 +377,7 @@ namespace ET
                 }
             }
 
-            // Set the polygon attribute 'coast' based on its neighbors. If
-            // it has at least one ocean and at least one land neighbor,
-            // then this is a coastal polygon.
+            // 同时挨着海和陆地的多边形就是海岸。
             foreach (var p in centers)
             {
                 var numOcean = 0;
@@ -420,10 +391,7 @@ namespace ET
                 p.coast = (numOcean > 0) && (numLand > 0);
             }
 
-            // Set the corner attributes based on the computed polygon
-            // attributes. If all polygons connected to this corner are
-            // ocean, then it's ocean; if all are land, then it's land;
-            // otherwise it's coast.
+            // 最后把中心级别的判定再同步回角点，保证 corner/center 语义一致。
             foreach (var q in corners)
             {
                 var numOcean = 0;
@@ -442,41 +410,27 @@ namespace ET
 
         private void RedistributeElevations()
         {
-            // Change the overall distribution of elevations so that lower
-            // elevations are more common than higher
-            // elevations. Specifically, we want elevation X to have frequency
-            // (1-X).  To do this we will sort the corners, then set each
-            // corner to its desired elevation.
-
+            // 重新分布高程，让低地面积大、高山面积小。
+            // 这样结果更像自然地形，而不是线性抬升后的平均坡面。
             var locations = LandCorners;
-            // SCALE_FACTOR increases the mountain area. At 1.0 the maximum
-            // elevation barely shows up on the map, so we set it to 1.1.
             var SCALE_FACTOR = 1.1f;
             locations.Sort((a, b) => a.elevation.CompareTo(b.elevation));
             for (int i = 0; i < locations.Count; i++)
             {
-                // Let y(x) be the total area that we want at elevation <= x.
-                // We want the higher elevations to occur less than lower
-                // ones, and set the area to be y(x) = 1 - (1-x)^2.
                 var y = (float)i / (locations.Count - 1);
-                // Now we have to solve for x, given the known y.
-                //  *  y = 1 - (1-x)^2
-                //  *  y = 1 - (1 - 2x + x^2)
-                //  *  y = 2x - x^2
-                //  *  x^2 - 2x + y = 0
-                // From this we can use the quadratic equation to get:
+                // 通过一个非线性映射压低中低海拔、拉开高海拔尾部。
                 float x = math.sqrt(SCALE_FACTOR) - math.sqrt(SCALE_FACTOR * (1 - y));
-                if (x > 1.0) x = 1.0f; // TODO: does this break downslopes?
+                if (x > 1.0) x = 1.0f;
                 locations[i].elevation = x;
             }
 
-            // Assign elevations to non-land corners
+            // 海洋和海岸保持海平面，不参与山地抬升。
             corners.Where(p => p.ocean || p.coast).ToList().ForEach(p => p.elevation = 0);
         }
 
         private void AssignPolygonElevations()
         {
-            // Polygon elevations are the average of their corners
+            // 多边形高程取其所有角点高程的平均值。
             foreach (var p in centers)
             {
                 var sumElevation = 0.0f;
@@ -491,10 +445,8 @@ namespace ET
 
         private void CalculateDownslopes()
         {
-            // Calculate downslope pointers.  At every point, we point to the
-            // point downstream from it, or to itself.  This is used for
-            // generating rivers and watersheds.
-
+            // 每个角点记录一个“最低相邻点”作为下坡方向。
+            // 这相当于为后续河流和流域计算搭一张有向图。
             foreach (var q in corners)
             {
                 var r = q;
@@ -512,13 +464,8 @@ namespace ET
 
         private void CalculateWatersheds()
         {
-            // Calculate the watershed of every land point. The watershed is
-            // the last downstream land point in the downslope graph. TODO:
-            // watersheds are currently calculated on corners, but it'd be
-            // more useful to compute them on polygon centers so that every
-            // polygon can be marked as being in one watershed.
-
-            // Initially the watershed pointer points downslope one step.      
+            // watershed 表示这个角点最终汇入哪一条出海路径。
+            // 初始时先指向一步下坡点，后面再沿着下坡链不断压缩。
             foreach (var q in corners)
             {
                 q.watershed = q;
@@ -528,11 +475,7 @@ namespace ET
                 }
             }
 
-            // Follow the downslope pointers to the coast. Limit to 100
-            // iterations although most of the time with numPoints==2000 it
-            // only takes 20 iterations because most points are not far from
-            // a coast.  TODO: can run faster by looking at
-            // p.watershed.watershed instead of p.downslope.watershed.
+            // 反复沿下坡关系追踪，直到稳定在海岸出口附近。
             for (var i = 0; i < 100; i++)
             {
                 var changed = false;
@@ -549,7 +492,7 @@ namespace ET
                 if (!changed) break;
             }
 
-            // How big is each watershed?
+            // 顺便统计每个流域终点被多少角点汇入。
             foreach (var q in corners)
             {
                 var r = q.watershed;
@@ -559,13 +502,11 @@ namespace ET
 
         private void CreateRivers()
         {
-            // Create rivers along edges. Pick a random corner point, then
-            // move downslope. Mark the edges and corners as rivers.
+            // 从若干随机高地角点出发，沿 downslope 一路向海岸走，路径上的边记为河流。
             for (var i = 0; i < (Width + Height) / 4; i++)
             {
                 var q = corners[random.NextInt(0, corners.Count - 1)];
                 if (q.ocean || q.elevation < 0.3 || q.elevation > 0.9) continue;
-                // Bias rivers to go west: if (q.downslope.x > q.x) continue;
                 while (!q.coast)
                 {
                     if (q == q.downslope)
@@ -576,7 +517,7 @@ namespace ET
                     var edge = lookupEdgeFromCorner(q, q.downslope);
                     edge.river = edge.river + 1;
                     q.river++;
-                    q.downslope.river++; // TODO: fix double count
+                    q.downslope.river++;
                     q = q.downslope;
                 }
             }
@@ -584,12 +525,9 @@ namespace ET
 
         private void AssignCornerMoisture()
         {
-            // Calculate moisture. Freshwater sources spread moisture: rivers
-            // and lakes (not oceans). Saltwater sources have moisture but do
-            // not spread it (we set it at the end, after propagation).
-
+            // 湿度从淡水源开始传播：
+            // 湖泊和河流是扩散源，海洋只在最后直接赋满，不参与内陆扩散。
             var queue = new Queue<MapCorner>();
-            // Fresh water
             foreach (var q in corners)
             {
                 if ((q.water || q.river > 0) && !q.ocean)
@@ -603,6 +541,7 @@ namespace ET
                 }
             }
 
+            // 每经过一层邻接，湿度按 0.9 衰减。
             while (queue.Any())
             {
                 var q = queue.Dequeue();
@@ -618,7 +557,7 @@ namespace ET
                 }
             }
 
-            // Salt water
+            // 海洋和海岸统一视为最高湿度。
             foreach (var q in corners)
             {
                 if (q.ocean || q.coast)
@@ -630,7 +569,7 @@ namespace ET
 
         private void AssignPolygonMoisture()
         {
-            // Polygon moisture is the average of the moisture at corners
+            // 多边形湿度取角点湿度平均值，并顺手把异常值截到 1。
             foreach (var p in centers)
             {
                 var sumMoisture = 0.0f;
@@ -647,6 +586,7 @@ namespace ET
 
         public MapEdge lookupEdgeFromCenter(MapCenter p, MapCenter r)
         {
+            // 查找两个相邻多边形共享的那条边。
             foreach (var edge in p.borders)
             {
                 if (edge.d0 == r || edge.d1 == r)
@@ -658,6 +598,7 @@ namespace ET
 
         public MapEdge lookupEdgeFromCorner(MapCorner q, MapCorner s)
         {
+            // 查找两个相邻角点之间的那条边。
             foreach (var edge in q.protrudes)
             {
                 if (edge.v0 == s || edge.v1 == s)
@@ -669,7 +610,7 @@ namespace ET
 
         private void RedistributeMoisture()
         {
-            // Change the overall distribution of moisture to be evenly distributed.
+            // 把内陆湿度重新拉伸到 0~1，保证 biome 划分时能覆盖完整区间。
             var locations = LandCorners;
             locations.Sort((a, b) => a.moisture.CompareTo(b.moisture));
 
@@ -681,6 +622,10 @@ namespace ET
 
         static Biome GetBiome(MapCenter p)
         {
+            // biome 分类完全由三类信息决定：
+            // 1. 是否是海洋/水域/海岸
+            // 2. 海拔区间
+            // 3. 湿度区间
             if (p.ocean)
             {
                 return Biome.Ocean;
@@ -726,6 +671,9 @@ namespace ET
 
         public static IEnumerable<float2> RelaxPoints(IEnumerable<float2> startingPoints, float width, float height)
         {
+            // Lloyd Relaxation:
+            // 先求每个点对应的 Voronoi 区域，再把点移动到区域质心，
+            // 从而让采样点分布更均匀。
             ET.Voronoi v =
                 new ET.Voronoi(startingPoints.ToList(), null, new RectangleF(0, 0, width, height));
             foreach (var point in startingPoints)
