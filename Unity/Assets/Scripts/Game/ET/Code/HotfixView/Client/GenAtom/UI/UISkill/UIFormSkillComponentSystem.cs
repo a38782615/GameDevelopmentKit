@@ -1,3 +1,4 @@
+using System.Globalization;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
@@ -22,12 +23,6 @@ namespace ET.Client
         private const float LakeInlandMaskTight = 0.76f;
         private const float LakeInlandMaskDefault = 0.82f;
         private const float LakeInlandMaskWide = 0.88f;
-        private const float LakeCarveThresholdSparse = 0.62f;
-        private const float LakeCarveThresholdDefault = 0.56f;
-        private const float LakeCarveThresholdDense = 0.5f;
-        private const float LakeCarveStrengthShallow = 0.3f;
-        private const float LakeCarveStrengthDefault = 0.42f;
-        private const float LakeCarveStrengthDeep = 0.54f;
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkillComponent self)
@@ -153,7 +148,7 @@ namespace ET.Client
             }
 
             self.ApplyLakeParameterSelections(genMap);
-            await genMap.BuildAsync(false);
+            await genMap.BuildAsync(true);
         }
 
         private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
@@ -559,8 +554,8 @@ namespace ET.Client
             }
 
             self.SetLakeInlandMaskSelection(self.ResolveNearestOption(genMap.LakeInlandMaskRange, LakeInlandMaskTight, LakeInlandMaskDefault, LakeInlandMaskWide));
-            self.SetLakeCarveThresholdSelection(self.ResolveNearestOption(genMap.LakeCarveThreshold, LakeCarveThresholdSparse, LakeCarveThresholdDefault, LakeCarveThresholdDense));
-            self.SetLakeCarveStrengthSelection(self.ResolveNearestOption(genMap.LakeCarveStrength, LakeCarveStrengthShallow, LakeCarveStrengthDefault, LakeCarveStrengthDeep));
+            self.SetLakeFloatInput(view.LakeCarveThresholdInputField, genMap.LakeCarveThreshold);
+            self.SetLakeFloatInput(view.LakeCarveStrengthInputField, genMap.LakeCarveStrength);
         }
 
         private static void ApplyLakeParameterSelections(this UIFormSkillComponent self, GenMap genMap)
@@ -571,8 +566,8 @@ namespace ET.Client
             }
 
             genMap.LakeInlandMaskRange = self.GetSelectedLakeInlandMaskValue();
-            genMap.LakeCarveThreshold = self.GetSelectedLakeCarveThresholdValue();
-            genMap.LakeCarveStrength = self.GetSelectedLakeCarveStrengthValue();
+            genMap.LakeCarveThreshold = self.GetLakeFloatInputValue(self.View?.LakeCarveThresholdInputField, genMap.LakeCarveThreshold);
+            genMap.LakeCarveStrength = self.GetLakeFloatInputValue(self.View?.LakeCarveStrengthInputField, genMap.LakeCarveStrength);
         }
 
         private static void SetLakeInlandMaskSelection(this UIFormSkillComponent self, int option)
@@ -586,32 +581,6 @@ namespace ET.Client
             view.LakeInlandMaskTightToggle?.SetIsOnWithoutNotify(option == 0);
             view.LakeInlandMaskDefaultToggle?.SetIsOnWithoutNotify(option == 1);
             view.LakeInlandMaskWideToggle?.SetIsOnWithoutNotify(option == 2);
-        }
-
-        private static void SetLakeCarveThresholdSelection(this UIFormSkillComponent self, int option)
-        {
-            MonoUIFormSkill view = self.View;
-            if (object.ReferenceEquals(view, null))
-            {
-                return;
-            }
-
-            view.LakeCarveThresholdSparseToggle?.SetIsOnWithoutNotify(option == 0);
-            view.LakeCarveThresholdDefaultToggle?.SetIsOnWithoutNotify(option == 1);
-            view.LakeCarveThresholdDenseToggle?.SetIsOnWithoutNotify(option == 2);
-        }
-
-        private static void SetLakeCarveStrengthSelection(this UIFormSkillComponent self, int option)
-        {
-            MonoUIFormSkill view = self.View;
-            if (object.ReferenceEquals(view, null))
-            {
-                return;
-            }
-
-            view.LakeCarveStrengthShallowToggle?.SetIsOnWithoutNotify(option == 0);
-            view.LakeCarveStrengthDefaultToggle?.SetIsOnWithoutNotify(option == 1);
-            view.LakeCarveStrengthDeepToggle?.SetIsOnWithoutNotify(option == 2);
         }
 
         private static float GetSelectedLakeInlandMaskValue(this UIFormSkillComponent self)
@@ -630,36 +599,35 @@ namespace ET.Client
             return LakeInlandMaskDefault;
         }
 
-        private static float GetSelectedLakeCarveThresholdValue(this UIFormSkillComponent self)
+        private static void SetLakeFloatInput(this UIFormSkillComponent self, InputField inputField, float value)
         {
-            MonoUIFormSkill view = self.View;
-            if (view?.LakeCarveThresholdSparseToggle != null && view.LakeCarveThresholdSparseToggle.isOn)
+            if (inputField == null)
             {
-                return LakeCarveThresholdSparse;
+                return;
             }
 
-            if (view?.LakeCarveThresholdDenseToggle != null && view.LakeCarveThresholdDenseToggle.isOn)
-            {
-                return LakeCarveThresholdDense;
-            }
-
-            return LakeCarveThresholdDefault;
+            inputField.text = value.ToString("0.###", CultureInfo.InvariantCulture);
         }
 
-        private static float GetSelectedLakeCarveStrengthValue(this UIFormSkillComponent self)
+        private static float GetLakeFloatInputValue(this UIFormSkillComponent self, InputField inputField, float fallbackValue)
         {
-            MonoUIFormSkill view = self.View;
-            if (view?.LakeCarveStrengthShallowToggle != null && view.LakeCarveStrengthShallowToggle.isOn)
+            if (inputField == null)
             {
-                return LakeCarveStrengthShallow;
+                return fallbackValue;
             }
 
-            if (view?.LakeCarveStrengthDeepToggle != null && view.LakeCarveStrengthDeepToggle.isOn)
+            string text = inputField.text?.Trim();
+            if (string.IsNullOrEmpty(text))
             {
-                return LakeCarveStrengthDeep;
+                return fallbackValue;
             }
 
-            return LakeCarveStrengthDefault;
+            if (float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
+            {
+                return value;
+            }
+
+            return float.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out value) ? value : fallbackValue;
         }
 
         private static int ResolveNearestOption(this UIFormSkillComponent self, float value, float option0, float option1, float option2)

@@ -7,17 +7,9 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUISkillItem m_ItemTemplateSkillItemTemplate;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveStrengthDeepToggle;
+        private UnityEngine.UI.InputField m_LakeCarveStrengthInputField;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveStrengthDefaultToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveStrengthShallowToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveThresholdDefaultToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveThresholdDenseToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Toggle m_LakeCarveThresholdSparseToggle;
+        private UnityEngine.UI.InputField m_LakeCarveThresholdInputField;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Toggle m_LakeInlandMaskDefaultToggle;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
@@ -37,12 +29,8 @@ namespace ET.Client
 
 
         public ET.Client.MonoUISkillItem ItemTemplateSkillItemTemplate => m_ItemTemplateSkillItemTemplate;
-        public UnityEngine.UI.Toggle LakeCarveStrengthDeepToggle => m_LakeCarveStrengthDeepToggle;
-        public UnityEngine.UI.Toggle LakeCarveStrengthDefaultToggle => m_LakeCarveStrengthDefaultToggle;
-        public UnityEngine.UI.Toggle LakeCarveStrengthShallowToggle => m_LakeCarveStrengthShallowToggle;
-        public UnityEngine.UI.Toggle LakeCarveThresholdDefaultToggle => m_LakeCarveThresholdDefaultToggle;
-        public UnityEngine.UI.Toggle LakeCarveThresholdDenseToggle => m_LakeCarveThresholdDenseToggle;
-        public UnityEngine.UI.Toggle LakeCarveThresholdSparseToggle => m_LakeCarveThresholdSparseToggle;
+        public UnityEngine.UI.InputField LakeCarveStrengthInputField => m_LakeCarveStrengthInputField;
+        public UnityEngine.UI.InputField LakeCarveThresholdInputField => m_LakeCarveThresholdInputField;
         public UnityEngine.UI.Toggle LakeInlandMaskDefaultToggle => m_LakeInlandMaskDefaultToggle;
         public UnityEngine.UI.Toggle LakeInlandMaskTightToggle => m_LakeInlandMaskTightToggle;
         public UnityEngine.UI.Toggle LakeInlandMaskWideToggle => m_LakeInlandMaskWideToggle;
@@ -62,12 +50,8 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_ItemTemplateSkillItemTemplate == null) return true;
-            if (this.m_LakeCarveStrengthDeepToggle == null) return true;
-            if (this.m_LakeCarveStrengthDefaultToggle == null) return true;
-            if (this.m_LakeCarveStrengthShallowToggle == null) return true;
-            if (this.m_LakeCarveThresholdDefaultToggle == null) return true;
-            if (this.m_LakeCarveThresholdDenseToggle == null) return true;
-            if (this.m_LakeCarveThresholdSparseToggle == null) return true;
+            if (this.m_LakeCarveStrengthInputField == null) return true;
+            if (this.m_LakeCarveThresholdInputField == null) return true;
             if (this.m_LakeInlandMaskDefaultToggle == null) return true;
             if (this.m_LakeInlandMaskTightToggle == null) return true;
             if (this.m_LakeInlandMaskWideToggle == null) return true;

@@ -144,35 +144,21 @@ namespace ET.Editor
                 "Wide",
                 false);
 
-            CreateMapControlRow(
+            CreateMapInputRow(
                 panel.transform,
                 "LakeCarveThresholdRow",
                 "Carve Threshold",
                 -116f,
-                "LakeCarveThresholdSparse_Toggle",
-                "Sparse",
-                false,
-                "LakeCarveThresholdDefault_Toggle",
-                "Default",
-                true,
-                "LakeCarveThresholdDense_Toggle",
-                "Dense",
-                false);
+                "LakeCarveThreshold_InputField",
+                "0.56");
 
-            CreateMapControlRow(
+            CreateMapInputRow(
                 panel.transform,
                 "LakeCarveStrengthRow",
                 "Carve Strength",
                 -172f,
-                "LakeCarveStrengthShallow_Toggle",
-                "Shallow",
-                false,
-                "LakeCarveStrengthDefault_Toggle",
-                "Default",
-                true,
-                "LakeCarveStrengthDeep_Toggle",
-                "Deep",
-                false);
+                "LakeCarveStrength_InputField",
+                "0.42");
 
             return rectTransform;
         }
@@ -415,6 +401,90 @@ namespace ET.Editor
             labelRect.offsetMin = new Vector2(18f, 0f);
             labelRect.offsetMax = new Vector2(-6f, 0f);
             optionLabel.color = new Color(0.95f, 0.97f, 1f, 0.96f);
+        }
+
+        private static void CreateMapInputRow(Transform parent, string rowName, string label, float anchoredY, string inputFieldName, string defaultValue)
+        {
+            GameObject rowObject = new GameObject(rowName, typeof(RectTransform));
+            rowObject.transform.SetParent(parent, false);
+
+            RectTransform rowRect = rowObject.GetComponent<RectTransform>();
+            rowRect.anchorMin = new Vector2(0f, 1f);
+            rowRect.anchorMax = new Vector2(1f, 1f);
+            rowRect.pivot = new Vector2(0.5f, 1f);
+            rowRect.anchoredPosition = new Vector2(0f, anchoredY);
+            rowRect.sizeDelta = new Vector2(-28f, 44f);
+
+            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 18f, TextAlignmentOptions.Left);
+            RectTransform labelRect = rowLabel.rectTransform;
+            labelRect.anchorMin = new Vector2(0f, 0f);
+            labelRect.anchorMax = new Vector2(0f, 1f);
+            labelRect.pivot = new Vector2(0f, 0.5f);
+            labelRect.anchoredPosition = new Vector2(16f, 0f);
+            labelRect.sizeDelta = new Vector2(128f, 0f);
+            rowLabel.color = new Color(0.84f, 0.89f, 0.95f, 0.94f);
+
+            CreateNumericInputField(rowObject.transform, inputFieldName, new Vector2(-16f, 0f), new Vector2(180f, 32f), defaultValue);
+        }
+
+        private static void CreateNumericInputField(Transform parent, string name, Vector2 anchoredPosition, Vector2 sizeDelta, string defaultValue)
+        {
+            GameObject inputObject = new GameObject(
+                name,
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(InputField));
+            inputObject.transform.SetParent(parent, false);
+
+            RectTransform rectTransform = inputObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(1f, 0.5f);
+            rectTransform.anchorMax = new Vector2(1f, 0.5f);
+            rectTransform.pivot = new Vector2(1f, 0.5f);
+            rectTransform.anchoredPosition = anchoredPosition;
+            rectTransform.sizeDelta = sizeDelta;
+
+            Image image = inputObject.GetComponent<Image>();
+            image.color = new Color(0.1f, 0.14f, 0.19f, 0.98f);
+
+            GameObject placeholderObject = new GameObject("Placeholder", typeof(RectTransform), typeof(Text));
+            placeholderObject.transform.SetParent(inputObject.transform, false);
+            Text placeholder = placeholderObject.GetComponent<Text>();
+            placeholder.text = defaultValue;
+            placeholder.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            placeholder.fontSize = 18;
+            placeholder.alignment = TextAnchor.MiddleLeft;
+            placeholder.color = new Color(0.58f, 0.64f, 0.72f, 0.95f);
+            placeholder.raycastTarget = false;
+            RectTransform placeholderRect = placeholder.rectTransform;
+            placeholderRect.anchorMin = Vector2.zero;
+            placeholderRect.anchorMax = Vector2.one;
+            placeholderRect.offsetMin = new Vector2(12f, 4f);
+            placeholderRect.offsetMax = new Vector2(-12f, -4f);
+
+            GameObject textObject = new GameObject("Text", typeof(RectTransform), typeof(Text));
+            textObject.transform.SetParent(inputObject.transform, false);
+            Text text = textObject.GetComponent<Text>();
+            text.text = defaultValue;
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.fontSize = 18;
+            text.alignment = TextAnchor.MiddleLeft;
+            text.color = new Color(0.93f, 0.96f, 1f, 0.98f);
+            text.raycastTarget = false;
+            RectTransform textRect = text.rectTransform;
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(12f, 4f);
+            textRect.offsetMax = new Vector2(-12f, -4f);
+
+            InputField inputField = inputObject.GetComponent<InputField>();
+            inputField.textComponent = text;
+            inputField.placeholder = placeholder;
+            inputField.text = defaultValue;
+            inputField.lineType = InputField.LineType.SingleLine;
+            inputField.contentType = InputField.ContentType.DecimalNumber;
+            inputField.characterValidation = InputField.CharacterValidation.Decimal;
+            inputField.caretColor = new Color(0.92f, 0.98f, 1f, 1f);
+            inputField.selectionColor = new Color(0.2f, 0.45f, 0.62f, 0.35f);
         }
 
         private static void CreateIcon(Transform parent)
@@ -666,12 +736,8 @@ namespace ET.Editor
             Toggle lakeInlandMaskTightToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskTight_Toggle"));
             Toggle lakeInlandMaskDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskDefault_Toggle"));
             Toggle lakeInlandMaskWideToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskWide_Toggle"));
-            Toggle lakeCarveThresholdSparseToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdSparse_Toggle"));
-            Toggle lakeCarveThresholdDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdDefault_Toggle"));
-            Toggle lakeCarveThresholdDenseToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThresholdDense_Toggle"));
-            Toggle lakeCarveStrengthShallowToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthShallow_Toggle"));
-            Toggle lakeCarveStrengthDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthDefault_Toggle"));
-            Toggle lakeCarveStrengthDeepToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrengthDeep_Toggle"));
+            InputField lakeCarveThresholdInputField = GetRequiredComponent<InputField>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThreshold_InputField"));
+            InputField lakeCarveStrengthInputField = GetRequiredComponent<InputField>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrength_InputField"));
             RectTransform panelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "Panel_RectTransform"));
             Transform skillGrid = FindRequiredChild(panelRectTransform, "SkillGrid_RectTransform_GridLayoutGroup");
             RectTransform skillGridRectTransform = GetRequiredComponent<RectTransform>(skillGrid);
@@ -697,12 +763,8 @@ namespace ET.Editor
             TrySetObjectReference(formComponent, "m_LakeInlandMaskTightToggle", lakeInlandMaskTightToggle);
             TrySetObjectReference(formComponent, "m_LakeInlandMaskDefaultToggle", lakeInlandMaskDefaultToggle);
             TrySetObjectReference(formComponent, "m_LakeInlandMaskWideToggle", lakeInlandMaskWideToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveThresholdSparseToggle", lakeCarveThresholdSparseToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveThresholdDefaultToggle", lakeCarveThresholdDefaultToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveThresholdDenseToggle", lakeCarveThresholdDenseToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveStrengthShallowToggle", lakeCarveStrengthShallowToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveStrengthDefaultToggle", lakeCarveStrengthDefaultToggle);
-            TrySetObjectReference(formComponent, "m_LakeCarveStrengthDeepToggle", lakeCarveStrengthDeepToggle);
+            TrySetObjectReference(formComponent, "m_LakeCarveThresholdInputField", lakeCarveThresholdInputField);
+            TrySetObjectReference(formComponent, "m_LakeCarveStrengthInputField", lakeCarveStrengthInputField);
             TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);
             TrySetObjectReference(formComponent, "m_SkillGridRectTransform", skillGridRectTransform);
             TrySetObjectReference(formComponent, "m_SkillGridGridLayoutGroup", skillGridLayoutGroup);
