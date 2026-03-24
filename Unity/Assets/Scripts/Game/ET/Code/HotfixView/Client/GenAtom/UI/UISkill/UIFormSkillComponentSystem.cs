@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Diagnostics;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
@@ -141,14 +142,30 @@ namespace ET.Client
 
         private static async UniTask RerenderMapAsync(this UIFormSkillComponent self)
         {
+            if (self.IsRerenderingMap)
+            {
+                return;
+            }
+
             GenMap genMap = self.GetGenMap();
             if (genMap == null || genMap.IsDisposed)
             {
                 return;
             }
 
-            self.ApplyLakeParameterSelections(genMap);
-            await genMap.BuildAsync(true);
+            self.IsRerenderingMap = true;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            try
+            {
+                self.ApplyLakeParameterSelections(genMap);
+                await genMap.BuildAsync(true);
+            }
+            finally
+            {
+                stopwatch.Stop();
+                self.IsRerenderingMap = false;
+                Log.Info($"[nmap][Perf][UI] rerenderTotalMs={stopwatch.ElapsedMilliseconds}");
+            }
         }
 
         private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)

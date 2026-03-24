@@ -270,24 +270,6 @@ namespace ET
                         hideFlags = HideFlags.HideAndDontSave
                     };
                 }
-                else
-                {
-                    // 如果资源材质加载失败，再回退到直接找 Shader 构造。
-                    Shader shader = Shader.Find("Shader Graphs/MapCombine");
-                    if (shader == null)
-                    {
-                        Log.Error($"nmap carpet init failed, cannot resolve map shader for view: {self.View?.name}");
-                        return;
-                    }
-
-                    runtimeMaterial = new Material(shader)
-                    {
-                        name = $"MapCombine_{self.View.name}_Runtime",
-                        enableInstancing = true,
-                        hideFlags = HideFlags.HideAndDontSave
-                    };
-                }
-
                 self.RuntimeMaterial = runtimeMaterial;
             }
 

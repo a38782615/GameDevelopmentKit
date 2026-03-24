@@ -9,6 +9,7 @@ namespace ET.Client
         public readonly List<MonoUISkillItem> SkillItems = new List<MonoUISkillItem>();
         public readonly Dictionary<int, EntityRef<SkillCellComponent>> SkillCellMap = new Dictionary<int, EntityRef<SkillCellComponent>>();
         public float ListSyncLeftTime;
+        public bool IsRerenderingMap;
 #if UNITY_EDITOR
         public int EditorSmokeRunId;
         public bool EditorSmokeTriggered;

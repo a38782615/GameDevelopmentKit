@@ -9,7 +9,7 @@ namespace ET
     {
         public Texture2D TxtTexture;
         public int Width = 400;
-        public int Height = 400;
+        public int Height = 200;
         public int RenderWidth = 100;
         public int RenderHeight = 50;
         public int TxtWidth = 400;
