@@ -345,6 +345,7 @@ namespace ET
             foreach (var p in centers)
             {
                 var numWater = 0;
+                bool centerIsLand = inside(p.point);
                 foreach (var q in p.corners)
                 {
                     // 接触外框的多边形直接判定为海洋起点。
@@ -360,7 +361,9 @@ namespace ET
                         numWater += 1;
                 }
 
-                p.water = (p.ocean || numWater >= p.corners.Count * lakeThreshold);
+                // 只看角点占比会让内陆小湖很难被识别；
+                // 当多边形中心已经落在水域时，也允许它直接成为湖泊候选。
+                p.water = p.ocean || !centerIsLand || numWater >= p.corners.Count * lakeThreshold;
             }
 
             // 用 BFS 把与海洋连通的水域都标成 ocean。
