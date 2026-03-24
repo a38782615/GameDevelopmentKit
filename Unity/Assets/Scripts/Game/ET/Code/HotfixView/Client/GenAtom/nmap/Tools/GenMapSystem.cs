@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace ET
 
         public static async UniTask BuildAsync(this GenMap self)
         {
+            self.MapSeed = GenerateRandomSeed();
             self.BiomeMap = new BiomeMap(new float2(self.Width, self.Height));
             self.BiomeMap.SetPointNum(self.PointNum);
             if (self.TxtTexture == null)
@@ -50,6 +52,15 @@ namespace ET
 
             await drawMap.InitAsync();
             drawMap.GenMap(self.BiomeMap, self.RenderWidth, self.RenderHeight);
+        }
+
+        private static uint GenerateRandomSeed()
+        {
+            long utcTicks = DateTime.UtcNow.Ticks;
+            long stopwatchTicks = Stopwatch.GetTimestamp();
+            int environmentTick = Environment.TickCount;
+            uint seed = (uint)(utcTicks ^ (utcTicks >> 32) ^ stopwatchTicks ^ (stopwatchTicks >> 32) ^ environmentTick);
+            return seed == 0 ? 1u : seed;
         }
 
         public static bool CheckIsland(this GenMap self, float2 q)
