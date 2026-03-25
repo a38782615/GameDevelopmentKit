@@ -22,6 +22,8 @@ namespace ET
         Func<float2, bool> inside;
         bool _needsMoreRandomness;
         private Random random;
+        private float2 _elevationNoiseOffset;
+        private float2 _temperatureNoiseOffset;
 
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -32,7 +34,19 @@ namespace ET
         // 只返回内陆角点。海洋和海岸角点在后续重分布时不参与排序。
         private List<MapCorner> LandCorners
         {
-            get { return corners.Where(p => !p.ocean && !p.coast).ToList(); }
+            get
+            {
+                List<MapCorner> result = new List<MapCorner>(corners.Count);
+                foreach (MapCorner corner in corners)
+                {
+                    if (!corner.ocean && !corner.coast)
+                    {
+                        result.Add(corner);
+                    }
+                }
+
+                return result;
+            }
         }
 
         public MapGraph(IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold)
@@ -59,14 +73,18 @@ namespace ET
             Height = height;
             inside = checkIsland;
             random = Random.CreateFromIndex(seed == 0 ? 1u : seed);
+            _elevationNoiseOffset = new float2(random.NextFloat(13f, 97f), random.NextFloat(29f, 131f));
+            _temperatureNoiseOffset = new float2(random.NextFloat(41f, 173f), random.NextFloat(59f, 211f));
             // 生成顺序是先搭建图，再逐步往图上附加地理属性。
             // 这里不是“先有高度图再裁海岸线”，而是先从岛屿形状和 Voronoi 拓扑出发，
             // 反推适合当前海岸线的高度、水流和湿度分布。
             BuildGraph(points, voronoi);
 
-            // 先在角点层级计算高程，再回写到多边形中心。
-            AssignCornerElevations();
+            AssignCornerWater();
             AssignOceanCoastAndLand(lakeThreshold);
+
+            // 高程只保留为低起伏排水坡度，不再作为地形分类主驱动。
+            AssignCornerElevations();
             RedistributeElevations();
             AssignPolygonElevations();
 
@@ -82,8 +100,13 @@ namespace ET
             RedistributeMoisture();
             AssignPolygonMoisture();
 
-            // 最终用高度和湿度共同决定群系类型。
-            centers.ForEach(p => p.biome = GetBiome(p));
+            // 最终用温度和湿度共同决定群系类型。
+            AssignCornerTemperature();
+            AssignPolygonTemperature();
+            foreach (MapCenter center in centers)
+            {
+                center.biome = GetBiome(center);
+            }
         }
 
         private void BuildGraph(IEnumerable<float2> points, ET.Voronoi voronoi)
@@ -246,8 +269,14 @@ namespace ET
             // 这里按近似 x 坐标分桶，再做距离判定，把它们规范成同一个 MapCorner。
             for (var i = (int)(point.x - 1); i <= (int)(point.x + 1); i++)
             {
-                foreach (var kvp in _cornerMap.Where(p => p.Key == i))
+                for (int j = 0; j < _cornerMap.Count; j++)
                 {
+                    KeyValuePair<int, MapCorner> kvp = _cornerMap[j];
+                    if (kvp.Key != i)
+                    {
+                        continue;
+                    }
+
                     var dx = point.x - kvp.Value.point.x;
                     var dy = point.y - kvp.Value.point.y;
                     if (dx * dx + dy * dy < 1e-6)
@@ -279,57 +308,31 @@ namespace ET
             }
         }
 
-        private void AssignCornerElevations()
+        private void AssignCornerWater()
         {
-            // 先在角点层级求“离海岸有多远”。
-            // 边界角点高度固定为 0，然后向内做广度扩散；
-            // 这样天然不会出现封闭低洼点，后面的河流总能找到下坡路径。
-            var queue = new Queue<MapCorner>();
-
-            foreach (var q in corners)
+            foreach (MapCorner q in corners)
             {
                 q.water = !inside(q.point);
             }
+        }
 
-            foreach (var q in corners)
+        private void AssignCornerElevations()
+        {
+            // 2D 地图不再追求山脉起伏，只保留一个朝边缘缓慢下降的排水坡度。
+            // 低振幅噪声仅用于打散等高线，保证河流不会整齐得像网格。
+            float reliefScale = math.max(1f, math.min(Width, Height) * 0.5f);
+            foreach (MapCorner q in corners)
             {
-                // 外框边界直接视为海平面。
-                if (q.border)
-                {
-                    q.elevation = 0;
-                    queue.Enqueue(q);
-                }
-                else
-                {
-                    q.elevation = float.PositiveInfinity;
-                }
-            }
+                float edgeDistance01 = GetEdgeDistance01(q.point, reliefScale);
+                float noise = SampleSignedNoise(q.point, _elevationNoiseOffset, 0.045f, 2);
+                float elevation = 0.04f + edgeDistance01 * 0.24f + noise * 0.025f;
 
-            while (queue.Any())
-            {
-                var q = queue.Dequeue();
-
-                foreach (var s in q.adjacent)
+                if (q.water)
                 {
-                    // 经过水域只加很小的高度，经过陆地则显著抬高。
-                    // 后面还会做一次重分布，所以这里只关注相对次序。
-                    var newElevation = 0.01f + q.elevation;
-                    if (!q.water && !s.water)
-                    {
-                        newElevation += 1;
-                        if (_needsMoreRandomness)
-                        {
-                            // 仅在规则网格模式下额外加入扰动，避免地形层次过于机械。
-                            newElevation += random.NextFloat();
-                        }
-                    }
-
-                    if (newElevation < s.elevation)
-                    {
-                        s.elevation = newElevation;
-                        queue.Enqueue(s);
-                    }
+                    elevation *= q.ocean || q.border ? 0f : 0.25f;
                 }
+
+                q.elevation = math.saturate(elevation);
             }
         }
 
@@ -338,97 +341,100 @@ namespace ET
             // 先把角点级别的水信息汇总到多边形中心，再从中心反写回角点。
             // 这里区分三个概念：
             // water: 任何水域
-            // ocean: 与地图外边界连通的水域
+            // ocean: 仅位于地图边缘带的水域
             // coast: 同时接触海洋和陆地的过渡带
-            var queue = new Queue<MapCenter>();
-
-            foreach (var p in centers)
+            foreach (MapCenter p in centers)
             {
-                var numWater = 0;
+                int numWater = 0;
                 bool centerIsLand = inside(p.point);
-                foreach (var q in p.corners)
+                p.border = false;
+                foreach (MapCorner q in p.corners)
                 {
-                    // 接触外框的多边形直接判定为海洋起点。
                     if (q.border)
                     {
                         p.border = true;
-                        p.ocean = true;
-                        q.water = true;
-                        queue.Enqueue(p);
                     }
 
                     if (q.water)
-                        numWater += 1;
-                }
-
-                // 只看角点占比会让内陆小湖很难被识别；
-                // 当多边形中心已经落在水域时，也允许它直接成为湖泊候选。
-                p.water = p.ocean || !centerIsLand || numWater >= p.corners.Count * lakeThreshold;
-            }
-
-            // 用 BFS 把与海洋连通的水域都标成 ocean。
-            while (queue.Any())
-            {
-                var p = queue.Dequeue();
-                foreach (var r in p.neighbors)
-                {
-                    if (r.water && !r.ocean)
                     {
-                        r.ocean = true;
-                        queue.Enqueue(r);
+                        numWater++;
                     }
                 }
+
+                // 海洋只存在在边缘带；内陆湖泊、河道即便连通也不会被并入海洋。
+                p.water = !centerIsLand || numWater >= p.corners.Count * lakeThreshold;
+                p.ocean = p.water && IsOceanBand(p.point);
             }
 
             // 同时挨着海和陆地的多边形就是海岸。
-            foreach (var p in centers)
+            foreach (MapCenter p in centers)
             {
-                var numOcean = 0;
-                var numLand = 0;
-                foreach (var r in p.neighbors)
+                int numOcean = 0;
+                int numLand = 0;
+                foreach (MapCenter r in p.neighbors)
                 {
                     numOcean += r.ocean ? 1 : 0;
                     numLand += !r.water ? 1 : 0;
                 }
 
-                p.coast = (numOcean > 0) && (numLand > 0);
+                p.coast = !p.water && (numOcean > 0);
             }
 
             // 最后把中心级别的判定再同步回角点，保证 corner/center 语义一致。
-            foreach (var q in corners)
+            foreach (MapCorner q in corners)
             {
-                var numOcean = 0;
-                var numLand = 0;
-                foreach (var p in q.touches)
+                int numOcean = 0;
+                int numLand = 0;
+                foreach (MapCenter p in q.touches)
                 {
                     numOcean += p.ocean ? 1 : 0;
                     numLand += !p.water ? 1 : 0;
                 }
 
-                q.ocean = (numOcean == q.touches.Count);
                 q.coast = (numOcean > 0) && (numLand > 0);
                 q.water = q.border || ((numLand != q.touches.Count) && !q.coast);
+                q.ocean = q.water && (q.border || ((numOcean > 0) && IsOceanBand(q.point)));
             }
         }
 
         private void RedistributeElevations()
         {
-            // 重新分布高程，让低地面积大、高山面积小。
-            // 这样结果更像自然地形，而不是线性抬升后的平均坡面。
-            var locations = LandCorners;
-            var SCALE_FACTOR = 1.1f;
-            locations.Sort((a, b) => a.elevation.CompareTo(b.elevation));
-            for (int i = 0; i < locations.Count; i++)
+            // 压低整体起伏，只保留平缓地势，避免生成“高山”观感。
+            List<MapCorner> locations = LandCorners;
+            if (locations.Count == 0)
             {
-                var y = (float)i / (locations.Count - 1);
-                // 通过一个非线性映射压低中低海拔、拉开高海拔尾部。
-                float x = math.sqrt(SCALE_FACTOR) - math.sqrt(SCALE_FACTOR * (1 - y));
-                if (x > 1.0) x = 1.0f;
-                locations[i].elevation = x;
+                return;
             }
 
-            // 海洋和海岸保持海平面，不参与山地抬升。
-            corners.Where(p => p.ocean || p.coast).ToList().ForEach(p => p.elevation = 0);
+            locations.Sort((a, b) => a.elevation.CompareTo(b.elevation));
+            if (locations.Count == 1)
+            {
+                locations[0].elevation = 0.18f;
+            }
+            else
+            {
+                for (int i = 0; i < locations.Count; i++)
+                {
+                    float y = (float)i / (locations.Count - 1);
+                    locations[i].elevation = math.lerp(0.06f, 0.32f, y);
+                }
+            }
+
+            foreach (MapCorner corner in corners)
+            {
+                if (corner.ocean)
+                {
+                    corner.elevation = 0f;
+                }
+                else if (corner.coast)
+                {
+                    corner.elevation = 0.02f;
+                }
+                else if (corner.water)
+                {
+                    corner.elevation = math.min(corner.elevation, 0.05f);
+                }
+            }
         }
 
         private void AssignPolygonElevations()
@@ -482,7 +488,7 @@ namespace ET
             for (var i = 0; i < 100; i++)
             {
                 var changed = false;
-                foreach (var q in corners)
+                foreach (MapCorner q in corners)
                 {
                     if (!q.ocean && !q.coast && !q.watershed.coast)
                     {
@@ -505,12 +511,13 @@ namespace ET
 
         private void CreateRivers()
         {
-            // 从若干随机高地角点出发，沿 downslope 一路向海岸走，路径上的边记为河流。
+            // 从若干中高地角点出发，沿 downslope 一路向海岸或内陆水体走。
+            // 河流允许终止在湖泊，不再强制一律汇入与边界连通的海洋。
             for (var i = 0; i < (Width + Height) / 4; i++)
             {
                 var q = corners[random.NextInt(0, corners.Count - 1)];
-                if (q.ocean || q.elevation < 0.3 || q.elevation > 0.9) continue;
-                while (!q.coast)
+                if (q.ocean || q.coast || q.water || q.elevation < 0.12f || q.elevation > 0.3f) continue;
+                while (!q.coast && !q.water)
                 {
                     if (q == q.downslope)
                     {
@@ -518,6 +525,11 @@ namespace ET
                     }
 
                     var edge = lookupEdgeFromCorner(q, q.downslope);
+                    if (edge == null)
+                    {
+                        break;
+                    }
+
                     edge.river = edge.river + 1;
                     q.river++;
                     q.downslope.river++;
@@ -531,7 +543,7 @@ namespace ET
             // 湿度从淡水源开始传播：
             // 湖泊和河流是扩散源，海洋只在最后直接赋满，不参与内陆扩散。
             var queue = new Queue<MapCorner>();
-            foreach (var q in corners)
+            foreach (MapCorner q in corners)
             {
                 if ((q.water || q.river > 0) && !q.ocean)
                 {
@@ -545,7 +557,7 @@ namespace ET
             }
 
             // 每经过一层邻接，湿度按 0.9 衰减。
-            while (queue.Any())
+            while (queue.Count > 0)
             {
                 var q = queue.Dequeue();
 
@@ -561,7 +573,7 @@ namespace ET
             }
 
             // 海洋和海岸统一视为最高湿度。
-            foreach (var q in corners)
+            foreach (MapCorner q in corners)
             {
                 if (q.ocean || q.coast)
                 {
@@ -573,10 +585,10 @@ namespace ET
         private void AssignPolygonMoisture()
         {
             // 多边形湿度取角点湿度平均值，并顺手把异常值截到 1。
-            foreach (var p in centers)
+            foreach (MapCenter p in centers)
             {
                 var sumMoisture = 0.0f;
-                foreach (var q in p.corners)
+                foreach (MapCorner q in p.corners)
                 {
                     if (q.moisture > 1.0)
                         q.moisture = 1.0f;
@@ -584,6 +596,40 @@ namespace ET
                 }
 
                 p.moisture = sumMoisture / p.corners.Count;
+            }
+        }
+
+        private void AssignCornerTemperature()
+        {
+            float coastalScale = math.max(1f, math.min(Width, Height) * 0.5f);
+            foreach (MapCorner q in corners)
+            {
+                float normalizedY = Height <= 0 ? 0.5f : math.saturate(q.point.y / Height);
+                float latitudeHeat = 1f - math.abs(normalizedY * 2f - 1f);
+                float drynessHeat = 1f - math.saturate(q.moisture);
+                float coastalCooling = (1f - GetEdgeDistance01(q.point, coastalScale)) * 0.08f;
+                float waterCooling = q.water ? 0.06f : 0f;
+                float noise01 = SampleNoise01(q.point, _temperatureNoiseOffset, 0.018f, 3);
+
+                q.temperature = math.saturate(latitudeHeat * 0.62f +
+                    drynessHeat * 0.16f +
+                    noise01 * 0.22f -
+                    coastalCooling -
+                    waterCooling);
+            }
+        }
+
+        private void AssignPolygonTemperature()
+        {
+            foreach (MapCenter p in centers)
+            {
+                float sumTemperature = 0f;
+                foreach (MapCorner q in p.corners)
+                {
+                    sumTemperature += q.temperature;
+                }
+
+                p.temperature = sumTemperature / p.corners.Count;
             }
         }
 
@@ -614,8 +660,19 @@ namespace ET
         private void RedistributeMoisture()
         {
             // 把内陆湿度重新拉伸到 0~1，保证 biome 划分时能覆盖完整区间。
-            var locations = LandCorners;
+            List<MapCorner> locations = LandCorners;
+            if (locations.Count == 0)
+            {
+                return;
+            }
+
             locations.Sort((a, b) => a.moisture.CompareTo(b.moisture));
+
+            if (locations.Count == 1)
+            {
+                locations[0].moisture = 0.5f;
+                return;
+            }
 
             for (var i = 0; i < locations.Count; i++)
             {
@@ -627,49 +684,87 @@ namespace ET
         {
             // biome 分类完全由三类信息决定：
             // 1. 是否是海洋/水域/海岸
-            // 2. 海拔区间
+            // 2. 温度区间
             // 3. 湿度区间
             if (p.ocean)
             {
                 return Biome.Ocean;
             }
-            else if (p.water)
+
+            if (p.water)
             {
-                if (p.elevation < 0.1) return Biome.Marsh;
-                if (p.elevation > 0.8) return Biome.Ice;
+                if (p.temperature < 0.18f) return Biome.Ice;
+                if (p.moisture > 0.85f && p.temperature > 0.45f) return Biome.Marsh;
                 return Biome.Lake;
             }
-            else if (p.coast)
+
+            if (p.coast)
             {
                 return Biome.Beach;
             }
-            else if (p.elevation > 0.8)
+
+            if (p.temperature < 0.14f)
             {
-                if (p.moisture > 0.50) return Biome.Snow;
-                else if (p.moisture > 0.33) return Biome.Tundra;
-                else if (p.moisture > 0.16) return Biome.Bare;
-                else return Biome.Scorched;
+                if (p.moisture > 0.55f) return Biome.Snow;
+                if (p.moisture > 0.28f) return Biome.Tundra;
+                return Biome.Bare;
             }
-            else if (p.elevation > 0.6)
+
+            if (p.temperature < 0.28f)
             {
-                if (p.moisture > 0.66) return Biome.Taiga;
-                else if (p.moisture > 0.33) return Biome.Shrubland;
-                else return Biome.TemperateDesert;
+                if (p.moisture < 0.18f) return Biome.Bare;
+                if (p.moisture < 0.42f) return Biome.Tundra;
+                if (p.moisture < 0.72f) return Biome.Taiga;
+                return Biome.Snow;
             }
-            else if (p.elevation > 0.3)
+
+            if (p.temperature < 0.45f)
             {
-                if (p.moisture > 0.83) return Biome.TemperateRainForest;
-                else if (p.moisture > 0.50) return Biome.TemperateDeciduousForest;
-                else if (p.moisture > 0.16) return Biome.Grassland;
-                else return Biome.TemperateDesert;
+                if (p.moisture < 0.16f) return Biome.TemperateDesert;
+                if (p.moisture < 0.38f) return Biome.Shrubland;
+                if (p.moisture < 0.68f) return Biome.Taiga;
+                return Biome.TemperateRainForest;
             }
-            else
+
+            if (p.temperature < 0.68f)
             {
-                if (p.moisture > 0.66) return Biome.TropicalRainForest;
-                else if (p.moisture > 0.33) return Biome.TropicalSeasonalForest;
-                else if (p.moisture > 0.16) return Biome.Grassland;
-                else return Biome.SubtropicalDesert;
+                if (p.moisture < 0.14f) return Biome.TemperateDesert;
+                if (p.moisture < 0.34f) return Biome.Grassland;
+                if (p.moisture < 0.7f) return Biome.TemperateDeciduousForest;
+                return Biome.TemperateRainForest;
             }
+
+            if (p.moisture < 0.1f) return Biome.Scorched;
+            if (p.moisture < 0.26f) return Biome.SubtropicalDesert;
+            if (p.moisture < 0.52f) return Biome.Grassland;
+            if (p.moisture < 0.78f) return Biome.TropicalSeasonalForest;
+            return Biome.TropicalRainForest;
+        }
+
+        private bool IsOceanBand(float2 point)
+        {
+            float oceanBandSize = math.max(2f, math.min(Width, Height) * 0.12f);
+            return GetEdgeDistance(point) <= oceanBandSize;
+        }
+
+        private float GetEdgeDistance01(float2 point, float scale)
+        {
+            return math.saturate(GetEdgeDistance(point) / scale);
+        }
+
+        private float GetEdgeDistance(float2 point)
+        {
+            return math.min(math.min(point.x, Width - point.x), math.min(point.y, Height - point.y));
+        }
+
+        private static float SampleSignedNoise(float2 point, float2 offset, float scale, int octave)
+        {
+            return Perlin.Fbm(point * scale + offset, octave);
+        }
+
+        private static float SampleNoise01(float2 point, float2 offset, float scale, int octave)
+        {
+            return math.saturate(SampleSignedNoise(point, offset, scale, octave) * 0.5f + 0.5f);
         }
 
         public static IEnumerable<float2> RelaxPoints(IEnumerable<float2> startingPoints, float width, float height)

@@ -15,6 +15,7 @@ namespace ET
         public Biome biome;     // biome type 
         public float elevation; // 0.0-1.0
         public float moisture;  // 0.0-1.0
+        public float temperature; // 0.0-1.0
         public List<MapCenter> neighbors = new List<MapCenter>();
         public List<MapEdge> borders = new List<MapEdge>();
         public List<MapCorner> corners = new List<MapCorner>();

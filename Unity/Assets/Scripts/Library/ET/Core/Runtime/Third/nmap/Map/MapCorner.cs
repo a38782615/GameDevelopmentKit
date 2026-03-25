@@ -14,6 +14,7 @@ namespace ET
         public bool border;  // at the edge of the map
         public float elevation;  // 0.0-1.0
         public float moisture;  // 0.0-1.0
+        public float temperature;  // 0.0-1.0
 
         public List<MapCenter> touches = new List<MapCenter>();
         public List<MapEdge> protrudes = new List<MapEdge>();
