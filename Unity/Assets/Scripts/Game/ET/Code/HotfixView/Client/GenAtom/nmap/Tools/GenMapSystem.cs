@@ -36,6 +36,8 @@ namespace ET
                 self.BiomeMap.Init(self.MapSeed, self.CheckIsland);
             }
 
+            //self.BiomeMap.MapGraph?.ApplyClusterBiomes(self.MapSeed);
+
             NoisyEdges noisyEdge = new NoisyEdges(self.MapSeed);
             noisyEdge.BuildNoisyEdges(self.BiomeMap);
 

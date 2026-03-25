@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1481824902747963078}
   - component: {fileID: 5657875809802978041}
   - component: {fileID: 643912814767981598}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterCategoryTemplate_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 1393958235737465408}
   - component: {fileID: 1872487625837097387}
   - component: {fileID: 8786835537435197313}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 3395634794726926656}
   - component: {fileID: 13198456399201101}
   - component: {fileID: 5418330458393910103}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIUnitAttribute
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +456,7 @@ GameObject:
   - component: {fileID: 8816550527796766733}
   - component: {fileID: 2071932276147002078}
   - component: {fileID: 6445491852639972371}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Value_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +613,7 @@ GameObject:
   - component: {fileID: 3299258035875486743}
   - component: {fileID: 6841116470437365233}
   - component: {fileID: 6122175522479980062}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerTags_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 2395639685334718254}
   - component: {fileID: 952651573541535405}
   - component: {fileID: 2481354500139787393}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterTitle_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -927,7 +927,7 @@ GameObject:
   - component: {fileID: 1945772113008499149}
   - component: {fileID: 7935138664649443694}
   - component: {fileID: 6364526437478946852}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterItemTemplate_AttributeRowTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1027,7 +1027,7 @@ GameObject:
   - component: {fileID: 8564282854340246771}
   - component: {fileID: 1846880806812652427}
   - component: {fileID: 3995739550965958986}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterTags_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1184,7 +1184,7 @@ GameObject:
   - component: {fileID: 1059312271970973063}
   - component: {fileID: 1452707239647063853}
   - component: {fileID: 6089327570295165619}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerCategoryTemplate_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1341,7 +1341,7 @@ GameObject:
   - component: {fileID: 3386571821902602447}
   - component: {fileID: 5655267701640357542}
   - component: {fileID: 2266606738611051944}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Value_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1499,7 +1499,7 @@ GameObject:
   - component: {fileID: 2132728442627254236}
   - component: {fileID: 1099860128597262019}
   - component: {fileID: 8155108212306829256}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterPanel_RectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1618,7 +1618,7 @@ GameObject:
   - component: {fileID: 9034020319112890225}
   - component: {fileID: 6945372771449752903}
   - component: {fileID: 5618915800491043303}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MonsterRows_RectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1719,7 +1719,7 @@ GameObject:
   - component: {fileID: 349816939193250810}
   - component: {fileID: 7230035837810414992}
   - component: {fileID: 1181568739789356951}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerPanel_RectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1838,7 +1838,7 @@ GameObject:
   - component: {fileID: 4819619389838789572}
   - component: {fileID: 3415020447735727556}
   - component: {fileID: 8972052528710264130}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerTitle_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1995,7 +1995,7 @@ GameObject:
   - component: {fileID: 1712753452266786233}
   - component: {fileID: 5003488708468937975}
   - component: {fileID: 3561728917937445957}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerItemTemplate_AttributeRowTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2095,7 +2095,7 @@ GameObject:
   - component: {fileID: 3548959552405471035}
   - component: {fileID: 6607257562449815082}
   - component: {fileID: 4600628537198814496}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PlayerRows_RectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2195,7 +2195,7 @@ GameObject:
   - component: {fileID: 3103941635585648538}
   - component: {fileID: 9177787676653424275}
   - component: {fileID: 4470211639772224993}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
