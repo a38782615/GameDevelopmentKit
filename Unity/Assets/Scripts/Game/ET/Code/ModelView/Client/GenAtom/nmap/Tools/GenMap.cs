@@ -17,9 +17,9 @@ namespace ET
         public int PointNum = 1000;
         public bool IsLake = true;
         public uint MapSeed = 12;
-        public float LakeInlandMaskRange = 0.82f;
-        public float LakeCarveThreshold = 0.56f;
-        public float LakeCarveStrength = 0.42f;
+        public float LakeInlandMaskRange = 0.88f;
+        public float LakeCarveThreshold = 0.44f;
+        public float LakeCarveStrength = 0.78f;
         public EntityRef<DrawMap> DrawMap;
         public BiomeMap BiomeMap;
     }

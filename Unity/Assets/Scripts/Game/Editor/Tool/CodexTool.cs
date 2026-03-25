@@ -21,17 +21,33 @@ namespace Game.Editor
             string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string codexCommandPath = FindCodexCommandPath();
             string powerShellArguments = BuildPowerShellArguments(codexCommandPath);
-            string terminalArguments =
-                $"new-tab --title \"{TerminalTitle}\" -d \"{projectRoot}\" -- powershell.exe {powerShellArguments}";
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            string windowsTerminalPath = FindWindowsTerminalPath();
+            ProcessStartInfo startInfo;
+            if (!string.IsNullOrEmpty(windowsTerminalPath))
             {
-                FileName = "wt.exe",
-                Arguments = terminalArguments,
-                UseShellExecute = true,
-                Verb = "runas",
-                WorkingDirectory = projectRoot,
-            };
+                string terminalArguments =
+                    $"new-tab --title \"{TerminalTitle}\" -d \"{projectRoot}\" -- powershell.exe {powerShellArguments}";
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = windowsTerminalPath,
+                    Arguments = terminalArguments,
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    WorkingDirectory = projectRoot,
+                };
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("wt.exe not found. Falling back to elevated powershell.exe.");
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell.exe",
+                    Arguments = powerShellArguments,
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    WorkingDirectory = projectRoot,
+                };
+            }
 
             try
             {
@@ -79,6 +95,32 @@ namespace Game.Editor
                 if (TryFindCodexCommandInDirectory(directory, out string codexPath))
                 {
                     return codexPath;
+                }
+            }
+
+            return null;
+        }
+
+        private static string FindWindowsTerminalPath()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string windowsAppsPath = Path.Combine(localAppData, "Microsoft", "WindowsApps", "wt.exe");
+            if (File.Exists(windowsAppsPath))
+            {
+                return windowsAppsPath;
+            }
+
+            string pathEnvironment = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+            IEnumerable<string> directories = pathEnvironment
+                .Split(Path.PathSeparator)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(path => path.Trim());
+            foreach (string directory in directories)
+            {
+                string candidatePath = Path.Combine(directory, "wt.exe");
+                if (File.Exists(candidatePath))
+                {
+                    return candidatePath;
                 }
             }
 

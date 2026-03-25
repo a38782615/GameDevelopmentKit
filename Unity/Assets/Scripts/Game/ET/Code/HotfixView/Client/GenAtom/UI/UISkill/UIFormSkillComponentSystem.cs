@@ -21,9 +21,9 @@ namespace ET.Client
         private const float SkillCellHeight = 160f;
         private const float SkillCellSpacingX = 20f;
         private const float SkillCellSpacingY = 20f;
-        private const float LakeInlandMaskTight = 0.76f;
-        private const float LakeInlandMaskDefault = 0.82f;
-        private const float LakeInlandMaskWide = 0.88f;
+        private const float LakeInlandMaskTight = 0.8f;
+        private const float LakeInlandMaskDefault = 0.88f;
+        private const float LakeInlandMaskWide = 0.92f;
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkillComponent self)

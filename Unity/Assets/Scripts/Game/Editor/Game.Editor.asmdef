@@ -20,6 +20,7 @@
         "StompyRobot.SRF.Editor",
         "Unity.TextMeshPro",
         "CodeBind",
+        "CodeBind.Editor",
         "FancyScrollView",
         "UIEffect",
         "Coffee.UIParticle",

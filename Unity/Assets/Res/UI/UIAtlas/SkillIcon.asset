@@ -1939,6 +1939,5 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  m_CollectionGUIDs:
-  - 300cbb07dc86fcb47aa8a0476298e6ee
+  m_CollectionGUIDs: []
   m_AtlasFolder: Assets/Res/UI/UIAtlas
