@@ -158,7 +158,7 @@ namespace ET.Client
             try
             {
                 self.ApplyLakeParameterSelections(genMap);
-                await genMap.BuildAsync(true);
+                await genMap.BuildAsync();
             }
             finally
             {

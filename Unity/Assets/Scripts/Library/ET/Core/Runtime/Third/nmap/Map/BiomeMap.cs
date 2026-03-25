@@ -16,9 +16,9 @@ namespace ET
         // Voronoi 采样点数量，数量越多，最终地图多边形越密。
         private int _pointCount = 500;
         // 一个多边形中“水角点”占比达到这个阈值时，会被判定为湖泊/水域。
-        float _lakeThreshold = 0.3f;
-        public int Width = 50;
-        public int Height = 50;
+        float _lakeThreshold = 0.1f;
+        public int Width;
+        public int Height;
         // Lloyd Relaxation 会把随机点重新分布得更均匀，避免 Voronoi 多边形过于尖锐或密度失衡。
         const int NUM_LLOYD_RELAXATIONS = 2;
 
@@ -36,6 +36,11 @@ namespace ET
         public void SetPointNum(int num)
         {
             _pointCount = num;
+        }
+
+        public void SetLakeThreshold(float lake)
+        {
+            this._lakeThreshold = lake;
         }
 
         private Random random;
@@ -67,10 +72,6 @@ namespace ET
 
             // Voronoi 负责给出初始的多边形划分，后续再由 MapGraph 推导高程、水系和群系。
             var voronoi = new Voronoi(points, colors, new RectangleF(0, 0, Width, Height));
-
-            // 未传入岛屿判定时，默认使用 Perlin 岛屿形状。
-            // 这个回调决定某个点是陆地还是水域，是后续海岸线和高度推导的输入条件。
-            checkIsland = checkIsland ?? IslandShape.makePerlin();
 
             // MapGraph 会基于 Voronoi 结果构建：
             // 1. 拓扑关系（center/corner/edge）

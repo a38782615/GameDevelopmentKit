@@ -17,16 +17,12 @@ namespace ET
         private static void Awake(this GenMap self)
         {
         }
-
-        public static async UniTask BuildAsync(this GenMap self, bool regenerateSeed = true)
+        public static async UniTask BuildAsync(this GenMap self)
         {
-            if (regenerateSeed || self.MapSeed == 0u)
-            {
-                self.MapSeed = GenerateRandomSeed();
-            }
-
+            self.MapSeed = GenerateRandomSeed();
             self.BiomeMap = new BiomeMap(new float2(self.Width, self.Height));
             self.BiomeMap.SetPointNum(self.PointNum);
+            self.BiomeMap.SetLakeThreshold(self.LakeThreshold);
             if (self.TxtTexture == null)
             {
                 self.BiomeMap.Init(self.MapSeed, self.CreateDefaultIslandShape());
@@ -36,7 +32,7 @@ namespace ET
                 self.BiomeMap.Init(self.MapSeed, self.CheckIsland);
             }
 
-            //self.BiomeMap.MapGraph?.ApplyClusterBiomes(self.MapSeed);
+            self.BiomeMap.MapGraph?.ApplyClusterBiomes(self.MapSeed);
 
             NoisyEdges noisyEdge = new NoisyEdges(self.MapSeed);
             noisyEdge.BuildNoisyEdges(self.BiomeMap);
@@ -76,32 +72,42 @@ namespace ET
             x = math.clamp(x, 0, self.TxtTexture.width - 1);
             y = math.clamp(y, 0, self.TxtTexture.height - 1);
             Color textureColor = self.TxtTexture.GetPixel(x, y);
-            if (self.IsLake)
+            if (self.LakeThreshold > 0)
             {
                 return textureColor != Color.white;
             }
 
             return textureColor == Color.white;
         }
-
+        // 默认随机地图的水陆判定函数。
+        // 传入逻辑坐标 q，返回 true 表示陆地，false 表示水域。
+        // 整体流程是：先构造大陆主体，再打碎海岸线，最后只在腹地按参数挖湖。
         private static Func<float2, bool> CreateDefaultIslandShape(this GenMap self)
         {
+            // 防止宽高异常时出现除以 0。
             float width = math.max(1f, self.Width);
             float height = math.max(1f, self.Height);
+            // 这些参数共同控制湖泊出现的位置、门槛和强度。
+            // clamp 用来限制 UI 或配置输入，避免参数把整张图直接切成水域。
             float lakeInlandMaskRange = math.clamp(self.LakeInlandMaskRange, 0.65f, 0.92f);
             float lakeEdgeMaskRange = math.clamp(lakeInlandMaskRange - 0.08f, 0.5f, 0.88f);
             float lakeCarveThreshold = math.clamp(self.LakeCarveThreshold, 0.25f, 0.72f);
             float lakeDetailThreshold = math.saturate(lakeCarveThreshold + 0.02f);
             float lakeCarveStrength = math.clamp(self.LakeCarveStrength, 0f, 1f);
             float lakeCoreRadius = math.max(0.12f, lakeInlandMaskRange * 0.46f);
-            float2 seedOffset = new float2(
-                (self.MapSeed % 997u) * 0.0137f + 7.13f,
-                ((self.MapSeed / 997u) % 991u) * 0.0179f + 11.29f);
-            return q =>
+            Func<float2, bool> GetFun = (q) =>
             {
+                // 不同 seed 使用不同噪声偏移，但同一 seed 的结果保持稳定。
+                float2 seedOffset = new float2(
+                    (self.MapSeed % 997u) * 0.0137f + 7.13f,
+                    ((self.MapSeed / 997u) % 991u) * 0.0179f + 11.29f);
+                // 把逻辑坐标归一化到 [-1, 1]，方便统一描述“中心”和“边缘”。
                 float2 normalized = new float2(q.x / width * 2f - 1f, q.y / height * 2f - 1f);
+                // edgeDistance 反映这个点离矩形边界有多近，越靠边越大。
+                // radialDistance 反映这个点离地图中心有多远，越靠中心越小。
                 float edgeDistance = math.max(math.abs(normalized.x), math.abs(normalized.y));
                 float radialDistance = math.length(normalized);
+                // 低频噪声决定大陆整体轮廓，中频噪声把海岸线打散得更自然。
                 float continentNoise = Perlin.Fbm(normalized * 1.8f + seedOffset, 4) * 0.24f;
                 float coastNoise = Perlin.Fbm(normalized * 3.2f + seedOffset * 1.9f + new float2(13.1f, 5.7f), 3) * 0.12f;
 
@@ -126,8 +132,9 @@ namespace ET
                 landScore -= lakeCoreMask * lakeCarveStrength * 0.72f;
                 landScore -= lakeCarve * inlandMask * lakeCarveStrength;
 
-                return landScore > 0.08f;
+                return landScore > self.LakeThreshold;
             };
+            return GetFun;
         }
 
         private static GameObject FindMapRoot(this GenMap self)

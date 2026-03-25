@@ -48,31 +48,19 @@ namespace ET
                 return result;
             }
         }
-
-        public MapGraph(IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold)
-        {
-            Init(IslandShape.makePerlin(), points, voronoi, width, height, lakeThreshold, 1u);
-        }
-
-        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
-            float lakeThreshold)
-        {
-            Init(checkIsland, points, voronoi, width, height, lakeThreshold, 1u);
-        }
-
-        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
-            float lakeThreshold, uint seed)
+        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold, uint seed)
         {
             Init(checkIsland, points, voronoi, width, height, lakeThreshold, seed);
         }
 
-        void Init(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height,
-            float lakeThreshold, uint seed)
+        private float LakeThreshold;
+        void Init(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold, uint seed)
         {
             Width = width;
             Height = height;
+            LakeThreshold = lakeThreshold;
             inside = checkIsland;
-            random = Random.CreateFromIndex(seed == 0 ? 1u : seed);
+            random = Random.CreateFromIndex(seed);
             _elevationNoiseOffset = new float2(random.NextFloat(13f, 97f), random.NextFloat(29f, 131f));
             _temperatureNoiseOffset = new float2(random.NextFloat(41f, 173f), random.NextFloat(59f, 211f));
             // 生成顺序是先搭建图，再逐步往图上附加地理属性。
@@ -81,7 +69,7 @@ namespace ET
             BuildGraph(points, voronoi);
 
             AssignCornerWater();
-            AssignOceanCoastAndLand(lakeThreshold);
+            AssignOceanCoastAndLand();
 
             // 高程只保留为低起伏排水坡度，不再作为地形分类主驱动。
             AssignCornerElevations();
@@ -252,8 +240,7 @@ namespace ET
             Comparison<MapCorner> result =
                 (a, b) =>
                 {
-                    return (int)(((a.point.x - mapCenter.point.x) * (b.point.y - mapCenter.point.y) -
-                                  (b.point.x - mapCenter.point.x) * (a.point.y - mapCenter.point.y)) * 1000);
+                    return (int)(((a.point.x - mapCenter.point.x) * (b.point.y - mapCenter.point.y) - (b.point.x - mapCenter.point.x) * (a.point.y - mapCenter.point.y)) * 1000);
                 };
             return result;
         }
@@ -318,14 +305,20 @@ namespace ET
 
         private void AssignCornerElevations()
         {
-            // 2D 地图不再追求山脉起伏，只保留一个朝边缘缓慢下降的排水坡度。
-            // 低振幅噪声仅用于打散等高线，保证河流不会整齐得像网格。
-            float reliefScale = math.max(1f, math.min(Width, Height) * 0.5f);
+            // 高程主趋势改为“左高右低”，让水系更容易朝右侧入海口排出。
+            // 低振幅噪声只负责打散边界，避免坡线过于机械。
+            float widthScale = math.max(1f, Width);
+            float heightScale = math.max(1f, Height);
             foreach (MapCorner q in corners)
             {
-                float edgeDistance01 = GetEdgeDistance01(q.point, reliefScale);
+                float rightLowGradient01 = math.saturate(1f - q.point.x / widthScale);
+                float centerBias01 = 1f - math.saturate(math.abs(q.point.y / heightScale * 2f - 1f));
+                float estuaryMask =
+                    math.saturate((q.point.x / widthScale - 0.66f) / 0.22f) *
+                    math.saturate((centerBias01 - 0.35f) / 0.45f);
                 float noise = SampleSignedNoise(q.point, _elevationNoiseOffset, 0.045f, 2);
-                float elevation = 0.04f + edgeDistance01 * 0.24f + noise * 0.025f;
+                float elevation = 0.04f + rightLowGradient01 * 0.24f + centerBias01 * 0.03f + noise * 0.02f;
+                elevation -= estuaryMask * 0.08f;
 
                 if (q.water)
                 {
@@ -336,7 +329,7 @@ namespace ET
             }
         }
 
-        private void AssignOceanCoastAndLand(float lakeThreshold)
+        private void AssignOceanCoastAndLand()
         {
             // 先把角点级别的水信息汇总到多边形中心，再从中心反写回角点。
             // 这里区分三个概念：
@@ -362,7 +355,7 @@ namespace ET
                 }
 
                 // 海洋只存在在边缘带；内陆湖泊、河道即便连通也不会被并入海洋。
-                p.water = !centerIsLand || numWater >= p.corners.Count * lakeThreshold;
+                p.water = !centerIsLand || numWater >= p.corners.Count * LakeThreshold;
                 p.ocean = p.water && IsOceanBand(p.point);
             }
 
@@ -744,7 +737,15 @@ namespace ET
         private bool IsOceanBand(float2 point)
         {
             float oceanBandSize = math.max(2f, math.min(Width, Height) * 0.12f);
-            return GetEdgeDistance(point) <= oceanBandSize;
+            float rightDistance = Width - point.x;
+            if (rightDistance <= oceanBandSize)
+            {
+                return true;
+            }
+
+            float normalizedY = Height <= 0 ? 0.5f : point.y / Height;
+            return rightDistance <= math.max(oceanBandSize, Width * 0.34f)
+                && math.abs(normalizedY - 0.5f) <= 0.22f;
         }
 
         private float GetEdgeDistance01(float2 point, float scale)
