@@ -17,6 +17,8 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Toggle m_LakeInlandMaskWideToggle;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.InputField m_LakeThresholdInputField;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_PanelRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Button m_ReloadSceneButton;
@@ -34,6 +36,7 @@ namespace ET.Client
         public UnityEngine.UI.Toggle LakeInlandMaskDefaultToggle => m_LakeInlandMaskDefaultToggle;
         public UnityEngine.UI.Toggle LakeInlandMaskTightToggle => m_LakeInlandMaskTightToggle;
         public UnityEngine.UI.Toggle LakeInlandMaskWideToggle => m_LakeInlandMaskWideToggle;
+        public UnityEngine.UI.InputField LakeThresholdInputField => m_LakeThresholdInputField;
         public UnityEngine.RectTransform PanelRectTransform => m_PanelRectTransform;
         public UnityEngine.UI.Button ReloadSceneButton => m_ReloadSceneButton;
         public UnityEngine.UI.Button RerenderMapButton => m_RerenderMapButton;
@@ -55,6 +58,7 @@ namespace ET.Client
             if (this.m_LakeInlandMaskDefaultToggle == null) return true;
             if (this.m_LakeInlandMaskTightToggle == null) return true;
             if (this.m_LakeInlandMaskWideToggle == null) return true;
+            if (this.m_LakeThresholdInputField == null) return true;
             if (this.m_PanelRectTransform == null) return true;
             if (this.m_ReloadSceneButton == null) return true;
             if (this.m_RerenderMapButton == null) return true;

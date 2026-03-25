@@ -78,7 +78,7 @@ namespace ET
             // 2. 高程、海洋、海岸、湖泊
             // 3. 下坡流向、流域、河流、湿度
             // 4. 最终 biome 分类
-            MapGraph = new MapGraph(checkIsland, points, voronoi, (int)Width, (int)Height, _lakeThreshold, seed);
+            MapGraph = new MapGraph(checkIsland, points, voronoi, (int)Width, (int)Height, seed);
         }
     }
 }

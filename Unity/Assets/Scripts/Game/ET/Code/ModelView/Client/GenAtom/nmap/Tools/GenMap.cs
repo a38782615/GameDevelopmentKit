@@ -15,7 +15,7 @@ namespace ET
         public int RenderWidth = 200;//渲染个数
         public int RenderHeight = 100;//渲染个数
         public int PointNum = 2000;
-        public float LakeThreshold = 0.15f;
+        public float LakeThreshold = 0.5f;
         public uint MapSeed = 12;
         public float LakeInlandMaskRange = 0.88f;
         public float LakeCarveThreshold = 0.44f;

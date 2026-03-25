@@ -48,17 +48,15 @@ namespace ET
                 return result;
             }
         }
-        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold, uint seed)
+        public MapGraph(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, uint seed)
         {
-            Init(checkIsland, points, voronoi, width, height, lakeThreshold, seed);
+            Init(checkIsland, points, voronoi, width, height, seed);
         }
 
-        private float LakeThreshold;
-        void Init(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, float lakeThreshold, uint seed)
+        void Init(Func<float2, bool> checkIsland, IEnumerable<float2> points, Voronoi voronoi, int width, int height, uint seed)
         {
             Width = width;
             Height = height;
-            LakeThreshold = lakeThreshold;
             inside = checkIsland;
             random = Random.CreateFromIndex(seed);
             _elevationNoiseOffset = new float2(random.NextFloat(13f, 97f), random.NextFloat(29f, 131f));
@@ -319,12 +317,6 @@ namespace ET
                 float noise = SampleSignedNoise(q.point, _elevationNoiseOffset, 0.045f, 2);
                 float elevation = 0.04f + rightLowGradient01 * 0.24f + centerBias01 * 0.03f + noise * 0.02f;
                 elevation -= estuaryMask * 0.08f;
-
-                if (q.water)
-                {
-                    elevation *= q.ocean || q.border ? 0f : 0.25f;
-                }
-
                 q.elevation = math.saturate(elevation);
             }
         }
@@ -355,7 +347,7 @@ namespace ET
                 }
 
                 // 海洋只存在在边缘带；内陆湖泊、河道即便连通也不会被并入海洋。
-                p.water = !centerIsLand || numWater >= p.corners.Count * LakeThreshold;
+                p.water = !centerIsLand || numWater >= p.corners.Count * 0.015f;
                 p.ocean = p.water && IsOceanBand(p.point);
             }
 
@@ -410,22 +402,6 @@ namespace ET
                 {
                     float y = (float)i / (locations.Count - 1);
                     locations[i].elevation = math.lerp(0.06f, 0.32f, y);
-                }
-            }
-
-            foreach (MapCorner corner in corners)
-            {
-                if (corner.ocean)
-                {
-                    corner.elevation = 0f;
-                }
-                else if (corner.coast)
-                {
-                    corner.elevation = 0.02f;
-                }
-                else if (corner.water)
-                {
-                    corner.elevation = math.min(corner.elevation, 0.05f);
                 }
             }
         }

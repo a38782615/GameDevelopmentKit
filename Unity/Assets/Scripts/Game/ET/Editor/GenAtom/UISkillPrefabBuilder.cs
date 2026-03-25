@@ -115,7 +115,7 @@ namespace ET.Editor
             rectTransform.anchorMax = new Vector2(0f, 1f);
             rectTransform.pivot = new Vector2(0f, 1f);
             rectTransform.anchoredPosition = new Vector2(24f, -24f);
-            rectTransform.sizeDelta = new Vector2(420f, 268f);
+            rectTransform.sizeDelta = new Vector2(420f, 324f);
 
             Image image = panel.GetComponent<Image>();
             image.color = new Color(0.05f, 0.08f, 0.12f, 0.92f);
@@ -146,9 +146,17 @@ namespace ET.Editor
 
             CreateMapInputRow(
                 panel.transform,
+                "LakeThresholdRow",
+                "Lake Threshold",
+                -116f,
+                "LakeThreshold_InputField",
+                "0.5");
+
+            CreateMapInputRow(
+                panel.transform,
                 "LakeCarveThresholdRow",
                 "Carve Threshold",
-                -116f,
+                -172f,
                 "LakeCarveThreshold_InputField",
                 "0.56");
 
@@ -156,7 +164,7 @@ namespace ET.Editor
                 panel.transform,
                 "LakeCarveStrengthRow",
                 "Carve Strength",
-                -172f,
+                -228f,
                 "LakeCarveStrength_InputField",
                 "0.42");
 
@@ -736,6 +744,7 @@ namespace ET.Editor
             Toggle lakeInlandMaskTightToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskTight_Toggle"));
             Toggle lakeInlandMaskDefaultToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskDefault_Toggle"));
             Toggle lakeInlandMaskWideToggle = GetRequiredComponent<Toggle>(FindRequiredChild(mapControls, "LakeInlandMaskRow/LakeInlandMaskWide_Toggle"));
+            InputField lakeThresholdInputField = GetRequiredComponent<InputField>(FindRequiredChild(mapControls, "LakeThresholdRow/LakeThreshold_InputField"));
             InputField lakeCarveThresholdInputField = GetRequiredComponent<InputField>(FindRequiredChild(mapControls, "LakeCarveThresholdRow/LakeCarveThreshold_InputField"));
             InputField lakeCarveStrengthInputField = GetRequiredComponent<InputField>(FindRequiredChild(mapControls, "LakeCarveStrengthRow/LakeCarveStrength_InputField"));
             RectTransform panelRectTransform = GetRequiredComponent<RectTransform>(FindRequiredChild(root.transform, "Panel_RectTransform"));
@@ -763,6 +772,7 @@ namespace ET.Editor
             TrySetObjectReference(formComponent, "m_LakeInlandMaskTightToggle", lakeInlandMaskTightToggle);
             TrySetObjectReference(formComponent, "m_LakeInlandMaskDefaultToggle", lakeInlandMaskDefaultToggle);
             TrySetObjectReference(formComponent, "m_LakeInlandMaskWideToggle", lakeInlandMaskWideToggle);
+            TrySetObjectReference(formComponent, "m_LakeThresholdInputField", lakeThresholdInputField);
             TrySetObjectReference(formComponent, "m_LakeCarveThresholdInputField", lakeCarveThresholdInputField);
             TrySetObjectReference(formComponent, "m_LakeCarveStrengthInputField", lakeCarveStrengthInputField);
             TrySetObjectReference(formComponent, "m_PanelRectTransform", panelRectTransform);

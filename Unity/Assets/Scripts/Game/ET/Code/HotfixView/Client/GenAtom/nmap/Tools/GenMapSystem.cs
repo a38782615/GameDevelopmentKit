@@ -87,14 +87,6 @@ namespace ET
             // 防止宽高异常时出现除以 0。
             float width = math.max(1f, self.Width);
             float height = math.max(1f, self.Height);
-            // 这些参数共同控制湖泊出现的位置、门槛和强度。
-            // clamp 用来限制 UI 或配置输入，避免参数把整张图直接切成水域。
-            float lakeInlandMaskRange = math.clamp(self.LakeInlandMaskRange, 0.65f, 0.92f);
-            float lakeEdgeMaskRange = math.clamp(lakeInlandMaskRange - 0.08f, 0.5f, 0.88f);
-            float lakeCarveThreshold = math.clamp(self.LakeCarveThreshold, 0.25f, 0.72f);
-            float lakeDetailThreshold = math.saturate(lakeCarveThreshold + 0.02f);
-            float lakeCarveStrength = math.clamp(self.LakeCarveStrength, 0f, 1f);
-            float lakeCoreRadius = math.max(0.12f, lakeInlandMaskRange * 0.46f);
             Func<float2, bool> GetFun = (q) =>
             {
                 // 不同 seed 使用不同噪声偏移，但同一 seed 的结果保持稳定。
@@ -113,26 +105,7 @@ namespace ET
 
                 // 先构造大陆主体，让边缘更容易收束成海岸。
                 float landScore = 0.6f - edgeDistance * 0.48f - radialDistance * 0.16f + continentNoise + coastNoise;
-
-                // 只在地图腹地施加“湖盆挖空”，避免把沿海切得过碎或直接打通到海洋。
-                float inlandMask =
-                    math.saturate((lakeInlandMaskRange - radialDistance) / 0.24f) *
-                    math.saturate((lakeEdgeMaskRange - edgeDistance) / 0.18f);
-                inlandMask *= inlandMask;
-
-                // 额外压低中心区域，避免随机种子偏干时中部始终没有湖。
-                float lakeCoreMask = math.saturate((lakeCoreRadius - radialDistance) / 0.16f);
-                lakeCoreMask *= lakeCoreMask;
-
-                // 低频噪声决定湖盆的大轮廓，高频噪声决定边缘破碎度。
-                float lakeBase = Perlin.Fbm(normalized * 4.1f + seedOffset * 2.7f + new float2(19.3f, 41.7f), 3);
-                float lakeDetail = Perlin.Fbm(normalized * 8.2f + seedOffset * 4.9f + new float2(-27.4f, 13.6f), 2);
-                float lakeCarve =
-                    math.saturate((lakeBase - lakeCarveThreshold) * 2.1f + (lakeDetail - lakeDetailThreshold) * 1.1f);
-                landScore -= lakeCoreMask * lakeCarveStrength * 0.72f;
-                landScore -= lakeCarve * inlandMask * lakeCarveStrength;
-
-                return landScore > self.LakeThreshold;
+                return landScore > 0;
             };
             return GetFun;
         }

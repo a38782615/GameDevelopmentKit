@@ -571,6 +571,7 @@ namespace ET.Client
             }
 
             self.SetLakeInlandMaskSelection(self.ResolveNearestOption(genMap.LakeInlandMaskRange, LakeInlandMaskTight, LakeInlandMaskDefault, LakeInlandMaskWide));
+            self.SetLakeFloatInput(view.LakeThresholdInputField, genMap.LakeThreshold);
             self.SetLakeFloatInput(view.LakeCarveThresholdInputField, genMap.LakeCarveThreshold);
             self.SetLakeFloatInput(view.LakeCarveStrengthInputField, genMap.LakeCarveStrength);
         }
@@ -583,6 +584,7 @@ namespace ET.Client
             }
 
             genMap.LakeInlandMaskRange = self.GetSelectedLakeInlandMaskValue();
+            genMap.LakeThreshold = self.GetLakeFloatInputValue(self.View?.LakeThresholdInputField, genMap.LakeThreshold);
             genMap.LakeCarveThreshold = self.GetLakeFloatInputValue(self.View?.LakeCarveThresholdInputField, genMap.LakeCarveThreshold);
             genMap.LakeCarveStrength = self.GetLakeFloatInputValue(self.View?.LakeCarveStrengthInputField, genMap.LakeCarveStrength);
         }
