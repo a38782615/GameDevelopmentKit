@@ -425,8 +425,8 @@ namespace ET
                 return corner != null && corner.coast ? MapTransitionKind.WaterCoast : MapTransitionKind.None;
             }
 
-            bool primaryWater = IsWaterBiome(primaryCenter.biome);
-            bool secondaryWater = IsWaterBiome(secondaryCenter.biome);
+            bool primaryWater = IsLiquidBiome(primaryCenter.biome);
+            bool secondaryWater = IsLiquidBiome(secondaryCenter.biome);
             if (primaryWater != secondaryWater)
             {
                 return primaryCenter.ocean || secondaryCenter.ocean || primaryCenter.coast || secondaryCenter.coast
@@ -458,9 +458,14 @@ namespace ET
             return edge != null ? MapTransitionKind.TerrainEdge : MapTransitionKind.None;
         }
 
-        private static bool IsWaterBiome(Biome biome)
+        private static bool IsInlandWaterBiome(Biome biome)
         {
             return biome == Biome.Lake || biome == Biome.Marsh;
+        }
+
+        private static bool IsLiquidBiome(Biome biome)
+        {
+            return IsOceanBiome(biome) || IsInlandWaterBiome(biome);
         }
 
         private static bool IsOceanBiome(Biome biome)
@@ -489,21 +494,132 @@ namespace ET
             return biome == Biome.Beach || biome == Biome.SubtropicalDesert || biome == Biome.TemperateDesert || biome == Biome.Scorched;
         }
 
+        private static float GetBlend(MapNode node, float cornerWeight = 1f)
+        {
+            return math.max(node.EdgeBlend, node.CornerBlend * cornerWeight);
+        }
+
         public static bool DrawLayer(this DrawMap self, DrawCarpet carpet, MapNode node)
         {
             // 由 DrawCarpet 的层类型决定当前节点是否属于这一层。
             return carpet.CarType switch
             {
-                0 => IsOceanBiome(node.MapCenter.biome),
-                1 => IsWaterBiome(node.MapCenter.biome),
-                2 => IsGreenBiome(node.MapCenter.biome),
-                3 => !IsOceanBiome(node.MapCenter.biome)
-                    && !IsWaterBiome(node.MapCenter.biome)
-                    && !IsGreenBiome(node.MapCenter.biome)
-                    && !IsColdBiome(node.MapCenter.biome),
-                4 => IsColdBiome(node.MapCenter.biome),
+                0 => self.IsOcean(node),
+                1 => self.IsWater(node),
+                2 => self.IsGreen(node),
+                3 => self.IsGround(node),
+                4 => self.IsCold(node),
                 _ => false
             };
+        }
+
+        public static bool IsOcean(this DrawMap self, MapNode node)
+        {
+            return IsOceanBiome(node.MapCenter.biome);
+        }
+
+        public static bool IsWater(this DrawMap self, MapNode node)
+        {
+            if (IsInlandWaterBiome(node.MapCenter.biome))
+            {
+                return true;
+            }
+
+            if (node.SecondaryCenter == null)
+            {
+                return false;
+            }
+
+            bool secondaryInlandWater = IsInlandWaterBiome(node.SecondaryCenter.biome);
+            bool secondaryOcean = IsOceanBiome(node.SecondaryCenter.biome);
+            if (!secondaryInlandWater && !secondaryOcean)
+            {
+                return false;
+            }
+
+            if (IsOceanBiome(node.MapCenter.biome) || IsColdBiome(node.MapCenter.biome))
+            {
+                return false;
+            }
+
+            float blend = GetBlend(node, 0.85f);
+            if (secondaryInlandWater)
+            {
+                return node.TransitionKind == MapTransitionKind.WaterCoast || node.TransitionKind == MapTransitionKind.WaterInner
+                    ? blend >= 0.58f
+                    : false;
+            }
+
+            return node.TransitionKind == MapTransitionKind.WaterCoast
+                ? blend >= 0.62f
+                : false;
+        }
+
+        public static bool IsGreen(this DrawMap self, MapNode node)
+        {
+            if (IsOceanBiome(node.MapCenter.biome) || IsInlandWaterBiome(node.MapCenter.biome))
+            {
+                return false;
+            }
+
+            bool primaryGreen = IsGreenBiome(node.MapCenter.biome);
+            bool secondaryGreen = node.SecondaryCenter != null && IsGreenBiome(node.SecondaryCenter.biome);
+            bool nearLiquid = node.SecondaryCenter != null && IsLiquidBiome(node.SecondaryCenter.biome);
+            bool nearCold = node.SecondaryCenter != null && IsColdBiome(node.SecondaryCenter.biome);
+            float blend = GetBlend(node);
+            if (primaryGreen)
+            {
+                if (nearLiquid && (node.TransitionKind == MapTransitionKind.WaterCoast || node.TransitionKind == MapTransitionKind.WaterInner))
+                {
+                    return blend < 0.68f;
+                }
+
+                if (nearCold && node.TransitionKind == MapTransitionKind.ColdEdge)
+                {
+                    return blend < 0.7f;
+                }
+
+                return true;
+            }
+
+            if (!secondaryGreen || IsColdBiome(node.MapCenter.biome))
+            {
+                return false;
+            }
+
+            return node.TransitionKind == MapTransitionKind.VegetationEdge ||
+                node.TransitionKind == MapTransitionKind.TerrainEdge
+                ? blend >= 0.72f
+                : false;
+        }
+
+        public static bool IsGround(this DrawMap self, MapNode node)
+        {
+            return !IsOceanBiome(node.MapCenter.biome);
+        }
+
+        public static bool IsCold(this DrawMap self, MapNode node)
+        {
+            if (IsColdBiome(node.MapCenter.biome))
+            {
+                return true;
+            }
+
+            if (node.SecondaryCenter == null || !IsColdBiome(node.SecondaryCenter.biome))
+            {
+                return false;
+            }
+
+            if (IsOceanBiome(node.MapCenter.biome) || IsInlandWaterBiome(node.MapCenter.biome))
+            {
+                return false;
+            }
+
+            float blend = GetBlend(node, 0.9f);
+            return node.TransitionKind == MapTransitionKind.ColdEdge ||
+                node.TransitionKind == MapTransitionKind.TerrainEdge
+                ? blend >= 0.7f
+                : false;
         }
     }
 }

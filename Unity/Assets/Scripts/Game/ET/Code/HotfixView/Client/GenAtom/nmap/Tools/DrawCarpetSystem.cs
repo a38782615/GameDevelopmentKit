@@ -12,7 +12,7 @@ namespace ET
     public static partial class DrawCarpetSystem
     {
         // 各图层在同一 Sorting Layer 内按固定偏移排布。
-        // type 越大，渲染顺序越靠上，用来把基础地表、水面、草层错开。
+        // Ocean 和 Ground 负责铺底，其余层作为覆盖层叠上去。
         private const int BaseSortingOrder = -100;
 
         [EntitySystem]
@@ -73,7 +73,7 @@ namespace ET
             {
                 // 所有 carpet 共用同一个 Sorting Layer，只用 order 区分前后层级。
                 self.SetSortingLayerId(0);
-                self.SetOrderInLayer(BaseSortingOrder + type);
+                self.SetOrderInLayer(BaseSortingOrder + GetSortingOffset(type));
 
                 // 这些地表网格是纯平面覆盖层，不需要实时阴影和探针。
                 self.MeshRenderer.shadowCastingMode = ShadowCastingMode.Off;
@@ -193,6 +193,19 @@ namespace ET
         public static void SetSortingLayerName(this DrawCarpet self, string value)
         {
             self.MeshRenderer.sortingLayerName = value;
+        }
+
+        private static int GetSortingOffset(int type)
+        {
+            return type switch
+            {
+                0 => 0,
+                3 => 1,
+                1 => 2,
+                2 => 3,
+                4 => 4,
+                _ => type
+            };
         }
 
         private static void Render(this DrawCarpet self)
