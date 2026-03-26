@@ -120,7 +120,7 @@ namespace ET.Editor
             Image image = panel.GetComponent<Image>();
             image.color = new Color(0.05f, 0.08f, 0.12f, 0.92f);
 
-            TextMeshProUGUI title = CreateTMPText("Title", panel.transform, "Lake Controls", 24f, TextAlignmentOptions.Left);
+            TextMeshProUGUI title = CreateTMPText("Title", panel.transform, "Lake Controls", 30f, TextAlignmentOptions.Left);
             RectTransform titleRect = title.rectTransform;
             titleRect.anchorMin = new Vector2(0f, 1f);
             titleRect.anchorMax = new Vector2(1f, 1f);
@@ -269,7 +269,7 @@ namespace ET.Editor
             Image image = buttonObject.GetComponent<Image>();
             image.color = new Color(0.14f, 0.19f, 0.24f, 0.95f);
 
-            Text label = CreateText("Label", buttonObject.transform, "重新加载场景", 24, TextAnchor.MiddleCenter);
+            Text label = CreateText("Label", buttonObject.transform, "重新加载场景", 30, TextAnchor.MiddleCenter);
             RectTransform labelRectTransform = label.rectTransform;
             labelRectTransform.anchorMin = Vector2.zero;
             labelRectTransform.anchorMax = Vector2.one;
@@ -306,7 +306,7 @@ namespace ET.Editor
             colors.disabledColor = new Color(0.2f, 0.37f, 0.26f, 0.45f);
             button.colors = colors;
 
-            TextMeshProUGUI label = CreateTMPText("Label", buttonObject.transform, "Apply + Render", 20f, TextAlignmentOptions.Center);
+            TextMeshProUGUI label = CreateTMPText("Label", buttonObject.transform, "Apply + Render", 30f, TextAlignmentOptions.Center);
             RectTransform labelRectTransform = label.rectTransform;
             labelRectTransform.anchorMin = Vector2.zero;
             labelRectTransform.anchorMax = Vector2.one;
@@ -340,7 +340,7 @@ namespace ET.Editor
             rowRect.anchoredPosition = new Vector2(0f, anchoredY);
             rowRect.sizeDelta = new Vector2(-28f, 44f);
 
-            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 18f, TextAlignmentOptions.Left);
+            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 30f, TextAlignmentOptions.Left);
             RectTransform labelRect = rowLabel.rectTransform;
             labelRect.anchorMin = new Vector2(0f, 0f);
             labelRect.anchorMax = new Vector2(0f, 1f);
@@ -402,7 +402,7 @@ namespace ET.Editor
             indicator.raycastTarget = false;
             toggle.graphic = indicator;
 
-            TextMeshProUGUI optionLabel = CreateTMPText("Label", toggleObject.transform, label, 16f, TextAlignmentOptions.Center);
+            TextMeshProUGUI optionLabel = CreateTMPText("Label", toggleObject.transform, label, 30f, TextAlignmentOptions.Center);
             RectTransform labelRect = optionLabel.rectTransform;
             labelRect.anchorMin = Vector2.zero;
             labelRect.anchorMax = Vector2.one;
@@ -423,7 +423,7 @@ namespace ET.Editor
             rowRect.anchoredPosition = new Vector2(0f, anchoredY);
             rowRect.sizeDelta = new Vector2(-28f, 44f);
 
-            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 18f, TextAlignmentOptions.Left);
+            TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 30f, TextAlignmentOptions.Left);
             RectTransform labelRect = rowLabel.rectTransform;
             labelRect.anchorMin = new Vector2(0f, 0f);
             labelRect.anchorMax = new Vector2(0f, 1f);
@@ -459,7 +459,7 @@ namespace ET.Editor
             Text placeholder = placeholderObject.GetComponent<Text>();
             placeholder.text = defaultValue;
             placeholder.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            placeholder.fontSize = 18;
+            placeholder.fontSize = 30;
             placeholder.alignment = TextAnchor.MiddleLeft;
             placeholder.color = new Color(0.58f, 0.64f, 0.72f, 0.95f);
             placeholder.raycastTarget = false;
@@ -474,7 +474,7 @@ namespace ET.Editor
             Text text = textObject.GetComponent<Text>();
             text.text = defaultValue;
             text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = 18;
+            text.fontSize = 30;
             text.alignment = TextAnchor.MiddleLeft;
             text.color = new Color(0.93f, 0.96f, 1f, 0.98f);
             text.raycastTarget = false;
@@ -558,7 +558,7 @@ namespace ET.Editor
 
         private static void CreateNameText(Transform parent)
         {
-            Text nameText = CreateText("Name_Text", parent, "Skill", 24, TextAnchor.LowerCenter);
+            Text nameText = CreateText("Name_Text", parent, "Skill", 30, TextAnchor.LowerCenter);
             RectTransform rectTransform = nameText.rectTransform;
             rectTransform.anchorMin = new Vector2(0f, 0f);
             rectTransform.anchorMax = new Vector2(1f, 0f);
@@ -571,7 +571,7 @@ namespace ET.Editor
 
         private static void CreateStateText(Transform parent)
         {
-            Text stateText = CreateText("State_Text", parent, string.Empty, 32, TextAnchor.MiddleCenter);
+            Text stateText = CreateText("State_Text", parent, string.Empty, 30, TextAnchor.MiddleCenter);
             RectTransform rectTransform = stateText.rectTransform;
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
