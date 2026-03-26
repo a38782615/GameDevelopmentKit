@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3907124208951305446}
   - component: {fileID: 3463670704753062718}
   - component: {fileID: 7040939551997041939}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: State_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 5867505333455891985}
   - component: {fileID: 1718045005231037563}
   - component: {fileID: 6833216907676646943}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Icon_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 7782108503852317596}
   - component: {fileID: 9148097070027261504}
   - component: {fileID: 1521480514975859379}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Cast_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 428937968962749776}
   - component: {fileID: 3651522925401368937}
   - component: {fileID: 8628233208966345276}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SkillItemTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -417,6 +417,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CastButton: {fileID: 9148097070027261504}
+  m_CooldownRingImage: {fileID: 0}
+  m_CooldownTrackImage: {fileID: 0}
   m_IconImage: {fileID: 1718045005231037563}
   m_NameText: {fileID: 6470101140290857766}
   m_StateText: {fileID: 3463670704753062718}
@@ -432,7 +434,7 @@ GameObject:
   - component: {fileID: 8533595686146436865}
   - component: {fileID: 6470101140290857766}
   - component: {fileID: 7318384409225859308}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Name_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}

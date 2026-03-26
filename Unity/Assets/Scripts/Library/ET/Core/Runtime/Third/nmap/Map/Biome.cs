@@ -96,6 +96,10 @@ namespace ET
         Beach,
         // 雪地
         Snow,
+        // 草原
+        Grassland,
+        // 灌木地
+        Shrubland,
         // 冻原
         Tundra,
         // 裸岩荒地
@@ -104,16 +108,12 @@ namespace ET
         Scorched,
         // 针叶林
         Taiga,
-        // 灌木地
-        Shrubland,
         // 温带沙漠
         TemperateDesert,
         // 温带雨林
         TemperateRainForest,
         // 温带落叶林
         TemperateDeciduousForest,
-        // 草原
-        Grassland,
         // 热带雨林
         TropicalRainForest,
         // 热带季雨林

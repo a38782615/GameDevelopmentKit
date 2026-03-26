@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1770263636443686209}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeCarveStrengthRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -298}
-  m_SizeDelta: {x: -28, y: 56}
+  m_SizeDelta: {x: -28, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &263039788236375184
 GameObject:
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 8180154719994364578}
   - component: {fileID: 1397421757950856791}
   - component: {fileID: 50318096740838508}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4042449878
   m_fontColor: {r: 0.84, g: 0.89, b: 0.95, a: 0.94}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 1185268666243204292}
   - component: {fileID: 5418660573310772338}
   - component: {fileID: 122495804097044574}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 8507211989477924527}
   - component: {fileID: 1273175415012523613}
   - component: {fileID: 6273817318084824119}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Icon_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 7968193304754632105}
   - component: {fileID: 6136686050762232290}
   - component: {fileID: 5923402567486334546}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4127193074
   m_fontColor: {r: 0.95, g: 0.97, b: 1, a: 0.96}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -414,7 +414,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -474,7 +474,7 @@ GameObject:
   - component: {fileID: 4176498399238860096}
   - component: {fileID: 2050433734059589716}
   - component: {fileID: 343392369627996415}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 2244838641736454449}
   - component: {fileID: 6880492531607317992}
   - component: {fileID: 8037300224880828705}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MapControls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -580,7 +580,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 24, y: 0}
-  m_SizeDelta: {x: 620, y: 392}
+  m_SizeDelta: {x: 620, y: 463.1353}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &6880492531607317992
 CanvasRenderer:
@@ -631,7 +631,7 @@ GameObject:
   - component: {fileID: 4711007251114539732}
   - component: {fileID: 527890161254224111}
   - component: {fileID: 4773003882221412663}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -710,7 +710,7 @@ GameObject:
   - component: {fileID: 7736867780467782761}
   - component: {fileID: 1715465394585406022}
   - component: {fileID: 6988919734642135090}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Panel_RectTransform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -786,7 +786,7 @@ GameObject:
   - component: {fileID: 7368604719178795157}
   - component: {fileID: 6086725377398976837}
   - component: {fileID: 3413654867132217245}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -866,7 +866,7 @@ GameObject:
   - component: {fileID: 809848376840772451}
   - component: {fileID: 2015516437806100388}
   - component: {fileID: 6952885465210854737}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeInlandMaskDefault_Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 4344829986444204378}
   - component: {fileID: 3114574750490569680}
   - component: {fileID: 4481709008914847244}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Cast_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1114,7 +1114,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1348775367388073131}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeThresholdRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1140,7 +1140,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -154}
-  m_SizeDelta: {x: -28, y: 56}
+  m_SizeDelta: {x: -28, y: 72}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &2330495205400925308
 GameObject:
@@ -1152,7 +1152,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4132006412134124712}
   - component: {fileID: 1731395442549100083}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SkillGrid_RectTransform_GridLayoutGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1215,7 +1215,7 @@ GameObject:
   - component: {fileID: 2210368819010081033}
   - component: {fileID: 2114486849210760133}
   - component: {fileID: 7048414132251234341}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeThreshold_InputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1241,7 +1241,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -16, y: 0}
-  m_SizeDelta: {x: 220, y: 40}
+  m_SizeDelta: {x: 370, y: 72}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &2210368819010081033
 CanvasRenderer:
@@ -1360,7 +1360,7 @@ GameObject:
   - component: {fileID: 2641710925983935178}
   - component: {fileID: 8839958787885101398}
   - component: {fileID: 1859740735410980241}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1423,7 +1423,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4211079154
   m_fontColor: {r: 0.95, g: 0.97, b: 1, a: 0.98}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1436,7 +1436,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -1496,7 +1496,7 @@ GameObject:
   - component: {fileID: 6700723451513655944}
   - component: {fileID: 5665677648400815052}
   - component: {fileID: 3315192756311909605}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CooldownRing_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1571,7 +1571,7 @@ GameObject:
   - component: {fileID: 8689083290879111339}
   - component: {fileID: 1435348103659206876}
   - component: {fileID: 142221231728400648}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1650,7 +1650,7 @@ GameObject:
   - component: {fileID: 8836909197590713897}
   - component: {fileID: 3939461481906421581}
   - component: {fileID: 1805030842187070314}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Name_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1730,7 +1730,7 @@ GameObject:
   - component: {fileID: 6594100033802325825}
   - component: {fileID: 5306086740086326421}
   - component: {fileID: 3933659517645929513}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RerenderMap_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1850,7 +1850,7 @@ GameObject:
   - component: {fileID: 1408966775188268941}
   - component: {fileID: 8653195666635879836}
   - component: {fileID: 5119042853705153017}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1913,7 +1913,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4127193074
   m_fontColor: {r: 0.95, g: 0.97, b: 1, a: 0.96}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1926,7 +1926,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -1987,7 +1987,7 @@ GameObject:
   - component: {fileID: 6047830681482217330}
   - component: {fileID: 4503934694675086556}
   - component: {fileID: 5569164223086834902}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeCarveStrength_InputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2013,7 +2013,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -16, y: 0}
-  m_SizeDelta: {x: 220, y: 40}
+  m_SizeDelta: {x: 338.5964, y: 56}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &6047830681482217330
 CanvasRenderer:
@@ -2133,7 +2133,7 @@ GameObject:
   - component: {fileID: 9051652277980888413}
   - component: {fileID: 3439126880063605463}
   - component: {fileID: 419123209869233828}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeInlandMaskWide_Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2257,7 +2257,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5518384164556017055}
   - component: {fileID: 3941672496721904285}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ItemTemplate_SkillItemTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2314,7 +2314,7 @@ GameObject:
   - component: {fileID: 8574378204701324458}
   - component: {fileID: 8131184735548760946}
   - component: {fileID: 1842056125815375505}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: State_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2411,7 +2411,7 @@ GameObject:
   - component: {fileID: 1398899978894092857}
   - component: {fileID: 5022274794857013494}
   - component: {fileID: 7219941825831307984}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UISkill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2538,7 +2538,7 @@ GameObject:
   - component: {fileID: 6762692317524264358}
   - component: {fileID: 1593893025098442121}
   - component: {fileID: 6988148744472804558}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2614,7 +2614,7 @@ GameObject:
   - component: {fileID: 2337790685003944807}
   - component: {fileID: 2965407995866322312}
   - component: {fileID: 8352776718284413082}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ReloadScene_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2734,7 +2734,7 @@ GameObject:
   - component: {fileID: 648267733803608725}
   - component: {fileID: 2369255039088392352}
   - component: {fileID: 5459880350407593263}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2813,7 +2813,7 @@ GameObject:
   - component: {fileID: 6337544468636105448}
   - component: {fileID: 8328097646835378085}
   - component: {fileID: 5333405344667676917}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CooldownTrack_Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2887,7 +2887,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3138292899056021102}
   - component: {fileID: 1906330609498570351}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeInlandMaskRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2915,7 +2915,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -82}
-  m_SizeDelta: {x: -28, y: 56}
+  m_SizeDelta: {x: -28, y: 72}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1906330609498570351
 MonoBehaviour:
@@ -2941,7 +2941,7 @@ GameObject:
   - component: {fileID: 7216554416845059295}
   - component: {fileID: 2886922617170087969}
   - component: {fileID: 8383011162516494309}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3004,7 +3004,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4042449878
   m_fontColor: {r: 0.84, g: 0.89, b: 0.95, a: 0.94}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3017,7 +3017,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -3078,7 +3078,7 @@ GameObject:
   - component: {fileID: 4423974735812769101}
   - component: {fileID: 7254255214051574}
   - component: {fileID: 8951152689478137189}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeCarveThreshold_InputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3103,8 +3103,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: 0}
-  m_SizeDelta: {x: 220, y: 40}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 292.28, y: 72}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &4423974735812769101
 CanvasRenderer:
@@ -3223,7 +3223,7 @@ GameObject:
   - component: {fileID: 8604342354223925696}
   - component: {fileID: 6294007894762080577}
   - component: {fileID: 9046523919954681963}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3286,7 +3286,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4210752759
   m_fontColor: {r: 0.97, g: 0.99, b: 0.98, a: 0.98}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3299,7 +3299,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -3359,7 +3359,7 @@ GameObject:
   - component: {fileID: 2807885174218122638}
   - component: {fileID: 7870772796463515939}
   - component: {fileID: 6560636005421639253}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3439,7 +3439,7 @@ GameObject:
   - component: {fileID: 8195887437054146436}
   - component: {fileID: 2989344163933199301}
   - component: {fileID: 6206139086171889929}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeInlandMaskTight_Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3564,7 +3564,7 @@ GameObject:
   - component: {fileID: 2311691202302394048}
   - component: {fileID: 8666306265470647248}
   - component: {fileID: 7078376873124300794}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3639,7 +3639,7 @@ GameObject:
   - component: {fileID: 2744197166193643473}
   - component: {fileID: 6231471972701443235}
   - component: {fileID: 6661902907887762622}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3702,7 +3702,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4042449878
   m_fontColor: {r: 0.84, g: 0.89, b: 0.95, a: 0.94}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3715,7 +3715,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -3775,7 +3775,7 @@ GameObject:
   - component: {fileID: 868633862369481977}
   - component: {fileID: 6057504407655210692}
   - component: {fileID: 6330921416528390690}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3838,7 +3838,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4042449878
   m_fontColor: {r: 0.84, g: 0.89, b: 0.95, a: 0.94}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -3851,7 +3851,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -3911,7 +3911,7 @@ GameObject:
   - component: {fileID: 3508629029538607127}
   - component: {fileID: 4638361607242683371}
   - component: {fileID: 4230622945096301422}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3988,7 +3988,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3354292476174576137}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LakeCarveThresholdRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4014,7 +4014,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -226}
-  m_SizeDelta: {x: -28, y: 56}
+  m_SizeDelta: {x: -28, y: 72}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8985594698288826295
 GameObject:
@@ -4027,7 +4027,7 @@ GameObject:
   - component: {fileID: 21583300417319918}
   - component: {fileID: 6905205097687489793}
   - component: {fileID: 1236156723263524660}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4090,7 +4090,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4127193074
   m_fontColor: {r: 0.95, g: 0.97, b: 1, a: 0.96}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -4103,7 +4103,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
