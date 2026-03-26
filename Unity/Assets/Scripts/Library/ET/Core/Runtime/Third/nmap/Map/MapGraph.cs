@@ -297,7 +297,11 @@ namespace ET
         {
             foreach (MapCorner q in corners)
             {
-                q.water = !inside(q.point);
+                // 初始阶段只根据岛屿轮廓判断角点是否落在水域中。
+                // 后续会在 AssignOceanCoastAndLand 中继续细分 ocean / coast / inland water。
+                bool isWater = !inside(q.point);
+                q.water = isWater;
+                q.ocean = isWater;
             }
         }
 

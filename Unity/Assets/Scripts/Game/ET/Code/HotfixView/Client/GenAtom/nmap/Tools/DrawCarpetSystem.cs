@@ -42,7 +42,7 @@ namespace ET
         public static async UniTask InitAsync(this DrawCarpet self, int type)
         {
             // type 决定当前 DrawCarpet 是哪一层：
-            // 0 = 基础地表，1 = 水层，2 = 草层。
+            // 0 = 海洋，1 = 内陆水域，2 = 绿色植被，3 = 常规地表，4 = 寒冷地表。
             self.CarType = type;
 
             // 每层都由一张主纹理和一张覆盖纹理组成，最终交给组合材质做混合。

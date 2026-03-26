@@ -105,7 +105,7 @@ namespace ET
 
                 // 先构造大陆主体，让边缘更容易收束成海岸。
                 float landScore = 0.6f - edgeDistance * 0.48f - radialDistance * 0.16f + continentNoise + coastNoise;
-                return landScore > 0;
+                return landScore > 0.1;
             };
             return GetFun;
         }

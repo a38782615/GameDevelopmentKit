@@ -7,10 +7,24 @@ namespace ET
     public partial class DrawCarpet : Entity, IAwake, IDestroy
     {
         [StaticField]
-        public static string[] mainNames = { "noise_rocky", "Ground_noise_water_shallow", "forest_ground_noise" };
+        public static string[] mainNames =
+        {
+            "Ground_noise_water_shallow",
+            "Ground_noise_water_shallow",
+            "forest_ground_noise",
+            "Ground_noise_dirt",
+            "ground_noise"
+        };
 
         [StaticField]
-        public static string[] overNames = { "blocky", "water", "grass" };
+        public static string[] overNames =
+        {
+            "water",
+            "water",
+            "grass",
+            "blocky",
+            "blocky"
+        };
 
         public MeshRenderer MeshRenderer;
         public MeshFilter MeshFilter;

@@ -28,6 +28,13 @@ namespace ET
                 return;
             }
 
+            if (childCount != DrawCarpet.mainNames.Length || childCount != DrawCarpet.overNames.Length)
+            {
+                Log.Error(
+                    $"nmap draw map init failed, layer count mismatch, childCount: {childCount}, main: {DrawCarpet.mainNames.Length}, over: {DrawCarpet.overNames.Length}");
+                return;
+            }
+
             for (int i = 0; i < childCount; i++)
             {
                 DrawCarpet carpet = self.AddChild<DrawCarpet>();
@@ -78,7 +85,7 @@ namespace ET
                 foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
                 {
                     DrawCarpet carpet = carpetRef.As();
-                    carpet?.Set(self.IsGround, node);
+                    carpet?.Set(self.DrawLayer, node);
                 }
             }
 
@@ -453,7 +460,12 @@ namespace ET
 
         private static bool IsWaterBiome(Biome biome)
         {
-            return biome == Biome.Ocean || biome == Biome.Lake || biome == Biome.Marsh || biome == Biome.Ice;
+            return biome == Biome.Lake || biome == Biome.Marsh;
+        }
+
+        private static bool IsOceanBiome(Biome biome)
+        {
+            return biome == Biome.Ocean;
         }
 
         private static bool IsGreenBiome(Biome biome)
@@ -474,76 +486,24 @@ namespace ET
 
         private static bool IsDryBiome(Biome biome)
         {
-            return biome == Biome.Beach || biome == Biome.SubtropicalDesert || biome == Biome.TemperateDesert ||
-                biome == Biome.Scorched;
+            return biome == Biome.Beach || biome == Biome.SubtropicalDesert || biome == Biome.TemperateDesert || biome == Biome.Scorched;
         }
 
-        public static bool IsGround(this DrawMap self, DrawCarpet carpet, MapNode node)
+        public static bool DrawLayer(this DrawMap self, DrawCarpet carpet, MapNode node)
         {
             // 由 DrawCarpet 的层类型决定当前节点是否属于这一层。
-            if (carpet.CarType == 0)
+            return carpet.CarType switch
             {
-                return true;
-            }
-
-            if (carpet.CarType == 1)
-            {
-                return self.IsWater(node);
-            }
-
-            if (carpet.CarType == 2)
-            {
-                return self.IsGrass(node);
-            }
-
-            return false;
-        }
-
-        public static bool IsWater(this DrawMap self, MapNode node)
-        {
-            // 主中心是水则直接为水；否则允许通过边界混合把靠近水域的格子扩成水边。
-            if (IsWaterBiome(node.MapCenter.biome))
-            {
-                return true;
-            }
-
-            if (node.SecondaryCenter == null || !IsWaterBiome(node.SecondaryCenter.biome))
-            {
-                return false;
-            }
-
-            float blend = math.max(node.EdgeBlend, node.CornerBlend * 0.85f);
-            return node.TransitionKind == MapTransitionKind.WaterCoast || node.TransitionKind == MapTransitionKind.WaterInner
-                ? blend >= 0.58f
-                : false;
-        }
-
-        public static bool IsGrass(this DrawMap self, MapNode node)
-        {
-            // 草地图层只处理非水域节点，并根据绿色 biome 与过渡权重控制覆盖。
-            if (IsWaterBiome(node.MapCenter.biome))
-            {
-                return false;
-            }
-
-            bool primaryGreen = IsGreenBiome(node.MapCenter.biome);
-            bool secondaryGreen = node.SecondaryCenter != null && IsGreenBiome(node.SecondaryCenter.biome);
-            bool nearWater = node.SecondaryCenter != null && IsWaterBiome(node.SecondaryCenter.biome);
-            float blend = math.max(node.EdgeBlend, node.CornerBlend);
-            if (primaryGreen)
-            {
-                return !nearWater || blend < 0.68f;
-            }
-
-            if (!secondaryGreen)
-            {
-                return false;
-            }
-
-            return node.TransitionKind == MapTransitionKind.VegetationEdge ||
-                node.TransitionKind == MapTransitionKind.TerrainEdge
-                ? blend >= 0.72f
-                : false;
+                0 => IsOceanBiome(node.MapCenter.biome),
+                1 => IsWaterBiome(node.MapCenter.biome),
+                2 => IsGreenBiome(node.MapCenter.biome),
+                3 => !IsOceanBiome(node.MapCenter.biome)
+                    && !IsWaterBiome(node.MapCenter.biome)
+                    && !IsGreenBiome(node.MapCenter.biome)
+                    && !IsColdBiome(node.MapCenter.biome),
+                4 => IsColdBiome(node.MapCenter.biome),
+                _ => false
+            };
         }
     }
 }
