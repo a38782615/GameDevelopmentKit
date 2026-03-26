@@ -3,6 +3,9 @@ using Unity.Mathematics;
 
 namespace ET
 {
+    // Biome 的辅助属性表：
+    // 1. Colors 用于地图可视化着色
+    // 2. Chinese 用于界面或日志里的中文展示
     public static class BiomeProperties
     {
         [StaticField]
@@ -66,6 +69,8 @@ namespace ET
             { Biome.TropicalRainForest, "热带雨林"},
             { Biome.TropicalSeasonalForest, "热带季雨林"},
         };
+
+        // 将十六进制 RGB 字符串转换为 Unity.Mathematics.float4 颜色。
         static float4 HexToColor(string hex)
         {
             byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -75,25 +80,45 @@ namespace ET
         }
     }
 
+    // 地图中心点的群系类型。
+    // 具体取值通常由海陆、水分、温度等条件共同决定。
     public enum Biome
     {
+        // 海洋
         Ocean,
+        // 沼泽
         Marsh,
+        // 冰原/冻水区域
         Ice,
+        // 湖泊
         Lake,
+        // 海岸沙滩
         Beach,
+        // 雪地
         Snow,
+        // 冻原
         Tundra,
+        // 裸岩荒地
         Bare,
+        // 焦土
         Scorched,
+        // 针叶林
         Taiga,
+        // 灌木地
         Shrubland,
+        // 温带沙漠
         TemperateDesert,
+        // 温带雨林
         TemperateRainForest,
+        // 温带落叶林
         TemperateDeciduousForest,
+        // 草原
         Grassland,
+        // 热带雨林
         TropicalRainForest,
+        // 热带季雨林
         TropicalSeasonalForest,
+        // 亚热带沙漠
         SubtropicalDesert
     }
 }
