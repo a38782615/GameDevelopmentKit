@@ -111,11 +111,11 @@ namespace ET.Editor
             panel.transform.SetParent(parent, false);
 
             RectTransform rectTransform = panel.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(0f, 1f);
-            rectTransform.anchorMax = new Vector2(0f, 1f);
-            rectTransform.pivot = new Vector2(0f, 1f);
-            rectTransform.anchoredPosition = new Vector2(24f, -24f);
-            rectTransform.sizeDelta = new Vector2(420f, 324f);
+            rectTransform.anchorMin = new Vector2(0f, 0f);
+            rectTransform.anchorMax = new Vector2(0f, 0f);
+            rectTransform.pivot = new Vector2(0f, 0f);
+            rectTransform.anchoredPosition = new Vector2(24f, 0f);
+            rectTransform.sizeDelta = new Vector2(620f, 392f);
 
             Image image = panel.GetComponent<Image>();
             image.color = new Color(0.05f, 0.08f, 0.12f, 0.92f);
@@ -125,15 +125,15 @@ namespace ET.Editor
             titleRect.anchorMin = new Vector2(0f, 1f);
             titleRect.anchorMax = new Vector2(1f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
-            titleRect.anchoredPosition = new Vector2(0f, -16f);
-            titleRect.sizeDelta = new Vector2(-32f, 30f);
+            titleRect.anchoredPosition = new Vector2(0f, -18f);
+            titleRect.sizeDelta = new Vector2(-40f, 36f);
             title.color = new Color(0.95f, 0.97f, 1f, 0.98f);
 
             CreateMapControlRow(
                 panel.transform,
                 "LakeInlandMaskRow",
                 "Inland Range",
-                -60f,
+                -82f,
                 "LakeInlandMaskTight_Toggle",
                 "Tight",
                 false,
@@ -148,7 +148,7 @@ namespace ET.Editor
                 panel.transform,
                 "LakeThresholdRow",
                 "Lake Threshold",
-                -116f,
+                -154f,
                 "LakeThreshold_InputField",
                 "0.5");
 
@@ -156,7 +156,7 @@ namespace ET.Editor
                 panel.transform,
                 "LakeCarveThresholdRow",
                 "Carve Threshold",
-                -172f,
+                -226f,
                 "LakeCarveThreshold_InputField",
                 "0.56");
 
@@ -164,7 +164,7 @@ namespace ET.Editor
                 panel.transform,
                 "LakeCarveStrengthRow",
                 "Carve Strength",
-                -228f,
+                -298f,
                 "LakeCarveStrength_InputField",
                 "0.42");
 
@@ -180,11 +180,11 @@ namespace ET.Editor
             image.color = new Color(0.05f, 0.08f, 0.12f, 0.86f);
 
             RectTransform rectTransform = panel.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(0.5f, 0f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0f);
-            rectTransform.pivot = new Vector2(0.5f, 0f);
+            rectTransform.anchorMin = new Vector2(1f, 0f);
+            rectTransform.anchorMax = new Vector2(1f, 0f);
+            rectTransform.pivot = new Vector2(1f, 0f);
             rectTransform.anchoredPosition = new Vector2(0f, 20f);
-            rectTransform.sizeDelta = new Vector2(820f, 196f);
+            rectTransform.sizeDelta = new Vector2(680f, 220f);
             return rectTransform;
         }
 
@@ -196,8 +196,8 @@ namespace ET.Editor
             RectTransform rectTransform = skillGrid.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = new Vector2(18f, 18f);
-            rectTransform.offsetMax = new Vector2(-18f, -18f);
+            rectTransform.offsetMin = new Vector2(20f, 20f);
+            rectTransform.offsetMax = new Vector2(-20f, -20f);
 
             GridLayoutGroup gridLayoutGroup = skillGrid.GetComponent<GridLayoutGroup>();
             gridLayoutGroup.startCorner = GridLayoutGroup.Corner.UpperLeft;
@@ -205,7 +205,7 @@ namespace ET.Editor
             gridLayoutGroup.childAlignment = TextAnchor.UpperCenter;
             gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             gridLayoutGroup.constraintCount = 1;
-            gridLayoutGroup.cellSize = new Vector2(160f, 160f);
+            gridLayoutGroup.cellSize = new Vector2(176f, 176f);
             gridLayoutGroup.spacing = new Vector2(20f, 20f);
 
             return rectTransform;
@@ -224,7 +224,7 @@ namespace ET.Editor
             rectTransform.anchorMin = new Vector2(0f, 1f);
             rectTransform.anchorMax = new Vector2(0f, 1f);
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            rectTransform.sizeDelta = new Vector2(160f, 160f);
+            rectTransform.sizeDelta = new Vector2(176f, 176f);
 
             GameObject castButtonObject = new GameObject(
                 "Cast_Button",
@@ -264,7 +264,7 @@ namespace ET.Editor
             rectTransform.anchorMax = new Vector2(0f, 0f);
             rectTransform.pivot = new Vector2(0f, 0f);
             rectTransform.anchoredPosition = new Vector2(24f, 24f);
-            rectTransform.sizeDelta = new Vector2(180f, 52f);
+            rectTransform.sizeDelta = new Vector2(252f, 64f);
 
             Image image = buttonObject.GetComponent<Image>();
             image.color = new Color(0.14f, 0.19f, 0.24f, 0.95f);
@@ -273,8 +273,8 @@ namespace ET.Editor
             RectTransform labelRectTransform = label.rectTransform;
             labelRectTransform.anchorMin = Vector2.zero;
             labelRectTransform.anchorMax = Vector2.one;
-            labelRectTransform.offsetMin = new Vector2(10f, 6f);
-            labelRectTransform.offsetMax = new Vector2(-10f, -6f);
+            labelRectTransform.offsetMin = new Vector2(14f, 8f);
+            labelRectTransform.offsetMax = new Vector2(-14f, -8f);
             label.color = new Color(0.95f, 0.97f, 1f, 0.95f);
         }
 
@@ -292,7 +292,7 @@ namespace ET.Editor
             rectTransform.anchorMax = new Vector2(1f, 0f);
             rectTransform.pivot = new Vector2(1f, 0f);
             rectTransform.anchoredPosition = new Vector2(-24f, 24f);
-            rectTransform.sizeDelta = new Vector2(190f, 52f);
+            rectTransform.sizeDelta = new Vector2(262f, 64f);
 
             Image image = buttonObject.GetComponent<Image>();
             image.color = new Color(0.2f, 0.37f, 0.26f, 0.98f);
@@ -310,8 +310,8 @@ namespace ET.Editor
             RectTransform labelRectTransform = label.rectTransform;
             labelRectTransform.anchorMin = Vector2.zero;
             labelRectTransform.anchorMax = Vector2.one;
-            labelRectTransform.offsetMin = new Vector2(10f, 6f);
-            labelRectTransform.offsetMax = new Vector2(-10f, -6f);
+            labelRectTransform.offsetMin = new Vector2(14f, 8f);
+            labelRectTransform.offsetMax = new Vector2(-14f, -8f);
             label.color = new Color(0.97f, 0.99f, 0.98f, 0.98f);
         }
 
@@ -338,7 +338,7 @@ namespace ET.Editor
             rowRect.anchorMax = new Vector2(1f, 1f);
             rowRect.pivot = new Vector2(0.5f, 1f);
             rowRect.anchoredPosition = new Vector2(0f, anchoredY);
-            rowRect.sizeDelta = new Vector2(-28f, 44f);
+            rowRect.sizeDelta = new Vector2(-28f, 56f);
 
             TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 30f, TextAlignmentOptions.Left);
             RectTransform labelRect = rowLabel.rectTransform;
@@ -346,15 +346,15 @@ namespace ET.Editor
             labelRect.anchorMax = new Vector2(0f, 1f);
             labelRect.pivot = new Vector2(0f, 0.5f);
             labelRect.anchoredPosition = new Vector2(16f, 0f);
-            labelRect.sizeDelta = new Vector2(128f, 0f);
+            labelRect.sizeDelta = new Vector2(180f, 0f);
             rowLabel.color = new Color(0.84f, 0.89f, 0.95f, 0.94f);
 
             ToggleGroup toggleGroup = rowObject.GetComponent<ToggleGroup>();
             toggleGroup.allowSwitchOff = false;
 
-            CreateToggleOption(rowObject.transform, toggleGroup, option0Name, option0Label, new Vector2(174f, 0f), option0IsOn);
-            CreateToggleOption(rowObject.transform, toggleGroup, option1Name, option1Label, new Vector2(260f, 0f), option1IsOn);
-            CreateToggleOption(rowObject.transform, toggleGroup, option2Name, option2Label, new Vector2(346f, 0f), option2IsOn);
+            CreateToggleOption(rowObject.transform, toggleGroup, option0Name, option0Label, new Vector2(196f, 0f), option0IsOn);
+            CreateToggleOption(rowObject.transform, toggleGroup, option1Name, option1Label, new Vector2(326f, 0f), option1IsOn);
+            CreateToggleOption(rowObject.transform, toggleGroup, option2Name, option2Label, new Vector2(456f, 0f), option2IsOn);
         }
 
         private static void CreateToggleOption(Transform parent, ToggleGroup group, string name, string label, Vector2 anchoredPosition, bool isOn)
@@ -371,7 +371,7 @@ namespace ET.Editor
             rectTransform.anchorMax = new Vector2(0f, 0.5f);
             rectTransform.pivot = new Vector2(0f, 0.5f);
             rectTransform.anchoredPosition = anchoredPosition;
-            rectTransform.sizeDelta = new Vector2(78f, 32f);
+            rectTransform.sizeDelta = new Vector2(118f, 40f);
 
             Image background = toggleObject.GetComponent<Image>();
             background.color = new Color(0.12f, 0.17f, 0.23f, 0.98f);
@@ -395,8 +395,8 @@ namespace ET.Editor
             indicatorRect.anchorMin = new Vector2(0f, 0.5f);
             indicatorRect.anchorMax = new Vector2(0f, 0.5f);
             indicatorRect.pivot = new Vector2(0f, 0.5f);
-            indicatorRect.anchoredPosition = new Vector2(8f, 0f);
-            indicatorRect.sizeDelta = new Vector2(10f, 10f);
+            indicatorRect.anchoredPosition = new Vector2(10f, 0f);
+            indicatorRect.sizeDelta = new Vector2(12f, 12f);
             Image indicator = indicatorObject.GetComponent<Image>();
             indicator.color = new Color(0.48f, 0.9f, 0.66f, 1f);
             indicator.raycastTarget = false;
@@ -406,8 +406,8 @@ namespace ET.Editor
             RectTransform labelRect = optionLabel.rectTransform;
             labelRect.anchorMin = Vector2.zero;
             labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = new Vector2(18f, 0f);
-            labelRect.offsetMax = new Vector2(-6f, 0f);
+            labelRect.offsetMin = new Vector2(24f, 0f);
+            labelRect.offsetMax = new Vector2(-8f, 0f);
             optionLabel.color = new Color(0.95f, 0.97f, 1f, 0.96f);
         }
 
@@ -421,7 +421,7 @@ namespace ET.Editor
             rowRect.anchorMax = new Vector2(1f, 1f);
             rowRect.pivot = new Vector2(0.5f, 1f);
             rowRect.anchoredPosition = new Vector2(0f, anchoredY);
-            rowRect.sizeDelta = new Vector2(-28f, 44f);
+            rowRect.sizeDelta = new Vector2(-28f, 56f);
 
             TextMeshProUGUI rowLabel = CreateTMPText("Label", rowObject.transform, label, 30f, TextAlignmentOptions.Left);
             RectTransform labelRect = rowLabel.rectTransform;
@@ -429,10 +429,10 @@ namespace ET.Editor
             labelRect.anchorMax = new Vector2(0f, 1f);
             labelRect.pivot = new Vector2(0f, 0.5f);
             labelRect.anchoredPosition = new Vector2(16f, 0f);
-            labelRect.sizeDelta = new Vector2(128f, 0f);
+            labelRect.sizeDelta = new Vector2(190f, 0f);
             rowLabel.color = new Color(0.84f, 0.89f, 0.95f, 0.94f);
 
-            CreateNumericInputField(rowObject.transform, inputFieldName, new Vector2(-16f, 0f), new Vector2(180f, 32f), defaultValue);
+            CreateNumericInputField(rowObject.transform, inputFieldName, new Vector2(-16f, 0f), new Vector2(220f, 40f), defaultValue);
         }
 
         private static void CreateNumericInputField(Transform parent, string name, Vector2 anchoredPosition, Vector2 sizeDelta, string defaultValue)
@@ -564,7 +564,7 @@ namespace ET.Editor
             rectTransform.anchorMax = new Vector2(1f, 0f);
             rectTransform.pivot = new Vector2(0.5f, 0f);
             rectTransform.anchoredPosition = Vector2.zero;
-            rectTransform.sizeDelta = new Vector2(0f, 36f);
+            rectTransform.sizeDelta = new Vector2(0f, 44f);
             nameText.color = new Color(0.94f, 0.95f, 0.98f, 0.92f);
             nameText.gameObject.SetActive(false);
         }
