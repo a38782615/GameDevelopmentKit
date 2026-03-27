@@ -2,14 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace ET
 {
     [FriendOf(typeof(DrawMap))]
     [FriendOf(typeof(DrawCarpet))]
+    [FriendOf(typeof(MapLogic))]
     [EntitySystemOf(typeof(DrawMap))]
     public static partial class DrawMapSystem
     {
+        private const int GrassCarpetType = 2;
+
         [EntitySystem]
         private static void Awake(this DrawMap self)
         {
@@ -54,6 +58,7 @@ namespace ET
             }
 
             self.Map.Clear();
+            self.RemovedGrassCells.Clear();
 
             // 先准备逻辑坐标到渲染网格、再到世界坐标的换算参数。
             List<MapCenter> centers = map.MapGraph.centers;
@@ -67,6 +72,10 @@ namespace ET
             float worldCellHeight = logicHeight * UVTileCover.cellSize / renderHeight;
             float worldOriginX = -renderWidth * worldCellWidth * 0.5f;
             float worldOriginY = -renderHeight * worldCellHeight * 0.5f;
+            self.RenderWidth = renderWidth;
+            self.RenderHeight = renderHeight;
+            self.WorldOrigin = new float2(worldOriginX, worldOriginY);
+            self.WorldCellSize = new float2(worldCellWidth, worldCellHeight);
             int mainTileCount = UVTileMain.TileCount * UVTileMain.TileCount;
             foreach (MapCenter center in centers)
             {
@@ -499,8 +508,98 @@ namespace ET
             return math.max(node.EdgeBlend, node.CornerBlend * cornerWeight);
         }
 
+        public static bool TryEraseGrassAtScreenPoint(this DrawMap self, Camera camera, Vector2 screenPosition)
+        {
+            if (camera == null || !self.TryGetGridPositionByScreenPoint(camera, screenPosition, out int2 gridPosition))
+            {
+                return false;
+            }
+
+            DrawCarpet grassCarpet = self.GetCarpet(GrassCarpetType);
+            MapLogic grassMapLogic = grassCarpet?.MapLogic.As();
+            if (grassMapLogic == null || !grassMapLogic.Map.ContainsKey(gridPosition))
+            {
+                return false;
+            }
+
+            self.RemovedGrassCells.Add(gridPosition);
+            self.RefreshGrassNeighborhood(gridPosition, grassCarpet, grassMapLogic);
+            return true;
+        }
+
+        public static bool TryGetGridPositionByScreenPoint(this DrawMap self, Camera camera, Vector2 screenPosition, out int2 gridPosition)
+        {
+            gridPosition = default;
+            if (camera == null || self.View == null)
+            {
+                return false;
+            }
+
+            if (self.RenderWidth <= 0 || self.RenderHeight <= 0 || self.WorldCellSize.x <= 0f || self.WorldCellSize.y <= 0f)
+            {
+                return false;
+            }
+
+            Plane mapPlane = new Plane(self.View.transform.forward, self.View.transform.position);
+            Ray ray = camera.ScreenPointToRay(screenPosition);
+            if (!mapPlane.Raycast(ray, out float distance))
+            {
+                return false;
+            }
+
+            Vector3 worldPoint = ray.GetPoint(distance);
+            Vector3 localPoint3 = self.View.transform.InverseTransformPoint(worldPoint);
+            float2 localPoint = new float2(localPoint3.x, localPoint3.y);
+            int x = (int)math.floor((localPoint.x - self.WorldOrigin.x) / self.WorldCellSize.x);
+            int y = (int)math.floor((localPoint.y - self.WorldOrigin.y) / self.WorldCellSize.y);
+            if (x < 0 || x >= self.RenderWidth || y < 0 || y >= self.RenderHeight)
+            {
+                return false;
+            }
+
+            gridPosition = new int2(x, y);
+            return self.Map.ContainsKey(gridPosition);
+        }
+
+        private static DrawCarpet GetCarpet(this DrawMap self, int carType)
+        {
+            return self.Grounds
+                .Select(carpetRef => carpetRef.As())
+                .FirstOrDefault(carpet => carpet != null && carpet.CarType == carType);
+        }
+
+        private static void RefreshGrassNeighborhood(this DrawMap self, int2 centerPosition, DrawCarpet grassCarpet, MapLogic grassMapLogic)
+        {
+            for (int y = centerPosition.y - 1; y <= centerPosition.y + 1; ++y)
+            {
+                for (int x = centerPosition.x - 1; x <= centerPosition.x + 1; ++x)
+                {
+                    int2 position = new int2(x, y);
+                    if (self.RemovedGrassCells.Contains(position))
+                    {
+                        grassMapLogic.Map.Remove(position);
+                        continue;
+                    }
+
+                    if (!self.Map.TryGetValue(position, out MapNode node) || !self.DrawLayer(grassCarpet, node))
+                    {
+                        grassMapLogic.Map.Remove(position);
+                        continue;
+                    }
+
+                    grassMapLogic.Map[position] = node;
+                }
+            }
+
+            grassCarpet.Rebuild();
+        }
+
         public static bool DrawLayer(this DrawMap self, DrawCarpet carpet, MapNode node)
         {
+            if (carpet.CarType == GrassCarpetType && self.RemovedGrassCells.Contains(node.Pos))
+            {
+                return false;
+            }
             // 由 DrawCarpet 的层类型决定当前节点是否属于这一层。
             return carpet.CarType switch
             {

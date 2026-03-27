@@ -143,8 +143,7 @@ namespace ET
             }
 
             // 先根据 MapNode 集合生成顶点、三角形和两套 UV，再把结果提交给 Mesh。
-            mapLogic.CreateMap();
-            self.Render();
+            self.Rebuild();
         }
 
         public static void Clear(this DrawCarpet self)
@@ -163,6 +162,19 @@ namespace ET
                 // 当前 carpet 只收集属于自己图层的节点。
                 mapLogic.Map[node.Pos] = node;
             }
+        }
+
+        public static void Rebuild(this DrawCarpet self)
+        {
+            MapLogic mapLogic = self.MapLogic.As();
+            if (mapLogic == null)
+            {
+                return;
+            }
+
+            mapLogic.Clear();
+            mapLogic.CreateMap();
+            self.Render();
         }
 
         public static int GetOrderInLayer(this DrawCarpet self)

@@ -17,6 +17,7 @@ namespace ET
         private static void Awake(this GenMap self)
         {
         }
+
         public static async UniTask BuildAsync(this GenMap self)
         {
             self.MapSeed = GenerateRandomSeed();
@@ -54,6 +55,12 @@ namespace ET
 
             await drawMap.InitAsync();
             drawMap.GenMap(self.BiomeMap, self.RenderWidth, self.RenderHeight);
+        }
+
+        public static bool TryEraseGrassAtScreenPoint(this GenMap self, Camera camera, Vector2 screenPosition)
+        {
+            DrawMap drawMap = self.DrawMap.As();
+            return drawMap != null && drawMap.TryEraseGrassAtScreenPoint(camera, screenPosition);
         }
 
         private static uint GenerateRandomSeed()
