@@ -46,6 +46,15 @@ namespace ET.Client
 
         public override void OnInitialize()
         {
+            SpecExecutionContext context = GetContext();
+            if (context != null)
+            {
+                SpecExecutionContext effectContext = context.CreateOwnedEffectContext(Spec);
+                if (effectContext != null)
+                {
+                    Spec.Context = effectContext;
+                }
+            }
         }
 
         public override void OnPeriodicHook()
@@ -60,6 +69,7 @@ namespace ET.Client
         public override void Tick(float deltaTime)
         {
             Spec.TickEffect(deltaTime);
+            this.UpdatePlacementLogic();
         }
 
         public override void OnInitialHook(AbilitySystemComponent target)
@@ -73,7 +83,11 @@ namespace ET.Client
             }
 
             Vector3 position = context.GetPosition(nodeData.positionSource, nodeData.positionBindingName);
-            SpawnPlacementAsync(position).Forget();
+            selfSpec.IsLogicActive = true;
+            selfSpec.RuntimePosition = position;
+            selfSpec.CurrentTargets.Clear();
+            SkillDiagFileLogger.Log($"[PlacementEffect] Start skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} pos={position}");
+            SpawnPlacementViewAsync(position).Forget();
         }
 
         public override void Cancel()
@@ -96,14 +110,17 @@ namespace ET.Client
             }
 
             selfSpec.PlacementEntity = default;
+            selfSpec.IsLogicActive = false;
+            this.TriggerPlacementExitForAll();
 
             if (Spec != null && !Spec.IsDisposed)
             {
+                SkillDiagFileLogger.Log($"[PlacementEffect] Cancel skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 Spec.CancelEffect();
             }
         }
 
-        private async UniTaskVoid SpawnPlacementAsync(Vector3 position)
+        private async UniTaskVoid SpawnPlacementViewAsync(Vector3 position)
         {
             PlacementEffectNodeData nodeData = GetNode();
             PlacementEffectSpec selfSpec = SelfSpec();
@@ -112,10 +129,12 @@ namespace ET.Client
                 return;
             }
 
-            UGFEntityPlacement currentPlacement = selfSpec.PlacementEntity.As();
-            if (currentPlacement != null)
+            this.CancelPlacementView();
+
+            if (nodeData.placementEntityId <= 0 && string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
             {
-                currentPlacement.Cancel();
+                SkillDiagFileLogger.Log($"[PlacementEffect] NoView skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
+                return;
             }
 
             PlacementInitData initData = new PlacementInitData
@@ -146,7 +165,6 @@ namespace ET.Client
                     Log.Warning($"[PlacementEffect] Missing placement entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     placementEntity.Dispose();
                     selfSpec.PlacementEntity = default;
-                    Spec.CancelEffect();
                     return;
                 }
             }
@@ -162,11 +180,7 @@ namespace ET.Client
                 {
                     selfSpec.PlacementEntity = default;
                 }
-
-                if (Spec != null && !Spec.IsDisposed)
-                {
-                    Spec.CancelEffect();
-                }
+                SkillDiagFileLogger.Log($"[PlacementEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
                 return;
             }

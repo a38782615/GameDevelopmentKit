@@ -337,6 +337,7 @@ namespace ET.Client
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
             {
+                SkillDiagFileLogger.Log($"[Ability] Activate skillId={self.SkillId} abilityNodeGuid={self.AbilityNodeGuid} target={target?.InstanceId ?? 0}");
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
@@ -382,6 +383,8 @@ namespace ET.Client
             // 移除激活时授予的标签
             if (asc != null && !self.Tags.ActivationOwnedTags.IsEmpty)
                 asc.OwnedTags.RemoveTags(self.Tags.ActivationOwnedTags);
+
+            SkillDiagFileLogger.Log($"[Ability] End skillId={self.SkillId} cancelled={wasCancelled}");
 
             EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnEnded()
             {

@@ -860,7 +860,17 @@ namespace ET.Client
         private static bool HasRuntimeFollowup(this GameplayEffectSpec self)
         {
             var damageSpec = self.GetComponent<DamageEffectSpec>();
-            return damageSpec != null && damageSpec.HasRuntimeFollowup;
+            if (damageSpec != null && damageSpec.HasRuntimeFollowup)
+            {
+                return true;
+            }
+
+            if (self.GetComponent<ProjectileEffectSpec>() != null)
+            {
+                return true;
+            }
+
+            return self.GetComponent<PlacementEffectSpec>() != null;
         }
 
         private static bool ShouldExecuteCompleteImmediatelyForRuntimeFollowup(this GameplayEffectSpec self)

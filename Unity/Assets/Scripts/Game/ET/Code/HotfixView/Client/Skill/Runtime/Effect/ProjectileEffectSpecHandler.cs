@@ -57,6 +57,7 @@ namespace ET.Client
         public override void Tick(float deltaTime)
         {
             Spec.TickEffect(deltaTime);
+            this.UpdateProjectileLogic(deltaTime);
         }
 
         public override void OnInitialize()
@@ -102,32 +103,36 @@ namespace ET.Client
                 direction = RotateVector2(direction, -nodeData.offsetAngle);
             }
 
-            SpawnProjectileAsync(launchPosition, targetPosition, direction, targetUnit).Forget();
+            selfSpec.HasTriggeredHit = false;
+            selfSpec.ExpectedTargetPosition = targetPosition;
+            selfSpec.IsLogicActive = true;
+            selfSpec.ReachedTarget = false;
+            selfSpec.CurrentPosition = launchPosition;
+            selfSpec.CurrentDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
+            selfSpec.StartPosition = launchPosition;
+            selfSpec.EndPosition = targetPosition;
+            selfSpec.TraveledDistance = 0f;
+            selfSpec.TotalDistance = Vector2.Distance(launchPosition, targetPosition);
+            selfSpec.FlightProgress = 0f;
+            selfSpec.HitCount = 0;
+            selfSpec.BounceCount = 0;
+            selfSpec.HitTargetInstanceIds.Clear();
+            SkillDiagFileLogger.Log($"[ProjectileEffect] Start skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} launch={launchPosition} target={targetPosition}");
+            SpawnProjectileViewAsync().Forget();
         }
 
         public override void Cancel()
         {
             ProjectileEffectSpec selfSpec = SelfSpec();
-            if (selfSpec == null)
+            if (selfSpec != null)
             {
-                if (Spec != null && !Spec.IsDisposed)
-                {
-                    Spec.CancelEffect();
-                }
-
-                return;
+                selfSpec.IsLogicActive = false;
+                this.CancelProjectileView();
             }
-
-            UGFEntityProjectile projectileEntity = selfSpec.ProjectileEntity.As();
-            if (projectileEntity != null)
-            {
-                projectileEntity.Cancel();
-            }
-
-            selfSpec.ProjectileEntity = default;
 
             if (Spec != null && !Spec.IsDisposed)
             {
+                SkillDiagFileLogger.Log($"[ProjectileEffect] Cancel skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 Spec.CancelEffect();
             }
         }
@@ -148,7 +153,7 @@ namespace ET.Client
             }
         }
 
-        private async UniTaskVoid SpawnProjectileAsync(Vector2 launchPosition, Vector2 targetPosition, Vector2 direction, AbilitySystemComponent targetUnit)
+        private async UniTaskVoid SpawnProjectileViewAsync()
         {
             ProjectileEffectNodeData nodeData = GetNode();
             ProjectileEffectSpec selfSpec = SelfSpec();
@@ -157,18 +162,20 @@ namespace ET.Client
                 return;
             }
 
-            UGFEntityProjectile currentProjectile = selfSpec.ProjectileEntity.As();
-            if (currentProjectile != null)
+            this.CancelProjectileView();
+
+            if (nodeData.projectileEntityId <= 0 && string.IsNullOrWhiteSpace(nodeData.projectilePrefabPath))
             {
-                currentProjectile.Cancel();
+                SkillDiagFileLogger.Log($"[ProjectileEffect] NoView skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
+                return;
             }
 
             ProjectileInitData initData = new ProjectileInitData
             {
-                LaunchPosition = launchPosition,
-                TargetPosition = targetPosition,
-                Direction = direction,
-                TargetUnit = targetUnit,
+                LaunchPosition = selfSpec.StartPosition,
+                TargetPosition = selfSpec.EndPosition,
+                Direction = selfSpec.CurrentDirection,
+                TargetUnit = GetTargetUnitFromPositionSource(nodeData.targetPositionSource),
                 TargetType = nodeData.projectileTargetType,
                 FlyOver = nodeData.flyOver,
                 CurveHeight = nodeData.curveHeight,
@@ -208,7 +215,6 @@ namespace ET.Client
                     Log.Warning($"[ProjectileEffect] Missing projectile entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     projectileEntity.Dispose();
                     selfSpec.ProjectileEntity = default;
-                    Spec.CancelEffect();
                     return;
                 }
             }
@@ -224,11 +230,7 @@ namespace ET.Client
                 {
                     selfSpec.ProjectileEntity = default;
                 }
-
-                if (Spec != null && !Spec.IsDisposed)
-                {
-                    Spec.CancelEffect();
-                }
+                SkillDiagFileLogger.Log($"[ProjectileEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
                 return;
             }
@@ -237,6 +239,8 @@ namespace ET.Client
             {
                 return;
             }
+
+            this.SyncProjectileView();
         }
 
         private Vector2 RotateVector2(Vector2 value, float degrees)

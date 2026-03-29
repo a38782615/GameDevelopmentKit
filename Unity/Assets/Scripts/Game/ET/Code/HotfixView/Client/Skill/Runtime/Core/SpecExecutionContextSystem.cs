@@ -363,6 +363,8 @@ namespace ET.Client
             if (connectedNodes == null || connectedNodes.Count == 0)
                 return;
 
+            SkillDiagFileLogger.Log($"[Context] ExecuteConnected skillId={skillId} nodeGuid={nodeGuid} port={outputPortId} count={connectedNodes.Count}");
+
             foreach (var nodeData in connectedNodes)
             {
                 self.ExecuteNode(skillId, nodeData);
@@ -407,6 +409,8 @@ namespace ET.Client
         public static void ExecuteNode(this SpecExecutionContext self, string skillId, NodeData nodeData)
         {
             if (nodeData == null) return;
+
+            SkillDiagFileLogger.Log($"[Context] ExecuteNode skillId={skillId} nodeGuid={nodeData.guid} nodeType={nodeData.nodeType}");
 
             var category = GetNodeCategory(nodeData.nodeType);
 
