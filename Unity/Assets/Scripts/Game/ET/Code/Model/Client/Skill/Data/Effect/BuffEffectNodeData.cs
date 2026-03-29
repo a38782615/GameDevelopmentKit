@@ -8,6 +8,7 @@ namespace ET.Client
     /// 通过 isPeriodic 属性区分是否为周期Buff
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class BuffEffectNodeData : EffectNodeData
     {
         /// <summary>

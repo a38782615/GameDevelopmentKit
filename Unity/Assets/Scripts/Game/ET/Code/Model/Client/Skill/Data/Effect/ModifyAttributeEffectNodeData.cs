@@ -7,6 +7,7 @@ namespace ET.Client
     /// 使用基类的 attributeModifiers 配置属性修改
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class ModifyAttributeEffectNodeData : EffectNodeData
     {
         // 属性修改配置使用基类的 attributeModifiers 字段

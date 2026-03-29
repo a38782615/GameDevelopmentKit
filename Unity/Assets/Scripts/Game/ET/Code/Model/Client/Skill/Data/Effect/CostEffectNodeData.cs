@@ -7,6 +7,7 @@ namespace ET.Client
     /// 使用基类的 attributeModifiers 配置消耗
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class CostEffectNodeData : EffectNodeData
     {
         // 消耗配置使用基类的 attributeModifiers 字段

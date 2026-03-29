@@ -3,6 +3,7 @@ namespace ET.Client
     /// <summary>
     /// 技能系统全局常量（Data层，Runtime和Editor均可访问）
     /// </summary>
+    [EnableClass]
     public static class SkillConstants
     {
         /// <summary>

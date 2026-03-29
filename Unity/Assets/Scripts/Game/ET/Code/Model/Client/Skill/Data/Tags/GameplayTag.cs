@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace ET.Client
 {
@@ -10,23 +9,18 @@ namespace ET.Client
     public struct GameplayTag : IEquatable<GameplayTag>
     {
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public string Name;
 
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public int HashCode;
 
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public string ShortName;
 
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public int[] AncestorHashCodes;
 
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public string[] AncestorNames;
 
         /// <summary>

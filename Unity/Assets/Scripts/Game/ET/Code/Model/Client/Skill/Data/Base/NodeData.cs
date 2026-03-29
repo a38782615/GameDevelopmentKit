@@ -3,6 +3,7 @@ using Unity.Mathematics;
 namespace ET.Client
 {
     [Serializable]
+    [EnableClass]
     public abstract class NodeData : Object
     {
         public string guid;
@@ -12,6 +13,7 @@ namespace ET.Client
     }
 
     [Serializable]
+    [EnableClass]
     public class ConnectionData : Object
     {
         public string outputNodeGuid;

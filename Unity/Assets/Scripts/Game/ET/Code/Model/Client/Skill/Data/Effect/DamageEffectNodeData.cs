@@ -6,6 +6,7 @@ namespace ET.Client
     /// 伤害效果节点数据（瞬时效果）
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class DamageEffectNodeData : EffectNodeData
     {
         /// <summary>

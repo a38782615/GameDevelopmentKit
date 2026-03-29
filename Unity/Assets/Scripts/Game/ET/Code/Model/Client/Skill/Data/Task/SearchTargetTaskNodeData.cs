@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace ET.Client
 {
@@ -8,6 +7,7 @@ namespace ET.Client
     /// 用于在指定范围内搜索目标，并对每个目标执行后续节点
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class SearchTargetTaskNodeData : TaskNodeData
     {
         public SearchShapeType searchShapeType = SearchShapeType.Circle;

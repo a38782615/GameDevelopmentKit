@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace ET.Client
 {
@@ -8,6 +7,7 @@ namespace ET.Client
     /// 用于比较目标的属性值，根据结果执行不同的分支
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class AttributeCompareConditionNodeData : ConditionNodeData
     {
         /// <summary>

@@ -8,6 +8,7 @@ namespace ET.Client
     /// 与 EffectNodeData 的区别：不需要标签系统、持续时间、堆叠等复杂配置
     /// </summary>
     [Serializable]
+    [EnableClass]
     public abstract class ConditionNodeData : NodeData
     {
         // 只继承 NodeData 的基础字段: guid, nodeType, position, targetType

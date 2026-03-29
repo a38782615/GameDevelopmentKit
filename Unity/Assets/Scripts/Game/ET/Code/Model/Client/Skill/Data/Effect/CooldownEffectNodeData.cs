@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace ET.Client
 {
@@ -19,6 +18,7 @@ namespace ET.Client
     /// 支持普通CD和充能CD两种模式
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class CooldownEffectNodeData : EffectNodeData
     {
         /// <summary>

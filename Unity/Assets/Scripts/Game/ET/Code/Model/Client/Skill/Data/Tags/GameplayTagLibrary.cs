@@ -10,6 +10,7 @@ namespace ET.Client
     /// <summary>
     /// 游戏标签静态库 - 提供所有标签的静态引用
     /// </summary>
+    [EnableClass]
     public static class GameplayTagLibrary
     {
         #region 标签定义

@@ -6,6 +6,7 @@ namespace ET.Client
     /// 治疗效果节点数据（瞬时效果）
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class HealEffectNodeData : EffectNodeData
     {
         /// <summary>

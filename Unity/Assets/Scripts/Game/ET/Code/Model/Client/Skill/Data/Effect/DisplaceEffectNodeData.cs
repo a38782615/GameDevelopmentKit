@@ -7,6 +7,7 @@ namespace ET.Client
     /// 用于吸引/击退目标的持续位移效果
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class DisplaceEffectNodeData : EffectNodeData
     {
         /// <summary>

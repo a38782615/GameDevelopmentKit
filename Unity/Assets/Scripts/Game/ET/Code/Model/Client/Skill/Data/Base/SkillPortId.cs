@@ -3,6 +3,7 @@ using Unity.Mathematics;
 
 namespace ET.Client
 {
+    [EnableClass]
     public static class SkillPortId
     {
         public const int Invalid = 0;
@@ -75,6 +76,7 @@ namespace ET.Client
         }
     }
 
+    [EnableClass]
     public static class SkillPortIdUtility
     {
         public static int ResolveAbilityEventPortId(GameplayEventType eventType)

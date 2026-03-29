@@ -8,6 +8,7 @@ namespace ET.Client
     /// 重构后的统一基类，包含所有Effect通用属性
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class EffectNodeData : NodeData
     {
         // ============ GAS 标签系统 ============

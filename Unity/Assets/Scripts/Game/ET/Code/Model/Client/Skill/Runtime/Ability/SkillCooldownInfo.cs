@@ -3,6 +3,7 @@ namespace ET.Client
     /// <summary>
     /// 技能冷却信息（统一接口，支持普通CD和充能CD）
     /// </summary>
+    [EnableClass]
     public class SkillCooldownInfo : Object
     {
         /// <summary>

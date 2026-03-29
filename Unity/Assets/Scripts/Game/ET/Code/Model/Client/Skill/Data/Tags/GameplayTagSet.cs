@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace ET.Client
 {
@@ -11,7 +10,6 @@ namespace ET.Client
     public struct GameplayTagSet : IEquatable<GameplayTagSet>
     {
         [Newtonsoft.Json.JsonProperty]
-        [SerializeField]
         public GameplayTag[] Tags;
 
         /// <summary>

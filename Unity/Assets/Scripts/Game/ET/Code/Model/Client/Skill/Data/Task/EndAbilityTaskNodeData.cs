@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace ET.Client
 {
@@ -8,6 +7,7 @@ namespace ET.Client
     /// 用于结束当前技能的执行
     /// </summary>
     [Serializable]
+    [EnableClass]
     public class EndAbilityTaskNodeData : TaskNodeData
     {
         /// <summary>
