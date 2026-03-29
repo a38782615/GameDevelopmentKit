@@ -96,8 +96,6 @@ namespace ET.Client
             }
 
             selfSpec.PlacementEntity = default;
-            selfSpec.PlacementObject = null;
-            GetContext()?.SetPlacementObject(null);
 
             if (Spec != null && !Spec.IsDisposed)
             {
@@ -148,8 +146,6 @@ namespace ET.Client
                     Log.Warning($"[PlacementEffect] Missing placement entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     placementEntity.Dispose();
                     selfSpec.PlacementEntity = default;
-                    selfSpec.PlacementObject = null;
-                    GetContext()?.SetPlacementObject(null);
                     Spec.CancelEffect();
                     return;
                 }
@@ -167,8 +163,6 @@ namespace ET.Client
                     selfSpec.PlacementEntity = default;
                 }
 
-                selfSpec.PlacementObject = null;
-                GetContext()?.SetPlacementObject(null);
                 if (Spec != null && !Spec.IsDisposed)
                 {
                     Spec.CancelEffect();
@@ -181,11 +175,6 @@ namespace ET.Client
             {
                 return;
             }
-
-            selfSpec.PlacementObject = placementEntity.CachedTransform != null
-                ? placementEntity.CachedTransform.gameObject
-                : null;
-            GetContext()?.SetPlacementObject(selfSpec.PlacementObject);
         }
     }
 }

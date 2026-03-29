@@ -28,17 +28,12 @@ namespace ET.Client
                 return;
             }
 
-            GameObject placementObject = self.GetPlacementObject();
             placementSpec.PlacementEntity = self;
-            placementSpec.PlacementObject = placementObject;
-            self.GetEffectSpec()?.GetContext()?.SetPlacementObject(placementObject);
         }
 
         [UGFEntitySystem]
         private static void UGFEntityOnHide(this UGFEntityPlacement self, bool isShutdown)
         {
-            GameObject placementObject = self.GetPlacementObject();
-
             self.TriggerExitForCurrentTargets();
             self.Initialized = false;
             self.DestroyRequested = true;
@@ -51,17 +46,6 @@ namespace ET.Client
                 {
                     placementSpec.PlacementEntity = default;
                 }
-
-                if (placementSpec.PlacementObject == placementObject)
-                {
-                    placementSpec.PlacementObject = null;
-                }
-            }
-
-            SpecExecutionContext context = self.GetEffectSpec()?.GetContext();
-            if (context != null && context.GetPlacementObject() == placementObject)
-            {
-                context.SetPlacementObject(null);
             }
         }
 
@@ -247,7 +231,6 @@ namespace ET.Client
 
             try
             {
-                childContext.SetPlacementObject(self.GetPlacementObject());
                 childContext.ExecuteConnectedNodes(effectSpec.SkillId, effectSpec.NodeGuid, outputPortId);
             }
             finally
@@ -264,11 +247,6 @@ namespace ET.Client
         private static PlacementEffectSpec GetPlacementSpec(this UGFEntityPlacement self)
         {
             return self.GetEffectSpec()?.GetComponent<PlacementEffectSpec>();
-        }
-
-        private static GameObject GetPlacementObject(this UGFEntityPlacement self)
-        {
-            return self?.CachedTransform != null ? self.CachedTransform.gameObject : null;
         }
 
         private static BodyCheckComponent GetBodyCheckComponent(this UGFEntityPlacement self)

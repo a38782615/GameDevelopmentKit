@@ -332,7 +332,7 @@ namespace ET.Client
             self.GetTimeCueRuntime()?.ResetAll();
 
             // 播放动画
-            self.PlayAnimation(self.AnimationName, self.IsAnimationLooping);
+            self.RequestPlayAnimation(self.AnimationName, self.IsAnimationLooping);
 
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
@@ -362,7 +362,7 @@ namespace ET.Client
             self.State = wasCancelled ? AbilityState.Cancelled : AbilityState.Ended;
             self.IsRunning = false;
 
-            self.PlayAnimation("Stand", true);
+            self.RequestPlayAnimation("Stand", true);
             self.GetTimeCueRuntime()?.StopAll();
 
             // 清理运行中的Effect
@@ -523,25 +523,26 @@ namespace ET.Client
 
         // ============ 动画 ============
 
-        private static void PlayAnimation(this GameplayAbilitySpec self, string name, bool loop)
+        private static void RequestPlayAnimation(this GameplayAbilitySpec self, string name, bool loop)
         {
-            var asc = self.GetASC;
-            if (asc?.Owner == null || string.IsNullOrEmpty(name)) return;
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
 
-            SkillUnit skillUnit = asc.GetParent<SkillUnit>();
+            SkillUnit skillUnit = self.GetASC?.GetParent<SkillUnit>();
             Unit unit = skillUnit?.Unit.As();
             if (unit == null)
             {
                 return;
             }
 
-            SkelenAnimationComponent animationComponent = unit.GetComponent<SkelenAnimationComponent>();
-            if (animationComponent == null)
+            EventSystem.Instance.Publish(unit.Scene(), new SkillAnimationPlay
             {
-                animationComponent = unit.AddComponent<SkelenAnimationComponent>();
-            }
-
-            animationComponent.PlayAnimation(name, loop);
+                Unit = unit,
+                AnimationName = name,
+                Loop = loop
+            });
         }
 
         private static TimeCueRuntimeComponent GetTimeCueRuntime(this GameplayAbilitySpec self)

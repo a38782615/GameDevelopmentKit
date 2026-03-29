@@ -25,8 +25,6 @@ namespace ET.Client
             self.MainTarget = default;
             self.ParentInputTarget = default;
             self.Targets.Clear();
-            self.ProjectileObject = null;
-            self.PlacementObject = null;
             self.AbilityLevel = 1;
             self.StackCount = 1;
             self.CustomData.Clear();
@@ -107,36 +105,6 @@ namespace ET.Client
         public static int GetStackCount(this SpecExecutionContext self)
         {
             return self?.StackCount ?? 1;
-        }
-
-        public static GameObject GetProjectileObject(this SpecExecutionContext self)
-        {
-            return self?.ProjectileObject;
-        }
-
-        public static void SetProjectileObject(this SpecExecutionContext self, GameObject projectileObject)
-        {
-            if (self == null)
-            {
-                return;
-            }
-
-            self.ProjectileObject = projectileObject;
-        }
-
-        public static GameObject GetPlacementObject(this SpecExecutionContext self)
-        {
-            return self?.PlacementObject;
-        }
-
-        public static void SetPlacementObject(this SpecExecutionContext self, GameObject placementObject)
-        {
-            if (self == null)
-            {
-                return;
-            }
-
-            self.PlacementObject = placementObject;
         }
 
         // ============ 目标管理 ============
@@ -253,8 +221,6 @@ namespace ET.Client
             newContext.Caster = self.Caster;
             newContext.MainTarget = self.MainTarget;
             newContext.ParentInputTarget = parentInputTarget;
-            newContext.ProjectileObject = self.ProjectileObject;
-            newContext.PlacementObject = self.PlacementObject;
             newContext.AbilityLevel = self.AbilityLevel;
             newContext.StackCount = self.StackCount;
             newContext.Targets.AddRange(self.Targets);
@@ -288,8 +254,6 @@ namespace ET.Client
             effectContext.Caster = self.Caster;
             effectContext.MainTarget = self.MainTarget;
             effectContext.ParentInputTarget = self.ParentInputTarget;
-            effectContext.ProjectileObject = self.ProjectileObject;
-            effectContext.PlacementObject = self.PlacementObject;
             effectContext.AbilityLevel = self.AbilityLevel;
             effectContext.StackCount = self.StackCount;
             effectContext.Targets.AddRange(self.Targets);
@@ -322,12 +286,28 @@ namespace ET.Client
                 case PositionSourceType.ParentInput:
                     return self.GetParentInputTarget()?.Owner;
                 case PositionSourceType.Projectile:
-                    return self.GetProjectileObject();
+                    return self.GetOwnerProjectileObject();
                 case PositionSourceType.Placement:
-                    return self.GetPlacementObject();
+                    return self.GetOwnerPlacementObject();
                 default:
                     return null;
             }
+        }
+
+        private static GameObject GetOwnerProjectileObject(this SpecExecutionContext self)
+        {
+            GameplayEffectSpec ownerEffectSpec = self.GetOwnerEffectSpec();
+            ProjectileEffectSpec projectileSpec = ownerEffectSpec?.GetComponent<ProjectileEffectSpec>();
+            UGFEntityProjectile projectileEntity = projectileSpec?.ProjectileEntity.As();
+            return projectileEntity?.CachedTransform != null ? projectileEntity.CachedTransform.gameObject : null;
+        }
+
+        private static GameObject GetOwnerPlacementObject(this SpecExecutionContext self)
+        {
+            GameplayEffectSpec ownerEffectSpec = self.GetOwnerEffectSpec();
+            PlacementEffectSpec placementSpec = ownerEffectSpec?.GetComponent<PlacementEffectSpec>();
+            UGFEntityPlacement placementEntity = placementSpec?.PlacementEntity.As();
+            return placementEntity?.CachedTransform != null ? placementEntity.CachedTransform.gameObject : null;
         }
 
         private static Vector3 GetPositionFromObject(GameObject obj, string bindingName)

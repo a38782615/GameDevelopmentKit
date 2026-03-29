@@ -27,7 +27,6 @@ namespace ET.Client
             if (projectileSpec != null)
             {
                 projectileSpec.ProjectileEntity = self;
-                projectileSpec.ProjectileObject = self.GetProjectileObject();
             }
         }
 
@@ -39,17 +38,11 @@ namespace ET.Client
             self.HitTargetInstanceIds.Clear();
 
             ProjectileEffectSpec projectileSpec = self.GetProjectileSpec();
-            GameObject projectileObject = self.GetProjectileObject();
             if (projectileSpec != null)
             {
                 if (projectileSpec.ProjectileEntity.As() == self)
                 {
                     projectileSpec.ProjectileEntity = default;
-                }
-
-                if (projectileSpec.ProjectileObject == projectileObject)
-                {
-                    projectileSpec.ProjectileObject = null;
                 }
             }
         }
@@ -624,11 +617,6 @@ namespace ET.Client
             return unit?.Scene()?.GetComponent<BodyCheckComponent>();
         }
 
-        private static GameObject GetProjectileObject(this UGFEntityProjectile self)
-        {
-            return self?.CachedTransform != null ? self.CachedTransform.gameObject : null;
-        }
-
         private static void TriggerHit(this UGFEntityProjectile self, AbilitySystemComponent hitTarget, Vector2 hitPosition)
         {
             if (hitTarget == null)
@@ -655,7 +643,6 @@ namespace ET.Client
             try
             {
                 hitContext.SetCustomData("HitPosition", hitPosition);
-                hitContext.SetProjectileObject(self.GetProjectileObject());
                 hitContext.ExecuteConnectedNodes(effectSpec.SkillId, effectSpec.NodeGuid, SkillPortId.ProjectileEffect.OnHit);
             }
             finally
@@ -676,7 +663,6 @@ namespace ET.Client
 
             self.TryTriggerPositionFallbackHit(position);
             context.SetCustomData("ReachPosition", position);
-            context.SetProjectileObject(self.GetProjectileObject());
             context.ExecuteConnectedNodes(effectSpec.SkillId, effectSpec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
         }
 
@@ -703,7 +689,6 @@ namespace ET.Client
             try
             {
                 bounceContext.SetCustomData("BouncePosition", bouncePosition);
-                bounceContext.SetProjectileObject(self.GetProjectileObject());
                 bounceContext.ExecuteConnectedNodes(effectSpec.SkillId, effectSpec.NodeGuid, SkillPortId.ProjectileEffect.OnBounce);
             }
             finally

@@ -125,8 +125,6 @@ namespace ET.Client
             }
 
             selfSpec.ProjectileEntity = default;
-            selfSpec.ProjectileObject = null;
-            GetContext()?.SetProjectileObject(null);
 
             if (Spec != null && !Spec.IsDisposed)
             {
@@ -210,8 +208,6 @@ namespace ET.Client
                     Log.Warning($"[ProjectileEffect] Missing projectile entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     projectileEntity.Dispose();
                     selfSpec.ProjectileEntity = default;
-                    selfSpec.ProjectileObject = null;
-                    GetContext()?.SetProjectileObject(null);
                     Spec.CancelEffect();
                     return;
                 }
@@ -229,8 +225,6 @@ namespace ET.Client
                     selfSpec.ProjectileEntity = default;
                 }
 
-                selfSpec.ProjectileObject = null;
-                GetContext()?.SetProjectileObject(null);
                 if (Spec != null && !Spec.IsDisposed)
                 {
                     Spec.CancelEffect();
@@ -243,11 +237,6 @@ namespace ET.Client
             {
                 return;
             }
-
-            selfSpec.ProjectileObject = projectileEntity.CachedTransform != null
-                ? projectileEntity.CachedTransform.gameObject
-                : null;
-            GetContext()?.SetProjectileObject(selfSpec.ProjectileObject);
         }
 
         private Vector2 RotateVector2(Vector2 value, float degrees)

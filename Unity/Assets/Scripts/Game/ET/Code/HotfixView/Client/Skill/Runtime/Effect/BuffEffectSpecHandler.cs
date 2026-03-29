@@ -44,8 +44,6 @@ namespace ET.Client
             executionContext.Caster = context.Caster;
             executionContext.MainTarget = context.MainTarget;
             executionContext.ParentInputTarget = currentTarget;
-            executionContext.ProjectileObject = context.ProjectileObject;
-            executionContext.PlacementObject = context.PlacementObject;
             executionContext.AbilityLevel = context.AbilityLevel;
             executionContext.StackCount = Spec.StackCount;
             executionContext.Targets.AddRange(context.Targets);
