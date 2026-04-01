@@ -80,7 +80,7 @@ Shader "Game/NMap/WaterFlow"
             {
                 float4 positionHCS : SV_POSITION;
                 float2 uv1 : TEXCOORD1;
-                float2 positionOS : TEXCOORD2;
+                float2 positionWS : TEXCOORD2;
             };
 
             Varyings vert(Attributes input)
@@ -88,7 +88,7 @@ Shader "Game/NMap/WaterFlow"
                 Varyings output;
                 output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.uv1 = input.uv1;
-                output.positionOS = input.positionOS.xy;
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz).xy;
                 return output;
             }
 
@@ -101,8 +101,8 @@ Shader "Game/NMap/WaterFlow"
             {
                 float timeValue = _Time.y;
                 float2 coverUv = input.uv1;
-                float2 mainBaseUv = input.positionOS * _MainTiling;
-                float2 overlayBaseUv = input.positionOS * _OverlayTiling;
+                float2 mainBaseUv = input.positionWS * _MainTiling;
+                float2 overlayBaseUv = input.positionWS * _OverlayTiling;
 
                 half4 coverColor = SAMPLE_TEXTURE2D(_Texture2DCover, sampler_Texture2DCover, coverUv);
                 half coverMask = GetMask(coverColor);
