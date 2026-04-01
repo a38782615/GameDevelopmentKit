@@ -41,10 +41,18 @@ namespace ET
 
             for (int i = 0; i < childCount; i++)
             {
+                Transform childTransform = self.View.transform.GetChild(i);
+                int carpetType = GetCarpetType(childTransform.name);
+                if (carpetType < 0)
+                {
+                    Log.Error($"nmap draw map init failed, unknown carpet child: {childTransform.name}");
+                    continue;
+                }
+
                 DrawCarpet carpet = self.AddChild<DrawCarpet>();
-                carpet.View = self.View.transform.GetChild(i).gameObject;
+                carpet.View = childTransform.gameObject;
                 self.Grounds.Add(carpet);
-                await carpet.InitAsync(i);
+                await carpet.InitAsync(carpetType);
             }
         }
 
@@ -609,6 +617,19 @@ namespace ET
                 3 => self.IsGround(node),
                 4 => self.IsCold(node),
                 _ => false
+            };
+        }
+
+        private static int GetCarpetType(string childName)
+        {
+            return childName switch
+            {
+                "Ocen" => 0,
+                "Water" => 1,
+                "Grass" => 2,
+                "Ground" => 3,
+                "Cold" => 4,
+                _ => -1
             };
         }
 
