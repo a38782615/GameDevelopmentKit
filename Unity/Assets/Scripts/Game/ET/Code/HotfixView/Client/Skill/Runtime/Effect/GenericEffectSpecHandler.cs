@@ -1,20 +1,17 @@
 namespace ET.Client
 {
-    /// <summary>
-    /// 通用效果Spec - 完全依赖基类处理
-    /// </summary>
     public partial class GenericEffectSpecHandler : AEffectHandler
     {
         public GenericEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<GenericEffectSpec>();
-            return selfSpec;
+            return Spec.GetComponent<GenericEffectSpec>();
         }
+
         public GenericEffectNodeData GetNode()
         {
-            var nodeData = NodeData as GenericEffectNodeData;
-            return nodeData;
+            return NodeData as GenericEffectNodeData;
         }
+
         public override SpecExecutionContext GetContext()
         {
             return Spec.GetContext();

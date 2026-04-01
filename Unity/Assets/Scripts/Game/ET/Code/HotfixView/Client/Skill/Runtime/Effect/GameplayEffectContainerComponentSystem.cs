@@ -38,7 +38,7 @@ namespace ET.Client
 
         public static GameplayEffectSpec FindStackableEffect(this GameplayEffectContainerComponent self, GameplayEffectSpec spec)
         {
-            var stackType = spec.EffectNodeData?.stackType ?? StackType.None;
+            var stackType = spec.GetEffectNodeData()?.stackType ?? StackType.None;
             if (stackType == StackType.None) return null;
 
             foreach (var e in self.ActiveEffects)
@@ -49,7 +49,7 @@ namespace ET.Client
                     continue;
                 }
 
-                if (effect.EffectNodeData?.nodeType != spec.EffectNodeData?.nodeType) continue;
+                if (effect.GetEffectNodeData()?.nodeType != spec.GetEffectNodeData()?.nodeType) continue;
                 if (!spec.MatchesStackIdentity(effect)) continue;
 
                 switch (stackType)
@@ -73,8 +73,8 @@ namespace ET.Client
                 return false;
             }
 
-            BuffEffectNodeData specBuff = spec.EffectNodeData as BuffEffectNodeData;
-            BuffEffectNodeData otherBuff = other.EffectNodeData as BuffEffectNodeData;
+            BuffEffectNodeData specBuff = spec.GetEffectNodeData() as BuffEffectNodeData;
+            BuffEffectNodeData otherBuff = other.GetEffectNodeData() as BuffEffectNodeData;
             if (specBuff != null && otherBuff != null)
             {
                 if (specBuff.buffId > 0 || otherBuff.buffId > 0)
@@ -243,7 +243,7 @@ namespace ET.Client
                         continue;
                     }
 
-                    var buffData = spec.EffectNodeData as BuffEffectNodeData;
+                    var buffData = spec.GetEffectNodeData() as BuffEffectNodeData;
                     if (buffData != null && buffData.buffId == buffId)
                         return buffSpec;
                 }
@@ -318,7 +318,7 @@ namespace ET.Client
             }
 
             handler.Spec = effect;
-            handler.NodeData = effect.EffectNodeData;
+            handler.NodeData = effect.GetEffectNodeData();
             return handler;
         }
     }

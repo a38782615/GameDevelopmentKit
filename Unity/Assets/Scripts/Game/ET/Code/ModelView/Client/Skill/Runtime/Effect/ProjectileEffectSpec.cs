@@ -1,20 +1,19 @@
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
     [ComponentOf(typeof(GameplayEffectSpec))]
     public class ProjectileEffectSpec : Entity, IAwake
     {
-        public EntityRef<UGFEntityProjectile> ProjectileEntity;
-        public Vector2 ExpectedTargetPosition;
+        public float2 ExpectedTargetPosition;
         public bool HasTriggeredHit;
         public bool IsLogicActive;
         public bool ReachedTarget;
-        public Vector2 CurrentPosition;
-        public Vector2 CurrentDirection;
-        public Vector2 StartPosition;
-        public Vector2 EndPosition;
+        public float2 CurrentPosition;
+        public float2 CurrentDirection;
+        public float2 StartPosition;
+        public float2 EndPosition;
         public float TraveledDistance;
         public float TotalDistance;
         public float FlightProgress;

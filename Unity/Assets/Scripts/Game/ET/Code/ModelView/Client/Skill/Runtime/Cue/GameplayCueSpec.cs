@@ -1,65 +1,55 @@
 namespace ET.Client
 {
     /// <summary>
-    /// Cue Spec 基类，负责承载节点配置和播放时的上下文。
+    /// Cue Spec 鍩虹被锛岃礋璐ｆ壙杞借妭鐐归厤缃拰鎾斁鏃剁殑涓婁笅鏂囥€?
     /// </summary>
     [ChildOf(typeof(GameplayCueContainerComponent))]
     public class GameplayCueSpec : Entity, IAwake, IUpdate, IDestroy
     {
         /// <summary>
-        /// 技能 ID，用于从数据中心获取节点数据。
+        /// 鎶€鑳?ID锛岀敤浜庝粠鏁版嵁涓績鑾峰彇鑺傜偣鏁版嵁銆?
         /// </summary>
         public string SkillId;
 
         /// <summary>
-        /// 节点 Guid。
+        /// 鑺傜偣 Guid銆?
         /// </summary>
         public string NodeGuid;
 
         /// <summary>
-        /// 执行上下文所属的 AbilitySpec。
+        /// 鎵ц涓婁笅鏂囨墍灞炵殑 AbilitySpec銆?
         /// </summary>
         public EntityRef<GameplayAbilitySpec> ContextOwner;
 
         /// <summary>
-        /// 实际触发该 Cue 的执行上下文。
+        /// 瀹為檯瑙﹀彂璇?Cue 鐨勬墽琛屼笂涓嬫枃銆?
         /// </summary>
         public EntityRef<SpecExecutionContext> Context;
 
         /// <summary>
-        /// 是否正在播放。
+        /// 鏄惁姝ｅ湪鎾斁銆?
         /// </summary>
         public bool IsRunning;
 
         /// <summary>
-        /// 是否已被取消。
+        /// 鏄惁宸茶鍙栨秷銆?
         /// </summary>
         public bool IsCancelled;
 
         /// <summary>
-        /// 是否随节点销毁。
+        /// 鏄惁闅忚妭鐐归攢姣併€?
         /// </summary>
         public bool DestroyWithNode;
 
         /// <summary>
-        /// 标签容器。
+        /// 鏍囩瀹瑰櫒銆?
         /// </summary>
         public CueTagContainer Tags;
 
         /// <summary>
-        /// 当前激活的运行态组件。
+        /// 褰撳墠婵€娲荤殑杩愯鎬佺粍浠躲€?
         /// </summary>
         public EntityRef<ActiveCueComponent> ActiveCueComponent;
-
-        /// <summary>
-        /// 获取节点数据。
-        /// </summary>
-        public NodeData NodeData => SkillDataCenter.Instance.GetNodeData(SkillId, NodeGuid);
-
-        /// <summary>
-        /// 获取 Cue 节点数据。
-        /// </summary>
-        public CueNodeData CueNodeData => NodeData as CueNodeData;
 
         public string HandName;
     }

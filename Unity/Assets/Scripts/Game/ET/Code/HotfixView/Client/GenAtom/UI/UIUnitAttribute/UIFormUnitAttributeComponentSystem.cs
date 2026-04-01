@@ -267,9 +267,10 @@ namespace ET.Client
 
         private static float3 GetUnitPosition(Unit unit, AbilitySystemComponent asc)
         {
-            if (asc?.Owner != null)
+            Transform ownerTransform = asc?.GetOwnerTransform();
+            if (ownerTransform != null)
             {
-                Vector3 ownerPosition = asc.Owner.transform.position;
+                Vector3 ownerPosition = ownerTransform.position;
                 return new float3(ownerPosition.x, ownerPosition.y, ownerPosition.z);
             }
 

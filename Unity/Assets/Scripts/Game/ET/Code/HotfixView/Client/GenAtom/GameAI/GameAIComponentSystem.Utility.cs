@@ -169,7 +169,7 @@ namespace ET.Client
             foreach (EntityRef<GameplayAbilitySpec> abilityRef in abilities.GetGrantedAbilities())
             {
                 GameplayAbilitySpec spec = abilityRef.As();
-                if (spec?.AbilityNodeData?.skillId > 0)
+                if (spec?.GetSkillNumericId() > 0)
                 {
                     return spec;
                 }
@@ -240,7 +240,7 @@ namespace ET.Client
 
         public static Vector3 GetWorldPosition(this Unit unit)
         {
-            UnityEngine.GameObject owner = unit?.GetComponent<SkillUnit>()?.ASC.As()?.Owner;
+            UnityEngine.GameObject owner = unit?.GetComponent<SkillUnit>()?.ASC.As()?.GetOwnerObject();
             if (owner != null)
             {
                 return owner.transform.position;

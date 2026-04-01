@@ -174,10 +174,10 @@ namespace ET.Client
             }
 
             selfSpec.HasRuntimeFollowup = CanEnableHitKnockback(nodeData);
-            selfSpec.KnockbackDirection = Vector3.zero;
+            selfSpec.KnockbackDirection = float3.zero;
             selfSpec.KnockbackRemainingDistance = 0f;
             selfSpec.KnockbackSpeed = 0f;
-            selfSpec.KnockbackTransform = null;
+            selfSpec.KnockbackTarget = default;
 
             if (selfSpec.HasRuntimeFollowup)
             {
@@ -214,7 +214,8 @@ namespace ET.Client
                 return;
             }
 
-            if (selfSpec.KnockbackTransform == null
+            AbilitySystemComponent knockbackTarget = selfSpec.KnockbackTarget.As();
+            if (knockbackTarget == null
                 || selfSpec.KnockbackRemainingDistance <= 0f
                 || selfSpec.KnockbackSpeed <= 0f)
             {
@@ -229,10 +230,17 @@ namespace ET.Client
                 return;
             }
 
-            Vector3 currentPosition = selfSpec.KnockbackTransform.position;
-            Vector3 nextPosition = currentPosition + selfSpec.KnockbackDirection * moveStep;
+            Unit targetUnit = GetTargetUnit(knockbackTarget);
+            if (targetUnit == null)
+            {
+                Spec.Expire();
+                return;
+            }
+
+            float3 currentPosition = targetUnit.Position;
+            float3 nextPosition = currentPosition + selfSpec.KnockbackDirection * moveStep;
             nextPosition.z = currentPosition.z;
-            ApplyKnockbackPosition(nextPosition, GetTargetUnit());
+            ApplyKnockbackPosition(nextPosition, targetUnit);
             selfSpec.KnockbackRemainingDistance -= moveStep;
 
             if (selfSpec.KnockbackRemainingDistance <= 0.001f)
@@ -252,55 +260,66 @@ namespace ET.Client
         private void InitializeKnockback(AbilitySystemComponent target, DamageEffectNodeData nodeData)
         {
             DamageEffectSpec selfSpec = SelfSpec();
-            if (selfSpec == null || !selfSpec.HasRuntimeFollowup || target?.Owner == null)
+            if (selfSpec == null || !selfSpec.HasRuntimeFollowup || target == null)
             {
                 return;
             }
 
-            Transform targetTransform = target.Owner.transform;
-            Vector3 targetPosition = targetTransform.position;
-            Vector3 casterPosition = targetPosition;
+            float3 targetPosition = GetRuntimePosition(target);
+            float3 casterPosition = targetPosition;
 
             SpecExecutionContext context = GetContext();
-            GameObject casterObject = context?.GetCaster()?.Owner;
-            if (casterObject != null)
+            AbilitySystemComponent caster = context?.GetCaster();
+            if (caster != null)
             {
-                casterPosition = casterObject.transform.position;
+                casterPosition = GetRuntimePosition(caster);
             }
 
-            Vector3 knockbackDirection = targetPosition - casterPosition;
+            float3 knockbackDirection = targetPosition - casterPosition;
             knockbackDirection.z = 0f;
 
-            if (knockbackDirection.sqrMagnitude < 0.0001f)
+            if (math.lengthsq(knockbackDirection) < 0.0001f)
             {
-                knockbackDirection = targetTransform.right;
-                knockbackDirection.z = 0f;
+                knockbackDirection = new float3(1f, 0f, 0f);
             }
 
-            if (knockbackDirection.sqrMagnitude < 0.0001f)
+            if (math.lengthsq(knockbackDirection) < 0.0001f)
             {
-                knockbackDirection = Vector3.right;
+                knockbackDirection = new float3(1f, 0f, 0f);
             }
 
-            selfSpec.KnockbackTransform = targetTransform;
-            selfSpec.KnockbackDirection = knockbackDirection.normalized;
+            selfSpec.KnockbackTarget = target;
+            selfSpec.KnockbackDirection = math.normalize(knockbackDirection);
             selfSpec.KnockbackRemainingDistance = Mathf.Max(0f, nodeData.knockbackDistance);
         }
 
-        private Unit GetTargetUnit()
+        private Unit GetTargetUnit(AbilitySystemComponent target)
         {
-            SkillUnit skillUnit = Spec.Target.As()?.GetParent<SkillUnit>();
+            SkillUnit skillUnit = target?.GetParent<SkillUnit>();
             return skillUnit?.Unit.As();
         }
 
-        private static void ApplyKnockbackPosition(Vector3 nextPosition, Unit unit)
+        private static void ApplyKnockbackPosition(float3 nextPosition, Unit unit)
         {
             if (unit == null)
             {
                 return;
             }
 
-            unit.Position = new float3(nextPosition.x, nextPosition.y, nextPosition.z);
+            unit.Position = nextPosition;
+        }
+
+        private static float3 GetRuntimePosition(AbilitySystemComponent asc)
+        {
+            UnityEngine.Transform ownerTransform = asc?.GetOwnerTransform();
+            if (ownerTransform != null)
+            {
+                Vector3 ownerPosition = ownerTransform.position;
+                return new float3(ownerPosition.x, ownerPosition.y, ownerPosition.z);
+            }
+
+            Unit unit = asc?.GetParent<SkillUnit>()?.Unit.As();
+            return unit?.Position ?? float3.zero;
         }
 
     }

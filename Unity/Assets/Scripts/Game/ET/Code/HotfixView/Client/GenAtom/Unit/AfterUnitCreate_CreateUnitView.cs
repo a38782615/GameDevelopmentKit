@@ -41,7 +41,7 @@ namespace ET.Client
             AbilitySystemComponent asc = skillUnit?.ASC.As();
             if (asc != null)
             {
-                asc.Owner = viewGameObject;
+                asc.SetOwnerObject(viewGameObject);
                 SkillHudManager.GetOrCreate().RegisterUnit(
                     asc.InstanceId,
                     viewGameObject,

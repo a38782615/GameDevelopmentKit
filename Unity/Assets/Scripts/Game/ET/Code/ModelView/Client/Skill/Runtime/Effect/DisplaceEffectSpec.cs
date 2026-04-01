@@ -1,5 +1,5 @@
 
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -11,10 +11,10 @@ namespace ET.Client
     public partial class DisplaceEffectSpec : Entity, IAwake
     {
         // 位移运行时状态
-        public Vector3 _displaceDirection;
-        public Vector3 _targetPoint;
-        public Vector3 _startPosition;
+        public float3 _displaceDirection;
+        public float3 _targetPoint;
+        public float3 _startPosition;
         public float _movedDistance;
-        public Transform _targetTransform;
+        public EntityRef<AbilitySystemComponent> _targetAbility;
     }
 }

@@ -1,27 +1,22 @@
-
-
 namespace ET.Client
 {
-    /// <summary>
-    /// 属性修改效果Spec（瞬时效果）
-    /// 完全依赖基类处理，无需额外逻辑
-    /// </summary>
     public partial class ModifyAttributeEffectSpecHandler : AEffectHandler
     {
         public ModifyAttributeEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<ModifyAttributeEffectSpec>();
-            return selfSpec;
+            return Spec.GetComponent<ModifyAttributeEffectSpec>();
         }
+
         public ModifyAttributeEffectNodeData GetNode()
         {
-            var nodeData = NodeData as ModifyAttributeEffectNodeData;
-            return nodeData;
+            return NodeData as ModifyAttributeEffectNodeData;
         }
+
         public override SpecExecutionContext GetContext()
         {
             return Spec.GetContext();
         }
+
         public override void Cancel()
         {
             Spec.CancelEffect();

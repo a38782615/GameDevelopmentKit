@@ -1,22 +1,17 @@
-
-
 namespace ET.Client
 {
-    /// <summary>
-    /// 消耗效果Spec（瞬时效果）
-    /// </summary>namespace ET.Client
     public partial class CostEffectSpecHandler : AEffectHandler
     {
         public CostEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<CostEffectSpec>();
-            return selfSpec;
+            return Spec.GetComponent<CostEffectSpec>();
         }
+
         public CostEffectNodeData GetNode()
         {
-            var nodeData = NodeData as CostEffectNodeData;
-            return nodeData;
+            return NodeData as CostEffectNodeData;
         }
+
         public override SpecExecutionContext GetContext()
         {
             return Spec.GetContext();
@@ -31,6 +26,7 @@ namespace ET.Client
         {
             Spec.Execute();
         }
+
         public override SpecExecutionContext GetExecutionContext()
         {
             return GetContext();

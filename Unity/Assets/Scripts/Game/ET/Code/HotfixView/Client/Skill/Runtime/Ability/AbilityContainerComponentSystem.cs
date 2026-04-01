@@ -169,7 +169,7 @@ namespace ET.Client
         {
             foreach (var spec in self.GrantedAbilities)
             {
-                if (spec.As().GraphData == graphData)
+                if (spec.As().GetGraphData() == graphData)
                     return spec;
             }
             return null;
@@ -179,7 +179,7 @@ namespace ET.Client
         {
             foreach (var spec in self.GrantedAbilities)
             {
-                if (spec.As().AbilityNodeData?.skillId == skillId)
+                if (spec.As().GetAbilityNodeData()?.skillId == skillId)
                     return spec;
             }
             return null;

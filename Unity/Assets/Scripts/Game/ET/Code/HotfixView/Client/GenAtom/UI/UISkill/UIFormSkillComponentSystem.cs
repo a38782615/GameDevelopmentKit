@@ -195,7 +195,7 @@ namespace ET.Client
 
         private static bool CanDisplaySkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
         {
-            AbilityNodeData abilityNodeData = spec.AbilityNodeData;
+            AbilityNodeData abilityNodeData = spec.GetAbilityNodeData();
             if (abilityNodeData == null)
             {
                 return false;
@@ -541,8 +541,8 @@ namespace ET.Client
 
         private static global::ET.DRSkill GetSkillData(this UIFormSkillComponent self, GameplayAbilitySpec spec)
         {
-            int skillId = spec.AbilityNodeData?.skillId ?? 0;
-            if (skillId <= 0 && !int.TryParse(spec.SkillId, out skillId))
+            int skillId = spec.GetSkillNumericId();
+            if (skillId <= 0)
             {
                 return null;
             }

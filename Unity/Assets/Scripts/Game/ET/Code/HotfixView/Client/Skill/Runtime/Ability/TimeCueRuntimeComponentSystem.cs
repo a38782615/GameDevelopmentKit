@@ -106,7 +106,7 @@ namespace ET.Client
             }
 
             handler.Spec = cueSpec;
-            handler.NodeData = cueSpec.CueNodeData;
+            handler.NodeData = cueSpec.GetCueNodeData();
             cueSpec.IsRunning = false;
             handler.StopCue();
         }

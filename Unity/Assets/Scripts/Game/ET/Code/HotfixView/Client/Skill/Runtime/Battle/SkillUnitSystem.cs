@@ -163,7 +163,7 @@ namespace ET.Client
 
                 if (!activated)
                 {
-                    Log.Warning($"[Unit] 被动技能自动激活失败 SkillId: {spec?.AbilityNodeData?.skillId ?? 0}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
+                    Log.Warning($"[Unit] 被动技能自动激活失败 SkillId: {spec?.GetSkillNumericId() ?? 0}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
                 }
             }
         }

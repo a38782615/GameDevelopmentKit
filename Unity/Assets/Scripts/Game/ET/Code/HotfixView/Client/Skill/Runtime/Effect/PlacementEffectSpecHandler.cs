@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client
@@ -82,7 +83,7 @@ namespace ET.Client
                 return;
             }
 
-            Vector3 position = context.GetPosition(nodeData.positionSource, nodeData.positionBindingName);
+            float3 position = ToFloat3(context.GetPosition(nodeData.positionSource, nodeData.positionBindingName));
             selfSpec.IsLogicActive = true;
             selfSpec.RuntimePosition = position;
             selfSpec.CurrentTargets.Clear();
@@ -103,13 +104,12 @@ namespace ET.Client
                 return;
             }
 
-            UGFEntityPlacement placementEntity = selfSpec.PlacementEntity.As();
+            UGFEntityPlacement placementEntity = FindPlacementEntity();
             if (placementEntity != null)
             {
                 placementEntity.Cancel();
             }
 
-            selfSpec.PlacementEntity = default;
             selfSpec.IsLogicActive = false;
             this.TriggerPlacementExitForAll();
 
@@ -120,7 +120,7 @@ namespace ET.Client
             }
         }
 
-        private async UniTaskVoid SpawnPlacementViewAsync(Vector3 position)
+        private async UniTaskVoid SpawnPlacementViewAsync(float3 position)
         {
             PlacementEffectNodeData nodeData = GetNode();
             PlacementEffectSpec selfSpec = SelfSpec();
@@ -139,7 +139,7 @@ namespace ET.Client
 
             PlacementInitData initData = new PlacementInitData
             {
-                Position = position,
+                Position = ToVector3(position),
                 EnableCollision = nodeData.enableCollision,
                 CollisionRadius = nodeData.collisionRadius,
                 CollisionTargetTags = nodeData.collisionTargetTags,
@@ -148,7 +148,6 @@ namespace ET.Client
             };
 
             UGFEntityPlacement placementEntity = Spec.AddChild<UGFEntityPlacement, PlacementInitData>(initData);
-            selfSpec.PlacementEntity = placementEntity;
 
             try
             {
@@ -164,7 +163,6 @@ namespace ET.Client
                 {
                     Log.Warning($"[PlacementEffect] Missing placement entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     placementEntity.Dispose();
-                    selfSpec.PlacementEntity = default;
                     return;
                 }
             }
@@ -175,11 +173,6 @@ namespace ET.Client
                 {
                     placementEntity.Dispose();
                 }
-
-                if (selfSpec.PlacementEntity.As() == placementEntity)
-                {
-                    selfSpec.PlacementEntity = default;
-                }
                 SkillDiagFileLogger.Log($"[PlacementEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
                 return;
@@ -189,6 +182,16 @@ namespace ET.Client
             {
                 return;
             }
+        }
+
+        private static float3 ToFloat3(Vector3 value)
+        {
+            return new float3(value.x, value.y, value.z);
+        }
+
+        private static Vector3 ToVector3(float3 value)
+        {
+            return new Vector3(value.x, value.y, value.z);
         }
     }
 }

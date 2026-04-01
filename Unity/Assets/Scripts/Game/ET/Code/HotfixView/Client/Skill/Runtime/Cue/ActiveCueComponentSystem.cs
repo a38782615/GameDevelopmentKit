@@ -96,7 +96,7 @@ namespace ET.Client
                 return;
             }
 
-            GameObject audioObject = target?.Owner != null ? target.Owner : new GameObject("CueSound");
+            GameObject audioObject = target?.GetOwnerObject() ?? new GameObject("CueSound");
             AudioSource audioSource = audioObject.GetComponent<AudioSource>();
             if (audioSource == null)
             {

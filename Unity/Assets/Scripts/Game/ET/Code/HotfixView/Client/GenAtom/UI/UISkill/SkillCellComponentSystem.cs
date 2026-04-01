@@ -293,8 +293,8 @@ namespace ET.Client
 
         private static global::ET.DRSkill GetSkillData(this SkillCellComponent self, GameplayAbilitySpec spec)
         {
-            int skillId = spec.AbilityNodeData?.skillId ?? 0;
-            if (skillId <= 0 && !int.TryParse(spec.SkillId, out skillId))
+            int skillId = spec.GetSkillNumericId();
+            if (skillId <= 0)
             {
                 return null;
             }

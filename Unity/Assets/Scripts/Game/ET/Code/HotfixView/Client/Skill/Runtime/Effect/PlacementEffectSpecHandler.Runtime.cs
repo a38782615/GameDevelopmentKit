@@ -161,17 +161,29 @@ namespace ET.Client
 
         private void CancelPlacementView()
         {
-            PlacementEffectSpec selfSpec = SelfSpec();
-            UGFEntityPlacement placementEntity = selfSpec?.PlacementEntity.As();
+            UGFEntityPlacement placementEntity = this.FindPlacementEntity();
             if (placementEntity != null)
             {
                 placementEntity.Cancel();
             }
+        }
 
-            if (selfSpec != null)
+        private UGFEntityPlacement FindPlacementEntity()
+        {
+            if (Spec?.Children == null)
             {
-                selfSpec.PlacementEntity = default;
+                return null;
             }
+
+            foreach (Entity child in Spec.Children.Values)
+            {
+                if (child is UGFEntityPlacement placementEntity)
+                {
+                    return placementEntity;
+                }
+            }
+
+            return null;
         }
     }
 }

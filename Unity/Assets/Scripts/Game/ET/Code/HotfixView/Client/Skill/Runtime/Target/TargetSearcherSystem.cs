@@ -209,10 +209,11 @@ namespace ET.Client
 
             foreach (var target in targets)
             {
-                if (target?.Owner == null)
+                Transform targetTransform = target?.GetOwnerTransform();
+                if (targetTransform == null)
                     continue;
 
-                float distance = Vector3.Distance(center, target.Owner.transform.position);
+                float distance = Vector3.Distance(center, targetTransform.position);
                 if (distance < nearestDistance)
                 {
                     nearestDistance = distance;
@@ -279,11 +280,13 @@ namespace ET.Client
         {
             targets.Sort((a, b) =>
             {
-                if (a?.Owner == null) return 1;
-                if (b?.Owner == null) return -1;
+                Transform transformA = a?.GetOwnerTransform();
+                Transform transformB = b?.GetOwnerTransform();
+                if (transformA == null) return 1;
+                if (transformB == null) return -1;
 
-                float distA = Vector3.Distance(center, a.Owner.transform.position);
-                float distB = Vector3.Distance(center, b.Owner.transform.position);
+                float distA = Vector3.Distance(center, transformA.position);
+                float distB = Vector3.Distance(center, transformB.position);
 
                 return ascending ? distA.CompareTo(distB) : distB.CompareTo(distA);
             });

@@ -22,17 +22,19 @@ namespace ET.Client
             self.Context = context;
             self.Source = context.Caster;
 
-            var nodeData = self.TaskNodeData;
+            TaskNodeData nodeData = self.GetTaskNodeData();
             if (nodeData != null)
+            {
                 self.AttachTaskComponent(nodeData.nodeType);
+            }
         }
 
         public static void Execute(this TaskSpec self)
         {
-            var handler = self.GetHandler();
+            ATaskHandler handler = self.GetHandler();
             if (handler == null)
             {
-                var nodeType = self.TaskNodeData?.nodeType;
+                NodeType? nodeType = self.GetTaskNodeData()?.nodeType;
                 Log.Error($"TaskHandler not found for NodeType: {nodeType}");
                 return;
             }
@@ -48,11 +50,13 @@ namespace ET.Client
         public static AbilitySystemComponent GetTaskTarget(this TaskSpec self)
         {
             SpecExecutionContext context = self.Context;
-            var nodeData = self.NodeData;
+            NodeData nodeData = self.GetNodeData();
             if (context == null)
+            {
                 return null;
+            }
 
-            var targetType = nodeData?.targetType ?? TargetType.MainTarget;
+            TargetType targetType = nodeData?.targetType ?? TargetType.MainTarget;
             switch (targetType)
             {
                 case TargetType.Caster:
@@ -64,17 +68,31 @@ namespace ET.Client
             }
         }
 
+        public static NodeData GetNodeData(this TaskSpec self)
+        {
+            return self == null ? null : SkillDataCenter.Instance.GetNodeData(self.SkillId, self.NodeGuid);
+        }
+
+        public static TaskNodeData GetTaskNodeData(this TaskSpec self)
+        {
+            return self.GetNodeData() as TaskNodeData;
+        }
+
         private static ATaskHandler GetHandler(this TaskSpec self)
         {
             if (string.IsNullOrEmpty(self.HandName))
+            {
                 return null;
+            }
 
-            var handler = TaskDispatcherComponent.Instance.Get(self.HandName);
+            ATaskHandler handler = TaskDispatcherComponent.Instance.Get(self.HandName);
             if (handler == null)
+            {
                 return null;
+            }
 
             handler.Spec = self;
-            handler.NodeData = self.TaskNodeData;
+            handler.NodeData = self.GetTaskNodeData();
             return handler;
         }
 
@@ -99,7 +117,9 @@ namespace ET.Client
         private static void EnsureTaskComponent<T>(this TaskSpec self) where T : Entity, IAwake, new()
         {
             if (self.GetComponent<T>() == null)
+            {
                 self.AddComponent<T>();
+            }
         }
     }
 }

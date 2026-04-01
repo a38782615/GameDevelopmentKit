@@ -36,22 +36,22 @@ namespace ET.Client
                 if (targetUnit != null)
                 {
                     selfSpec.EndPosition = GetAbilityPosition(targetUnit, nodeData.targetBindingName, selfSpec.EndPosition);
-                    selfSpec.TotalDistance = Vector2.Distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
+                    selfSpec.TotalDistance = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
                 }
 
                 if (nodeData.curveHeight > 0f && selfSpec.TotalDistance > 0.1f)
                 {
                     selfSpec.FlightProgress = Mathf.Clamp01(selfSpec.TraveledDistance / (selfSpec.TotalDistance + selfSpec.TraveledDistance));
-                    Vector2 linearPos = Vector2.MoveTowards(selfSpec.CurrentPosition, selfSpec.EndPosition, moveDistance);
+                    float2 linearPos = MoveTowards(selfSpec.CurrentPosition, selfSpec.EndPosition, moveDistance);
                     float curveOffset = nodeData.curveHeight * 4f * selfSpec.FlightProgress * (1f - selfSpec.FlightProgress);
-                    Vector2 perpendicular = new Vector2(selfSpec.CurrentDirection.y, -selfSpec.CurrentDirection.x);
+                    float2 perpendicular = new float2(selfSpec.CurrentDirection.y, -selfSpec.CurrentDirection.x);
                     selfSpec.CurrentPosition = linearPos + perpendicular * curveOffset;
-                    selfSpec.CurrentDirection = (selfSpec.EndPosition - selfSpec.CurrentPosition).normalized;
+                    selfSpec.CurrentDirection = math.normalizesafe(selfSpec.EndPosition - selfSpec.CurrentPosition, selfSpec.CurrentDirection);
                 }
                 else
                 {
-                    selfSpec.CurrentDirection = (selfSpec.EndPosition - selfSpec.CurrentPosition).normalized;
-                    selfSpec.CurrentPosition = Vector2.MoveTowards(selfSpec.CurrentPosition, selfSpec.EndPosition, moveDistance);
+                    selfSpec.CurrentDirection = math.normalizesafe(selfSpec.EndPosition - selfSpec.CurrentPosition, selfSpec.CurrentDirection);
+                    selfSpec.CurrentPosition = MoveTowards(selfSpec.CurrentPosition, selfSpec.EndPosition, moveDistance);
                 }
             }
             else if (nodeData.flyOver)
@@ -61,9 +61,9 @@ namespace ET.Client
             else if (nodeData.curveHeight > 0f && selfSpec.TotalDistance > 0.1f)
             {
                 selfSpec.FlightProgress = Mathf.Clamp01(selfSpec.TraveledDistance / selfSpec.TotalDistance);
-                Vector2 linearPos = Vector2.Lerp(selfSpec.StartPosition, selfSpec.EndPosition, selfSpec.FlightProgress);
-                Vector2 forward = (selfSpec.EndPosition - selfSpec.StartPosition).normalized;
-                Vector2 perpendicular = new Vector2(forward.y, -forward.x);
+                float2 linearPos = math.lerp(selfSpec.StartPosition, selfSpec.EndPosition, selfSpec.FlightProgress);
+                float2 forward = math.normalizesafe(selfSpec.EndPosition - selfSpec.StartPosition, selfSpec.CurrentDirection);
+                float2 perpendicular = new float2(forward.y, -forward.x);
                 float curveOffset = nodeData.curveHeight * 4f * selfSpec.FlightProgress * (1f - selfSpec.FlightProgress);
                 selfSpec.CurrentPosition = linearPos + perpendicular * curveOffset;
             }
@@ -93,7 +93,7 @@ namespace ET.Client
             }
 
             using ListComponent<EntityRef<EntityBody>> bodies = ListComponent<EntityRef<EntityBody>>.Create();
-            bodyCheck.SearchCircle(new float2(selfSpec.CurrentPosition.x, selfSpec.CurrentPosition.y), nodeData.collisionRadius, bodies);
+            bodyCheck.SearchCircle(selfSpec.CurrentPosition, nodeData.collisionRadius, bodies);
             AbilitySystemComponent sourceAsc = Spec.Source.As();
 
             foreach (EntityRef<EntityBody> bodyRef in bodies)
@@ -162,7 +162,7 @@ namespace ET.Client
 
             if (!selfSpec.ReachedTarget)
             {
-                float distToTarget = Vector2.Distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
+                float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
                 if (distToTarget < nodeData.collisionRadius || (selfSpec.TotalDistance > 0f && selfSpec.TraveledDistance >= selfSpec.TotalDistance))
                 {
                     selfSpec.ReachedTarget = true;
@@ -176,7 +176,7 @@ namespace ET.Client
             {
                 DestroyProjectileLogic();
             }
-            else if (!nodeData.flyOver && (selfSpec.FlightProgress >= 1f || Vector2.Distance(selfSpec.CurrentPosition, selfSpec.EndPosition) < 0.1f))
+            else if (!nodeData.flyOver && (selfSpec.FlightProgress >= 1f || math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition) < 0.1f))
             {
                 DestroyProjectileLogic();
             }
@@ -194,7 +194,7 @@ namespace ET.Client
 
             selfSpec.BounceCount++;
             using ListComponent<EntityRef<EntityBody>> bodies = ListComponent<EntityRef<EntityBody>>.Create();
-            bodyCheck.SearchCircle(new float2(selfSpec.CurrentPosition.x, selfSpec.CurrentPosition.y), nodeData.bounceSearchRadius, bodies);
+            bodyCheck.SearchCircle(selfSpec.CurrentPosition, nodeData.bounceSearchRadius, bodies);
             AbilitySystemComponent nextTarget = null;
             float nearest = float.MaxValue;
             foreach (EntityRef<EntityBody> bodyRef in bodies)
@@ -215,7 +215,7 @@ namespace ET.Client
                     continue;
                 }
 
-                float distance = Vector2.Distance(selfSpec.CurrentPosition, GetAbilityPosition(candidate, nodeData.targetBindingName, selfSpec.CurrentPosition));
+                float distance = math.distance(selfSpec.CurrentPosition, GetAbilityPosition(candidate, nodeData.targetBindingName, selfSpec.CurrentPosition));
                 if (distance < nearest)
                 {
                     nearest = distance;
@@ -236,10 +236,10 @@ namespace ET.Client
 
             selfSpec.StartPosition = selfSpec.CurrentPosition;
             selfSpec.EndPosition = GetAbilityPosition(nextTarget, nodeData.targetBindingName, selfSpec.EndPosition);
-            selfSpec.TotalDistance = Vector2.Distance(selfSpec.StartPosition, selfSpec.EndPosition);
+            selfSpec.TotalDistance = math.distance(selfSpec.StartPosition, selfSpec.EndPosition);
             selfSpec.TraveledDistance = 0f;
             selfSpec.FlightProgress = 0f;
-            selfSpec.CurrentDirection = (selfSpec.EndPosition - selfSpec.StartPosition).normalized;
+            selfSpec.CurrentDirection = math.normalizesafe(selfSpec.EndPosition - selfSpec.StartPosition, selfSpec.CurrentDirection);
             SkillDiagFileLogger.Log($"[ProjectileEffect] Bounce skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} nextTarget={nextTarget.InstanceId} pos={selfSpec.CurrentPosition}");
             SpecExecutionContext bounceContext = GetContext()?.CreateWithParentInput(nextTarget);
             if (bounceContext != null)
@@ -258,7 +258,7 @@ namespace ET.Client
             return true;
         }
 
-        private void TriggerProjectileHit(AbilitySystemComponent target, Vector2 hitPosition)
+        private void TriggerProjectileHit(AbilitySystemComponent target, float2 hitPosition)
         {
             ProjectileEffectSpec selfSpec = SelfSpec();
             SpecExecutionContext hitContext = GetContext()?.CreateWithParentInput(target);
@@ -301,24 +301,24 @@ namespace ET.Client
             return true;
         }
 
-        private Vector2 GetAbilityPosition(AbilitySystemComponent asc, string bindingName, Vector2 fallback)
+        private float2 GetAbilityPosition(AbilitySystemComponent asc, string bindingName, float2 fallback)
         {
-            if (asc?.Owner != null)
+            Transform transform = asc?.GetOwnerTransform();
+            if (transform != null)
             {
-                Transform transform = asc.Owner.transform;
                 if (!string.IsNullOrEmpty(bindingName))
                 {
                     Transform binding = transform.Find(bindingName);
                     if (binding != null)
                     {
-                        return binding.position;
+                        return ToPlanar(binding.position);
                     }
                 }
-                return transform.position;
+                return ToPlanar(transform.position);
             }
 
             Unit unit = asc?.GetParent<SkillUnit>()?.Unit.As();
-            return unit == null ? fallback : new Vector2(unit.Position.x, unit.Position.y);
+            return unit == null ? fallback : unit.Position.ToPlanar();
         }
 
         private BodyCheckComponent GetBodyCheckComponent()
@@ -339,7 +339,7 @@ namespace ET.Client
             if (!selfSpec.HasTriggeredHit && nodeData != null && nodeData.projectileTargetType == ProjectileTargetType.Position)
             {
                 AbilitySystemComponent target = GetContext()?.GetMainTarget();
-                if (target != null && Vector2.Distance(selfSpec.CurrentPosition, selfSpec.ExpectedTargetPosition) <= Mathf.Max(nodeData.collisionRadius, 0.75f))
+                if (target != null && math.distance(selfSpec.CurrentPosition, selfSpec.ExpectedTargetPosition) <= Mathf.Max(nodeData.collisionRadius, 0.75f))
                 {
                     TriggerProjectileHit(target, selfSpec.CurrentPosition);
                 }
@@ -354,14 +354,14 @@ namespace ET.Client
         private void SyncProjectileView()
         {
             ProjectileEffectSpec selfSpec = SelfSpec();
-            UGFEntityProjectile projectileEntity = selfSpec?.ProjectileEntity.As();
+            UGFEntityProjectile projectileEntity = this.FindProjectileEntity();
             if (selfSpec == null || projectileEntity?.CachedTransform == null)
             {
                 return;
             }
 
-            projectileEntity.CachedTransform.position = selfSpec.CurrentPosition;
-            if (selfSpec.CurrentDirection.sqrMagnitude > 0.001f)
+            projectileEntity.CachedTransform.position = ToVector3(selfSpec.CurrentPosition);
+            if (math.lengthsq(selfSpec.CurrentDirection) > 0.001f)
             {
                 float angle = Mathf.Atan2(selfSpec.CurrentDirection.y, selfSpec.CurrentDirection.x) * Mathf.Rad2Deg;
                 projectileEntity.CachedTransform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -370,17 +370,46 @@ namespace ET.Client
 
         private void CancelProjectileView()
         {
-            ProjectileEffectSpec selfSpec = SelfSpec();
-            UGFEntityProjectile projectileEntity = selfSpec?.ProjectileEntity.As();
+            UGFEntityProjectile projectileEntity = this.FindProjectileEntity();
             if (projectileEntity != null)
             {
                 projectileEntity.Cancel();
             }
+        }
 
-            if (selfSpec != null)
+        private UGFEntityProjectile FindProjectileEntity()
+        {
+            if (Spec?.Children == null)
             {
-                selfSpec.ProjectileEntity = default;
+                return null;
             }
+
+            foreach (Entity child in Spec.Children.Values)
+            {
+                if (child is UGFEntityProjectile projectileEntity)
+                {
+                    return projectileEntity;
+                }
+            }
+
+            return null;
+        }
+
+        private static float2 MoveTowards(float2 current, float2 target, float maxDistanceDelta)
+        {
+            float2 delta = target - current;
+            float distance = math.length(delta);
+            if (distance <= maxDistanceDelta || distance < 0.0001f)
+            {
+                return target;
+            }
+
+            return current + delta / distance * maxDistanceDelta;
+        }
+
+        private static Vector3 ToVector3(float2 value)
+        {
+            return global::ET.ModeDefine.Is2D ? new Vector3(value.x, value.y, 0f) : new Vector3(value.x, 0f, value.y);
         }
     }
 }

@@ -48,11 +48,12 @@ namespace ET.Client
 
         public static void HandleAttributeChanged(this AbilitySystemComponent self, int numericType, float before, float after)
         {
-            if (self.Owner != null && (numericType == global::ET.NumericType.Hp || numericType == global::ET.NumericType.MaxHp))
+            UnityEngine.GameObject ownerObject = self.GetOwnerObject();
+            if (ownerObject != null && (numericType == global::ET.NumericType.Hp || numericType == global::ET.NumericType.MaxHp))
             {
                 SkillHudManager.GetOrCreate().UpdateUnitHealth(
                     self.InstanceId,
-                    self.Owner,
+                    ownerObject,
                     self.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
                     self.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
             }
@@ -98,6 +99,7 @@ namespace ET.Client
         private static void Destroy(this AbilitySystemComponent self)
         {
             SkillHudManager.Instance?.UnregisterUnit(self);
+            self.ClearOwnerObject();
             self.OwnedTags?.Clear();
             self.OwnedTagsRef = default;
             self.IsInitialized = false;
@@ -331,7 +333,7 @@ namespace ET.Client
 
         private static bool RequiresMainTarget(this GameplayAbilitySpec self)
         {
-            SkillData graphData = self?.GraphData;
+            SkillData graphData = self?.GetGraphData();
             if (graphData?.nodes == null)
             {
                 return false;
@@ -402,9 +404,10 @@ namespace ET.Client
 
         private static UnityEngine.Vector3 GetWorldPosition(Unit unit, AbilitySystemComponent asc)
         {
-            if (asc?.Owner != null)
+            UnityEngine.Transform ownerTransform = asc?.GetOwnerTransform();
+            if (ownerTransform != null)
             {
-                return asc.Owner.transform.position;
+                return ownerTransform.position;
             }
 
             return unit == null
@@ -431,13 +434,7 @@ namespace ET.Client
                 return 0;
             }
 
-            int skillId = spec.AbilityNodeData?.skillId ?? 0;
-            if (skillId > 0)
-            {
-                return skillId;
-            }
-
-            return int.TryParse(spec.SkillId, out skillId) ? skillId : 0;
+            return spec.GetSkillNumericId();
         }
     }
 }

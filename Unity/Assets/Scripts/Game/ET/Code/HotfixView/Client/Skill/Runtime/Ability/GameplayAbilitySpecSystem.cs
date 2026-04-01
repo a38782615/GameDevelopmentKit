@@ -52,9 +52,17 @@ namespace ET.Client
             self.FindAbilityNode();
             self.FindCostAndCooldownNodes();
 
-            if (self.AbilityNodeData != null)
+            AbilityNodeData abilityNodeData = self.GetAbilityNodeData();
+            if (abilityNodeData != null)
             {
-                self.Tags = new AbilityTagContainer(self.AbilityNodeData);
+                self.Tags = new AbilityTagContainer(
+                    abilityNodeData.assetTags,
+                    abilityNodeData.cancelAbilitiesWithTags,
+                    abilityNodeData.blockAbilitiesWithTags,
+                    abilityNodeData.activationOwnedTags,
+                    abilityNodeData.activationRequiredTags,
+                    abilityNodeData.activationBlockedTags,
+                    abilityNodeData.ongoingBlockedTags);
             }
         }
 
@@ -62,14 +70,13 @@ namespace ET.Client
 
         private static void FindAbilityNode(this GameplayAbilitySpec self)
         {
-            var graphData = self.GraphData;
+            var graphData = self.GetGraphData();
             if (graphData?.nodes == null) return;
 
             foreach (var node in graphData.nodes)
             {
                 if (node is AbilityNodeData abilityNode)
                 {
-                    self.AbilityNodeData = abilityNode;
                     self.AbilityNodeGuid = abilityNode.guid;
                     break;
                 }
@@ -135,12 +142,13 @@ namespace ET.Client
 
         private static void FindCostAndCooldownNodes(this GameplayAbilitySpec self)
         {
-            var graphData = self.GraphData;
-            if (graphData?.connections == null || self.AbilityNodeData == null) return;
+            var graphData = self.GetGraphData();
+            AbilityNodeData abilityNodeData = self.GetAbilityNodeData();
+            if (graphData?.connections == null || abilityNodeData == null) return;
 
             foreach (var conn in graphData.connections)
             {
-                if (conn.outputNodeGuid != self.AbilityNodeData.guid) continue;
+                if (conn.outputNodeGuid != abilityNodeData.guid) continue;
 
                 int outputPortId = conn.GetOutputPortId(NodeType.Ability);
                 if (outputPortId == SkillPortId.Ability.Cost)
@@ -202,7 +210,7 @@ namespace ET.Client
         public static bool IsOnCooldown(this GameplayAbilitySpec self)
         {
             var cdEffect = self.GetCooldownEffect();
-            if (cdEffect != null && cdEffect.GetComponent<CooldownEffectSpec>() is CooldownEffectSpec cooldownSpec && cooldownSpec.IsChargeCooldown)
+            if (cdEffect != null && cdEffect.GetComponent<CooldownEffectSpec>() is CooldownEffectSpec cooldownSpec && cooldownSpec.IsChargeCooldown())
                 return cooldownSpec.CurrentCharges <= 0;
 
             var cooldownTag = self.GetCooldownTag();
@@ -258,20 +266,20 @@ namespace ET.Client
             }
 
             var cooldownSpec = cdEffect.GetComponent<CooldownEffectSpec>();
-            info.IsChargeCooldown = cooldownSpec.IsChargeCooldown;
-            if (cooldownSpec.IsChargeCooldown)
+            info.IsChargeCooldown = cooldownSpec.IsChargeCooldown();
+            if (cooldownSpec.IsChargeCooldown())
             {
                 info.CurrentCharges = cooldownSpec.CurrentCharges;
                 info.MaxCharges = cooldownSpec.MaxCharges;
-                info.ChargeProgress = cooldownSpec.ChargeProgress;
+                info.ChargeProgress = cooldownSpec.GetChargeProgress();
                 info.ChargeTimeRemaining = cooldownSpec.ChargeTimer;
                 info.IsOnCooldown = cooldownSpec.CurrentCharges <= 0;
             }
             else
             {
-                info.RemainingTime = cdEffect.RemainingTime;
+                info.RemainingTime = cdEffect.GetRemainingTime();
                 info.TotalDuration = cdEffect.Duration;
-                info.IsOnCooldown = cdEffect.RemainingTime > 0;
+                info.IsOnCooldown = cdEffect.GetRemainingTime() > 0;
             }
 
             return info;
@@ -428,10 +436,11 @@ namespace ET.Client
 
         public static void OnGameplayEvent(this GameplayAbilitySpec self, GameplayEventType gameplayEvent)
         {
-            if (self.AbilityNodeData?.eventOutputPorts == null) return;
+            AbilityNodeData abilityNodeData = self.GetAbilityNodeData();
+            if (abilityNodeData?.eventOutputPorts == null) return;
             SpecExecutionContext context = self.Context;
             if (context == null) return;
-            foreach (var portData in self.AbilityNodeData.eventOutputPorts)
+            foreach (var portData in abilityNodeData.eventOutputPorts)
             {
                 if (portData.eventType == gameplayEvent)
                 {
@@ -468,7 +477,7 @@ namespace ET.Client
                 var e = effect.As();
                 if (e == null) continue;
 
-                if (e.EffectNodeData?.durationType != EffectDurationType.Instant)
+                if (e.GetEffectNodeData()?.durationType != EffectDurationType.Instant)
                     e.TickEffect(deltaTime);
 
                 if (!e.IsRunning)
@@ -580,6 +589,32 @@ namespace ET.Client
             {
                 effectSpec.Dispose();
             }
+        }
+
+        public static SkillData GetGraphData(this GameplayAbilitySpec self)
+        {
+            return self == null ? null : SkillDataCenter.Instance.GetSkillGraph(self.SkillId);
+        }
+
+        public static AbilityNodeData GetAbilityNodeData(this GameplayAbilitySpec self)
+        {
+            if (self == null || string.IsNullOrEmpty(self.AbilityNodeGuid))
+            {
+                return null;
+            }
+
+            return SkillDataCenter.Instance.GetNodeData(self.SkillId, self.AbilityNodeGuid) as AbilityNodeData;
+        }
+
+        public static int GetSkillNumericId(this GameplayAbilitySpec self)
+        {
+            int skillId = self.GetAbilityNodeData()?.skillId ?? 0;
+            if (skillId > 0)
+            {
+                return skillId;
+            }
+
+            return int.TryParse(self?.SkillId, out skillId) ? skillId : 0;
         }
     }
 }

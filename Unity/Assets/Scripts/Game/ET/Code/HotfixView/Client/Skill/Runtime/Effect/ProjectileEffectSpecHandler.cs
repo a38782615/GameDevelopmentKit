@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace ET.Client
@@ -87,8 +88,8 @@ namespace ET.Client
 
             selfSpec.HasTriggeredHit = false;
 
-            Vector2 launchPosition = context.GetPosition(nodeData.launchPositionSource, nodeData.launchBindingName);
-            Vector2 targetPosition = context.GetPosition(nodeData.targetPositionSource, nodeData.targetBindingName);
+            float2 launchPosition = ToPlanar(context.GetPosition(nodeData.launchPositionSource, nodeData.launchBindingName));
+            float2 targetPosition = ToPlanar(context.GetPosition(nodeData.targetPositionSource, nodeData.targetBindingName));
             selfSpec.ExpectedTargetPosition = targetPosition;
 
             AbilitySystemComponent targetUnit = null;
@@ -97,7 +98,7 @@ namespace ET.Client
                 targetUnit = GetTargetUnitFromPositionSource(nodeData.targetPositionSource);
             }
 
-            Vector2 direction = (targetPosition - launchPosition).normalized;
+            float2 direction = math.normalizesafe(targetPosition - launchPosition, new float2(1f, 0f));
             if (nodeData.projectileTargetType == ProjectileTargetType.Position && Mathf.Abs(nodeData.offsetAngle) > 0.01f)
             {
                 direction = RotateVector2(direction, -nodeData.offsetAngle);
@@ -108,11 +109,11 @@ namespace ET.Client
             selfSpec.IsLogicActive = true;
             selfSpec.ReachedTarget = false;
             selfSpec.CurrentPosition = launchPosition;
-            selfSpec.CurrentDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
+            selfSpec.CurrentDirection = math.lengthsq(direction) > 0.0001f ? math.normalize(direction) : new float2(1f, 0f);
             selfSpec.StartPosition = launchPosition;
             selfSpec.EndPosition = targetPosition;
             selfSpec.TraveledDistance = 0f;
-            selfSpec.TotalDistance = Vector2.Distance(launchPosition, targetPosition);
+            selfSpec.TotalDistance = math.distance(launchPosition, targetPosition);
             selfSpec.FlightProgress = 0f;
             selfSpec.HitCount = 0;
             selfSpec.BounceCount = 0;
@@ -172,9 +173,9 @@ namespace ET.Client
 
             ProjectileInitData initData = new ProjectileInitData
             {
-                LaunchPosition = selfSpec.StartPosition,
-                TargetPosition = selfSpec.EndPosition,
-                Direction = selfSpec.CurrentDirection,
+                LaunchPosition = ToVector2(selfSpec.StartPosition),
+                TargetPosition = ToVector2(selfSpec.EndPosition),
+                Direction = ToVector2(selfSpec.CurrentDirection),
                 TargetUnit = GetTargetUnitFromPositionSource(nodeData.targetPositionSource),
                 TargetType = nodeData.projectileTargetType,
                 FlyOver = nodeData.flyOver,
@@ -198,7 +199,6 @@ namespace ET.Client
             };
 
             UGFEntityProjectile projectileEntity = Spec.AddChild<UGFEntityProjectile, ProjectileInitData>(initData);
-            selfSpec.ProjectileEntity = projectileEntity;
 
             try
             {
@@ -214,7 +214,6 @@ namespace ET.Client
                 {
                     Log.Warning($"[ProjectileEffect] Missing projectile entity config. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                     projectileEntity.Dispose();
-                    selfSpec.ProjectileEntity = default;
                     return;
                 }
             }
@@ -224,11 +223,6 @@ namespace ET.Client
                 if (!projectileEntity.IsDisposed)
                 {
                     projectileEntity.Dispose();
-                }
-
-                if (selfSpec.ProjectileEntity.As() == projectileEntity)
-                {
-                    selfSpec.ProjectileEntity = default;
                 }
                 SkillDiagFileLogger.Log($"[ProjectileEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
@@ -243,12 +237,22 @@ namespace ET.Client
             this.SyncProjectileView();
         }
 
-        private Vector2 RotateVector2(Vector2 value, float degrees)
+        private float2 RotateVector2(float2 value, float degrees)
         {
             float radians = degrees * Mathf.Deg2Rad;
             float cos = Mathf.Cos(radians);
             float sin = Mathf.Sin(radians);
-            return new Vector2(value.x * cos - value.y * sin, value.x * sin + value.y * cos);
+            return new float2(value.x * cos - value.y * sin, value.x * sin + value.y * cos);
+        }
+
+        private static float2 ToPlanar(Vector3 value)
+        {
+            return global::ET.ModeDefine.Is2D ? new float2(value.x, value.y) : new float2(value.x, value.z);
+        }
+
+        private static Vector2 ToVector2(float2 value)
+        {
+            return new Vector2(value.x, value.y);
         }
     }
 }

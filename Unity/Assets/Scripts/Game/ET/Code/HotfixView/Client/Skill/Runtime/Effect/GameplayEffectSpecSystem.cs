@@ -59,7 +59,7 @@ namespace ET.Client
             self.SetByCallerValues.Clear();
             self.SnapshotValues.Clear();
 
-            var effectData = self.EffectNodeData;
+            var effectData = self.GetEffectNodeData();
             if (effectData != null)
                 self.Tags = new EffectTagContainer(effectData);
 
@@ -108,7 +108,7 @@ namespace ET.Client
             }
 
             self.IsRunning = true;
-            var effectData = self.EffectNodeData;
+            var effectData = self.GetEffectNodeData();
             bool hasRuntimeFollowup = self.HasRuntimeFollowup();
 
             if (effectData?.durationType == EffectDurationType.Instant)
@@ -151,7 +151,7 @@ namespace ET.Client
 
                 if (existingEffect != null)
                 {
-                    var existingData = existingEffect.EffectNodeData;
+                    var existingData = existingEffect.GetEffectNodeData();
                     int stackLimit = existingData?.stackLimit ?? 0;
                     bool isAtStackLimit = stackLimit > 0 && existingEffect.StackCount >= stackLimit;
                     if (isAtStackLimit)
@@ -225,7 +225,7 @@ namespace ET.Client
             try
             {
                 var targetAttr = target?.Attributes;
-                if (self.EffectNodeData?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
+                if (self.GetEffectNodeData()?.durationType == EffectDurationType.Instant && target?.Attributes != null && self.Modifiers?.Count > 0)
                 {
                     var calcContext = self.CreateCalculationContext(target);
                     foreach (var modifier in self.Modifiers)
@@ -315,7 +315,7 @@ namespace ET.Client
             }
 
             handler.Spec = self;
-            handler.NodeData = self.EffectNodeData;
+            handler.NodeData = self.GetEffectNodeData();
             return handler;
         }
 
@@ -360,7 +360,7 @@ namespace ET.Client
             if (self.IsExpired || !self.IsApplied) return;
 
             self.ElapsedTime += deltaTime;
-            var effectData = self.EffectNodeData;
+            var effectData = self.GetEffectNodeData();
             var ctx = self.GetContext();
             if (ctx == null)
             {
@@ -388,7 +388,7 @@ namespace ET.Client
 
         public static void RefreshEffect(this GameplayEffectSpec self)
         {
-            var effectData = self.EffectNodeData;
+            var effectData = self.GetEffectNodeData();
             if (effectData?.stackDurationRefreshPolicy == StackDurationRefreshPolicy.RefreshOnSuccessfulApplication)
             {
                 self.ElapsedTime = 0f;
@@ -408,7 +408,7 @@ namespace ET.Client
         {
             if (self.IsExpired) return;
 
-            var policy = self.EffectNodeData?.stackExpirationPolicy ?? StackExpirationPolicy.ClearEntireStack;
+            var policy = self.GetEffectNodeData()?.stackExpirationPolicy ?? StackExpirationPolicy.ClearEntireStack;
             switch (policy)
             {
                 case StackExpirationPolicy.ClearEntireStack:
@@ -574,7 +574,7 @@ namespace ET.Client
 
         public static bool AddStack(this GameplayEffectSpec self, int count = 1)
         {
-            var effectData = self.EffectNodeData;
+            var effectData = self.GetEffectNodeData();
             int stackLimit = effectData?.stackLimit ?? 0;
             var overflowPolicy = effectData?.stackOverflowPolicy ?? StackOverflowPolicy.DenyApplication;
 
@@ -658,7 +658,7 @@ namespace ET.Client
 
         private static AbilitySystemComponent GetEffectTarget(this GameplayEffectSpec self, SpecExecutionContext context)
         {
-            var nodeData = self.NodeData;
+            var nodeData = self.GetNodeData();
             if (nodeData == null) return context?.GetMainTarget();
             return context?.GetTargetByType(nodeData.targetType);
         }
@@ -670,7 +670,7 @@ namespace ET.Client
                 return null;
             }
 
-            var stackType = self.EffectNodeData?.stackType ?? StackType.None;
+            var stackType = self.GetEffectNodeData()?.stackType ?? StackType.None;
             if (stackType == StackType.None)
             {
                 return null;
@@ -679,7 +679,7 @@ namespace ET.Client
             foreach (var effectRef in container.ActiveEffects)
             {
                 var effect = effectRef.As();
-                if (effect == null || effect.EffectNodeData?.nodeType != self.EffectNodeData?.nodeType)
+                if (effect == null || effect.GetEffectNodeData()?.nodeType != self.GetEffectNodeData()?.nodeType)
                 {
                     continue;
                 }
@@ -712,8 +712,8 @@ namespace ET.Client
                 return false;
             }
 
-            BuffEffectNodeData selfBuff = self.EffectNodeData as BuffEffectNodeData;
-            BuffEffectNodeData otherBuff = other.EffectNodeData as BuffEffectNodeData;
+            BuffEffectNodeData selfBuff = self.GetEffectNodeData() as BuffEffectNodeData;
+            BuffEffectNodeData otherBuff = other.GetEffectNodeData() as BuffEffectNodeData;
             if (selfBuff != null && otherBuff != null)
             {
                 if (selfBuff.buffId > 0 || otherBuff.buffId > 0)
@@ -765,7 +765,7 @@ namespace ET.Client
             }
 
             handler.Spec = cueSpec;
-            handler.NodeData = cueSpec.CueNodeData;
+            handler.NodeData = cueSpec.GetCueNodeData();
             cueSpec.IsCancelled = true;
             cueSpec.IsRunning = false;
             handler.StopCue();
@@ -881,7 +881,24 @@ namespace ET.Client
 
         private static bool UsesFiniteDuration(this GameplayEffectSpec self)
         {
-            return self.EffectNodeData?.durationType == EffectDurationType.Duration || self.HasRuntimeFollowup();
+            return self.GetEffectNodeData()?.durationType == EffectDurationType.Duration || self.HasRuntimeFollowup();
+        }
+
+        public static NodeData GetNodeData(this GameplayEffectSpec self)
+        {
+            return self == null ? null : SkillDataCenter.Instance.GetNodeData(self.SkillId, self.NodeGuid);
+        }
+
+        public static EffectNodeData GetEffectNodeData(this GameplayEffectSpec self)
+        {
+            return self.GetNodeData() as EffectNodeData;
+        }
+
+        public static float GetRemainingTime(this GameplayEffectSpec self)
+        {
+            return self.GetEffectNodeData()?.durationType == EffectDurationType.Duration
+                ? math.max(0f, self.Duration - self.ElapsedTime)
+                : -1f;
         }
     }
 }

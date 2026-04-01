@@ -1,4 +1,4 @@
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
@@ -9,9 +9,9 @@ namespace ET.Client
     public class DamageEffectSpec : Entity, IAwake
     {
         public bool HasRuntimeFollowup;
-        public Vector3 KnockbackDirection;
+        public float3 KnockbackDirection;
         public float KnockbackRemainingDistance;
         public float KnockbackSpeed;
-        public Transform KnockbackTransform;
+        public EntityRef<AbilitySystemComponent> KnockbackTarget;
     }
 }

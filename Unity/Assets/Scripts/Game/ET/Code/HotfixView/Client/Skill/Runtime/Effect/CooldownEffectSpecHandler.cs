@@ -99,7 +99,7 @@ namespace ET.Client
         public override void Tick(float deltaTime)
         {
             CooldownEffectSpec selfSpec = SelfSpec();
-            CooldownEffectNodeData nodeData = selfSpec.CooldownNodeData;
+            CooldownEffectNodeData nodeData = selfSpec.GetCooldownNodeData();
             if (nodeData == null)
             {
                 return;
@@ -156,7 +156,7 @@ namespace ET.Client
             CooldownEffectSpec selfSpec = SelfSpec();
             Spec.ResetEffect();
 
-            if (!selfSpec.IsChargeCooldown)
+            if (!selfSpec.IsChargeCooldown())
             {
                 return;
             }

@@ -15,8 +15,6 @@ namespace ET.Client
         {
         }
 
-        // ============ 初始化 ============
-
         public static void InitCondition(this ConditionSpec self, string skillId, string nodeGuid, SpecExecutionContext context)
         {
             self.SkillId = skillId;
@@ -24,27 +22,35 @@ namespace ET.Client
             self.Context = context;
             self.Source = context.Caster;
 
-            var nodeData = self.ConditionNodeData;
+            ConditionNodeData nodeData = self.GetConditionNodeData();
             if (nodeData != null)
+            {
                 self.AttachConditionComponent(nodeData.nodeType);
+            }
         }
 
         public static bool Evaluate(this ConditionSpec self)
         {
             SpecExecutionContext context = self.Context;
-            if (context == null) return false;
+            if (context == null)
+            {
+                return false;
+            }
 
-            var nodeData = self.ConditionNodeData;
-            if (nodeData == null) return false;
+            ConditionNodeData nodeData = self.GetConditionNodeData();
+            if (nodeData == null)
+            {
+                return false;
+            }
 
-            var handler = self.GetHandler();
+            AConditionHandler handler = self.GetHandler();
             if (handler == null)
             {
                 Log.Error($"ConditionHandler not found for NodeType: {nodeData.nodeType}");
                 return false;
             }
 
-            var target = self.GetConditionTarget();
+            AbilitySystemComponent target = self.GetConditionTarget();
             return handler.Evaluate(target);
         }
 
@@ -56,11 +62,13 @@ namespace ET.Client
         public static AbilitySystemComponent GetConditionTarget(this ConditionSpec self)
         {
             SpecExecutionContext context = self.Context;
-            var nodeData = self.NodeData;
+            NodeData nodeData = self.GetNodeData();
             if (context == null)
+            {
                 return null;
+            }
 
-            var targetType = nodeData?.targetType ?? TargetType.MainTarget;
+            TargetType targetType = nodeData?.targetType ?? TargetType.MainTarget;
             switch (targetType)
             {
                 case TargetType.Caster:
@@ -72,17 +80,31 @@ namespace ET.Client
             }
         }
 
+        public static NodeData GetNodeData(this ConditionSpec self)
+        {
+            return self == null ? null : SkillDataCenter.Instance.GetNodeData(self.SkillId, self.NodeGuid);
+        }
+
+        public static ConditionNodeData GetConditionNodeData(this ConditionSpec self)
+        {
+            return self.GetNodeData() as ConditionNodeData;
+        }
+
         private static AConditionHandler GetHandler(this ConditionSpec self)
         {
             if (string.IsNullOrEmpty(self.HandName))
+            {
                 return null;
+            }
 
-            var handler = ConditionDispatcherComponent.Instance.Get(self.HandName);
+            AConditionHandler handler = ConditionDispatcherComponent.Instance.Get(self.HandName);
             if (handler == null)
+            {
                 return null;
+            }
 
             handler.Spec = self;
-            handler.NodeData = self.ConditionNodeData;
+            handler.NodeData = self.GetConditionNodeData();
             return handler;
         }
 
@@ -103,7 +125,9 @@ namespace ET.Client
         private static void EnsureConditionComponent<T>(this ConditionSpec self) where T : Entity, IAwake, new()
         {
             if (self.GetComponent<T>() == null)
+            {
                 self.AddComponent<T>();
+            }
         }
     }
 }

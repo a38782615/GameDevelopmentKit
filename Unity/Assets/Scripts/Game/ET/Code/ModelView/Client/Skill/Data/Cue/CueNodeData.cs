@@ -23,25 +23,4 @@ namespace ET.Client
         /// </summary>
         public bool destroyWithNode = false;
     }
-
-    public struct CueTagContainer
-    {
-        public GameplayTagSet RequiredTags;
-        public GameplayTagSet ImmunityTags;
-
-        public CueTagContainer(CueNodeData data)
-        {
-            RequiredTags = data.requiredTags;
-            ImmunityTags = data.immunityTags;
-        }
-
-        public CueTagContainer(
-            GameplayTagSet requiredTags,
-            GameplayTagSet immunityTags
-         )
-        {
-            RequiredTags = requiredTags;
-            ImmunityTags = immunityTags;
-        }
-    }
 }

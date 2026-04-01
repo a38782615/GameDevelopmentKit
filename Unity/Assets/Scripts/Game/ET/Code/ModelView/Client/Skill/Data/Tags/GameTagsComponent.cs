@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace ET.Client
 {
@@ -11,7 +10,6 @@ namespace ET.Client
     [ComponentOf(typeof(AbilitySystemComponent))]
     public class GameTagsComponent : Entity, IAwake, IDestroy
     {
-        [SerializeField]
         internal List<GameplayTag> tags = new List<GameplayTag>();
 
         internal Dictionary<int, int> tagCounts = new Dictionary<int, int>();

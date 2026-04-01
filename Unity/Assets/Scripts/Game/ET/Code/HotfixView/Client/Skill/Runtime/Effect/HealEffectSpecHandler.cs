@@ -1,23 +1,17 @@
-
 namespace ET.Client
 {
-    /// <summary>
-    /// 治疗效果 Spec（瞬时效果）
-    /// </summary>
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     public partial class HealEffectSpecHandler : AEffectHandler
     {
         public HealEffectSpec SelfSpec()
         {
-            HealEffectSpec selfSpec = Spec.GetComponent<HealEffectSpec>();
-            return selfSpec;
+            return Spec.GetComponent<HealEffectSpec>();
         }
 
         public HealEffectNodeData GetNode()
         {
-            HealEffectNodeData nodeData = NodeData as HealEffectNodeData;
-            return nodeData;
+            return NodeData as HealEffectNodeData;
         }
 
         public override SpecExecutionContext GetContext()
@@ -114,12 +108,8 @@ namespace ET.Client
             SpecExecutionContext executionContext = GetExecutionContext();
             executionContext.SetCustomData("Heal", actualHeal);
             executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.Effect.Initial);
-
         }
 
-        /// <summary>
-        /// 计算治疗量
-        /// </summary>
         private float CalculateHeal(HealEffectNodeData nodeData, AbilitySystemComponent target)
         {
             SpecExecutionContext context = GetContext();
@@ -153,21 +143,16 @@ namespace ET.Client
             }
         }
 
-        /// <summary>
-        /// 使用 MMC 计算治疗量
-        /// </summary>
         private float CalculateMMCHeal(HealEffectNodeData nodeData, AbilitySystemComponent target)
         {
             if (nodeData.healMMCType == MMCType.AttributeBased)
             {
                 float? attrValue = null;
 
-                if (nodeData.healMMCUseSnapshot && Spec.SnapshotValues != null)
+                if (nodeData.healMMCUseSnapshot && Spec.SnapshotValues != null
+                    && Spec.SnapshotValues.TryGetValue(nodeData.healMMCCaptureAttribute, out float snapshotValue))
                 {
-                    if (Spec.SnapshotValues.TryGetValue(nodeData.healMMCCaptureAttribute, out float snapshotValue))
-                    {
-                        attrValue = snapshotValue;
-                    }
+                    attrValue = snapshotValue;
                 }
 
                 if (!attrValue.HasValue)

@@ -280,11 +280,11 @@ namespace ET.Client
             switch (sourceType)
             {
                 case PositionSourceType.Caster:
-                    return self.GetCaster()?.Owner;
+                    return self.GetCaster()?.GetOwnerObject();
                 case PositionSourceType.MainTarget:
-                    return self.GetMainTarget()?.Owner;
+                    return self.GetMainTarget()?.GetOwnerObject();
                 case PositionSourceType.ParentInput:
-                    return self.GetParentInputTarget()?.Owner;
+                    return self.GetParentInputTarget()?.GetOwnerObject();
                 case PositionSourceType.Projectile:
                     return self.GetOwnerProjectileObject();
                 case PositionSourceType.Placement:
@@ -297,17 +297,39 @@ namespace ET.Client
         private static GameObject GetOwnerProjectileObject(this SpecExecutionContext self)
         {
             GameplayEffectSpec ownerEffectSpec = self.GetOwnerEffectSpec();
-            ProjectileEffectSpec projectileSpec = ownerEffectSpec?.GetComponent<ProjectileEffectSpec>();
-            UGFEntityProjectile projectileEntity = projectileSpec?.ProjectileEntity.As();
-            return projectileEntity?.CachedTransform != null ? projectileEntity.CachedTransform.gameObject : null;
+            if (ownerEffectSpec?.Children == null)
+            {
+                return null;
+            }
+
+            foreach (Entity child in ownerEffectSpec.Children.Values)
+            {
+                if (child is UGFEntityProjectile projectileEntity && projectileEntity.CachedTransform != null)
+                {
+                    return projectileEntity.CachedTransform.gameObject;
+                }
+            }
+
+            return null;
         }
 
         private static GameObject GetOwnerPlacementObject(this SpecExecutionContext self)
         {
             GameplayEffectSpec ownerEffectSpec = self.GetOwnerEffectSpec();
-            PlacementEffectSpec placementSpec = ownerEffectSpec?.GetComponent<PlacementEffectSpec>();
-            UGFEntityPlacement placementEntity = placementSpec?.PlacementEntity.As();
-            return placementEntity?.CachedTransform != null ? placementEntity.CachedTransform.gameObject : null;
+            if (ownerEffectSpec?.Children == null)
+            {
+                return null;
+            }
+
+            foreach (Entity child in ownerEffectSpec.Children.Values)
+            {
+                if (child is UGFEntityPlacement placementEntity && placementEntity.CachedTransform != null)
+                {
+                    return placementEntity.CachedTransform.gameObject;
+                }
+            }
+
+            return null;
         }
 
         private static Vector3 GetPositionFromObject(GameObject obj, string bindingName)
@@ -467,7 +489,7 @@ namespace ET.Client
             effectSpec.SetByCallerValues.Clear();
             effectSpec.SnapshotValues.Clear();
 
-            var effectData = effectSpec.EffectNodeData;
+            var effectData = ResolveEffectNodeData(effectSpec);
             if (effectData != null)
             {
                 effectSpec.Tags = new EffectTagContainer(effectData);
@@ -513,7 +535,7 @@ namespace ET.Client
             handler.Execute();
 
             // 如果是持续/周期效果且正在运行，注册到对应的Owner
-            if (effectSpec.IsRunning && effectSpec.EffectNodeData?.durationType != EffectDurationType.Instant)
+            if (effectSpec.IsRunning && ResolveEffectNodeData(effectSpec)?.durationType != EffectDurationType.Instant)
             {
                 self.RegisterRunningEffect(effectSpec);
             }
@@ -606,10 +628,10 @@ namespace ET.Client
             cueSpec.IsCancelled = false;
             cueSpec.ActiveCueComponent = default;
 
-            var cueData = cueSpec.CueNodeData;
+            var cueData = ResolveCueNodeData(cueSpec);
             if (cueData != null)
             {
-                cueSpec.Tags = new CueTagContainer(cueData);
+                cueSpec.Tags = new CueTagContainer(cueData.requiredTags, cueData.immunityTags);
             }
 
             var handler = cueSpec.GetCueHandler();
@@ -651,7 +673,7 @@ namespace ET.Client
             if (self == null) return;
 
             var abilitySpec = self.GetAbilitySpec();
-            if (abilitySpec != null && abilitySpec.IsRunning && effectSpec.EffectNodeData.cancelOnAbilityEnd)
+            if (abilitySpec != null && abilitySpec.IsRunning && ResolveEffectNodeData(effectSpec).cancelOnAbilityEnd)
             {
                 if (!abilitySpec.RunningEffects.Contains(effectSpec))
                 {
@@ -702,7 +724,7 @@ namespace ET.Client
             }
 
             handler.Spec = effectSpec;
-            handler.NodeData = effectSpec.EffectNodeData;
+            handler.NodeData = ResolveEffectNodeData(effectSpec);
             return handler;
         }
 
@@ -722,8 +744,28 @@ namespace ET.Client
             }
 
             handler.Spec = cueSpec;
-            handler.NodeData = cueSpec.CueNodeData;
+            handler.NodeData = ResolveCueNodeData(cueSpec);
             return handler;
+        }
+
+        private static EffectNodeData ResolveEffectNodeData(GameplayEffectSpec effectSpec)
+        {
+            if (effectSpec == null)
+            {
+                return null;
+            }
+
+            return SkillDataCenter.Instance.GetNodeData(effectSpec.SkillId, effectSpec.NodeGuid) as EffectNodeData;
+        }
+
+        private static CueNodeData ResolveCueNodeData(GameplayCueSpec cueSpec)
+        {
+            if (cueSpec == null)
+            {
+                return null;
+            }
+
+            return SkillDataCenter.Instance.GetNodeData(cueSpec.SkillId, cueSpec.NodeGuid) as CueNodeData;
         }
 
         private static bool CanPlayCueOnTarget(this SpecExecutionContext self, GameplayCueSpec cueSpec, AbilitySystemComponent target)

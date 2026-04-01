@@ -24,7 +24,6 @@ namespace ET.Client
         /// <summary>
         /// 所属的GameObject（View层引用）
         /// </summary>
-        public UnityEngine.GameObject Owner;
 
         /// <summary>
         /// 是否已初始化

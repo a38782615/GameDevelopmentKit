@@ -1,22 +1,17 @@
 namespace ET.Client
 {
-    /// <summary>
-    /// Buff效果Spec（持续效果）
-    /// </summary>
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
     public class BuffEffectSpecHandler : AEffectHandler
     {
         public BuffEffectSpec SelfSpec()
         {
-            var selfSpec = Spec.GetComponent<BuffEffectSpec>();
-            return selfSpec;
+            return Spec.GetComponent<BuffEffectSpec>();
         }
 
         public BuffEffectNodeData GetNode()
         {
-            var nodeData = NodeData as BuffEffectNodeData;
-            return nodeData;
+            return NodeData as BuffEffectNodeData;
         }
 
         public override SpecExecutionContext GetContext()
@@ -48,9 +43,9 @@ namespace ET.Client
             executionContext.StackCount = Spec.StackCount;
             executionContext.Targets.AddRange(context.Targets);
 
-            foreach (var kvp in context.CustomData)
+            foreach ((string key, object value) in context.CustomData)
             {
-                executionContext.CustomData[kvp.Key] = kvp.Value;
+                executionContext.CustomData[key] = value;
             }
 
             return executionContext;

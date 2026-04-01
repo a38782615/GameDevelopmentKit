@@ -15,23 +15,12 @@ namespace ET.Client
         [UGFEntitySystem]
         private static void UGFEntityOnShow(this UGFEntityPlacement self)
         {
-            PlacementEffectSpec placementSpec = self.GetEffectSpec()?.GetComponent<PlacementEffectSpec>();
-            if (placementSpec != null)
-            {
-                placementSpec.PlacementEntity = self;
-            }
-
             self.SyncFromSpec();
         }
 
         [UGFEntitySystem]
         private static void UGFEntityOnHide(this UGFEntityPlacement self, bool isShutdown)
         {
-            PlacementEffectSpec placementSpec = self.GetEffectSpec()?.GetComponent<PlacementEffectSpec>();
-            if (placementSpec != null && placementSpec.PlacementEntity.As() == self)
-            {
-                placementSpec.PlacementEntity = default;
-            }
         }
 
         [UGFEntitySystem]
@@ -58,7 +47,10 @@ namespace ET.Client
                 return;
             }
 
-            self.CachedTransform.position = placementSpec.RuntimePosition;
+            self.CachedTransform.position = new UnityEngine.Vector3(
+                placementSpec.RuntimePosition.x,
+                placementSpec.RuntimePosition.y,
+                placementSpec.RuntimePosition.z);
         }
 
         private static GameplayEffectSpec GetEffectSpec(this UGFEntityPlacement self)

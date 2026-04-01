@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
 
 namespace ET.Client
 {
     /// <summary>
-    /// 效果Spec基类
-    /// 瞬时效果: 不授予标签，直接修改BaseValue（永久）
-    /// 持续效果: Apply时授予标签+添加Modifier（临时），Remove时移除
+    /// 鏁堟灉Spec鍩虹被
+    /// 鐬椂鏁堟灉: 涓嶆巿浜堟爣绛撅紝鐩存帴淇敼BaseValue锛堟案涔咃級
+    /// 鎸佺画鏁堟灉: Apply鏃舵巿浜堟爣绛?娣诲姞Modifier锛堜复鏃讹級锛孯emove鏃剁Щ闄?
     /// </summary>
     [ChildOf(typeof(GameplayEffectContainerComponent))]
     public class GameplayEffectSpec : Entity, IAwake, IUpdate, IDestroy
     {
-        // ============ 基础标识 ============
+        // ============ 鍩虹鏍囪瘑 ============
         public string SkillId;
         public string NodeGuid;
         public EntityRef<SpecExecutionContext> Context;
@@ -23,7 +22,7 @@ namespace ET.Client
         public bool IsRunning;
         public bool IsCancelled;
 
-        // ============ 运行时数据（可被修改） ============
+        // ============ 杩愯鏃舵暟鎹紙鍙淇敼锛?============
         public EffectTagContainer Tags;
         public float Duration;
         public float Period;
@@ -31,7 +30,7 @@ namespace ET.Client
         public Dictionary<string, float> SetByCallerValues = new Dictionary<string, float>();
         public Dictionary<int, float> SnapshotValues = new Dictionary<int, float>();
 
-        // ============ 运行时状态 ============
+        // ============ 杩愯鏃剁姸鎬?============
         public float ActivationTime;
         public bool IsApplied;
         public bool IsExpired;
@@ -41,14 +40,6 @@ namespace ET.Client
         public float ElapsedTime;
         public float PeriodTimer;
         public List<EntityRef<GameplayCueSpec>> TriggeredCueIds = new List<EntityRef<GameplayCueSpec>>();
-
-        // ============ 静态数据访问 ============
-        public NodeData NodeData => SkillDataCenter.Instance.GetNodeData(SkillId, NodeGuid);
-        public EffectNodeData EffectNodeData => NodeData as EffectNodeData;
-
-        public float RemainingTime => EffectNodeData?.durationType == EffectDurationType.Duration
-            ? math.max(0f, Duration - ElapsedTime)
-            : -1f;
 
         public string HandName;
     }

@@ -347,7 +347,7 @@ namespace ET.Client.Editor
 
         private static string GetProjectilePath(GameplayAbilitySpec spec)
         {
-            SkillData graphData = spec?.GraphData;
+            SkillData graphData = spec?.GetGraphData();
             if (graphData?.nodes == null)
             {
                 return string.Empty;

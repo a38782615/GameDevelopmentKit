@@ -10,15 +10,20 @@ namespace ET.Client
 
         public override void Execute()
         {
-            var nodeData = this.NodeData as EndAbilityTaskNodeData;
+            EndAbilityTaskNodeData nodeData = this.NodeData as EndAbilityTaskNodeData;
             GameplayAbilitySpec abilitySpec = this.GetContext()?.GetAbilitySpec();
             if (nodeData == null || abilitySpec == null)
+            {
                 return;
+            }
 
             if (nodeData.endType == EndAbilityType.Cancel)
+            {
                 abilitySpec.CancelAbility();
-            else
-                abilitySpec.EndAbility();
+                return;
+            }
+
+            abilitySpec.EndAbility();
         }
     }
 }

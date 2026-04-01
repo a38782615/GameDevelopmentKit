@@ -70,7 +70,7 @@ namespace ET.Client
         public static AbilitySystemComponent GetCueTarget(this GameplayCueSpec self)
         {
             SpecExecutionContext context = self.GetContext();
-            NodeData nodeData = self.NodeData;
+            NodeData nodeData = self.GetNodeData();
             if (nodeData == null)
             {
                 return context?.GetMainTarget();
@@ -82,7 +82,7 @@ namespace ET.Client
         public static List<AbilitySystemComponent> GetCueTargets(this GameplayCueSpec self)
         {
             SpecExecutionContext context = self.GetContext();
-            NodeData nodeData = self.NodeData;
+            NodeData nodeData = self.GetNodeData();
             if (context == null)
             {
                 return null;
@@ -108,7 +108,7 @@ namespace ET.Client
 
         public static UnityEngine.Transform GetTargetTransform(this GameplayCueSpec self, AbilitySystemComponent target)
         {
-            return target?.Owner?.transform;
+            return target?.GetOwnerTransform();
         }
 
         public static UnityEngine.Vector3 GetTargetPosition(this GameplayCueSpec self, AbilitySystemComponent target)
@@ -132,6 +132,16 @@ namespace ET.Client
             }
 
             return gameplayAbilitySpec.Context.As();
+        }
+
+        public static NodeData GetNodeData(this GameplayCueSpec self)
+        {
+            return self == null ? null : SkillDataCenter.Instance.GetNodeData(self.SkillId, self.NodeGuid);
+        }
+
+        public static CueNodeData GetCueNodeData(this GameplayCueSpec self)
+        {
+            return self.GetNodeData() as CueNodeData;
         }
 
         public static ActiveCueComponent GetActiveCue(this GameplayCueSpec self)
