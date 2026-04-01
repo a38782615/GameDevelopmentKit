@@ -19,9 +19,6 @@ Shader "Game/NMap/WaterFlow"
         _FoamBand ("Foam Band", Range(0.01, 0.5)) = 0.18
         _FoamStrength ("Foam Strength", Range(0, 1)) = 0.32
         _FoamBrightness ("Foam Brightness", Float) = 1.25
-        _ShoreColor ("Shore Color", Color) = (0.36, 0.79, 0.82, 1)
-        _FoamColor ("Foam Color", Color) = (0.90, 0.98, 0.98, 1)
-        _ShoreColorStrength ("Shore Color Strength", Range(0, 1)) = 0.58
     }
 
     SubShader
@@ -59,20 +56,12 @@ Shader "Game/NMap/WaterFlow"
                 float4 _Color;
                 float4 _MainFlow;
                 float4 _OverlayFlow;
-                float4 _ShoreColor;
-                float4 _FoamColor;
                 float _brightness;
                 float _BlendFactor;
                 float _MainTiling;
                 float _OverlayTiling;
                 float _OverlayStrength;
                 float _DistortionStrength;
-                float _MaskLow;
-                float _MaskHigh;
-                float _FoamBand;
-                float _FoamStrength;
-                float _FoamBrightness;
-                float _ShoreColorStrength;
             CBUFFER_END
 
             struct Attributes
@@ -114,7 +103,6 @@ Shader "Game/NMap/WaterFlow"
                 half coverMask = GetMask(coverColor);
                 half shoreMask = smoothstep(_MaskLow, _MaskHigh, coverMask);
                 half innerMask = smoothstep(_MaskLow + _FoamBand, _MaskHigh + _FoamBand, coverMask);
-                half shallowMask = saturate(1.0h - innerMask);
                 half foamMask = saturate((shoreMask - innerMask) * _FoamStrength);
 
                 float2 flowedOverlayUv = overlayBaseUv + _OverlayFlow.xy * timeValue;
@@ -129,8 +117,7 @@ Shader "Game/NMap/WaterFlow"
 
                 half blend = saturate(_BlendFactor + _OverlayStrength * shoreMask);
                 half3 rgb = lerp(mainColor.rgb, overlayColor.rgb, blend);
-                rgb = lerp(rgb, _ShoreColor.rgb, shallowMask * _ShoreColorStrength);
-                half3 foamColor = lerp(overlayColor.rgb * _FoamBrightness, _FoamColor.rgb, 0.7h);
+                half3 foamColor = overlayColor.rgb * _FoamBrightness;
                 rgb = lerp(rgb, foamColor, foamMask);
                 half alpha = shoreMask;
 
