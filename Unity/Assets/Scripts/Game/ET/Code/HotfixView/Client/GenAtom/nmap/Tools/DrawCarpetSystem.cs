@@ -193,9 +193,9 @@ namespace ET
                 self.MatPropBlock.SetTexture("_WaterMaskTex", drawMap.LiquidMaskTexture);
             }
 
-            float maskWidth = math.max(drawMap.LogicSize.x, 0.0001f);
-            float maskHeight = math.max(drawMap.LogicSize.y, 0.0001f);
-            self.MatPropBlock.SetVector("_WaterMaskParams", new Vector4(0f, 0f, 1f / maskWidth, 1f / maskHeight));
+            float maskWidth = math.max(drawMap.RenderWidth * drawMap.WorldCellSize.x, 0.0001f);
+            float maskHeight = math.max(drawMap.RenderHeight * drawMap.WorldCellSize.y, 0.0001f);
+            self.MatPropBlock.SetVector("_WaterMaskParams", new Vector4(drawMap.WorldOrigin.x, drawMap.WorldOrigin.y, 1f / maskWidth, 1f / maskHeight));
             self.ApplyLayerProperties();
             self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
         }
