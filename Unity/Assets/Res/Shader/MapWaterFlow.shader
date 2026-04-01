@@ -62,6 +62,11 @@ Shader "Game/NMap/WaterFlow"
                 float _OverlayTiling;
                 float _OverlayStrength;
                 float _DistortionStrength;
+                float _MaskLow;
+                float _MaskHigh;
+                float _FoamBand;
+                float _FoamStrength;
+                float _FoamBrightness;
             CBUFFER_END
 
             struct Attributes
