@@ -11,10 +11,6 @@ namespace ET
     [EntitySystemOf(typeof(DrawCarpet))]
     public static partial class DrawCarpetSystem
     {
-        private const int OceanCarpetType = 0;
-        private const int WaterCarpetType = 1;
-        private const string LiquidMainTextureName = "Water_DarkTile";
-        private const string LiquidOverlayTextureName = "Water_LightTile";
         // 各图层在同一 Sorting Layer 内按固定偏移排布。
         // Ocean 和 Ground 负责铺底，其余层作为覆盖层叠上去。
         private const int BaseSortingOrder = -100;
@@ -50,9 +46,9 @@ namespace ET
             self.CarType = type;
 
             // 每层都由一张主纹理和一张覆盖纹理组成，最终交给组合材质做混合。
-            Texture2D mainTexture = await self.LoadTextureAsync(GetMainTextureName(type));
-            Texture2D overlayTexture = await self.LoadTextureAsync(GetOverlayTextureName(type));
-            Material sourceMaterial = await self.LoadMaterialAsync(GetMaterialName(type));
+            Texture2D mainTexture = await self.LoadTextureAsync(DrawCarpet.mainNames[type]);
+            Texture2D overlayTexture = await self.LoadTextureAsync(DrawCarpet.overNames[type]);
+            Material sourceMaterial = await self.LoadMaterialAsync("Custom_SpriteOverlay");
             if (self == null || self.IsDisposed)
             {
                 // 异步加载结束时实体可能已销毁，资源必须及时回收。
@@ -135,7 +131,6 @@ namespace ET
                 self.MatPropBlock.SetTexture("_Texture2DCover", self.OverlayTexture);
             }
 
-            self.ApplyLayerProperties();
             self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
         }
 
@@ -263,26 +258,6 @@ namespace ET
             return await UGFComponent.Instance.LoadAssetAsync<Material>(AssetUtility.GetNMapMaterialAsset(materialName));
         }
 
-        private static string GetMaterialName(int type)
-        {
-            return IsLiquidCarpetType(type) ? "Custom_WaterFlow" : "Custom_SpriteOverlay";
-        }
-
-        private static string GetMainTextureName(int type)
-        {
-            return IsLiquidCarpetType(type) ? LiquidMainTextureName : DrawCarpet.mainNames[type];
-        }
-
-        private static string GetOverlayTextureName(int type)
-        {
-            return IsLiquidCarpetType(type) ? LiquidOverlayTextureName : DrawCarpet.overNames[type];
-        }
-
-        private static bool IsLiquidCarpetType(int type)
-        {
-            return type == OceanCarpetType || type == WaterCarpetType;
-        }
-
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
         {
             if (texture != null)
@@ -325,22 +300,6 @@ namespace ET
 
             // sharedMaterial 指向当前 carpet 的运行时材质实例。
             self.MeshRenderer.sharedMaterial = runtimeMaterial;
-        }
-
-        private static void ApplyLayerProperties(this DrawCarpet self)
-        {
-            if (self.MatPropBlock == null || !IsLiquidCarpetType(self.CarType))
-            {
-                return;
-            }
-
-            self.MatPropBlock.SetVector("_MainFlow", new Vector4(0.006f, 0.003f, 0f, 0f));
-            self.MatPropBlock.SetVector("_OverlayFlow", new Vector4(-0.011f, 0.007f, 0f, 0f));
-            self.MatPropBlock.SetFloat("_MainTiling", 0.72f);
-            self.MatPropBlock.SetFloat("_OverlayTiling", 0.94f);
-            self.MatPropBlock.SetFloat("_OverlayStrength", 0.52f);
-            self.MatPropBlock.SetFloat("_DistortionStrength", 0.016f);
-            self.MatPropBlock.SetFloat("_BlendFactor", 0.24f);
         }
     }
 }
