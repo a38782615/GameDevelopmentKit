@@ -11,6 +11,7 @@ namespace ET
     [EntitySystemOf(typeof(DrawCarpet))]
     public static partial class DrawCarpetSystem
     {
+        private const int WaterCarpetType = 1;
         // 各图层在同一 Sorting Layer 内按固定偏移排布。
         // Ocean 和 Ground 负责铺底，其余层作为覆盖层叠上去。
         private const int BaseSortingOrder = -100;
@@ -48,7 +49,7 @@ namespace ET
             // 每层都由一张主纹理和一张覆盖纹理组成，最终交给组合材质做混合。
             Texture2D mainTexture = await self.LoadTextureAsync(DrawCarpet.mainNames[type]);
             Texture2D overlayTexture = await self.LoadTextureAsync(DrawCarpet.overNames[type]);
-            Material sourceMaterial = await self.LoadMaterialAsync("Custom_SpriteOverlay");
+            Material sourceMaterial = await self.LoadMaterialAsync(GetMaterialName(type));
             if (self == null || self.IsDisposed)
             {
                 // 异步加载结束时实体可能已销毁，资源必须及时回收。
@@ -131,6 +132,7 @@ namespace ET
                 self.MatPropBlock.SetTexture("_Texture2DCover", self.OverlayTexture);
             }
 
+            self.ApplyLayerProperties();
             self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
         }
 
@@ -258,6 +260,11 @@ namespace ET
             return await UGFComponent.Instance.LoadAssetAsync<Material>(AssetUtility.GetNMapMaterialAsset(materialName));
         }
 
+        private static string GetMaterialName(int type)
+        {
+            return type == WaterCarpetType ? "Custom_WaterFlow" : "Custom_SpriteOverlay";
+        }
+
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
         {
             if (texture != null)
@@ -300,6 +307,22 @@ namespace ET
 
             // sharedMaterial 指向当前 carpet 的运行时材质实例。
             self.MeshRenderer.sharedMaterial = runtimeMaterial;
+        }
+
+        private static void ApplyLayerProperties(this DrawCarpet self)
+        {
+            if (self.MatPropBlock == null || self.CarType != WaterCarpetType)
+            {
+                return;
+            }
+
+            self.MatPropBlock.SetVector("_MainFlow", new Vector4(0.010f, 0.004f, 0f, 0f));
+            self.MatPropBlock.SetVector("_OverlayFlow", new Vector4(-0.018f, 0.010f, 0f, 0f));
+            self.MatPropBlock.SetFloat("_MainTiling", 1f);
+            self.MatPropBlock.SetFloat("_OverlayTiling", 1.15f);
+            self.MatPropBlock.SetFloat("_OverlayStrength", 0.68f);
+            self.MatPropBlock.SetFloat("_DistortionStrength", 0.025f);
+            self.MatPropBlock.SetFloat("_BlendFactor", 0.18f);
         }
     }
 }
