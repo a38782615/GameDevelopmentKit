@@ -15,8 +15,6 @@ namespace ET
     {
         private const int OceanCarpetType = 0;
         private const int WaterCarpetType = 1;
-        private const int GroundCarpetType = 3;
-        private const string SurfaceMaskedShaderName = "Game/NMap/SurfaceMasked";
         private const string LiquidMainTextureName = "Water_DarkTile";
         private const string LiquidOverlayTextureName = "Water_LightTile";
         private const string LiquidCoverTextureName = "water";
@@ -182,7 +180,7 @@ namespace ET
 
         public static void ApplyLiquidMask(this DrawCarpet self, DrawMap drawMap)
         {
-            if (self.MeshRenderer == null || self.MatPropBlock == null || drawMap == null)
+            if (!IsLiquidCarpetType(self.CarType) || self.MeshRenderer == null || self.MatPropBlock == null || drawMap == null)
             {
                 return;
             }
@@ -203,14 +201,6 @@ namespace ET
                 self.MatPropBlock.SetFloat("_UseGlobalMask", isOcean ? 0f : 1f);
                 self.MatPropBlock.SetFloat("_LiquidMaskChannel", 1f);
                 self.ApplyLayerProperties();
-            }
-            else if (IsMaskedSurfaceCarpetType(self.CarType))
-            {
-                self.MatPropBlock.SetFloat("_UseGlobalMask", 1f);
-                self.MatPropBlock.SetFloat("_LiquidMaskChannel", 0f);
-                self.MatPropBlock.SetFloat("_CutoutLow", 0.16f);
-                self.MatPropBlock.SetFloat("_CutoutHigh", 0.72f);
-                self.MatPropBlock.SetFloat("_AlphaClip", 0.01f);
             }
 
             self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
@@ -322,12 +312,7 @@ namespace ET
 
         private static string GetMaterialName(int type)
         {
-            if (IsLiquidCarpetType(type))
-            {
-                return "Custom_WaterFlow";
-            }
-
-            return IsMaskedSurfaceCarpetType(type) ? "Custom_SurfaceMasked" : "Custom_SpriteOverlay";
+            return IsLiquidCarpetType(type) ? "Custom_WaterFlow" : "Custom_SpriteOverlay";
         }
 
         private static string GetMainTextureName(int type)
@@ -348,11 +333,6 @@ namespace ET
         private static bool IsLiquidCarpetType(int type)
         {
             return type == OceanCarpetType || type == WaterCarpetType;
-        }
-
-        private static bool IsMaskedSurfaceCarpetType(int type)
-        {
-            return type == GroundCarpetType;
         }
 
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
@@ -392,18 +372,6 @@ namespace ET
                         hideFlags = HideFlags.HideAndDontSave
                     };
 
-                    if (IsMaskedSurfaceCarpetType(self.CarType))
-                    {
-                        Shader surfaceMaskedShader = Shader.Find(SurfaceMaskedShaderName);
-                        if (surfaceMaskedShader != null)
-                        {
-                            runtimeMaterial.shader = surfaceMaskedShader;
-                        }
-                        else
-                        {
-                            Log.Warning($"nmap surface masked shader not found: {SurfaceMaskedShaderName}");
-                        }
-                    }
                 }
                 self.RuntimeMaterial = runtimeMaterial;
             }
