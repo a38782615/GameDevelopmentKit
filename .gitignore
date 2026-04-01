@@ -70,3 +70,6 @@ Unity/Packages/AIBridge
 Unity/Packages/com.unity.ide.cursor
 Unity/.vscode
 Unity/Packages/cn.lys.aibridge/
+Unity/.claude
+Unity/AIBridgeCache/CLI
+Unity/.claude

@@ -1,4 +1,4 @@
-# *MUST*使用中文回答用户问题
+﻿# *MUST*使用中文回答用户问题
 ---
 
 ## Plan Completion Rule
@@ -123,3 +123,23 @@
 - 命名遵循分析器约束：类型 / 公有成员 / 常量首字母大写；私有 / 保护成员、局部变量首字母小写；名称不要以下划线结尾。
 - 静态字段或静态属性默认需要标记 `[StaticField]`。
 - 带 `[UniqueId]` 约束的常量 ID 必须落在指定范围内，且不能重复。
+
+<!-- AIBRIDGE:START {"assistant":"codex","templateId":"unity-project-rules","version":1,"target":"root-rule"} -->
+## AIBridge Rules
+
+Use `AIBridgeCache/CLI/AIBridgeCLI.exe` for Unity Editor automation in this project.
+
+- Prefer `--raw` output for machine-readable responses
+- Use AIBridge for compile checks, console log inspection, scene hierarchy changes, GameObject updates, Transform edits, and asset queries
+- Use screenshot or GIF commands for visual verification when Play Mode is required
+
+**Quick Reference**:
+```bash
+AIBridgeCLI.exe compile unity --raw
+AIBridgeCLI.exe get_logs --logType Error --raw
+AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube --raw
+AIBridgeCLI.exe asset search --mode script --keyword "Player" --raw
+```
+
+Reference: `/.claude/skills/aibridge/SKILL.md`
+<!-- AIBRIDGE:END -->
