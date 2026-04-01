@@ -12,24 +12,11 @@ namespace ET
     [EntitySystemOf(typeof(DrawMap))]
     public static partial class DrawMapSystem
     {
-        private const int OceanCarpetType = 0;
-        private const int WaterCarpetType = 1;
         private const int GrassCarpetType = 2;
-        private const int LiquidMaskScale = 8;
 
         [EntitySystem]
         private static void Awake(this DrawMap self)
         {
-        }
-
-        [EntitySystem]
-        private static void Destroy(this DrawMap self)
-        {
-            if (self.LiquidMaskTexture != null)
-            {
-                global::UnityEngine.Object.Destroy(self.LiquidMaskTexture);
-                self.LiquidMaskTexture = null;
-            }
         }
 
         public static async UniTask InitAsync(this DrawMap self)
@@ -54,18 +41,10 @@ namespace ET
 
             for (int i = 0; i < childCount; i++)
             {
-                Transform childTransform = self.View.transform.GetChild(i);
-                int carpetType = GetCarpetType(childTransform.name);
-                if (carpetType < 0)
-                {
-                    Log.Error($"nmap draw map init failed, unknown carpet child: {childTransform.name}");
-                    continue;
-                }
-
                 DrawCarpet carpet = self.AddChild<DrawCarpet>();
-                carpet.View = childTransform.gameObject;
+                carpet.View = self.View.transform.GetChild(i).gameObject;
                 self.Grounds.Add(carpet);
-                await carpet.InitAsync(carpetType);
+                await carpet.InitAsync(i);
             }
         }
 
@@ -95,8 +74,6 @@ namespace ET
             float worldOriginY = -renderHeight * worldCellHeight * 0.5f;
             self.RenderWidth = renderWidth;
             self.RenderHeight = renderHeight;
-            self.LogicSize = new float2(logicWidth, logicHeight);
-            self.LogicCellSize = new float2(renderCellWidth, renderCellHeight);
             self.WorldOrigin = new float2(worldOriginX, worldOriginY);
             self.WorldCellSize = new float2(worldCellWidth, worldCellHeight);
             int mainTileCount = UVTileMain.TileCount * UVTileMain.TileCount;
@@ -110,7 +87,6 @@ namespace ET
             // 离散化后如果还有空洞，再按最近中心点补齐。
             self.FillRasterizationGaps(centers, renderWidth, renderHeight, renderCellWidth, renderCellHeight, worldCellWidth,
                 worldCellHeight, worldOriginX, worldOriginY, mainTileCount);
-            self.GenerateLiquidMaskTexture(logicWidth, logicHeight, renderCellWidth, renderCellHeight);
 
             // 把结果节点分发给所有图层，由各图层自行决定是否接收。
             foreach (MapNode node in self.Map.Values)
@@ -118,12 +94,7 @@ namespace ET
                 foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
                 {
                     DrawCarpet carpet = carpetRef.As();
-                    if (carpet == null || IsLiquidCarpetType(carpet.CarType))
-                    {
-                        continue;
-                    }
-
-                    carpet.Set(self.DrawLayer, node);
+                    carpet?.Set(self.DrawLayer, node);
                 }
             }
 
@@ -131,7 +102,6 @@ namespace ET
             foreach (EntityRef<DrawCarpet> carpetRef in self.Grounds)
             {
                 DrawCarpet carpet = carpetRef.As();
-                carpet?.ApplyLiquidMask(self);
                 carpet?.GenMap();
             }
         }
@@ -536,153 +506,6 @@ namespace ET
         private static float GetBlend(MapNode node, float cornerWeight = 1f)
         {
             return math.max(node.EdgeBlend, node.CornerBlend * cornerWeight);
-        }
-
-        private static bool IsLiquidCarpetType(int carType)
-        {
-            return carType == OceanCarpetType || carType == WaterCarpetType;
-        }
-
-        private static int GetCarpetType(string childName)
-        {
-            return childName switch
-            {
-                "Ocen" => OceanCarpetType,
-                "Water" => WaterCarpetType,
-                "Grass" => GrassCarpetType,
-                "Ground" => 3,
-                "Cold" => 4,
-                _ => -1
-            };
-        }
-
-        private static void GenerateLiquidMaskTexture(this DrawMap self, float logicWidth, float logicHeight, float renderCellWidth, float renderCellHeight)
-        {
-            int maskWidth = math.max(1, self.RenderWidth * LiquidMaskScale);
-            int maskHeight = math.max(1, self.RenderHeight * LiquidMaskScale);
-            Texture2D maskTexture = self.LiquidMaskTexture;
-            if (maskTexture == null || maskTexture.width != maskWidth || maskTexture.height != maskHeight)
-            {
-                if (maskTexture != null)
-                {
-                    global::UnityEngine.Object.Destroy(maskTexture);
-                }
-
-                maskTexture = new Texture2D(maskWidth, maskHeight, TextureFormat.RGBA32, false, true)
-                {
-                    name = "NMap_LiquidMask_Runtime",
-                    wrapMode = TextureWrapMode.Clamp,
-                    filterMode = FilterMode.Bilinear,
-                    hideFlags = HideFlags.HideAndDontSave
-                };
-                self.LiquidMaskTexture = maskTexture;
-            }
-
-            Color32[] pixels = new Color32[maskWidth * maskHeight];
-            for (int y = 0; y < maskHeight; y++)
-            {
-                float sampleY = (y + 0.5f) / maskHeight * logicHeight;
-                int cellY = math.clamp((int)math.floor(sampleY / renderCellHeight), 0, self.RenderHeight - 1);
-                for (int x = 0; x < maskWidth; x++)
-                {
-                    float sampleX = (x + 0.5f) / maskWidth * logicWidth;
-                    int cellX = math.clamp((int)math.floor(sampleX / renderCellWidth), 0, self.RenderWidth - 1);
-                    float liquidCoverage = 0f;
-                    float waterCoverage = 0f;
-                    float shoreCoverage = 0f;
-                    if (self.Map.TryGetValue(new int2(cellX, cellY), out MapNode node))
-                    {
-                        float2 samplePoint = new float2(sampleX, sampleY);
-                        liquidCoverage = self.GetLiquidCoverage(node, samplePoint, renderCellWidth, renderCellHeight);
-                        shoreCoverage = self.GetLiquidShoreCoverage(node, samplePoint, renderCellWidth, renderCellHeight);
-                        waterCoverage = self.GetWaterOverlayCoverage(node, shoreCoverage, samplePoint, renderCellWidth, renderCellHeight);
-                    }
-
-                    pixels[x + y * maskWidth] = new Color32(
-                        (byte)math.clamp((int)math.round(liquidCoverage * 255f), 0, 255),
-                        (byte)math.clamp((int)math.round(waterCoverage * 255f), 0, 255),
-                        (byte)math.clamp((int)math.round(shoreCoverage * 255f), 0, 255),
-                        byte.MaxValue);
-                }
-            }
-
-            maskTexture.SetPixels32(pixels);
-            maskTexture.Apply(false, false);
-        }
-
-        private static float GetLiquidCoverage(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight)
-        {
-            if (IsLiquidBiome(node.MapCenter.biome))
-            {
-                return 1f;
-            }
-
-            if (node.SecondaryCenter == null || !IsLiquidBiome(node.SecondaryCenter.biome))
-            {
-                return 0f;
-            }
-
-            if (node.TransitionKind != MapTransitionKind.WaterCoast && node.TransitionKind != MapTransitionKind.WaterInner)
-            {
-                return 0f;
-            }
-
-            float blend = self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.9f);
-            return math.saturate(math.max(blend * 1.15f, 0.82f));
-        }
-
-        private static float GetWaterOverlayCoverage(this DrawMap self, MapNode node, float shoreCoverage, float2 samplePoint, float renderCellWidth, float renderCellHeight)
-        {
-            bool primaryInlandWater = IsInlandWaterBiome(node.MapCenter.biome);
-            bool secondaryInlandWater = node.SecondaryCenter != null && IsInlandWaterBiome(node.SecondaryCenter.biome);
-            if (primaryInlandWater || secondaryInlandWater)
-            {
-                if (primaryInlandWater)
-                {
-                    return 1f;
-                }
-
-                float lakeBlend = self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.9f);
-                return math.saturate(math.max(lakeBlend, shoreCoverage));
-            }
-
-            return math.saturate((shoreCoverage - 0.18f) / 0.52f);
-        }
-
-        private static float GetLiquidShoreCoverage(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight)
-        {
-            if (node.TransitionKind != MapTransitionKind.WaterCoast && node.TransitionKind != MapTransitionKind.WaterInner)
-            {
-                return 0f;
-            }
-
-            bool oceanCoverage = self.IsOcean(node);
-            bool waterCoverage = self.IsWater(node);
-            if (!oceanCoverage && !waterCoverage)
-            {
-                return 0f;
-            }
-
-            return self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.9f);
-        }
-
-        private static float GetLiquidBlend(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight, float cornerWeight)
-        {
-            float edgeBlend = 0f;
-            if (node.BoundaryEdge != null && node.BoundaryEdge.v0 != null && node.BoundaryEdge.v1 != null)
-            {
-                float edgeDistance = DistancePointToSegment(samplePoint, node.BoundaryEdge.v0.point, node.BoundaryEdge.v1.point);
-                edgeBlend = ComputeBlend(edgeDistance, GetEdgeBlendWidth(renderCellWidth, renderCellHeight, node.TransitionKind));
-            }
-
-            float cornerBlend = 0f;
-            if (node.BoundaryCorner != null)
-            {
-                float cornerDistance = math.distance(samplePoint, node.BoundaryCorner.point);
-                cornerBlend = ComputeBlend(cornerDistance, GetCornerBlendRadius(renderCellWidth, renderCellHeight, node.TransitionKind));
-            }
-
-            return math.max(edgeBlend, cornerBlend * cornerWeight);
         }
 
         public static bool TryEraseGrassAtScreenPoint(this DrawMap self, Camera camera, Vector2 screenPosition)

@@ -5,7 +5,6 @@ Shader "Game/NMap/WaterFlow"
         _MainTex ("Main Texture", 2D) = "white" {}
         _OverlayTex ("Overlay Texture", 2D) = "white" {}
         _Texture2DCover ("Cover Texture", 2D) = "white" {}
-        _WaterMaskTex ("Water Mask", 2D) = "black" {}
         _Color ("Tint", Color) = (1, 1, 1, 1)
         _brightness ("Brightness", Float) = 1
         _BlendFactor ("Blend Factor", Range(0, 1)) = 0.2
@@ -23,10 +22,6 @@ Shader "Game/NMap/WaterFlow"
         _ShoreColor ("Shore Color", Color) = (0.36, 0.79, 0.82, 1)
         _FoamColor ("Foam Color", Color) = (0.90, 0.98, 0.98, 1)
         _ShoreColorStrength ("Shore Color Strength", Range(0, 1)) = 0.58
-        _UseGlobalMask ("Use Global Mask", Range(0, 1)) = 0
-        _LiquidMaskChannel ("Liquid Mask Channel", Range(0, 1)) = 1
-        _WaterMaskParams ("Water Mask Params", Vector) = (0, 0, 1, 1)
-        _ForceFullCoverage ("Force Full Coverage", Range(0, 1)) = 0
     }
 
     SubShader
@@ -59,8 +54,6 @@ Shader "Game/NMap/WaterFlow"
             SAMPLER(sampler_OverlayTex);
             TEXTURE2D(_Texture2DCover);
             SAMPLER(sampler_Texture2DCover);
-            TEXTURE2D(_WaterMaskTex);
-            SAMPLER(sampler_WaterMaskTex);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _Color;
@@ -68,7 +61,6 @@ Shader "Game/NMap/WaterFlow"
                 float4 _OverlayFlow;
                 float4 _ShoreColor;
                 float4 _FoamColor;
-                float4 _WaterMaskParams;
                 float _brightness;
                 float _BlendFactor;
                 float _MainTiling;
@@ -81,9 +73,6 @@ Shader "Game/NMap/WaterFlow"
                 float _FoamStrength;
                 float _FoamBrightness;
                 float _ShoreColorStrength;
-                float _UseGlobalMask;
-                float _LiquidMaskChannel;
-                float _ForceFullCoverage;
             CBUFFER_END
 
             struct Attributes
@@ -120,39 +109,13 @@ Shader "Game/NMap/WaterFlow"
                 float2 coverUv = input.uv1;
                 float2 mainBaseUv = input.positionWS * _MainTiling;
                 float2 overlayBaseUv = input.positionWS * _OverlayTiling;
-                half forceFullCoverage = saturate(_ForceFullCoverage);
-                half useGlobalMask = saturate(_UseGlobalMask);
-                half coverageMask;
-                half shoreMask;
-                half shallowMask;
-                half foamMask;
-                if (forceFullCoverage > 0.5h)
-                {
-                    coverageMask = 1.0h;
-                    shoreMask = 0.0h;
-                    shallowMask = 0.0h;
-                    foamMask = 0.0h;
-                }
-                else if (useGlobalMask > 0.5h)
-                {
-                    float2 maskUv = saturate((input.positionWS - _WaterMaskParams.xy) * _WaterMaskParams.zw);
-                    half4 maskColor = SAMPLE_TEXTURE2D(_WaterMaskTex, sampler_WaterMaskTex, maskUv);
-                    coverageMask = lerp(maskColor.r, maskColor.g, saturate(_LiquidMaskChannel));
-                    shoreMask = maskColor.b;
-                    shallowMask = shoreMask;
-                    foamMask = smoothstep(1.0h - _FoamBand, 1.0h, shoreMask) * _FoamStrength;
-                    coverageMask = step(0.5h, coverageMask);
-                }
-                else
-                {
-                    half4 coverColor = SAMPLE_TEXTURE2D(_Texture2DCover, sampler_Texture2DCover, coverUv);
-                    half coverMask = GetMask(coverColor);
-                    coverageMask = smoothstep(_MaskLow, _MaskHigh, coverMask);
-                    half innerMask = smoothstep(_MaskLow + _FoamBand, _MaskHigh + _FoamBand, coverMask);
-                    shoreMask = coverageMask;
-                    shallowMask = saturate(1.0h - innerMask);
-                    foamMask = saturate((coverageMask - innerMask) * _FoamStrength);
-                }
+
+                half4 coverColor = SAMPLE_TEXTURE2D(_Texture2DCover, sampler_Texture2DCover, coverUv);
+                half coverMask = GetMask(coverColor);
+                half shoreMask = smoothstep(_MaskLow, _MaskHigh, coverMask);
+                half innerMask = smoothstep(_MaskLow + _FoamBand, _MaskHigh + _FoamBand, coverMask);
+                half shallowMask = saturate(1.0h - innerMask);
+                half foamMask = saturate((shoreMask - innerMask) * _FoamStrength);
 
                 float2 flowedOverlayUv = overlayBaseUv + _OverlayFlow.xy * timeValue;
                 half4 overlayFlowSample = SAMPLE_TEXTURE2D(_OverlayTex, sampler_OverlayTex, flowedOverlayUv);
@@ -169,7 +132,7 @@ Shader "Game/NMap/WaterFlow"
                 rgb = lerp(rgb, _ShoreColor.rgb, shallowMask * _ShoreColorStrength);
                 half3 foamColor = lerp(overlayColor.rgb * _FoamBrightness, _FoamColor.rgb, 0.7h);
                 rgb = lerp(rgb, foamColor, foamMask);
-                half alpha = coverageMask;
+                half alpha = shoreMask;
 
                 return half4(rgb * _Color.rgb * _brightness, alpha * _Color.a);
             }

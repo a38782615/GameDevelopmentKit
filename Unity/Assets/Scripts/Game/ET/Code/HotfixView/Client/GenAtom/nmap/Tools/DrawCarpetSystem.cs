@@ -2,13 +2,11 @@ using System;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
-using Unity.Mathematics;
 using UnityEngine.Rendering;
 
 namespace ET
 {
     [FriendOf(typeof(DrawCarpet))]
-    [FriendOf(typeof(DrawMap))]
     [FriendOf(typeof(MapLogic))]
     [EntitySystemOf(typeof(DrawCarpet))]
     public static partial class DrawCarpetSystem
@@ -153,13 +151,6 @@ namespace ET
 
         public static void GenMap(this DrawCarpet self)
         {
-            if (IsLiquidCarpetType(self.CarType))
-            {
-                DrawMap drawMap = self.GetParent<DrawMap>();
-                self.BuildLiquidSurfaceMesh(drawMap);
-                return;
-            }
-
             MapLogic mapLogic = self.MapLogic.As();
             if (mapLogic == null)
             {
@@ -176,34 +167,6 @@ namespace ET
             // DrawMap 重新生成前只清节点索引，不在这里动 Mesh；
             // Mesh 会在 Render 时整体重建。
             mapLogic?.Map.Clear();
-        }
-
-        public static void ApplyLiquidMask(this DrawCarpet self, DrawMap drawMap)
-        {
-            if (!IsLiquidCarpetType(self.CarType) || self.MeshRenderer == null || self.MatPropBlock == null || drawMap == null)
-            {
-                return;
-            }
-
-            self.MeshRenderer.GetPropertyBlock(self.MatPropBlock);
-            if (drawMap.LiquidMaskTexture != null)
-            {
-                self.MatPropBlock.SetTexture("_WaterMaskTex", drawMap.LiquidMaskTexture);
-            }
-
-            float maskWidth = math.max(drawMap.RenderWidth * drawMap.WorldCellSize.x, 0.0001f);
-            float maskHeight = math.max(drawMap.RenderHeight * drawMap.WorldCellSize.y, 0.0001f);
-            self.MatPropBlock.SetVector("_WaterMaskParams", new Vector4(drawMap.WorldOrigin.x, drawMap.WorldOrigin.y, 1f / maskWidth, 1f / maskHeight));
-            if (IsLiquidCarpetType(self.CarType))
-            {
-                bool isOcean = self.CarType == OceanCarpetType;
-                self.MatPropBlock.SetFloat("_ForceFullCoverage", isOcean ? 1f : 0f);
-                self.MatPropBlock.SetFloat("_UseGlobalMask", isOcean ? 0f : 1f);
-                self.MatPropBlock.SetFloat("_LiquidMaskChannel", 1f);
-                self.ApplyLayerProperties();
-            }
-
-            self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
         }
 
         public static void Set(this DrawCarpet self, Func<DrawCarpet, MapNode, bool> func, MapNode node)
@@ -371,60 +334,12 @@ namespace ET
                         enableInstancing = true,
                         hideFlags = HideFlags.HideAndDontSave
                     };
-
                 }
                 self.RuntimeMaterial = runtimeMaterial;
             }
 
             // sharedMaterial 指向当前 carpet 的运行时材质实例。
             self.MeshRenderer.sharedMaterial = runtimeMaterial;
-        }
-
-        private static void BuildLiquidSurfaceMesh(this DrawCarpet self, DrawMap drawMap)
-        {
-            if (self.MeshFilter == null || drawMap == null)
-            {
-                return;
-            }
-
-            Mesh mesh = self.MeshFilter.sharedMesh;
-            if (mesh == null)
-            {
-                return;
-            }
-
-            float width = drawMap.RenderWidth * drawMap.WorldCellSize.x;
-            float height = drawMap.RenderHeight * drawMap.WorldCellSize.y;
-            float minX = drawMap.WorldOrigin.x;
-            float minY = drawMap.WorldOrigin.y;
-            float maxX = minX + width;
-            float maxY = minY + height;
-
-            mesh.Clear();
-            mesh.SetVertices(new[]
-            {
-                new Vector3(minX, minY, 0f),
-                new Vector3(maxX, minY, 0f),
-                new Vector3(minX, maxY, 0f),
-                new Vector3(maxX, maxY, 0f)
-            });
-            mesh.SetTriangles(new[] { 0, 1, 2, 2, 1, 3 }, 0);
-            mesh.SetUVs(0, new[]
-            {
-                new Vector2(0f, 0f),
-                new Vector2(1f, 0f),
-                new Vector2(0f, 1f),
-                new Vector2(1f, 1f)
-            });
-            mesh.SetUVs(1, new[]
-            {
-                new Vector2(0f, 0f),
-                new Vector2(1f, 0f),
-                new Vector2(0f, 1f),
-                new Vector2(1f, 1f)
-            });
-            mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
         }
 
         private static void ApplyLayerProperties(this DrawCarpet self)
@@ -449,8 +364,6 @@ namespace ET
             self.MatPropBlock.SetFloat("_ShoreColorStrength", 0.72f);
             self.MatPropBlock.SetColor("_ShoreColor", new Color(0.36f, 0.79f, 0.82f, 1f));
             self.MatPropBlock.SetColor("_FoamColor", new Color(0.90f, 0.98f, 0.98f, 1f));
-            self.MatPropBlock.SetFloat("_UseGlobalMask", 0f);
-            self.MatPropBlock.SetFloat("_ForceFullCoverage", 0f);
         }
     }
 }
