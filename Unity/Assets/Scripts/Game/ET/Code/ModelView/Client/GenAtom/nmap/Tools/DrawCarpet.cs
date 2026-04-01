@@ -30,6 +30,7 @@ namespace ET
         public MeshFilter MeshFilter;
         public Texture2D MainTexture;
         public Texture2D OverlayTexture;
+        public Texture2D CoverTexture;
         public Material SourceMaterial;
         public Material RuntimeMaterial;
         public GameObject View;

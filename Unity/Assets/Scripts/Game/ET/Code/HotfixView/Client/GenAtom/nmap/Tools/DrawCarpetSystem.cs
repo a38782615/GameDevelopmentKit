@@ -15,6 +15,7 @@ namespace ET
         private const int WaterCarpetType = 1;
         private const string LiquidMainTextureName = "Water_DarkTile";
         private const string LiquidOverlayTextureName = "Water_LightTile";
+        private const string LiquidCoverTextureName = "water";
         // 各图层在同一 Sorting Layer 内按固定偏移排布。
         // Ocean 和 Ground 负责铺底，其余层作为覆盖层叠上去。
         private const int BaseSortingOrder = -100;
@@ -30,6 +31,7 @@ namespace ET
             // DrawCarpet 持有的纹理和源材质来自资源系统，需要显式卸载。
             self.UnloadTexture(self.MainTexture);
             self.UnloadTexture(self.OverlayTexture);
+            self.UnloadTexture(self.CoverTexture);
             self.UnloadMaterial(self.SourceMaterial);
             if (self.RuntimeMaterial != null)
             {
@@ -39,6 +41,7 @@ namespace ET
 
             self.MainTexture = null;
             self.OverlayTexture = null;
+            self.CoverTexture = null;
             self.SourceMaterial = null;
             self.RuntimeMaterial = null;
         }
@@ -52,18 +55,21 @@ namespace ET
             // 每层都由一张主纹理和一张覆盖纹理组成，最终交给组合材质做混合。
             Texture2D mainTexture = await self.LoadTextureAsync(GetMainTextureName(type));
             Texture2D overlayTexture = await self.LoadTextureAsync(GetOverlayTextureName(type));
+            Texture2D coverTexture = await self.LoadTextureAsync(GetCoverTextureName(type));
             Material sourceMaterial = await self.LoadMaterialAsync(GetMaterialName(type));
             if (self == null || self.IsDisposed)
             {
                 // 异步加载结束时实体可能已销毁，资源必须及时回收。
                 self.UnloadTexture(mainTexture);
                 self.UnloadTexture(overlayTexture);
+                self.UnloadTexture(coverTexture);
                 self.UnloadMaterial(sourceMaterial);
                 return;
             }
 
             self.MainTexture = mainTexture;
             self.OverlayTexture = overlayTexture;
+            self.CoverTexture = coverTexture;
             self.SourceMaterial = sourceMaterial;
             self.MeshFilter = self.View.GetComponent<MeshFilter>();
             self.MeshRenderer = self.View.GetComponent<MeshRenderer>();
@@ -132,7 +138,11 @@ namespace ET
             {
                 // Overlay 既喂给叠加纹理槽，也兼容旧的 cover 采样命名。
                 self.MatPropBlock.SetTexture("_OverlayTex", self.OverlayTexture);
-                self.MatPropBlock.SetTexture("_Texture2DCover", self.OverlayTexture);
+            }
+
+            if (self.CoverTexture != null)
+            {
+                self.MatPropBlock.SetTexture("_Texture2DCover", self.CoverTexture);
             }
 
             self.ApplyLayerProperties();
@@ -278,6 +288,11 @@ namespace ET
             return IsLiquidCarpetType(type) ? LiquidOverlayTextureName : DrawCarpet.overNames[type];
         }
 
+        private static string GetCoverTextureName(int type)
+        {
+            return IsLiquidCarpetType(type) ? LiquidCoverTextureName : DrawCarpet.overNames[type];
+        }
+
         private static bool IsLiquidCarpetType(int type)
         {
             return type == OceanCarpetType || type == WaterCarpetType;
@@ -336,11 +351,16 @@ namespace ET
 
             self.MatPropBlock.SetVector("_MainFlow", new Vector4(0.006f, 0.003f, 0f, 0f));
             self.MatPropBlock.SetVector("_OverlayFlow", new Vector4(-0.011f, 0.007f, 0f, 0f));
-            self.MatPropBlock.SetFloat("_MainTiling", 0.72f);
-            self.MatPropBlock.SetFloat("_OverlayTiling", 0.94f);
-            self.MatPropBlock.SetFloat("_OverlayStrength", 0.52f);
-            self.MatPropBlock.SetFloat("_DistortionStrength", 0.016f);
-            self.MatPropBlock.SetFloat("_BlendFactor", 0.24f);
+            self.MatPropBlock.SetFloat("_MainTiling", 0.18f);
+            self.MatPropBlock.SetFloat("_OverlayTiling", 0.26f);
+            self.MatPropBlock.SetFloat("_OverlayStrength", 0.42f);
+            self.MatPropBlock.SetFloat("_DistortionStrength", 0.014f);
+            self.MatPropBlock.SetFloat("_BlendFactor", 0.22f);
+            self.MatPropBlock.SetFloat("_MaskLow", 0.04f);
+            self.MatPropBlock.SetFloat("_MaskHigh", 0.40f);
+            self.MatPropBlock.SetFloat("_FoamBand", 0.18f);
+            self.MatPropBlock.SetFloat("_FoamStrength", 0.32f);
+            self.MatPropBlock.SetFloat("_FoamBrightness", 1.25f);
         }
     }
 }
