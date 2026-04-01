@@ -15,7 +15,7 @@ namespace ET
         private const int OceanCarpetType = 0;
         private const int WaterCarpetType = 1;
         private const int GrassCarpetType = 2;
-        private const int LiquidMaskScale = 4;
+        private const int LiquidMaskScale = 8;
 
         [EntitySystem]
         private static void Awake(this DrawMap self)
@@ -54,10 +54,18 @@ namespace ET
 
             for (int i = 0; i < childCount; i++)
             {
+                Transform childTransform = self.View.transform.GetChild(i);
+                int carpetType = GetCarpetType(childTransform.name);
+                if (carpetType < 0)
+                {
+                    Log.Error($"nmap draw map init failed, unknown carpet child: {childTransform.name}");
+                    continue;
+                }
+
                 DrawCarpet carpet = self.AddChild<DrawCarpet>();
-                carpet.View = self.View.transform.GetChild(i).gameObject;
+                carpet.View = childTransform.gameObject;
                 self.Grounds.Add(carpet);
-                await carpet.InitAsync(i);
+                await carpet.InitAsync(carpetType);
             }
         }
 
@@ -535,6 +543,19 @@ namespace ET
             return carType == OceanCarpetType || carType == WaterCarpetType;
         }
 
+        private static int GetCarpetType(string childName)
+        {
+            return childName switch
+            {
+                "Ocen" => OceanCarpetType,
+                "Water" => WaterCarpetType,
+                "Grass" => GrassCarpetType,
+                "Ground" => 3,
+                "Cold" => 4,
+                _ => -1
+            };
+        }
+
         private static void GenerateLiquidMaskTexture(this DrawMap self, float logicWidth, float logicHeight, float renderCellWidth, float renderCellHeight)
         {
             int maskWidth = math.max(1, self.RenderWidth * LiquidMaskScale);
@@ -566,19 +587,19 @@ namespace ET
                 {
                     float sampleX = (x + 0.5f) / maskWidth * logicWidth;
                     int cellX = math.clamp((int)math.floor(sampleX / renderCellWidth), 0, self.RenderWidth - 1);
-                    float oceanCoverage = 0f;
+                    float liquidCoverage = 0f;
                     float waterCoverage = 0f;
                     float shoreCoverage = 0f;
                     if (self.Map.TryGetValue(new int2(cellX, cellY), out MapNode node))
                     {
                         float2 samplePoint = new float2(sampleX, sampleY);
-                        oceanCoverage = self.GetOceanCoverage(node);
-                        waterCoverage = self.GetWaterCoverage(node, samplePoint, renderCellWidth, renderCellHeight);
+                        liquidCoverage = self.GetLiquidCoverage(node, samplePoint, renderCellWidth, renderCellHeight);
                         shoreCoverage = self.GetLiquidShoreCoverage(node, samplePoint, renderCellWidth, renderCellHeight);
+                        waterCoverage = self.GetWaterOverlayCoverage(node, shoreCoverage, samplePoint, renderCellWidth, renderCellHeight);
                     }
 
                     pixels[x + y * maskWidth] = new Color32(
-                        (byte)math.clamp((int)math.round(oceanCoverage * 255f), 0, 255),
+                        (byte)math.clamp((int)math.round(liquidCoverage * 255f), 0, 255),
                         (byte)math.clamp((int)math.round(waterCoverage * 255f), 0, 255),
                         (byte)math.clamp((int)math.round(shoreCoverage * 255f), 0, 255),
                         byte.MaxValue);
@@ -589,46 +610,43 @@ namespace ET
             maskTexture.Apply(false, false);
         }
 
-        private static float GetOceanCoverage(this DrawMap self, MapNode node)
+        private static float GetLiquidCoverage(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight)
         {
-            return IsOceanBiome(node.MapCenter.biome) ? 1f : 0f;
-        }
-
-        private static float GetWaterCoverage(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight)
-        {
-            if (IsInlandWaterBiome(node.MapCenter.biome))
+            if (IsLiquidBiome(node.MapCenter.biome))
             {
                 return 1f;
             }
 
-            if (node.SecondaryCenter == null)
+            if (node.SecondaryCenter == null || !IsLiquidBiome(node.SecondaryCenter.biome))
             {
                 return 0f;
             }
 
-            bool secondaryInlandWater = IsInlandWaterBiome(node.SecondaryCenter.biome);
-            bool secondaryOcean = IsOceanBiome(node.SecondaryCenter.biome);
-            if (!secondaryInlandWater && !secondaryOcean)
+            if (node.TransitionKind != MapTransitionKind.WaterCoast && node.TransitionKind != MapTransitionKind.WaterInner)
             {
                 return 0f;
             }
 
-            if (IsOceanBiome(node.MapCenter.biome) || IsColdBiome(node.MapCenter.biome))
+            float blend = self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.9f);
+            return math.saturate(math.max(blend * 1.15f, 0.82f));
+        }
+
+        private static float GetWaterOverlayCoverage(this DrawMap self, MapNode node, float shoreCoverage, float2 samplePoint, float renderCellWidth, float renderCellHeight)
+        {
+            bool primaryInlandWater = IsInlandWaterBiome(node.MapCenter.biome);
+            bool secondaryInlandWater = node.SecondaryCenter != null && IsInlandWaterBiome(node.SecondaryCenter.biome);
+            if (primaryInlandWater || secondaryInlandWater)
             {
-                return 0f;
+                if (primaryInlandWater)
+                {
+                    return 1f;
+                }
+
+                float lakeBlend = self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.9f);
+                return math.saturate(math.max(lakeBlend, shoreCoverage));
             }
 
-            float blend = self.GetLiquidBlend(node, samplePoint, renderCellWidth, renderCellHeight, 0.85f);
-            if (secondaryInlandWater)
-            {
-                return node.TransitionKind == MapTransitionKind.WaterCoast || node.TransitionKind == MapTransitionKind.WaterInner
-                    ? math.saturate((blend - 0.34f) / 0.34f)
-                    : 0f;
-            }
-
-            return node.TransitionKind == MapTransitionKind.WaterCoast
-                ? math.saturate((blend - 0.40f) / 0.30f)
-                : 0f;
+            return math.saturate((shoreCoverage - 0.18f) / 0.52f);
         }
 
         private static float GetLiquidShoreCoverage(this DrawMap self, MapNode node, float2 samplePoint, float renderCellWidth, float renderCellHeight)
@@ -638,7 +656,9 @@ namespace ET
                 return 0f;
             }
 
-            if (!IsLiquidBiome(node.MapCenter.biome) && (node.SecondaryCenter == null || !IsLiquidBiome(node.SecondaryCenter.biome)))
+            bool oceanCoverage = self.IsOcean(node);
+            bool waterCoverage = self.IsWater(node);
+            if (!oceanCoverage && !waterCoverage)
             {
                 return 0f;
             }

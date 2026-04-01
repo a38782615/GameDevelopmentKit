@@ -26,6 +26,7 @@ Shader "Game/NMap/WaterFlow"
         _UseGlobalMask ("Use Global Mask", Range(0, 1)) = 0
         _LiquidMaskChannel ("Liquid Mask Channel", Range(0, 1)) = 1
         _WaterMaskParams ("Water Mask Params", Vector) = (0, 0, 1, 1)
+        _ForceFullCoverage ("Force Full Coverage", Range(0, 1)) = 0
     }
 
     SubShader
@@ -82,6 +83,7 @@ Shader "Game/NMap/WaterFlow"
                 float _ShoreColorStrength;
                 float _UseGlobalMask;
                 float _LiquidMaskChannel;
+                float _ForceFullCoverage;
             CBUFFER_END
 
             struct Attributes
@@ -118,12 +120,20 @@ Shader "Game/NMap/WaterFlow"
                 float2 coverUv = input.uv1;
                 float2 mainBaseUv = input.positionWS * _MainTiling;
                 float2 overlayBaseUv = input.positionWS * _OverlayTiling;
+                half forceFullCoverage = saturate(_ForceFullCoverage);
                 half useGlobalMask = saturate(_UseGlobalMask);
                 half coverageMask;
                 half shoreMask;
                 half shallowMask;
                 half foamMask;
-                if (useGlobalMask > 0.5h)
+                if (forceFullCoverage > 0.5h)
+                {
+                    coverageMask = 1.0h;
+                    shoreMask = 0.0h;
+                    shallowMask = 0.0h;
+                    foamMask = 0.0h;
+                }
+                else if (useGlobalMask > 0.5h)
                 {
                     float2 maskUv = saturate((input.positionWS - _WaterMaskParams.xy) * _WaterMaskParams.zw);
                     half4 maskColor = SAMPLE_TEXTURE2D(_WaterMaskTex, sampler_WaterMaskTex, maskUv);
@@ -131,6 +141,7 @@ Shader "Game/NMap/WaterFlow"
                     shoreMask = maskColor.b;
                     shallowMask = shoreMask;
                     foamMask = smoothstep(1.0h - _FoamBand, 1.0h, shoreMask) * _FoamStrength;
+                    coverageMask = step(0.5h, coverageMask);
                 }
                 else
                 {

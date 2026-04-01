@@ -15,6 +15,7 @@ namespace ET
     {
         private const int OceanCarpetType = 0;
         private const int WaterCarpetType = 1;
+        private const string SurfaceMaskedShaderName = "Game/NMap/SurfaceMasked";
         private const string LiquidMainTextureName = "Water_DarkTile";
         private const string LiquidOverlayTextureName = "Water_LightTile";
         private const string LiquidCoverTextureName = "water";
@@ -180,14 +181,12 @@ namespace ET
 
         public static void ApplyLiquidMask(this DrawCarpet self, DrawMap drawMap)
         {
-            if (!IsLiquidCarpetType(self.CarType) || self.MeshRenderer == null || self.MatPropBlock == null || drawMap == null)
+            if (self.MeshRenderer == null || self.MatPropBlock == null || drawMap == null)
             {
                 return;
             }
 
             self.MeshRenderer.GetPropertyBlock(self.MatPropBlock);
-            self.MatPropBlock.SetFloat("_UseGlobalMask", 1f);
-            self.MatPropBlock.SetFloat("_LiquidMaskChannel", self.CarType == OceanCarpetType ? 0f : 1f);
             if (drawMap.LiquidMaskTexture != null)
             {
                 self.MatPropBlock.SetTexture("_WaterMaskTex", drawMap.LiquidMaskTexture);
@@ -196,7 +195,23 @@ namespace ET
             float maskWidth = math.max(drawMap.RenderWidth * drawMap.WorldCellSize.x, 0.0001f);
             float maskHeight = math.max(drawMap.RenderHeight * drawMap.WorldCellSize.y, 0.0001f);
             self.MatPropBlock.SetVector("_WaterMaskParams", new Vector4(drawMap.WorldOrigin.x, drawMap.WorldOrigin.y, 1f / maskWidth, 1f / maskHeight));
-            self.ApplyLayerProperties();
+            if (IsLiquidCarpetType(self.CarType))
+            {
+                bool isOcean = self.CarType == OceanCarpetType;
+                self.MatPropBlock.SetFloat("_ForceFullCoverage", isOcean ? 1f : 0f);
+                self.MatPropBlock.SetFloat("_UseGlobalMask", isOcean ? 0f : 1f);
+                self.MatPropBlock.SetFloat("_LiquidMaskChannel", 1f);
+                self.ApplyLayerProperties();
+            }
+            else
+            {
+                self.MatPropBlock.SetFloat("_UseGlobalMask", 1f);
+                self.MatPropBlock.SetFloat("_LiquidMaskChannel", 0f);
+                self.MatPropBlock.SetFloat("_CutoutLow", 0.16f);
+                self.MatPropBlock.SetFloat("_CutoutHigh", 0.72f);
+                self.MatPropBlock.SetFloat("_AlphaClip", 0.01f);
+            }
+
             self.MeshRenderer.SetPropertyBlock(self.MatPropBlock);
         }
 
@@ -306,7 +321,7 @@ namespace ET
 
         private static string GetMaterialName(int type)
         {
-            return IsLiquidCarpetType(type) ? "Custom_WaterFlow" : "Custom_SpriteOverlay";
+            return IsLiquidCarpetType(type) ? "Custom_WaterFlow" : "Custom_SurfaceMasked";
         }
 
         private static string GetMainTextureName(int type)
@@ -365,6 +380,19 @@ namespace ET
                         enableInstancing = true,
                         hideFlags = HideFlags.HideAndDontSave
                     };
+
+                    if (!IsLiquidCarpetType(self.CarType))
+                    {
+                        Shader surfaceMaskedShader = Shader.Find(SurfaceMaskedShaderName);
+                        if (surfaceMaskedShader != null)
+                        {
+                            runtimeMaterial.shader = surfaceMaskedShader;
+                        }
+                        else
+                        {
+                            Log.Warning($"nmap surface masked shader not found: {SurfaceMaskedShaderName}");
+                        }
+                    }
                 }
                 self.RuntimeMaterial = runtimeMaterial;
             }
@@ -443,6 +471,7 @@ namespace ET
             self.MatPropBlock.SetColor("_ShoreColor", new Color(0.36f, 0.79f, 0.82f, 1f));
             self.MatPropBlock.SetColor("_FoamColor", new Color(0.90f, 0.98f, 0.98f, 1f));
             self.MatPropBlock.SetFloat("_UseGlobalMask", 0f);
+            self.MatPropBlock.SetFloat("_ForceFullCoverage", 0f);
         }
     }
 }
