@@ -14,11 +14,6 @@ Shader "Game/NMap/WaterFlow"
         _OverlayTiling ("Overlay Tiling", Float) = 1.15
         _OverlayStrength ("Overlay Strength", Range(0, 1)) = 0.68
         _DistortionStrength ("Distortion Strength", Range(0, 0.2)) = 0.025
-        _MaskLow ("Mask Low", Range(0, 1)) = 0.04
-        _MaskHigh ("Mask High", Range(0, 1)) = 0.4
-        _FoamBand ("Foam Band", Range(0.01, 0.5)) = 0.18
-        _FoamStrength ("Foam Strength", Range(0, 1)) = 0.32
-        _FoamBrightness ("Foam Brightness", Float) = 1.25
     }
 
     SubShader
@@ -74,16 +69,16 @@ Shader "Game/NMap/WaterFlow"
             struct Varyings
             {
                 float4 positionHCS : SV_POSITION;
+                float2 uv0 : TEXCOORD0;
                 float2 uv1 : TEXCOORD1;
-                float2 positionOS : TEXCOORD2;
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
                 output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.uv0 = input.uv0;
                 output.uv1 = input.uv1;
-                output.positionOS = input.positionOS.xy;
                 return output;
             }
 
@@ -95,31 +90,21 @@ Shader "Game/NMap/WaterFlow"
             half4 frag(Varyings input) : SV_Target
             {
                 float timeValue = _Time.y;
-                float2 coverUv = input.uv1;
-                float2 mainBaseUv = input.positionOS * _MainTiling;
-                float2 overlayBaseUv = input.positionOS * _OverlayTiling;
-
-                half4 coverColor = SAMPLE_TEXTURE2D(_Texture2DCover, sampler_Texture2DCover, coverUv);
-                half coverMask = GetMask(coverColor);
-                half shoreMask = smoothstep(_MaskLow, _MaskHigh, coverMask);
-                half innerMask = smoothstep(_MaskLow + _FoamBand, _MaskHigh + _FoamBand, coverMask);
-                half foamMask = saturate((shoreMask - innerMask) * _FoamStrength);
-
-                float2 flowedOverlayUv = overlayBaseUv + _OverlayFlow.xy * timeValue;
-                half4 overlayFlowSample = SAMPLE_TEXTURE2D(_OverlayTex, sampler_OverlayTex, flowedOverlayUv);
+                float2 overlayBaseUv = input.uv1 * _OverlayTiling + _OverlayFlow.xy * timeValue;
+                half4 overlayFlowSample = SAMPLE_TEXTURE2D(_OverlayTex, sampler_OverlayTex, overlayBaseUv);
                 float2 distortion = (overlayFlowSample.rg * 2.0h - 1.0h) * _DistortionStrength;
 
-                float2 mainUv = mainBaseUv + _MainFlow.xy * timeValue + distortion;
-                float2 overlayUv = flowedOverlayUv + distortion * 0.5;
+                float2 mainUv = input.uv0 * _MainTiling + _MainFlow.xy * timeValue + distortion;
+                float2 overlayUv = overlayBaseUv + distortion * 0.5;
 
                 half4 mainColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, mainUv);
                 half4 overlayColor = SAMPLE_TEXTURE2D(_OverlayTex, sampler_OverlayTex, overlayUv);
+                half4 coverColor = SAMPLE_TEXTURE2D(_Texture2DCover, sampler_Texture2DCover, overlayUv);
 
-                half blend = saturate(_BlendFactor + _OverlayStrength * shoreMask);
+                half overlayMask = saturate(GetMask(coverColor) * _OverlayStrength);
+                half blend = saturate(_BlendFactor + overlayMask * (1.0h - _BlendFactor));
                 half3 rgb = lerp(mainColor.rgb, overlayColor.rgb, blend);
-                half3 foamColor = overlayColor.rgb * _FoamBrightness;
-                rgb = lerp(rgb, foamColor, foamMask);
-                half alpha = shoreMask;
+                half alpha = saturate(max(mainColor.a, overlayMask));
 
                 return half4(rgb * _Color.rgb * _brightness, alpha * _Color.a);
             }

@@ -50,20 +50,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlendFactor: 0.22
-    - _DistortionStrength: 0.014
-    - _FoamBand: 0.18
-    - _FoamBrightness: 1.25
-    - _FoamStrength: 0.32
-    - _MainTiling: 0.18
-    - _MaskHigh: 0.4
-    - _MaskLow: 0.04
-    - _OverlayStrength: 0.42
-    - _OverlayTiling: 0.26
+    - _BlendFactor: 0.18
+    - _DistortionStrength: 0.025
+    - _MainTiling: 1
+    - _OverlayStrength: 0.68
+    - _OverlayTiling: 1.15
     - _brightness: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 0.96}
-    - _MainFlow: {r: 0.006, g: 0.003, b: 0, a: 0}
-    - _OverlayFlow: {r: -0.011, g: 0.007, b: 0, a: 0}
+    - _MainFlow: {r: 0.01, g: 0.004, b: 0, a: 0}
+    - _OverlayFlow: {r: -0.018, g: 0.01, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
