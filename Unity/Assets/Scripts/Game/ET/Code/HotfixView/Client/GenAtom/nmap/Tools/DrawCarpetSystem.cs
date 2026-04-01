@@ -358,9 +358,12 @@ namespace ET
             self.MatPropBlock.SetFloat("_BlendFactor", 0.22f);
             self.MatPropBlock.SetFloat("_MaskLow", 0.04f);
             self.MatPropBlock.SetFloat("_MaskHigh", 0.40f);
-            self.MatPropBlock.SetFloat("_FoamBand", 0.18f);
-            self.MatPropBlock.SetFloat("_FoamStrength", 0.32f);
-            self.MatPropBlock.SetFloat("_FoamBrightness", 1.25f);
+            self.MatPropBlock.SetFloat("_FoamBand", 0.24f);
+            self.MatPropBlock.SetFloat("_FoamStrength", 0.62f);
+            self.MatPropBlock.SetFloat("_FoamBrightness", 1.45f);
+            self.MatPropBlock.SetFloat("_ShoreColorStrength", 0.72f);
+            self.MatPropBlock.SetColor("_ShoreColor", new Color(0.36f, 0.79f, 0.82f, 1f));
+            self.MatPropBlock.SetColor("_FoamColor", new Color(0.90f, 0.98f, 0.98f, 1f));
         }
     }
 }

@@ -269,6 +269,9 @@ namespace Game.Editor
             material.SetFloat("_FoamBand", 0.18f);
             material.SetFloat("_FoamStrength", foamStrength);
             material.SetFloat("_FoamBrightness", 1.25f);
+            material.SetFloat("_ShoreColorStrength", coverTexture == null ? 0f : 0.72f);
+            material.SetColor("_ShoreColor", new Color(0.36f, 0.79f, 0.82f, 1f));
+            material.SetColor("_FoamColor", new Color(0.90f, 0.98f, 0.98f, 1f));
             EditorUtility.SetDirty(material);
             return material;
         }
