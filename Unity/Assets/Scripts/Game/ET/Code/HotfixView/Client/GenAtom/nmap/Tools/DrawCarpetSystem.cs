@@ -15,6 +15,7 @@ namespace ET
     {
         private const int OceanCarpetType = 0;
         private const int WaterCarpetType = 1;
+        private const int GroundCarpetType = 3;
         private const string SurfaceMaskedShaderName = "Game/NMap/SurfaceMasked";
         private const string LiquidMainTextureName = "Water_DarkTile";
         private const string LiquidOverlayTextureName = "Water_LightTile";
@@ -203,7 +204,7 @@ namespace ET
                 self.MatPropBlock.SetFloat("_LiquidMaskChannel", 1f);
                 self.ApplyLayerProperties();
             }
-            else
+            else if (IsMaskedSurfaceCarpetType(self.CarType))
             {
                 self.MatPropBlock.SetFloat("_UseGlobalMask", 1f);
                 self.MatPropBlock.SetFloat("_LiquidMaskChannel", 0f);
@@ -321,7 +322,12 @@ namespace ET
 
         private static string GetMaterialName(int type)
         {
-            return IsLiquidCarpetType(type) ? "Custom_WaterFlow" : "Custom_SurfaceMasked";
+            if (IsLiquidCarpetType(type))
+            {
+                return "Custom_WaterFlow";
+            }
+
+            return IsMaskedSurfaceCarpetType(type) ? "Custom_SurfaceMasked" : "Custom_SpriteOverlay";
         }
 
         private static string GetMainTextureName(int type)
@@ -342,6 +348,11 @@ namespace ET
         private static bool IsLiquidCarpetType(int type)
         {
             return type == OceanCarpetType || type == WaterCarpetType;
+        }
+
+        private static bool IsMaskedSurfaceCarpetType(int type)
+        {
+            return type == GroundCarpetType;
         }
 
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
@@ -381,7 +392,7 @@ namespace ET
                         hideFlags = HideFlags.HideAndDontSave
                     };
 
-                    if (!IsLiquidCarpetType(self.CarType))
+                    if (IsMaskedSurfaceCarpetType(self.CarType))
                     {
                         Shader surfaceMaskedShader = Shader.Find(SurfaceMaskedShaderName);
                         if (surfaceMaskedShader != null)
