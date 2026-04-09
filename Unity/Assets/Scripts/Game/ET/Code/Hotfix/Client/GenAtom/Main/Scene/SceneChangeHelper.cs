@@ -60,16 +60,28 @@ namespace ET.Client
 
         private static async UniTask CreateLocalUnitsFromTables(Scene root, Scene currentScene)
         {
-            var configs = Tables.Instance.DTUnitConfig;
+            var heros = Tables.Instance.DTHero;
+            var unis1 = new UniTask[heros.DataList.Count];
+            for (int i = 0; i < heros.DataList.Count; i++)
+            {
+                var config = heros.DataList[i];
+                UnitInfo unitInfo = CreateUnitInfo(config, i);
+                Unit unit = UnitFactory.Create(currentScene, unitInfo);
+                if (i == 0)
+                {
+                    root.GetComponent<PlayerComponent>().MyId = unitInfo.UnitId;
+                }
+                var t = EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
+                unis1[i] = t;
+            }
+            await UniTask.WhenAll(unis1);
+
+            var configs = Tables.Instance.DTMonster;
             var unis = new UniTask[configs.DataList.Count];
             for (int i = 0; i < configs.DataList.Count; i++)
             {
                 var config = configs.DataList[i];
                 UnitInfo unitInfo = CreateUnitInfo(config, i);
-                if (i == 0)
-                {
-                    root.GetComponent<PlayerComponent>().MyId = unitInfo.UnitId;
-                }
                 Unit unit = UnitFactory.Create(currentScene, unitInfo);
 
                 var t = EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
@@ -78,15 +90,27 @@ namespace ET.Client
 
             await UniTask.WhenAll(unis);
         }
-        private static UnitInfo CreateUnitInfo(DRUnitConfig config, int index)
+
+        private static UnitInfo CreateUnitInfo(DRHero config, int index)
         {
             UnitInfo unitInfo = UnitInfo.Create();
-            unitInfo.UnitId = IdGenerater.Instance.GenerateInstanceId();
-            unitInfo.ConfigId = config.Id;
-            unitInfo.Type = config.Type;
+            unitInfo.UnitId = config.Id;
+            unitInfo.Type = config.UnitConfigId_Ref.Type;
+            unitInfo.ConfigId = config.UnitConfigId;
+
             unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
             unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
-            unitInfo.KV[NumericType.Speed] = (long)(50 * 1000f);
+            return unitInfo;
+        }
+        private static UnitInfo CreateUnitInfo(DRMonster config, int index)
+        {
+            UnitInfo unitInfo = UnitInfo.Create();
+            unitInfo.UnitId = config.Id;
+            unitInfo.Type = config.UnitConfigId_Ref.Type;
+            unitInfo.ConfigId = config.UnitConfigId;
+
+            unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
+            unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
             return unitInfo;
         }
 

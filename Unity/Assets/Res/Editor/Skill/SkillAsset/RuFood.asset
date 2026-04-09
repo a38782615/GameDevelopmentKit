@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1003
   nodes:
-  - rid: 8915324534274916806
-  - rid: 8915324534274916807
-  - rid: 8915324534274916809
-  - rid: 8915324534274916813
-  - rid: 8915324534274916814
-  - rid: 8915324534274916808
-  - rid: 8915324534274916812
-  - rid: 8915324534274916811
-  - rid: 8915324534274916810
+  - rid: 4204046695868924054
+  - rid: 4204046695868924055
+  - rid: 4204046695868924056
+  - rid: 4204046695868924057
+  - rid: 4204046695868924058
+  - rid: 4204046695868924059
+  - rid: 4204046695868924060
+  - rid: 4204046695868924061
+  - rid: 4204046695868924062
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -59,8 +59,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324534274916806
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924054
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
@@ -104,8 +104,8 @@ MonoBehaviour:
         ongoingRequiredTags:
           Tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324534274916807
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924055
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
@@ -147,7 +147,87 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324534274916808
+    - rid: 4204046695868924056
+      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
+        nodeType: 7
+        position:
+          x: 700
+          y: -1856.6667
+        targetType: 1
+        endType: 0
+    - rid: 4204046695868924057
+      type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
+        nodeType: 20
+        position:
+          x: -452
+          y: -2375.3333
+        targetType: 1
+        skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
+          type: 2}
+        skeletonDataAssetPath: Assets/Res/Spine/SP_Zhanshi/SP_Zhanshi_SkeletonData.asset
+        animationName: Skill_attack_1005
+        animationDuration: 16
+        isAnimationLooping: 0
+        timeEffects:
+        - triggerTime: 7
+          portIdValue: 2315086
+          legacyPortId: de0ba361-3aba-4ef0-bb07-9b418fcae591
+        - triggerTime: 16
+          portIdValue: 2000539
+          legacyPortId: f41c85e0-7f26-494e-9ffc-4a06c980f811
+        timeCues:
+        - startTime: 6
+          endTime: 55
+          portIdValue: 2287012
+          legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
+    - rid: 4204046695868924058
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
+        nodeType: 0
+        position:
+          x: -878.6666
+          y: -1853.3334
+        targetType: 1
+        skillId: 1003
+        assetTags:
+          Tags: []
+        cancelAbilitiesWithTags:
+          Tags: []
+        blockAbilitiesWithTags:
+          Tags: []
+        activationOwnedTags:
+          Tags:
+          - Name: Skill.Running
+            HashCode: -51601538
+            ShortName: Running
+            AncestorHashCodes: fdea404e
+            AncestorNames:
+            - Skill
+        activationRequiredTags:
+          Tags: []
+        activationBlockedTags:
+          Tags:
+          - Name: CD.RuFood
+            HashCode: -1045902856
+            ShortName: RuFood
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
+            - CD
+          - Name: Skill.Running
+            HashCode: -51601538
+            ShortName: Running
+            AncestorHashCodes: fdea404e
+            AncestorNames:
+            - Skill
+        ongoingBlockedTags:
+          Tags: []
+        eventOutputPorts: []
+    - rid: 4204046695868924059
       type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
@@ -171,42 +251,46 @@ MonoBehaviour:
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
-    - rid: 8915324534274916809
-      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924060
+      type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
-        guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
-        nodeType: 7
+        guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
+        nodeType: 4
         position:
-          x: 700
-          y: -1856.6667
+          x: -452
+          y: -1786.6667
         targetType: 1
-        endType: 0
-    - rid: 8915324534274916810
-      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 93ec5a43-cc34-4e4a-acb3-39da2f2c3010
-        nodeType: 12
-        position:
-          x: 408.66666
-          y: -1790.6667
-        targetType: 1
-        requiredTags:
+        searchShapeType: 0
+        searchLineType: 0
+        positionSource: 0
+        positionBindingName: center
+        searchCircleRadius: 5
+        searchSectorRadius: 2
+        searchSectorAngle: 180
+        searchLineDirectionOffsetAngle: 0
+        searchLineDirectionWidth: 1
+        searchLineDirectionLength: 10
+        lineStartPositionSource: 0
+        lineStartBindingName: 
+        lineEndPositionSource: 1
+        lineEndBindingName: 
+        searchLineBetweenWidth: 1
+        searchLineAbsoluteAngle: 0
+        searchLineAbsoluteWidth: 1
+        searchLineAbsoluteLength: 10
+        maxTargets: 999
+        searchTargetTags:
+          Tags:
+          - Name: unitType.monster
+            HashCode: -2021655864
+            ShortName: monster
+            AncestorHashCodes: 6c74655f
+            AncestorNames:
+            - unitType
+        searchExcludeTags:
           Tags: []
-        immunityTags:
-          Tags: []
-        destroyWithNode: 1
-        positionSource: 2
-        particleEntityId: 50005
-        particlePrefab: {fileID: 4321741288478946800, guid: 969424356221a284cb141a046878636f,
-          type: 3}
-        particlePrefabPath: Assets/Res/Entity/Effect/ef_Xuanyun_01.prefab
-        particleBindingName: head
-        particleOffset: {x: 0, y: 0, z: 0}
-        particleScale: {x: 1, y: 1, z: 1}
-        attachToTarget: 1
-        particleLoop: 1
-    - rid: 8915324534274916811
-      type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924061
+      type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: cb1df36f-5729-423e-9d1a-287db5a433f0
         nodeType: 11
@@ -254,111 +338,27 @@ MonoBehaviour:
           Tags: []
         cancelOnAbilityEnd: 0
         buffId: 0
-    - rid: 8915324534274916812
-      type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924062
+      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
-        guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
-        nodeType: 4
+        guid: 93ec5a43-cc34-4e4a-acb3-39da2f2c3010
+        nodeType: 12
         position:
-          x: -452
-          y: -1786.6667
+          x: 408.66666
+          y: -1790.6667
         targetType: 1
-        searchShapeType: 0
-        searchLineType: 0
-        positionSource: 0
-        positionBindingName: center
-        searchCircleRadius: 5
-        searchSectorRadius: 2
-        searchSectorAngle: 180
-        searchLineDirectionOffsetAngle: 0
-        searchLineDirectionWidth: 1
-        searchLineDirectionLength: 10
-        lineStartPositionSource: 0
-        lineStartBindingName: 
-        lineEndPositionSource: 1
-        lineEndBindingName: 
-        searchLineBetweenWidth: 1
-        searchLineAbsoluteAngle: 0
-        searchLineAbsoluteWidth: 1
-        searchLineAbsoluteLength: 10
-        maxTargets: 999
-        searchTargetTags:
-          Tags:
-          - Name: unitType.monster
-            HashCode: -2021655864
-            ShortName: monster
-            AncestorHashCodes: 6c74655f
-            AncestorNames:
-            - unitType
-        searchExcludeTags:
+        requiredTags:
           Tags: []
-    - rid: 8915324534274916813
-      type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-        nodeType: 20
-        position:
-          x: -452
-          y: -2375.3333
-        targetType: 1
-        skeletonDataAsset: {fileID: 11400000, guid: 3754b23f7ac951e42ab7bce09051b229,
-          type: 2}
-        skeletonDataAssetPath: Assets/Res/Spine/SP_Zhanshi/SP_Zhanshi_SkeletonData.asset
-        animationName: Skill_attack_1005
-        animationDuration: 16
-        isAnimationLooping: 0
-        timeEffects:
-        - triggerTime: 7
-          portIdValue: 2315086
-          legacyPortId: de0ba361-3aba-4ef0-bb07-9b418fcae591
-        - triggerTime: 16
-          portIdValue: 2000539
-          legacyPortId: f41c85e0-7f26-494e-9ffc-4a06c980f811
-        timeCues:
-        - startTime: 6
-          endTime: 55
-          portIdValue: 2287012
-          legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
-    - rid: 8915324534274916814
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-        nodeType: 0
-        position:
-          x: -878.6666
-          y: -1853.3334
-        targetType: 1
-        skillId: 1003
-        assetTags:
+        immunityTags:
           Tags: []
-        cancelAbilitiesWithTags:
-          Tags: []
-        blockAbilitiesWithTags:
-          Tags: []
-        activationOwnedTags:
-          Tags:
-          - Name: Skill.Running
-            HashCode: -51601538
-            ShortName: Running
-            AncestorHashCodes: fdea404e
-            AncestorNames:
-            - Skill
-        activationRequiredTags:
-          Tags: []
-        activationBlockedTags:
-          Tags:
-          - Name: CD.RuFood
-            HashCode: -1045902856
-            ShortName: RuFood
-            AncestorHashCodes: aba22dbc
-            AncestorNames:
-            - CD
-          - Name: Skill.Running
-            HashCode: -51601538
-            ShortName: Running
-            AncestorHashCodes: fdea404e
-            AncestorNames:
-            - Skill
-        ongoingBlockedTags:
-          Tags: []
-        eventOutputPorts: []
+        destroyWithNode: 1
+        positionSource: 2
+        particleEntityId: 50005
+        particlePrefab: {fileID: 4321741288478946800, guid: 969424356221a284cb141a046878636f,
+          type: 3}
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Xuanyun_01.prefab
+        particleBindingName: head
+        particleOffset: {x: 0, y: 0, z: 0}
+        particleScale: {x: 1, y: 1, z: 1}
+        attachToTarget: 1
+        particleLoop: 1

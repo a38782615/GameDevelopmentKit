@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 7001
   nodes:
-  - rid: 8915324534274916764
-  - rid: 8915324534274916765
-  - rid: 8915324534274916768
-  - rid: 8915324534274916769
-  - rid: 8915324534274916770
-  - rid: 8915324534274916766
-  - rid: 8915324534274916767
-  - rid: 8915324534274916771
+  - rid: 4204046695868924021
+  - rid: 4204046695868924022
+  - rid: 4204046695868924023
+  - rid: 4204046695868924024
+  - rid: 4204046695868924025
+  - rid: 4204046695868924026
+  - rid: 4204046695868924027
+  - rid: 4204046695868924028
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -54,8 +54,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324534274916764
-      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924021
+      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
         nodeType: 7
@@ -64,7 +64,7 @@ MonoBehaviour:
           y: -1987.3334
         targetType: 1
         endType: 0
-    - rid: 8915324534274916765
+    - rid: 4204046695868924022
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -87,7 +87,144 @@ MonoBehaviour:
           portIdValue: 2715463
           legacyPortId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
         timeCues: []
-    - rid: 8915324534274916766
+    - rid: 4204046695868924023
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
+        nodeType: 10
+        position:
+          x: -1220.6666
+          y: -1747.3334
+        targetType: 1
+        assetTags:
+          Tags: []
+        grantedTags:
+          Tags:
+          - Name: CD.FireCircle
+            HashCode: 522143731
+            ShortName: FireCircle
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
+            - CD
+        applicationRequiredTags:
+          Tags: []
+        applicationImmunityTags:
+          Tags: []
+        removeGameEffectsWithTags:
+          Tags: []
+        durationType: 1
+        duration: 3
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          Tags: []
+        cancelOnAbilityEnd: 0
+        cooldownType: 0
+        maxCharges: 2
+        chargeTime: 10
+    - rid: 4204046695868924024
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
+        nodeType: 3
+        position:
+          x: -1195.3334
+          y: -2003.3334
+        targetType: 1
+        assetTags:
+          Tags: []
+        grantedTags:
+          Tags: []
+        applicationRequiredTags:
+          Tags: []
+        applicationImmunityTags:
+          Tags: []
+        removeGameEffectsWithTags:
+          Tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers:
+        - attrType: 1003
+          operation: 0
+          magnitudeSourceType: 0
+          fixedValue: -100
+          formula: 
+          mmcType: 0
+          setByCallerKey: 
+          mmcCaptureAttribute: 200
+          mmcAttributeSource: 0
+          mmcCoefficient: 1
+          mmcUseSnapshot: 1
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          Tags: []
+        cancelOnAbilityEnd: 1
+    - rid: 4204046695868924025
+      type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
+        nodeType: 1
+        position:
+          x: -97.33333
+          y: -1810
+        targetType: 0
+        assetTags:
+          Tags: []
+        grantedTags:
+          Tags: []
+        applicationRequiredTags:
+          Tags: []
+        applicationImmunityTags:
+          Tags: []
+        removeGameEffectsWithTags:
+          Tags: []
+        durationType: 0
+        duration: 0
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          Tags: []
+        cancelOnAbilityEnd: 1
+        damageType: 0
+        damageSourceType: 0
+        damageFixedValue: 10
+        damageFormula: 
+        damageMMCType: 0
+        damageSetByCallerKey: 
+        damageMMCCaptureAttribute: 200
+        damageMMCAttributeSource: 0
+        damageMMCCoefficient: 1
+        damageMMCUseSnapshot: 1
+        damageMultiplyByStackCount: 0
+        damageCalculationType: 0
+        enableHitKnockback: 1
+        knockbackDistance: 1
+        knockbackSpeed: 12
+    - rid: 4204046695868924026
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -125,7 +262,7 @@ MonoBehaviour:
             - Buff
             - Buff.DeBuff
         eventOutputPorts: []
-    - rid: 8915324534274916767
+    - rid: 4204046695868924027
       type: {class: ProjectileEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
@@ -187,144 +324,7 @@ MonoBehaviour:
         canBounceToSameTarget: 0
         excludeSourceCamp: 1
         bounceAngleOffset: 0
-    - rid: 8915324534274916768
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
-        nodeType: 10
-        position:
-          x: -1220.6666
-          y: -1747.3334
-        targetType: 1
-        assetTags:
-          Tags: []
-        grantedTags:
-          Tags:
-          - Name: CD.FireCircle
-            HashCode: 522143731
-            ShortName: FireCircle
-            AncestorHashCodes: aba22dbc
-            AncestorNames:
-            - CD
-        applicationRequiredTags:
-          Tags: []
-        applicationImmunityTags:
-          Tags: []
-        removeGameEffectsWithTags:
-          Tags: []
-        durationType: 1
-        duration: 3
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          Tags: []
-        cancelOnAbilityEnd: 0
-        cooldownType: 0
-        maxCharges: 2
-        chargeTime: 10
-    - rid: 8915324534274916769
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
-        nodeType: 3
-        position:
-          x: -1195.3334
-          y: -2003.3334
-        targetType: 1
-        assetTags:
-          Tags: []
-        grantedTags:
-          Tags: []
-        applicationRequiredTags:
-          Tags: []
-        applicationImmunityTags:
-          Tags: []
-        removeGameEffectsWithTags:
-          Tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers:
-        - attrType: 1003
-          operation: 0
-          magnitudeSourceType: 0
-          fixedValue: -100
-          formula: 
-          mmcType: 0
-          setByCallerKey: 
-          mmcCaptureAttribute: 200
-          mmcAttributeSource: 0
-          mmcCoefficient: 1
-          mmcUseSnapshot: 1
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          Tags: []
-        cancelOnAbilityEnd: 1
-    - rid: 8915324534274916770
-      type: {class: DamageEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
-        nodeType: 1
-        position:
-          x: -97.33333
-          y: -1810
-        targetType: 0
-        assetTags:
-          Tags: []
-        grantedTags:
-          Tags: []
-        applicationRequiredTags:
-          Tags: []
-        applicationImmunityTags:
-          Tags: []
-        removeGameEffectsWithTags:
-          Tags: []
-        durationType: 0
-        duration: 0
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          Tags: []
-        cancelOnAbilityEnd: 1
-        damageType: 0
-        damageSourceType: 0
-        damageFixedValue: 10
-        damageFormula: 
-        damageMMCType: 0
-        damageSetByCallerKey: 
-        damageMMCCaptureAttribute: 200
-        damageMMCAttributeSource: 0
-        damageMMCCoefficient: 1
-        damageMMCUseSnapshot: 1
-        damageMultiplyByStackCount: 0
-        damageCalculationType: 0
-        enableHitKnockback: 1
-        knockbackDistance: 1
-        knockbackSpeed: 12
-    - rid: 8915324534274916771
+    - rid: 4204046695868924028
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db

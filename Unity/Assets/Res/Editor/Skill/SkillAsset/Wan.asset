@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1006
   nodes:
-  - rid: 8915324534274916782
-  - rid: 8915324534274916783
-  - rid: 8915324534274916784
-  - rid: 8915324534274916785
-  - rid: 8915324534274916787
-  - rid: 8915324534274916788
-  - rid: 8915324534274916789
-  - rid: 8915324534274916786
+  - rid: 4204046695868924039
+  - rid: 4204046695868924040
+  - rid: 4204046695868924041
+  - rid: 4204046695868924042
+  - rid: 4204046695868924043
+  - rid: 4204046695868924044
+  - rid: 4204046695868924045
+  - rid: 4204046695868924046
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
@@ -54,8 +54,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324534274916782
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924039
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
@@ -99,8 +99,8 @@ MonoBehaviour:
         ongoingRequiredTags:
           Tags: []
         cancelOnAbilityEnd: 1
-    - rid: 8915324534274916783
-      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924040
+      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: f73ba91e-a76b-456c-b19c-a5176809d5f5
         nodeType: 7
@@ -109,8 +109,8 @@ MonoBehaviour:
           y: -1856.6667
         targetType: 1
         endType: 0
-    - rid: 8915324534274916784
-      type: {class: DisplaceEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924041
+      type: {class: DisplaceEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 091ecddb-f80b-4c00-aa06-f9bc718618d2
         nodeType: 22
@@ -149,8 +149,8 @@ MonoBehaviour:
         minDistance: 0.5
         pointSource: 0
         pointBindingName: 
-    - rid: 8915324534274916785
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924042
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
@@ -192,32 +192,8 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324534274916786
-      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
-        nodeType: 12
-        position:
-          x: 677.3334
-          y: -1998.6667
-        targetType: 1
-        requiredTags:
-          Tags: []
-        immunityTags:
-          Tags: []
-        destroyWithNode: 0
-        positionSource: 0
-        particleEntityId: 50010
-        particlePrefab: {fileID: 6869347943692573679, guid: b77df2ac5f8751f4d9fcd60e620d7416,
-          type: 3}
-        particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_zhentianpaoxiao_01.prefab
-        particleBindingName: down
-        particleOffset: {x: 0, y: 0, z: 0}
-        particleScale: {x: 1, y: 1, z: 1}
-        attachToTarget: 0
-        particleLoop: 0
-    - rid: 8915324534274916787
-      type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924043
+      type: {class: SearchTargetTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
         nodeType: 4
@@ -254,7 +230,7 @@ MonoBehaviour:
             - unitType
         searchExcludeTags:
           Tags: []
-    - rid: 8915324534274916788
+    - rid: 4204046695868924044
       type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
@@ -281,7 +257,7 @@ MonoBehaviour:
           endTime: 75
           portIdValue: 2287012
           legacyPortId: 8dea1941-c520-4f9a-aee0-40932c8542ef
-    - rid: 8915324534274916789
+    - rid: 4204046695868924045
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -324,3 +300,27 @@ MonoBehaviour:
         ongoingBlockedTags:
           Tags: []
         eventOutputPorts: []
+    - rid: 4204046695868924046
+      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
+        nodeType: 12
+        position:
+          x: 677.3334
+          y: -1998.6667
+        targetType: 1
+        requiredTags:
+          Tags: []
+        immunityTags:
+          Tags: []
+        destroyWithNode: 0
+        positionSource: 0
+        particleEntityId: 50010
+        particlePrefab: {fileID: 6869347943692573679, guid: b77df2ac5f8751f4d9fcd60e620d7416,
+          type: 3}
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_zhentianpaoxiao_01.prefab
+        particleBindingName: down
+        particleOffset: {x: 0, y: 0, z: 0}
+        particleScale: {x: 1, y: 1, z: 1}
+        attachToTarget: 0
+        particleLoop: 0

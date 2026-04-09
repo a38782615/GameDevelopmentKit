@@ -63,7 +63,7 @@ namespace ET.Client
             }
         }
 
-        public static global::ET.DRHero GetHeroData(this SkillUnit self, int unitConfigId)
+        public static global::ET.DRHero GetHeroData(this SkillUnit self, int id)
         {
             var heroTable = Tables.Instance.DTHero;
             if (heroTable?.DataList == null)
@@ -71,34 +71,19 @@ namespace ET.Client
                 return null;
             }
 
-            foreach (var heroData in heroTable.DataList)
-            {
-                if (heroData.UnitConfigId == unitConfigId)
-                {
-                    return heroData;
-                }
-            }
-
-            return null;
+            var ret = heroTable.Get(id);
+            return ret;
         }
 
-        public static global::ET.DRMonster GetMonsterData(this SkillUnit self, int unitConfigId)
+        public static global::ET.DRMonster GetMonsterData(this SkillUnit self, int id)
         {
             var monsterTable = Tables.Instance.DTMonster;
             if (monsterTable?.DataList == null)
             {
                 return null;
             }
-
-            foreach (var monsterData in monsterTable.DataList)
-            {
-                if (monsterData.UnitConfigId == unitConfigId)
-                {
-                    return monsterData;
-                }
-            }
-
-            return null;
+            var ret = monsterTable.Get(id);
+            return ret;
         }
 
         private static void InitUnitTypeTags(this SkillUnit self, AbilitySystemComponent asc)

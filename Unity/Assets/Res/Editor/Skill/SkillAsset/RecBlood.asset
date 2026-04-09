@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1007
   nodes:
-  - rid: 8915324534274916792
-  - rid: 8915324534274916793
-  - rid: 8915324534274916796
-  - rid: 8915324534274916795
-  - rid: 8915324534274916791
-  - rid: 8915324534274916794
-  - rid: 8915324534274916790
+  - rid: 4204046695868924047
+  - rid: 4204046695868924048
+  - rid: 4204046695868924049
+  - rid: 4204046695868924050
+  - rid: 4204046695868924051
+  - rid: 4204046695868924052
+  - rid: 4204046695868924053
   connections:
   - outputNodeGuid: 6d127270-5aeb-4542-9183-8d2d028d6786
     outputPortId: 3001
@@ -49,38 +49,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324534274916790
-      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
-        nodeType: 12
-        position:
-          x: -303.3333
-          y: -2072.6667
-        targetType: 1
-        requiredTags:
-          Tags: []
-        immunityTags:
-          Tags: []
-        destroyWithNode: 0
-        positionSource: 0
-        particleEntityId: 50004
-        particlePrefab: {fileID: 3966591633886693288, guid: 876bc2ad5530efd4881e54e3550d1f48,
-          type: 3}
-        particlePrefabPath: Assets/Res/Entity/Effect/ef_skill_zhanshi_huifunengliang.prefab
-        particleBindingName: down
-        particleOffset: {x: 0, y: 0, z: 0}
-        particleScale: {x: 1, y: 1, z: 1}
-        attachToTarget: 0
-        particleLoop: 0
-    - rid: 8915324534274916791
+    - rid: 4204046695868924047
       type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: 356907e0-1488-4128-bfcc-7ff73cfc3330
         nodeType: 0
         position:
-          x: -932.6666
-          y: -1930
+          x: -924.6666
+          y: -1886.6667
         targetType: 1
         skillId: 1007
         assetTags:
@@ -104,8 +80,8 @@ MonoBehaviour:
         ongoingBlockedTags:
           Tags: []
         eventOutputPorts: []
-    - rid: 8915324534274916792
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924048
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: c28fb88d-51b1-47b2-be59-859e0ac638e3
         nodeType: 10
@@ -147,8 +123,8 @@ MonoBehaviour:
         cooldownType: 0
         maxCharges: 2
         chargeTime: 10
-    - rid: 8915324534274916793
-      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924049
+      type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 011aad56-e96c-41eb-9d85-e793d74a40bb
         nodeType: 7
@@ -157,14 +133,14 @@ MonoBehaviour:
           y: -1780
         targetType: 1
         endType: 0
-    - rid: 8915324534274916794
-      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924050
+      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 6d127270-5aeb-4542-9183-8d2d028d6786
         nodeType: 2
         position:
-          x: -556.6666
-          y: -1986
+          x: -550.6666
+          y: -2050
         targetType: 1
         assetTags:
           Tags: []
@@ -202,7 +178,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324534274916795
+    - rid: 4204046695868924051
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: becb4d53-8a9e-4dc0-95a3-618d1e79ecc7
@@ -229,8 +205,8 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324534274916796
-      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924052
+      type: {class: CostEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: 3cc340e3-1583-428e-ada4-c4e8539725d6
         nodeType: 3
@@ -274,3 +250,27 @@ MonoBehaviour:
         ongoingRequiredTags:
           Tags: []
         cancelOnAbilityEnd: 0
+    - rid: 4204046695868924053
+      type: {class: ParticleCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
+        nodeType: 12
+        position:
+          x: -303.3333
+          y: -2072.6667
+        targetType: 1
+        requiredTags:
+          Tags: []
+        immunityTags:
+          Tags: []
+        destroyWithNode: 0
+        positionSource: 0
+        particleEntityId: 50004
+        particlePrefab: {fileID: 3966591633886693288, guid: 876bc2ad5530efd4881e54e3550d1f48,
+          type: 3}
+        particlePrefabPath: Assets/Res/Entity/Effect/ef_skill_zhanshi_huifunengliang.prefab
+        particleBindingName: down
+        particleOffset: {x: 0, y: 0, z: 0}
+        particleScale: {x: 1, y: 1, z: 1}
+        attachToTarget: 0
+        particleLoop: 0

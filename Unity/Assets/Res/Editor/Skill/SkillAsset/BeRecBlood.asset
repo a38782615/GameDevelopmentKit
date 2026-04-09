@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 2001
   nodes:
-  - rid: 8915324534274916818
-  - rid: 8915324534274916819
-  - rid: 8915324534274916815
-  - rid: 8915324534274916817
-  - rid: 8915324534274916816
+  - rid: 4204046695868924072
+  - rid: 4204046695868924073
+  - rid: 4204046695868924074
+  - rid: 4204046695868924075
+  - rid: 4204046695868924076
   connections:
   - outputNodeGuid: 426755b7-c39a-4524-9cb5-960a31a19c10
     outputPortId: 3002
@@ -39,8 +39,120 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8915324534274916815
-      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+    - rid: 4204046695868924072
+      type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: 426755b7-c39a-4524-9cb5-960a31a19c10
+        nodeType: 11
+        position:
+          x: 587.3334
+          y: 114.66667
+        targetType: 1
+        assetTags:
+          Tags: []
+        grantedTags:
+          Tags: []
+        applicationRequiredTags:
+          Tags: []
+        applicationImmunityTags:
+          Tags: []
+        removeGameEffectsWithTags:
+          Tags: []
+        durationType: 2
+        duration: 10
+        isPeriodic: 1
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 1
+        stackLimit: 1
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          Tags:
+          - Name: CD.BeRecBlood
+            HashCode: -1099994396
+            ShortName: "\u88AB\u52A8\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
+            - CD
+        cancelOnAbilityEnd: 1
+        buffId: 0
+    - rid: 4204046695868924073
+      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: d5809887-df6e-4604-bd09-36cef191ce83
+        nodeType: 0
+        position:
+          x: 113.33334
+          y: 158.66667
+        targetType: 1
+        skillId: 2001
+        assetTags:
+          Tags: []
+        cancelAbilitiesWithTags:
+          Tags: []
+        blockAbilitiesWithTags:
+          Tags: []
+        activationOwnedTags:
+          Tags: []
+        activationRequiredTags:
+          Tags: []
+        activationBlockedTags:
+          Tags: []
+        ongoingBlockedTags:
+          Tags: []
+        eventOutputPorts:
+        - eventType: 2
+          customEventTag: 
+          PortId: 1103
+    - rid: 4204046695868924074
+      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
+      data:
+        guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
+        nodeType: 10
+        position:
+          x: 370.66666
+          y: 484.66666
+        targetType: 1
+        assetTags:
+          Tags: []
+        grantedTags:
+          Tags:
+          - Name: CD.BeRecBlood
+            HashCode: -1099994396
+            ShortName: "\u88AB\u52A8\u56DE\u8840"
+            AncestorHashCodes: aba22dbc
+            AncestorNames:
+            - CD
+        applicationRequiredTags:
+          Tags: []
+        applicationImmunityTags:
+          Tags: []
+        removeGameEffectsWithTags:
+          Tags: []
+        durationType: 1
+        duration: 3
+        isPeriodic: 0
+        period: 1
+        executeOnApplication: 0
+        attributeModifiers: []
+        stackType: 0
+        stackLimit: 0
+        stackDurationRefreshPolicy: 0
+        stackPeriodResetPolicy: 0
+        stackExpirationPolicy: 0
+        stackOverflowPolicy: 0
+        ongoingRequiredTags:
+          Tags: []
+        cancelOnAbilityEnd: 0
+        cooldownType: 0
+        maxCharges: 2
+        chargeTime: 10
+    - rid: 4204046695868924075
+      type: {class: HealEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
         guid: a8c2d6c0-65f1-4bed-8a6a-70197e84bb56
         nodeType: 2
@@ -84,7 +196,7 @@ MonoBehaviour:
         healMMCUseSnapshot: 1
         healMultiplyByStackCount: 0
         healCalculationType: 0
-    - rid: 8915324534274916816
+    - rid: 4204046695868924076
       type: {class: FloatingTextCueNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
       data:
         guid: d086a8c9-8557-4a61-8fd2-64b3c1e543a3
@@ -111,115 +223,3 @@ MonoBehaviour:
         duration: 1.5
         offset: {x: 0, y: 0}
         moveDirection: {x: 0, y: 1}
-    - rid: 8915324534274916817
-      type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 7eefd9ae-c57e-439d-b1b6-e7f4e52f2f6f
-        nodeType: 10
-        position:
-          x: 348.66666
-          y: 489.99997
-        targetType: 1
-        assetTags:
-          Tags: []
-        grantedTags:
-          Tags:
-          - Name: CD.BeRecBlood
-            HashCode: -1099994396
-            ShortName: "\u88AB\u52A8\u56DE\u8840"
-            AncestorHashCodes: aba22dbc
-            AncestorNames:
-            - CD
-        applicationRequiredTags:
-          Tags: []
-        applicationImmunityTags:
-          Tags: []
-        removeGameEffectsWithTags:
-          Tags: []
-        durationType: 1
-        duration: 3
-        isPeriodic: 0
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 0
-        stackLimit: 0
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          Tags: []
-        cancelOnAbilityEnd: 0
-        cooldownType: 0
-        maxCharges: 2
-        chargeTime: 10
-    - rid: 8915324534274916818
-      type: {class: BuffEffectNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 426755b7-c39a-4524-9cb5-960a31a19c10
-        nodeType: 11
-        position:
-          x: 587.3334
-          y: 114.66667
-        targetType: 1
-        assetTags:
-          Tags: []
-        grantedTags:
-          Tags: []
-        applicationRequiredTags:
-          Tags: []
-        applicationImmunityTags:
-          Tags: []
-        removeGameEffectsWithTags:
-          Tags: []
-        durationType: 2
-        duration: 10
-        isPeriodic: 1
-        period: 1
-        executeOnApplication: 0
-        attributeModifiers: []
-        stackType: 1
-        stackLimit: 1
-        stackDurationRefreshPolicy: 0
-        stackPeriodResetPolicy: 0
-        stackExpirationPolicy: 0
-        stackOverflowPolicy: 0
-        ongoingRequiredTags:
-          Tags:
-          - Name: CD.BeRecBlood
-            HashCode: -1099994396
-            ShortName: "\u88AB\u52A8\u56DE\u8840"
-            AncestorHashCodes: aba22dbc
-            AncestorNames:
-            - CD
-        cancelOnAbilityEnd: 1
-        buffId: 0
-    - rid: 8915324534274916819
-      type: {class: AbilityNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: d5809887-df6e-4604-bd09-36cef191ce83
-        nodeType: 0
-        position:
-          x: 113.33334
-          y: 158.66667
-        targetType: 1
-        skillId: 2001
-        assetTags:
-          Tags: []
-        cancelAbilitiesWithTags:
-          Tags: []
-        blockAbilitiesWithTags:
-          Tags: []
-        activationOwnedTags:
-          Tags: []
-        activationRequiredTags:
-          Tags: []
-        activationBlockedTags:
-          Tags: []
-        ongoingBlockedTags:
-          Tags: []
-        eventOutputPorts:
-        - eventType: 2
-          customEventTag: 
-          PortId: 1103
