@@ -10,6 +10,7 @@ namespace ET.Client
     {
         private const float MinReachDistance = 0.05f;
         private const float ReachDistanceFactor = 0.4f;
+        private const float BlockedFinalTargetStopDistanceMultiplier = 2f;
 
         [Invoke(TimerInvokeType.MovementSimulationTimer)]
         public class MovementSimulationTimer : ATimer<MovementSimulationComponent>
@@ -261,7 +262,17 @@ namespace ET.Client
                 return;
             }
 
-            self.TryAdvanceTarget(moveComponent, unit, agent.Radius, true);
+            if (!self.TryAdvanceTarget(moveComponent, unit, agent.Radius, true))
+            {
+                return;
+            }
+
+            if (!self.ShouldStopNearBlockedFinalTarget(moveComponent, unit, agent))
+            {
+                return;
+            }
+
+            global::ET.Move2DComponentSystem.Stop(moveComponent, true);
         }
 
         private static float2 GetPreferredVelocity(this MovementSimulationComponent self, MovementAgent agent)
@@ -327,6 +338,67 @@ namespace ET.Client
             }
 
             return moveComponent.StartTime != 0 && moveComponent.N < moveComponent.Targets.Count;
+        }
+
+        private static bool ShouldStopNearBlockedFinalTarget(this MovementSimulationComponent self, global::ET.Move2DComponent moveComponent, Unit unit, MovementAgent agent)
+        {
+            if (moveComponent == null || unit == null || agent == null || moveComponent.StartTime == 0 || moveComponent.Targets.Count <= 0)
+            {
+                return false;
+            }
+
+            float ownWidth = GetOwnWidth(unit, agent);
+            if (ownWidth <= 0f)
+            {
+                return false;
+            }
+
+            float2 currentPosition = unit.Position.ToPlanar();
+            float2 finalTarget = moveComponent.FinalTarget;
+            float stopDistance = ownWidth * BlockedFinalTargetStopDistanceMultiplier;
+            if (math.distancesq(currentPosition, finalTarget) > stopDistance * stopDistance)
+            {
+                return false;
+            }
+
+            BodyCheckComponent bodyCheckComponent = unit.Scene()?.GetComponent<BodyCheckComponent>();
+            if (bodyCheckComponent == null)
+            {
+                return false;
+            }
+
+            float queryRadius = math.max(ownWidth * 0.5f, agent.Radius);
+            using ListComponent<EntityRef<EntityBody>> bodies = ListComponent<EntityRef<EntityBody>>.Create();
+            bodyCheckComponent.SearchCircle(finalTarget, queryRadius, bodies);
+            foreach (EntityRef<EntityBody> bodyRef in bodies)
+            {
+                EntityBody body = bodyRef.As();
+                Unit obstacleUnit = body?.GetParent<Unit>();
+                if (obstacleUnit == null || obstacleUnit.IsDisposed || obstacleUnit.Id == unit.Id)
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static float GetOwnWidth(Unit unit, MovementAgent agent)
+        {
+            DRUnitConfig config = unit?.Config();
+            if (config != null && config.Width > 0f)
+            {
+                return config.Width;
+            }
+
+            if (agent != null && agent.Radius > 0f)
+            {
+                return agent.Radius * 2f;
+            }
+
+            return 0f;
         }
 
         private static void ResetSimulator(this MovementSimulationComponent self)
