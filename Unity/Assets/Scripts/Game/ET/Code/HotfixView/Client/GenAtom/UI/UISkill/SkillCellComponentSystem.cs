@@ -135,7 +135,8 @@ namespace ET.Client
             float resolvedCostMp = card.GetResolvedCostMp();
             bool canCast = card.Zone == SkillCardZone.Hand &&
                 !spec.IsActive &&
-                !cooldownInfo.IsOnCooldown;
+                !cooldownInfo.IsOnCooldown &&
+                currentMp >= resolvedCostMp;
             string stateText = self.GetStateText(card, spec, cooldownInfo, currentMp, resolvedCostMp);
 
             if (!self.StateInitialized || self.CachedCanCast != canCast)
