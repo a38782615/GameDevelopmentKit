@@ -49,6 +49,7 @@ namespace ET.Client
 
             self.DrawCount = ruleConfig.DrawCount;
             self.HandLimit = ruleConfig.HandLimit;
+            self.InitMp = ruleConfig.InitMp;
             self.CycleSeconds = ruleConfig.CycleSeconds;
             self.CurrentCycleTime = ruleConfig.CycleSeconds;
             self.MoveDrainMpPerSecond = ruleConfig.MoveDrainMpPerSecond;
@@ -240,6 +241,7 @@ namespace ET.Client
             self.SkillCardRuleId = 0;
             self.DrawCount = 0;
             self.HandLimit = 0;
+            self.InitMp = 0f;
             self.CycleSeconds = 0f;
             self.CurrentCycleTime = 0f;
             self.MoveDrainMpPerSecond = 0f;
@@ -563,6 +565,21 @@ namespace ET.Client
 
             float maxMp = attributes.GetCurrentValue(global::ET.NumericType.MaxMp);
             attributes.SetCurrentValue(global::ET.NumericType.Mp, maxMp);
+        }
+
+        public static void InitializeMp(this SkillCardDeckComponent self)
+        {
+            AbilitySystemComponent asc = self.GetParent<SkillUnit>()?.ASC.As();
+            var attributes = asc?.Attributes;
+            if (attributes == null)
+            {
+                return;
+            }
+
+            float maxMp = attributes.GetCurrentValue(global::ET.NumericType.MaxMp);
+            float targetMp = self.InitMp > 0f ? UnityEngine.Mathf.Min(self.InitMp, maxMp) : maxMp;
+            attributes.SetCurrentValue(global::ET.NumericType.Mp, targetMp);
+            SkillDiagFileLogger.Log($"[CardDeck] Initialize MP, BattleCardConfigId={self.BattleCardConfigId}, InitMp={self.InitMp:F3}, MaxMp={maxMp:F3}, AppliedMp={targetMp:F3}");
         }
     }
 }

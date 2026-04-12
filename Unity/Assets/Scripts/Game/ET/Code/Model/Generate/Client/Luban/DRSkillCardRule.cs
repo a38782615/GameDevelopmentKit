@@ -21,6 +21,7 @@ public sealed partial class DRSkillCardRule : Luban.BeanBase
         CycleSeconds = _buf.ReadFloat();
         MoveDrainMpPerSecond = _buf.ReadFloat();
         PassiveTriggerIntervalSeconds = _buf.ReadFloat();
+        InitMp = _buf.ReadFloat();
         PostInit();
     }
 
@@ -50,6 +51,10 @@ public sealed partial class DRSkillCardRule : Luban.BeanBase
     /// PassiveTriggerIntervalSeconds
     /// </summary>
     public readonly float PassiveTriggerIntervalSeconds;
+    /// <summary>
+    /// InitMp
+    /// </summary>
+    public readonly float InitMp;
     public const int __ID__ = 1947322799;
     public override int GetTypeId() => __ID__;
 
@@ -67,6 +72,7 @@ public sealed partial class DRSkillCardRule : Luban.BeanBase
         + "CycleSeconds:" + CycleSeconds + ","
         + "MoveDrainMpPerSecond:" + MoveDrainMpPerSecond + ","
         + "PassiveTriggerIntervalSeconds:" + PassiveTriggerIntervalSeconds + ","
+        + "InitMp:" + InitMp + ","
         + "}";
     }
 

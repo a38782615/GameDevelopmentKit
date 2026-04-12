@@ -10,6 +10,7 @@ namespace ET.Client
         public int SkillCardRuleId;
         public int DrawCount;
         public int HandLimit;
+        public float InitMp;
         public float CycleSeconds;
         public float CurrentCycleTime;
         public float MoveDrainMpPerSecond;
