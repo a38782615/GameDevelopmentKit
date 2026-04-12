@@ -10,7 +10,9 @@ namespace ET.Client
     public static partial class FightInputComponentSystem
     {
         private const float MoveInputDeadZone = 0.01f;
-        private const float KeyboardMoveTargetDistance = 1000f;
+        private const float KeyboardMoveStepSeconds = 0.2f;
+        private const float KeyboardMoveMinStepDistance = 0.75f;
+        private const float KeyboardMoveDirectionReuseDot = 0.999f;
 
         [EntitySystem]
         private static void Awake(this FightInputComponent self)
@@ -183,10 +185,6 @@ namespace ET.Client
 
             float2 normalizedDirection = math.normalize(planarDirection);
             Vector2 normalizedDirectionVector2 = new Vector2(normalizedDirection.x, normalizedDirection.y);
-            if (self.IsKeyboardMoving && Vector2.Dot(self.LastKeyboardMoveDirection, normalizedDirectionVector2) >= 0.999f)
-            {
-                return;
-            }
 
             global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
             float speed = attributeComponent?.GetCurrentValue(global::ET.NumericType.Speed) ?? 0f;
@@ -196,8 +194,14 @@ namespace ET.Client
                 return;
             }
 
+            if (!self.ShouldIssueKeyboardMove(unit, normalizedDirectionVector2))
+            {
+                return;
+            }
+
             float2 currentPosition = unit.Position.ToPlanar();
-            float2 targetPosition = currentPosition + normalizedDirection * KeyboardMoveTargetDistance;
+            float moveStepDistance = math.max(speed * KeyboardMoveStepSeconds, KeyboardMoveMinStepDistance);
+            float2 targetPosition = currentPosition + normalizedDirection * moveStepDistance;
             using ListComponent<float3> path = ListComponent<float3>.Create();
             path.Add(currentPosition.ToModePosition());
             path.Add(targetPosition.ToModePosition());
@@ -221,6 +225,21 @@ namespace ET.Client
 
             self.IsKeyboardMoving = false;
             self.LastKeyboardMoveDirection = Vector2.zero;
+        }
+
+        private static bool ShouldIssueKeyboardMove(this FightInputComponent self, Unit unit, Vector2 normalizedDirection)
+        {
+            if (!self.IsKeyboardMoving)
+            {
+                return true;
+            }
+
+            if (unit == null || unit.IsDisposed || unit.IsMoveArrived())
+            {
+                return true;
+            }
+
+            return Vector2.Dot(self.LastKeyboardMoveDirection, normalizedDirection) < KeyboardMoveDirectionReuseDot;
         }
     }
 }
