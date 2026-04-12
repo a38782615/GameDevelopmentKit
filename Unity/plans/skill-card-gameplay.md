@@ -284,7 +284,7 @@
 
 ### 第一批：数据与运行时骨架
 
-- [ ] A1. 新增牌区枚举与卡牌实例模型。
+- [x] A1. 新增牌区枚举与卡牌实例模型。
   - 建议文件：
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Card/SkillCardZone.cs`
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Card/SkillCardRuntime.cs`
@@ -296,7 +296,7 @@
     - `BaseCostMp`
     - `OverrideCostMp`
     - `CurrentResolvedCostMp`
-- [ ] A2. 新增牌堆组件。
+- [x] A2. 新增牌堆组件。
   - 建议文件：
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Card/SkillCardDeckComponent.cs`
   - 建议持有：
@@ -309,7 +309,7 @@
     - 当前移动累计时间
     - 当前牌堆规则 Id
     - 被动技能周期触发累计时间
-- [ ] A3. 新增牌堆系统逻辑。
+- [x] A3. 新增牌堆系统逻辑。
   - 建议文件：
     - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Card/SkillCardDeckComponentSystem.cs`
   - 提供接口：
@@ -323,7 +323,7 @@
     - 移动扣点 Tick
     - 被动技能能力区 Tick
     - 从卡实例触发施法
-- [ ] A4. 新增遗物组件与遗物实例模型。
+- [x] A4. 新增遗物组件与遗物实例模型。
   - 建议文件：
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Relic/RelicRuntime.cs`
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Relic/RelicContainerComponent.cs`
@@ -368,7 +368,7 @@
   - 改为 `deck.TryCastCard(cardInstanceId)`
   - 主动技能卡打出后按原有技能链路执行。
   - 被动技能卡打出后进入能力区，并按配置周期触发。
-- [ ] C2. 接入 `MP` 校验与扣费。
+- [x] C2. 接入 `MP` 校验与扣费。
   - 复用现有 `NumericType.Mp` / `NumericType.MaxMp`
   - 明确“卡牌消耗”和现有 Cost 节点的先后职责
   - 第一版建议：
@@ -381,18 +381,18 @@
 
 ### 第四批：轮转、移动扣点与 UI
 
-- [ ] D1. 接入移动状态。
+- [x] D1. 接入移动状态。
   - 第一版可先在玩法层同时参考：
     - 输入 `MoveValue`
     - 下层移动组件是否处于移动中
   - 最终以下层移动状态为准
-- [ ] D2. 实现轮转。
+- [x] D2. 实现轮转。
   - 到时后：
     - `MP` 回满 `MaxMp`
     - 出牌区整体丢弃到弃牌区
     - 从抽牌区按配置数量补牌
     - 派发遗物触发事件
-- [ ] D2.1 实现能力区驻留与被动周期触发。
+- [x] D2.1 实现能力区驻留与被动周期触发。
   - 被动技能卡打出后进入能力区，不在普通轮转时立即进入弃牌区。
   - 能力区中的被动技能卡按 `PassiveTriggerIntervalSeconds` 周期触发。
   - 需要明确轮转时能力区是否清空；在未新增更多规则前，第一版建议能力区卡独立于出牌区轮转。

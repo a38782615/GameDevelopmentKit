@@ -22,6 +22,12 @@ namespace ET.Client
             self.ResetRuntimeState();
         }
 
+        [EntitySystem]
+        private static void Update(this SkillCardDeckComponent self)
+        {
+            self.Tick(UnityEngine.Time.deltaTime);
+        }
+
         public static void Initialize(this SkillCardDeckComponent self, DRBattleCardConfig battleCardConfig)
         {
             self.ResetRuntimeState();
@@ -44,8 +50,12 @@ namespace ET.Client
             self.DrawCount = ruleConfig.DrawCount;
             self.HandLimit = ruleConfig.HandLimit;
             self.CycleSeconds = ruleConfig.CycleSeconds;
+            self.CurrentCycleTime = ruleConfig.CycleSeconds;
             self.MoveDrainMpPerSecond = ruleConfig.MoveDrainMpPerSecond;
+            self.CurrentMoveDrainTime = 0f;
             self.PassiveTriggerIntervalSeconds = ruleConfig.PassiveTriggerIntervalSeconds;
+            self.PassiveTriggerElapsed = 0f;
+            self.IsMoveDraining = false;
         }
 
         public static SkillCardRuntime AddCard(this SkillCardDeckComponent self, int skillId, GameplayAbilitySpec spec, DRSkill skillConfig)
@@ -109,15 +119,27 @@ namespace ET.Client
                 return false;
             }
 
+            float resolvedCostMp = card.GetResolvedCostMp();
+            if (!self.CanAffordCardCost(asc, resolvedCostMp))
+            {
+                Log.Warning($"[CardDeck] MP is not enough, CardInstanceId: {cardInstanceId}, SkillId: {card.SkillId}, CostMp: {resolvedCostMp}");
+                return false;
+            }
+
             if (card.TriggerType == 1)
             {
+                if (!self.PayCardCost(asc, resolvedCostMp))
+                {
+                    return false;
+                }
+
                 self.MoveCardToZone(card, SkillCardZone.Ability);
-                SkillDiagFileLogger.Log($"[CardDeck] Passive card entered ability zone, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
+                SkillDiagFileLogger.Log($"[CardDeck] Passive card entered ability zone, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={resolvedCostMp}");
                 return true;
             }
 
             spec.SetActivatingCardInstance(cardInstanceId);
-            spec.ActivatingCardResolvedCostMp = card.GetResolvedCostMp();
+            spec.ActivatingCardResolvedCostMp = resolvedCostMp;
             bool activated = asc.TryActivateAbility(spec);
             if (!activated)
             {
@@ -127,14 +149,34 @@ namespace ET.Client
                 return false;
             }
 
+            if (!self.PayCardCost(asc, resolvedCostMp))
+            {
+                spec.SetActivatingCardInstance(0);
+                spec.ActivatingCardResolvedCostMp = 0f;
+                Log.Warning($"[CardDeck] MP pay failed after activation, CardInstanceId: {cardInstanceId}, SkillId: {card.SkillId}");
+                return false;
+            }
+
             self.MoveCardToZone(card, SkillCardZone.DiscardPile);
-            SkillDiagFileLogger.Log($"[CardDeck] Active card cast success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={card.GetResolvedCostMp()}");
+            SkillDiagFileLogger.Log($"[CardDeck] Active card cast success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={resolvedCostMp}");
             return true;
         }
 
         public static float GetResolvedCostMp(this SkillCardRuntime self)
         {
             return self.HasOverrideCostMp ? self.OverrideCostMp : self.BaseCostMp;
+        }
+
+        public static void Tick(this SkillCardDeckComponent self, float deltaTime)
+        {
+            if (deltaTime <= 0f)
+            {
+                return;
+            }
+
+            self.TickMoveDrain(deltaTime);
+            self.TickCycle(deltaTime);
+            self.TickPassiveCards(deltaTime);
         }
 
         private static void ResetRuntimeState(this SkillCardDeckComponent self)
@@ -159,8 +201,12 @@ namespace ET.Client
             self.DrawCount = 0;
             self.HandLimit = 0;
             self.CycleSeconds = 0f;
+            self.CurrentCycleTime = 0f;
             self.MoveDrainMpPerSecond = 0f;
+            self.CurrentMoveDrainTime = 0f;
             self.PassiveTriggerIntervalSeconds = 0f;
+            self.PassiveTriggerElapsed = 0f;
+            self.IsMoveDraining = false;
             self.DrawPileCardIds.Clear();
             self.HandCardIds.Clear();
             self.AbilityCardIds.Clear();
@@ -170,6 +216,11 @@ namespace ET.Client
 
         private static bool TryDrawOne(this SkillCardDeckComponent self)
         {
+            if (self.DrawPileCardIds.Count <= 0)
+            {
+                self.ReshuffleDiscardIntoDrawPile();
+            }
+
             if (self.DrawPileCardIds.Count <= 0)
             {
                 return false;
@@ -183,7 +234,16 @@ namespace ET.Client
                 return false;
             }
 
-            self.MoveCardToZone(card, SkillCardZone.Hand);
+            SkillCardZone targetZone = self.HandCardIds.Count < self.HandLimit || self.HandLimit <= 0
+                ? SkillCardZone.Hand
+                : SkillCardZone.DiscardPile;
+            self.MoveCardToZone(card, targetZone);
+
+            if (targetZone == SkillCardZone.DiscardPile)
+            {
+                SkillDiagFileLogger.Log($"[CardDeck] Hand limit overflow to discard, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
+            }
+
             return true;
         }
 
@@ -219,6 +279,249 @@ namespace ET.Client
                 SkillCardZone.Destroyed => self.DestroyedCardIds,
                 _ => self.DrawPileCardIds,
             };
+        }
+
+        private static bool CanAffordCardCost(this SkillCardDeckComponent self, AbilitySystemComponent asc, float costMp)
+        {
+            var attributes = asc?.Attributes;
+            if (attributes == null)
+            {
+                return false;
+            }
+
+            if (costMp <= 0f)
+            {
+                return true;
+            }
+
+            float currentMp = attributes.GetCurrentValue(global::ET.NumericType.Mp);
+            return currentMp >= costMp;
+        }
+
+        private static bool PayCardCost(this SkillCardDeckComponent self, AbilitySystemComponent asc, float costMp)
+        {
+            return self.TryPayMp(asc, costMp, out _, out _);
+        }
+
+        private static bool TryPayMp(this SkillCardDeckComponent self, AbilitySystemComponent asc, float costMp, out float beforeMp, out float afterMp)
+        {
+            var attributes = asc?.Attributes;
+            beforeMp = 0f;
+            afterMp = 0f;
+            if (attributes == null)
+            {
+                return false;
+            }
+
+            beforeMp = attributes.GetCurrentValue(global::ET.NumericType.Mp);
+            afterMp = beforeMp;
+            if (costMp <= 0f)
+            {
+                return true;
+            }
+
+            if (beforeMp < costMp)
+            {
+                return false;
+            }
+
+            afterMp = UnityEngine.Mathf.Max(0f, beforeMp - costMp);
+            return attributes.SetCurrentValue(global::ET.NumericType.Mp, afterMp);
+        }
+
+        private static void TickMoveDrain(this SkillCardDeckComponent self, float deltaTime)
+        {
+            if (self.MoveDrainMpPerSecond <= 0f)
+            {
+                self.StopMoveDrain();
+                return;
+            }
+
+            SkillUnit skillUnit = self.GetParent<SkillUnit>();
+            global::ET.Unit unit = skillUnit?.Unit.As();
+            AbilitySystemComponent asc = skillUnit?.ASC.As();
+            if (unit == null || asc == null)
+            {
+                self.StopMoveDrain();
+                return;
+            }
+
+            if (!self.IsUnitMoving(unit))
+            {
+                self.StopMoveDrain();
+                return;
+            }
+
+            if (!self.IsMoveDraining)
+            {
+                self.IsMoveDraining = true;
+                self.CurrentMoveDrainTime = 0f;
+                SkillDiagFileLogger.Log($"[CardDeck] Move drain start, UnitConfigId={unit.ConfigId}, Rate={self.MoveDrainMpPerSecond}");
+            }
+
+            self.CurrentMoveDrainTime += deltaTime;
+            float drainMp = self.MoveDrainMpPerSecond * deltaTime;
+            if (drainMp <= 0f)
+            {
+                return;
+            }
+
+            if (!self.TryPayMp(asc, drainMp, out float beforeMp, out float afterMp))
+            {
+                return;
+            }
+
+            SkillDiagFileLogger.Log($"[CardDeck] Move drain tick, UnitConfigId={unit.ConfigId}, DeltaTime={deltaTime:F3}, DrainMp={drainMp:F3}, BeforeMp={beforeMp:F3}, AfterMp={afterMp:F3}, MoveElapsed={self.CurrentMoveDrainTime:F3}");
+        }
+
+        private static bool IsUnitMoving(this SkillCardDeckComponent self, global::ET.Unit unit)
+        {
+            global::ET.Move2DComponent move2DComponent = unit.GetComponent<global::ET.Move2DComponent>();
+            if (move2DComponent != null && !global::ET.Move2DComponentSystem.IsArrived(move2DComponent))
+            {
+                return true;
+            }
+
+            global::ET.MoveComponent moveComponent = unit.GetComponent<global::ET.MoveComponent>();
+            return moveComponent != null && !global::ET.MoveComponentSystem.IsArrived(moveComponent);
+        }
+
+        private static void StopMoveDrain(this SkillCardDeckComponent self)
+        {
+            if (!self.IsMoveDraining)
+            {
+                return;
+            }
+
+            SkillDiagFileLogger.Log($"[CardDeck] Move drain stop, Elapsed={self.CurrentMoveDrainTime:F3}");
+            self.IsMoveDraining = false;
+            self.CurrentMoveDrainTime = 0f;
+        }
+
+        private static void TickCycle(this SkillCardDeckComponent self, float deltaTime)
+        {
+            if (self.CycleSeconds <= 0f)
+            {
+                return;
+            }
+
+            self.CurrentCycleTime -= deltaTime;
+            if (self.CurrentCycleTime > 0f)
+            {
+                return;
+            }
+
+            self.ExecuteCycle();
+        }
+
+        private static void ExecuteCycle(this SkillCardDeckComponent self)
+        {
+            self.ResetMpToMax();
+            self.DiscardHandCards();
+            self.DrawCards(self.DrawCount);
+            self.CurrentCycleTime = self.CycleSeconds;
+            self.PassiveTriggerElapsed = 0f;
+            SkillDiagFileLogger.Log($"[CardDeck] Cycle reset, BattleCardConfigId={self.BattleCardConfigId}, DrawPile={self.DrawPileCardIds.Count}, Hand={self.HandCardIds.Count}, Discard={self.DiscardPileCardIds.Count}, Ability={self.AbilityCardIds.Count}");
+        }
+
+        private static void TickPassiveCards(this SkillCardDeckComponent self, float deltaTime)
+        {
+            if (self.AbilityCardIds.Count <= 0 || self.PassiveTriggerIntervalSeconds <= 0f)
+            {
+                return;
+            }
+
+            self.PassiveTriggerElapsed += deltaTime;
+            while (self.PassiveTriggerElapsed >= self.PassiveTriggerIntervalSeconds)
+            {
+                self.PassiveTriggerElapsed -= self.PassiveTriggerIntervalSeconds;
+                self.TriggerAbilityZoneCards();
+            }
+        }
+
+        private static void TriggerAbilityZoneCards(this SkillCardDeckComponent self)
+        {
+            AbilitySystemComponent asc = self.GetParent<SkillUnit>()?.ASC.As();
+            if (asc == null)
+            {
+                return;
+            }
+
+            List<long> abilityCardIds = new List<long>(self.AbilityCardIds);
+            foreach (long cardInstanceId in abilityCardIds)
+            {
+                SkillCardRuntime card = self.GetChild<SkillCardRuntime>(cardInstanceId);
+                GameplayAbilitySpec spec = card?.SpecRef.As();
+                if (card == null || spec == null)
+                {
+                    continue;
+                }
+
+                spec.SetActivatingCardInstance(cardInstanceId);
+                spec.ActivatingCardResolvedCostMp = 0f;
+                bool activated = asc.TryActivateAbility(spec);
+                if (activated)
+                {
+                    SkillDiagFileLogger.Log($"[CardDeck] Ability zone trigger success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
+                }
+            }
+        }
+
+        private static void DiscardHandCards(this SkillCardDeckComponent self)
+        {
+            List<long> handCardIds = new List<long>(self.HandCardIds);
+            foreach (long cardInstanceId in handCardIds)
+            {
+                SkillCardRuntime card = self.GetChild<SkillCardRuntime>(cardInstanceId);
+                if (card == null)
+                {
+                    continue;
+                }
+
+                self.MoveCardToZone(card, SkillCardZone.DiscardPile);
+            }
+        }
+
+        private static void ReshuffleDiscardIntoDrawPile(this SkillCardDeckComponent self)
+        {
+            if (self.DiscardPileCardIds.Count <= 0)
+            {
+                return;
+            }
+
+            List<long> shuffled = new List<long>(self.DiscardPileCardIds);
+            for (int i = shuffled.Count - 1; i > 0; i--)
+            {
+                int swapIndex = UnityEngine.Random.Range(0, i + 1);
+                (shuffled[i], shuffled[swapIndex]) = (shuffled[swapIndex], shuffled[i]);
+            }
+
+            self.DiscardPileCardIds.Clear();
+            foreach (long cardInstanceId in shuffled)
+            {
+                SkillCardRuntime card = self.GetChild<SkillCardRuntime>(cardInstanceId);
+                if (card == null)
+                {
+                    continue;
+                }
+
+                self.MoveCardToZone(card, SkillCardZone.DrawPile);
+            }
+
+            SkillDiagFileLogger.Log($"[CardDeck] Reshuffle discard into draw pile, Count={self.DrawPileCardIds.Count}");
+        }
+
+        private static void ResetMpToMax(this SkillCardDeckComponent self)
+        {
+            AbilitySystemComponent asc = self.GetParent<SkillUnit>()?.ASC.As();
+            var attributes = asc?.Attributes;
+            if (attributes == null)
+            {
+                return;
+            }
+
+            float maxMp = attributes.GetCurrentValue(global::ET.NumericType.MaxMp);
+            attributes.SetCurrentValue(global::ET.NumericType.Mp, maxMp);
         }
     }
 }

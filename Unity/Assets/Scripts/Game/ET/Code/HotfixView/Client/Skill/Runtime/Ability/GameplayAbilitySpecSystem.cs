@@ -190,6 +190,19 @@ namespace ET.Client
 
         public static bool CanAffordCost(this GameplayAbilitySpec self)
         {
+            if (self.ActivatingCardInstanceId > 0)
+            {
+                var ownerAsc = self.GetASC;
+                var attributes = ownerAsc?.Attributes;
+                if (attributes == null)
+                {
+                    return false;
+                }
+
+                float currentMp = attributes.GetCurrentValue(global::ET.NumericType.Mp);
+                return currentMp >= self.GetCurrentResolvedCardCostMp();
+            }
+
             if (string.IsNullOrEmpty(self.CostNodeGuid)) return true;
 
             var costNodeData = SkillDataCenter.Instance.GetNodeData(self.SkillId, self.CostNodeGuid) as CostEffectNodeData;
@@ -349,7 +362,10 @@ namespace ET.Client
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
             {
                 SkillDiagFileLogger.Log($"[Ability] Activate skillId={self.SkillId} abilityNodeGuid={self.AbilityNodeGuid} target={target?.InstanceId ?? 0}");
-                context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
+                if (self.ActivatingCardInstanceId <= 0)
+                {
+                    context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
+                }
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
             }
