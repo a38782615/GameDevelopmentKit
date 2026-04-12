@@ -77,6 +77,7 @@ namespace ET.Client
             card.TriggerType = skillConfig.CardTriggerType;
             self.DrawPileCardIds.Add(cardInstanceId);
             spec.BindCardInstance(cardInstanceId);
+            SkillDiagFileLogger.Log($"[CardDeck] Add card, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, Zone={card.Zone}, BaseCostMp={card.BaseCostMp:F3}, TriggerType={card.TriggerType}");
             return card;
         }
 
@@ -277,6 +278,7 @@ namespace ET.Client
                 ? SkillCardZone.Hand
                 : SkillCardZone.DiscardPile;
             self.MoveCardToZone(card, targetZone);
+            SkillDiagFileLogger.Log($"[CardDeck] Draw card, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, TargetZone={targetZone}, DrawPileRemaining={self.DrawPileCardIds.Count}, HandCount={self.HandCardIds.Count}, DiscardCount={self.DiscardPileCardIds.Count}");
 
             if (targetZone == SkillCardZone.DiscardPile)
             {
