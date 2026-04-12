@@ -23,6 +23,9 @@ public partial class Tables
     public DTHero DTHero { private set; get; }
     public DTMonster DTMonster { private set; get; }
     public DTGameAI DTGameAI { private set; get; }
+    public DTSkillCardRule DTSkillCardRule { private set; get; }
+    public DTBattleCardConfig DTBattleCardConfig { private set; get; }
+    public DTRelic DTRelic { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -64,6 +67,15 @@ public partial class Tables
         DTGameAI = new DTGameAI(() => loader("dtgameai"));
         loadTasks.Add(DTGameAI.LoadAsync());
         _tables.Add("DTGameAI", DTGameAI);
+        DTSkillCardRule = new DTSkillCardRule(() => loader("dtskillcardrule"));
+        loadTasks.Add(DTSkillCardRule.LoadAsync());
+        _tables.Add("DTSkillCardRule", DTSkillCardRule);
+        DTBattleCardConfig = new DTBattleCardConfig(() => loader("dtbattlecardconfig"));
+        loadTasks.Add(DTBattleCardConfig.LoadAsync());
+        _tables.Add("DTBattleCardConfig", DTBattleCardConfig);
+        DTRelic = new DTRelic(() => loader("dtrelic"));
+        loadTasks.Add(DTRelic.LoadAsync());
+        _tables.Add("DTRelic", DTRelic);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -84,6 +96,9 @@ public partial class Tables
         DTHero.ResolveRef(this);
         DTMonster.ResolveRef(this);
         DTGameAI.ResolveRef(this);
+        DTSkillCardRule.ResolveRef(this);
+        DTBattleCardConfig.ResolveRef(this);
+        DTRelic.ResolveRef(this);
         PostResolveRef();
     }
 

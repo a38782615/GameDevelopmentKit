@@ -10,6 +10,8 @@ namespace ET.Client
     {
         public EntityRef<Unit> Unit => this.GetParent<Unit>();
         public EntityRef<AbilitySystemComponent> ASC => GetComponent<AbilitySystemComponent>();
+        public EntityRef<SkillCardDeckComponent> SkillCardDeck => GetComponent<SkillCardDeckComponent>();
+        public EntityRef<RelicContainerComponent> RelicContainer => GetComponent<RelicContainerComponent>();
 
         public AbilitySystemComponent ownerASC => this.ASC.As();
     }

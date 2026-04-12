@@ -34,11 +34,11 @@ public sealed partial class DRMonster : Luban.BeanBase
     public DRUnitConfig UnitConfigId_Ref { private set; get; }
     public readonly string Name;
     /// <summary>
-    /// 主动技能
+    /// ActiveSkillIds
     /// </summary>
     public readonly int[] ActiveSkill;
     /// <summary>
-    /// 被动技能
+    /// PassiveSkillIds
     /// </summary>
     public readonly int[] PassiveSkill;
     public const int __ID__ = 1429977964;

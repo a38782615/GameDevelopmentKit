@@ -21,6 +21,8 @@ public sealed partial class DRHero : Luban.BeanBase
         Name = _buf.ReadString();
         {int __n0 = _buf.ReadSize(); ActiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); ActiveSkill[__index0] = __e0;}}
         {int __n0 = _buf.ReadSize(); PassiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); PassiveSkill[__index0] = __e0;}}
+        BattleCardConfigId = _buf.ReadInt();
+        BattleCardConfigId_Ref = null;
         PostInit();
     }
 
@@ -34,19 +36,25 @@ public sealed partial class DRHero : Luban.BeanBase
     public DRUnitConfig UnitConfigId_Ref { private set; get; }
     public readonly string Name;
     /// <summary>
-    /// 主动技能
+    /// ActiveSkillIds
     /// </summary>
     public readonly int[] ActiveSkill;
     /// <summary>
-    /// 被动技能
+    /// PassiveSkillIds
     /// </summary>
     public readonly int[] PassiveSkill;
+    /// <summary>
+    /// BattleCardConfigId
+    /// </summary>
+    public readonly int BattleCardConfigId;
+    public DRBattleCardConfig BattleCardConfigId_Ref { private set; get; }
     public const int __ID__ = 2024756648;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
     {
         UnitConfigId_Ref = tables.DTUnitConfig.GetOrDefault(UnitConfigId);
+        BattleCardConfigId_Ref = tables.DTBattleCardConfig.GetOrDefault(BattleCardConfigId);
         PostResolveRef();
     }
 
@@ -58,6 +66,7 @@ public sealed partial class DRHero : Luban.BeanBase
         + "Name:" + Name + ","
         + "ActiveSkill:" + Luban.StringUtil.CollectionToString(ActiveSkill) + ","
         + "PassiveSkill:" + Luban.StringUtil.CollectionToString(PassiveSkill) + ","
+        + "BattleCardConfigId:" + BattleCardConfigId + ","
         + "}";
     }
 

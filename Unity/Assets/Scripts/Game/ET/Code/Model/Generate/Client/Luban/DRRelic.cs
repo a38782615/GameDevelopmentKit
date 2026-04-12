@@ -11,47 +11,46 @@ using Luban;
 
 namespace ET
 {
-public sealed partial class DRSkill : Luban.BeanBase
+public sealed partial class DRRelic : Luban.BeanBase
 {
-    public DRSkill(ByteBuf _buf) 
+    public DRRelic(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
-        IsAct = _buf.ReadInt();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
-        IconPath = _buf.ReadString();
-        CardCopies = _buf.ReadInt();
-        CardBaseCostMp = _buf.ReadFloat();
-        CardTriggerType = _buf.ReadInt();
+        EffectType = _buf.ReadInt();
+        EffectValue = _buf.ReadFloat();
+        TriggerType = _buf.ReadInt();
         PostInit();
     }
 
-    public static DRSkill DeserializeDRSkill(ByteBuf _buf)
+    public static DRRelic DeserializeDRRelic(ByteBuf _buf)
     {
-        return new DRSkill(_buf);
+        return new DRRelic(_buf);
     }
 
     public readonly int Id;
-    public readonly int IsAct;
+    /// <summary>
+    /// Name
+    /// </summary>
     public readonly string Name;
+    /// <summary>
+    /// Desc
+    /// </summary>
     public readonly string Desc;
     /// <summary>
-    /// Icon
+    /// EffectType
     /// </summary>
-    public readonly string IconPath;
+    public readonly int EffectType;
     /// <summary>
-    /// CardCopies
+    /// EffectValue
     /// </summary>
-    public readonly int CardCopies;
+    public readonly float EffectValue;
     /// <summary>
-    /// BaseMpCost
+    /// TriggerType
     /// </summary>
-    public readonly float CardBaseCostMp;
-    /// <summary>
-    /// TriggerType 0Active 1Passive
-    /// </summary>
-    public readonly int CardTriggerType;
-    public const int __ID__ = -1646724509;
+    public readonly int TriggerType;
+    public const int __ID__ = -1647823995;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
@@ -63,13 +62,11 @@ public sealed partial class DRSkill : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
-        + "IsAct:" + IsAct + ","
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","
-        + "IconPath:" + IconPath + ","
-        + "CardCopies:" + CardCopies + ","
-        + "CardBaseCostMp:" + CardBaseCostMp + ","
-        + "CardTriggerType:" + CardTriggerType + ","
+        + "EffectType:" + EffectType + ","
+        + "EffectValue:" + EffectValue + ","
+        + "TriggerType:" + TriggerType + ","
         + "}";
     }
 
