@@ -5,7 +5,7 @@ namespace ET.Client
     [ComponentOf(typeof(UIComponent))]
     public class UIFormSkillComponent : UGFUIForm<MonoUIFormSkill>, IAwake, IUGFUIFormOnOpen, IUGFUIFormOnClose, IUGFUIFormOnUpdate
     {
-        public readonly List<EntityRef<GameplayAbilitySpec>> SkillSpecs = new List<EntityRef<GameplayAbilitySpec>>();
+        public readonly List<EntityRef<SkillCardRuntime>> SkillCards = new List<EntityRef<SkillCardRuntime>>();
         public readonly List<MonoUISkillItem> SkillItems = new List<MonoUISkillItem>();
         public readonly Dictionary<int, EntityRef<SkillCellComponent>> SkillCellMap = new Dictionary<int, EntityRef<SkillCellComponent>>();
         public float ListSyncLeftTime;

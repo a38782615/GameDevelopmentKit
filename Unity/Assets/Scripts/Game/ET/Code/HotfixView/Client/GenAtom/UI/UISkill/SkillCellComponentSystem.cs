@@ -8,6 +8,7 @@ namespace ET.Client
     [FriendOf(typeof(SkillCellComponent))]
     [FriendOf(typeof(UIFormSkillComponent))]
     [FriendOf(typeof(GameplayAbilitySpec))]
+    [FriendOf(typeof(SkillCardRuntime))]
     public static partial class SkillCellComponentSystem
     {
         private const float StateRefreshInterval = 0.1f;
@@ -64,20 +65,26 @@ namespace ET.Client
             self.ResetCooldownVisual();
         }
 
-        public static void Bind(this SkillCellComponent self, GameplayAbilitySpec spec)
+        public static void Bind(this SkillCellComponent self, SkillCardRuntime card)
         {
-            if (self.View == null || spec == null)
+            if (self.View == null || card == null)
             {
                 return;
             }
 
-            bool specChanged = self.Spec.As() != spec;
-            self.Spec = spec;
+            bool cardChanged = self.Card.As() != card;
+            self.Card = card;
 
-            if (specChanged)
+            GameplayAbilitySpec spec = card.SpecRef.As();
+            if (spec == null)
             {
-                global::ET.DRSkill skillData = self.GetSkillData(spec);
-                string skillLabel = skillData?.Name ?? spec.SkillId;
+                return;
+            }
+
+            if (cardChanged)
+            {
+                global::ET.DRSkill skillData = self.GetSkillData(card);
+                string skillLabel = skillData?.Name ?? card.SkillId.ToString();
                 string iconPath = skillData?.IconPath;
 
                 if (self.View.NameText != null)
@@ -95,13 +102,13 @@ namespace ET.Client
 
         private static void OnClickCastButton(this SkillCellComponent self)
         {
-            GameplayAbilitySpec spec = self.Spec.As();
-            if (spec == null)
+            SkillCardRuntime card = self.Card.As();
+            if (card == null)
             {
                 return;
             }
 
-            self.TryCastSkill(spec);
+            self.TryCastSkill(card);
             self.StateRefreshLeftTime = 0f;
             self.RefreshState();
         }
@@ -109,8 +116,10 @@ namespace ET.Client
         private static void RefreshState(this SkillCellComponent self)
         {
             MonoUISkillItem view = self.View;
-            GameplayAbilitySpec spec = self.Spec.As();
-            if (view == null || spec == null)
+            SkillCardRuntime card = self.Card.As();
+            GameplayAbilitySpec spec = card?.SpecRef.As();
+            AbilitySystemComponent asc = spec?.GetASC;
+            if (view == null || card == null || spec == null || asc == null)
             {
                 return;
             }
@@ -122,8 +131,13 @@ namespace ET.Client
 
             SkillCooldownInfo cooldownInfo = spec.GetCooldownInfo();
             self.RefreshCooldownVisual(cooldownInfo);
-            bool canCast = !spec.IsActive && !cooldownInfo.IsOnCooldown && spec.CanAffordCost();
-            string stateText = self.GetStateText(spec, cooldownInfo);
+            float currentMp = asc.Attributes?.GetCurrentValue(global::ET.NumericType.Mp) ?? 0f;
+            float resolvedCostMp = card.GetResolvedCostMp();
+            bool canCast = card.Zone == SkillCardZone.Hand &&
+                !spec.IsActive &&
+                !cooldownInfo.IsOnCooldown &&
+                currentMp >= resolvedCostMp;
+            string stateText = self.GetStateText(card, spec, cooldownInfo, currentMp, resolvedCostMp);
 
             if (!self.StateInitialized || self.CachedCanCast != canCast)
             {
@@ -181,24 +195,36 @@ namespace ET.Client
 #endif
         }
 
-        private static string GetStateText(this SkillCellComponent self, GameplayAbilitySpec spec, SkillCooldownInfo cooldownInfo)
+        private static string GetStateText(this SkillCellComponent self, SkillCardRuntime card, GameplayAbilitySpec spec, SkillCooldownInfo cooldownInfo, float currentMp, float resolvedCostMp)
         {
+            string triggerText = card.TriggerType == 1 ? "被动" : "主动";
+            string resourceText = $"耗能 {resolvedCostMp:0.#} | MP {currentMp:0.#}";
             if (spec.IsActive)
             {
-                return "Casting";
+                return $"{triggerText}\n{resourceText}\n施放中";
             }
 
             if (cooldownInfo.IsChargeCooldown && cooldownInfo.CurrentCharges < cooldownInfo.MaxCharges)
             {
-                return $"{cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
+                return $"{triggerText}\n{resourceText}\n充能 {cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
             }
 
             if (cooldownInfo.IsOnCooldown)
             {
-                return $"{cooldownInfo.RemainingTime:0.0}";
+                return $"{triggerText}\n{resourceText}\n冷却 {cooldownInfo.RemainingTime:0.0}";
             }
 
-            return string.Empty;
+            if (card.Zone != SkillCardZone.Hand)
+            {
+                return $"{triggerText}\n{resourceText}\n{self.GetZoneText(card.Zone)}";
+            }
+
+            if (currentMp < resolvedCostMp)
+            {
+                return $"{triggerText}\n{resourceText}\n法力不足";
+            }
+
+            return $"{triggerText}\n{resourceText}";
         }
 
         private static void RefreshCooldownVisual(this SkillCellComponent self, SkillCooldownInfo cooldownInfo)
@@ -280,20 +306,20 @@ namespace ET.Client
             self.CachedCooldownFillAmount = 0f;
         }
 
-        private static bool TryCastSkill(this SkillCellComponent self, GameplayAbilitySpec spec)
+        private static bool TryCastSkill(this SkillCellComponent self, SkillCardRuntime card)
         {
-            AbilitySystemComponent asc = spec?.GetASC;
-            if (spec == null || asc == null)
+            SkillCardDeckComponent deck = card?.GetParent<SkillCardDeckComponent>();
+            if (card == null || deck == null)
             {
                 return false;
             }
 
-            return asc.TryActivateAbility(spec);
+            return deck.TryCastCard(card.CardInstanceId);
         }
 
-        private static global::ET.DRSkill GetSkillData(this SkillCellComponent self, GameplayAbilitySpec spec)
+        private static global::ET.DRSkill GetSkillData(this SkillCellComponent self, SkillCardRuntime card)
         {
-            int skillId = spec.GetSkillNumericId();
+            int skillId = card?.SkillId ?? 0;
             if (skillId <= 0)
             {
                 return null;
@@ -339,6 +365,19 @@ namespace ET.Client
 
             string iconName = Path.GetFileNameWithoutExtension(normalizedPath);
             return $"Assets/Res/UI/UISprite/SkillIcon/{iconName}.png";
+        }
+
+        private static string GetZoneText(this SkillCellComponent self, SkillCardZone zone)
+        {
+            return zone switch
+            {
+                SkillCardZone.DrawPile => "抽牌区",
+                SkillCardZone.Hand => "出牌区",
+                SkillCardZone.Ability => "能力区",
+                SkillCardZone.DiscardPile => "弃牌区",
+                SkillCardZone.Destroyed => "销毁区",
+                _ => string.Empty,
+            };
         }
     }
 }

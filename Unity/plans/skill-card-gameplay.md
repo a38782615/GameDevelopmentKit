@@ -374,7 +374,7 @@
   - 第一版建议：
     - 卡牌消耗作为唯一 `MP` 扣费入口
     - 若技能图里已有 `CostEffectNodeData` 扣 `MP`，则需要禁用或迁移，避免双扣
-- [ ] C3. 实现单卡实例消耗覆盖。
+- [x] C3. 实现单卡实例消耗覆盖。
   - 覆盖值只挂卡实例
   - 同技能其他副本保持原值
   - 弃牌/重抽后是否保留覆盖值，第一版建议“保留到该卡实例离开本场战斗”
@@ -396,14 +396,14 @@
   - 被动技能卡打出后进入能力区，不在普通轮转时立即进入弃牌区。
   - 能力区中的被动技能卡按 `PassiveTriggerIntervalSeconds` 周期触发。
   - 需要明确轮转时能力区是否清空；在未新增更多规则前，第一版建议能力区卡独立于出牌区轮转。
-- [ ] D3. 改造技能 UI 数据源。
+- [x] D3. 改造技能 UI 数据源。
   - 目标文件：
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/GenAtom/UI/UISkill/UIFormSkillComponent.cs`
     - `Assets/Scripts/Game/ET/Code/HotfixView/Client/GenAtom/UI/UISkill/UIFormSkillComponentSystem.cs`
   - 改动方向：
     - `SkillSpecs` 改成卡牌视图列表
     - 保留对 `Spec` 的引用，仅用于展示技能名、图标和实际施法
-- [ ] D4. 改造单格 UI。
+- [x] D4. 改造单格 UI。
   - 目标文件：
     - `Assets/Scripts/Game/ET/Code/HotfixView/Client/GenAtom/UI/UISkill/SkillCellComponentSystem.cs`
   - 改动方向：

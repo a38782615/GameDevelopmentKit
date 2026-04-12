@@ -167,6 +167,45 @@ namespace ET.Client
             return self.HasOverrideCostMp ? self.OverrideCostMp : self.BaseCostMp;
         }
 
+        public static void ResetCostOverride(this SkillCardRuntime self, string source = null)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            float beforeCost = self.GetResolvedCostMp();
+            self.HasOverrideCostMp = false;
+            self.OverrideCostMp = self.BaseCostMp;
+            float afterCost = self.GetResolvedCostMp();
+            SkillDiagFileLogger.Log($"[CardDeck] Card cost override reset, CardInstanceId={self.CardInstanceId}, SkillId={self.SkillId}, Source={source ?? "Unknown"}, BeforeCost={beforeCost:F3}, AfterCost={afterCost:F3}");
+        }
+
+        public static void SetOverrideCostMp(this SkillCardRuntime self, float overrideCostMp, string source = null)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            float beforeCost = self.GetResolvedCostMp();
+            self.HasOverrideCostMp = true;
+            self.OverrideCostMp = UnityEngine.Mathf.Max(0f, overrideCostMp);
+            float afterCost = self.GetResolvedCostMp();
+            SkillDiagFileLogger.Log($"[CardDeck] Card cost override set, CardInstanceId={self.CardInstanceId}, SkillId={self.SkillId}, Source={source ?? "Unknown"}, BeforeCost={beforeCost:F3}, AfterCost={afterCost:F3}");
+        }
+
+        public static void AddOverrideCostDeltaMp(this SkillCardRuntime self, float deltaMp, string source = null)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            float resolvedCost = self.GetResolvedCostMp();
+            self.SetOverrideCostMp(resolvedCost + deltaMp, source);
+        }
+
         public static void Tick(this SkillCardDeckComponent self, float deltaTime)
         {
             if (deltaTime <= 0f)

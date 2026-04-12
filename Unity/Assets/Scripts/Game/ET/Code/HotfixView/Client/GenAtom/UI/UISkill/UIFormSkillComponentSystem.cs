@@ -10,6 +10,8 @@ namespace ET.Client
     [EntitySystemOf(typeof(UIFormSkillComponent))]
     [FriendOf(typeof(UIFormSkillComponent))]
     [FriendOf(typeof(GameplayAbilitySpec))]
+    [FriendOf(typeof(SkillCardDeckComponent))]
+    [FriendOf(typeof(SkillCardRuntime))]
     [FriendOf(typeof(GenMap))]
     public static partial class UIFormSkillComponentSystem
     {
@@ -70,7 +72,7 @@ namespace ET.Client
 
             self.DestroySkillItems();
             self.DisposeSkillCells();
-            self.SkillSpecs.Clear();
+            self.SkillCards.Clear();
         }
 
         [UGFUIFormSystem]
@@ -96,27 +98,25 @@ namespace ET.Client
 
         private static void SyncSkillList(this UIFormSkillComponent self)
         {
-            Unit unit = UnitHelper.GetMyUnitFromCurrentScene(self.Scene());
-            AbilitySystemComponent asc = unit?.GetComponent<SkillUnit>()?.ASC.As();
-            var grantedAbilities = asc?.Abilities?.GetGrantedAbilities();
-            if (!self.IsSkillListChanged(grantedAbilities))
+            SkillCardDeckComponent deck = self.GetPlayerCardDeck();
+            if (!self.IsSkillListChanged(deck))
             {
                 self.RefreshSkillLayout();
                 return;
             }
 
-            self.SkillSpecs.Clear();
-            if (grantedAbilities != null)
+            self.SkillCards.Clear();
+            if (deck != null)
             {
-                foreach (EntityRef<GameplayAbilitySpec> abilityRef in grantedAbilities)
+                foreach (long cardInstanceId in deck.HandCardIds)
                 {
-                    GameplayAbilitySpec spec = abilityRef.As();
-                    if (spec == null || !self.CanDisplaySkill(spec))
+                    SkillCardRuntime card = deck.GetChild<SkillCardRuntime>(cardInstanceId);
+                    if (card == null)
                     {
                         continue;
                     }
 
-                    self.SkillSpecs.Add(spec);
+                    self.SkillCards.Add(card);
                 }
             }
 
@@ -168,63 +168,50 @@ namespace ET.Client
             }
         }
 
-        private static bool IsSkillListChanged(this UIFormSkillComponent self, System.Collections.Generic.IReadOnlyList<EntityRef<GameplayAbilitySpec>> grantedAbilities)
+        private static bool IsSkillListChanged(this UIFormSkillComponent self, SkillCardDeckComponent deck)
         {
-            int visibleIndex = 0;
-            if (grantedAbilities != null)
+            if (deck == null)
             {
-                foreach (EntityRef<GameplayAbilitySpec> abilityRef in grantedAbilities)
+                return self.SkillCards.Count > 0;
+            }
+
+            if (deck.HandCardIds.Count != self.SkillCards.Count)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < deck.HandCardIds.Count; i++)
+            {
+                SkillCardRuntime card = deck.GetChild<SkillCardRuntime>(deck.HandCardIds[i]);
+                if (card == null || self.SkillCards[i].As() != card)
                 {
-                    GameplayAbilitySpec spec = abilityRef.As();
-                    if (spec == null || !self.CanDisplaySkill(spec))
-                    {
-                        continue;
-                    }
-
-                    if (visibleIndex >= self.SkillSpecs.Count || self.SkillSpecs[visibleIndex].As() != spec)
-                    {
-                        return true;
-                    }
-
-                    ++visibleIndex;
+                    return true;
                 }
             }
 
-            return visibleIndex != self.SkillSpecs.Count;
-        }
-
-        private static bool CanDisplaySkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
-        {
-            AbilityNodeData abilityNodeData = spec.GetAbilityNodeData();
-            if (abilityNodeData == null)
-            {
-                return false;
-            }
-
-            return abilityNodeData.eventOutputPorts == null || abilityNodeData.eventOutputPorts.Count == 0;
+            return false;
         }
 
         private static bool TryCastSkillAtIndex(this UIFormSkillComponent self, int index)
         {
-            if (index < 0 || index >= self.SkillSpecs.Count)
+            if (index < 0 || index >= self.SkillCards.Count)
             {
                 return false;
             }
 
-            GameplayAbilitySpec spec = self.SkillSpecs[index].As();
-            return self.TryCastSkill(spec);
+            SkillCardRuntime card = self.SkillCards[index].As();
+            return self.TryCastSkill(card);
         }
 
-        public static bool TryCastSkill(this UIFormSkillComponent self, GameplayAbilitySpec spec)
+        public static bool TryCastSkill(this UIFormSkillComponent self, SkillCardRuntime card)
         {
-            AbilitySystemComponent asc = spec?.GetASC;
-            if (spec == null || asc == null)
+            SkillCardDeckComponent deck = card?.GetParent<SkillCardDeckComponent>();
+            if (card == null || deck == null)
             {
                 return false;
             }
 
-            bool success = asc.TryActivateAbility(spec);
-            return success;
+            return deck.TryCastCard(card.CardInstanceId);
         }
 
 #if UNITY_EDITOR
@@ -239,7 +226,7 @@ namespace ET.Client
                 }
 
                 self.SyncSkillList();
-                if (self.SkillSpecs.Count > 0)
+                if (self.SkillCards.Count > 0)
                 {
                     self.TryStartEditorSmokeTest();
                     await UniTask.DelayFrame(60);
@@ -265,21 +252,22 @@ namespace ET.Client
                 return;
             }
 
-            if (self.SkillSpecs.Count <= 0)
+            if (self.SkillCards.Count <= 0)
             {
                 return;
             }
 
             self.EditorSmokeTriggered = true;
-            if (self.SkillSpecs.Count <= 0)
+            if (self.SkillCards.Count <= 0)
             {
                 return;
             }
 
-            GameplayAbilitySpec spec = self.SkillSpecs[0].As();
-            global::ET.DRSkill skillData = self.GetSkillData(spec);
+            SkillCardRuntime card = self.SkillCards[0].As();
+            GameplayAbilitySpec spec = card?.SpecRef.As();
+            global::ET.DRSkill skillData = self.GetSkillData(card);
             self.EditorSmokeSpec = spec;
-            self.EditorSmokeSkillLabel = skillData?.Name ?? spec?.SkillId ?? "Unknown";
+            self.EditorSmokeSkillLabel = skillData?.Name ?? card?.SkillId.ToString() ?? "Unknown";
 
             string beforeState = self.GetEditorDebugState(spec);
             bool success = self.TryCastSkillAtIndex(0);
@@ -383,7 +371,7 @@ namespace ET.Client
                 return;
             }
 
-            self.EnsureSkillItemCount(self.SkillSpecs.Count);
+            self.EnsureSkillItemCount(self.SkillCards.Count);
             for (int i = 0; i < self.SkillItems.Count; ++i)
             {
                 MonoUISkillItem item = self.SkillItems[i];
@@ -393,14 +381,14 @@ namespace ET.Client
                 }
 
                 item.transform.SetSiblingIndex(i + 1);
-                GameplayAbilitySpec spec = self.SkillSpecs[i].As();
-                if (spec == null)
+                SkillCardRuntime card = self.SkillCards[i].As();
+                if (card == null)
                 {
                     continue;
                 }
 
                 SkillCellComponent cell = self.GetOrCreateSkillCell(item);
-                cell.Bind(spec);
+                cell.Bind(card);
             }
 
             self.RefreshSkillLayout();
@@ -539,15 +527,21 @@ namespace ET.Client
             return Mathf.Max(1, columns);
         }
 
-        private static global::ET.DRSkill GetSkillData(this UIFormSkillComponent self, GameplayAbilitySpec spec)
+        private static global::ET.DRSkill GetSkillData(this UIFormSkillComponent self, SkillCardRuntime card)
         {
-            int skillId = spec.GetSkillNumericId();
+            int skillId = card?.SkillId ?? 0;
             if (skillId <= 0)
             {
                 return null;
             }
 
             return Tables.Instance.DTSkill.GetOrDefault(skillId);
+        }
+
+        private static SkillCardDeckComponent GetPlayerCardDeck(this UIFormSkillComponent self)
+        {
+            Unit unit = UnitHelper.GetMyUnitFromCurrentScene(self.Scene());
+            return unit?.GetComponent<SkillUnit>()?.SkillCardDeck.As();
         }
 
         private static GenMap GetGenMap(this UIFormSkillComponent self)
