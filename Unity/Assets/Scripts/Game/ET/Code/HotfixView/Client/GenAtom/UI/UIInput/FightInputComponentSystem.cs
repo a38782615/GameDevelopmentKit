@@ -10,8 +10,8 @@ namespace ET.Client
     public static partial class FightInputComponentSystem
     {
         private const float MoveInputDeadZone = 0.01f;
-        private const float KeyboardMoveStepSeconds = 0.2f;
-        private const float KeyboardMoveMinStepDistance = 0.75f;
+        private const float KeyboardMoveStepSeconds = 0.35f;
+        private const float KeyboardMoveMinStepDistance = 1.1f;
         private const float KeyboardMoveDirectionReuseDot = 0.999f;
 
         [EntitySystem]
