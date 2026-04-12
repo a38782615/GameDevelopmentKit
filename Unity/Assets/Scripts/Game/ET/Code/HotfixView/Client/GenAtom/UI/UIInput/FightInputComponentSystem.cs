@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,6 +9,9 @@ namespace ET.Client
     [FriendOf(typeof(FightInputComponent))]
     public static partial class FightInputComponentSystem
     {
+        private const float MoveInputDeadZone = 0.01f;
+        private const float KeyboardMoveTargetDistance = 1000f;
+
         [EntitySystem]
         private static void Awake(this FightInputComponent self)
         {
@@ -29,6 +33,7 @@ namespace ET.Client
             self.MoveValue = self.InputControls.rpg.Move.ReadValue<Vector2>();
             self.RefreshPointerPosition();
             self.PublishPendingScreenClick();
+            self.UpdateKeyboardMove();
         }
 
         [EntitySystem]
@@ -38,11 +43,13 @@ namespace ET.Client
             self.Callbacks = null;
             self.InputControls = null;
             self.MoveValue = Vector2.zero;
+            self.LastKeyboardMoveDirection = Vector2.zero;
             self.PointerScreenPosition = Vector2.zero;
             self.FirePressed = false;
             self.CancelPressed = false;
             self.RotateRPressed = false;
             self.PendingScreenClick = false;
+            self.IsKeyboardMoving = false;
             self.FireTriggeredFrame = -1;
             self.CancelTriggeredFrame = -1;
             self.RotateRTriggeredFrame = -1;
@@ -79,11 +86,14 @@ namespace ET.Client
             }
 
             self.InputControls?.rpg.Disable();
+            self.StopKeyboardMove();
             self.MoveValue = Vector2.zero;
+            self.LastKeyboardMoveDirection = Vector2.zero;
             self.FirePressed = false;
             self.CancelPressed = false;
             self.RotateRPressed = false;
             self.PendingScreenClick = false;
+            self.IsKeyboardMoving = false;
             self.FireTriggeredFrame = -1;
             self.CancelTriggeredFrame = -1;
             self.RotateRTriggeredFrame = -1;
@@ -151,6 +161,66 @@ namespace ET.Client
             }
 
             return currentEventSystem.IsPointerOverGameObject();
+        }
+
+        private static void UpdateKeyboardMove(this FightInputComponent self)
+        {
+            Scene scene = self.GetParent<Scene>();
+            Unit unit = scene == null || scene.IsDisposed ? null : UnitHelper.GetMyUnitFromCurrentScene(scene);
+            if (unit == null || unit.IsDisposed || !unit.IsMoveAllowed())
+            {
+                self.StopKeyboardMove(unit);
+                return;
+            }
+
+            Vector2 moveInput = self.MoveValue;
+            float2 planarDirection = new float2(moveInput.x, moveInput.y);
+            if (math.lengthsq(planarDirection) <= MoveInputDeadZone * MoveInputDeadZone)
+            {
+                self.StopKeyboardMove(unit);
+                return;
+            }
+
+            float2 normalizedDirection = math.normalize(planarDirection);
+            Vector2 normalizedDirectionVector2 = new Vector2(normalizedDirection.x, normalizedDirection.y);
+            if (self.IsKeyboardMoving && Vector2.Dot(self.LastKeyboardMoveDirection, normalizedDirectionVector2) >= 0.999f)
+            {
+                return;
+            }
+
+            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
+            float speed = attributeComponent?.GetCurrentValue(global::ET.NumericType.Speed) ?? 0f;
+            if (speed <= 0f)
+            {
+                self.StopKeyboardMove(unit);
+                return;
+            }
+
+            float2 currentPosition = unit.Position.ToPlanar();
+            float2 targetPosition = currentPosition + normalizedDirection * KeyboardMoveTargetDistance;
+            using ListComponent<float3> path = ListComponent<float3>.Create();
+            path.Add(currentPosition.ToModePosition());
+            path.Add(targetPosition.ToModePosition());
+            unit.MoveAlongPathAsync(path, speed).Forget();
+            self.LastKeyboardMoveDirection = normalizedDirectionVector2;
+            self.IsKeyboardMoving = true;
+        }
+
+        private static void StopKeyboardMove(this FightInputComponent self, Unit unit = null)
+        {
+            if (!self.IsKeyboardMoving)
+            {
+                return;
+            }
+
+            unit ??= self.GetParent<Scene>() == null ? null : UnitHelper.GetMyUnitFromCurrentScene(self.GetParent<Scene>());
+            if (unit != null && !unit.IsDisposed)
+            {
+                unit.StopMove(true);
+            }
+
+            self.IsKeyboardMoving = false;
+            self.LastKeyboardMoveDirection = Vector2.zero;
         }
     }
 }
