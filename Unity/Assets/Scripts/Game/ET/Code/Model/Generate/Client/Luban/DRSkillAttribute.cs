@@ -17,6 +17,7 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
     {
         Id = _buf.ReadInt();
         Id_Ref = null;
+        Desc = _buf.ReadString();
         {int n0 = _buf.ReadSize(); Attrs = new System.Collections.Generic.Dictionary<string, int>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { string _k0;  _k0 = _buf.ReadString(); int _v0;  _v0 = _buf.ReadInt();     Attrs.Add(_k0, _v0);}}
         PostInit();
     }
@@ -29,7 +30,11 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
     public readonly int Id;
     public DRSkill Id_Ref { private set; get; }
     /// <summary>
-    /// AttrMap
+    /// 描述
+    /// </summary>
+    public readonly string Desc;
+    /// <summary>
+    /// 属性映射
     /// </summary>
     public readonly System.Collections.Generic.Dictionary<string, int> Attrs;
     public const int __ID__ = 507563897;
@@ -45,6 +50,7 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "Desc:" + Desc + ","
         + "Attrs:" + Luban.StringUtil.CollectionToString(Attrs) + ","
         + "}";
     }
