@@ -12,6 +12,9 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.TimeEffectRuntimeComponent))]
     [FriendOfAttribute(typeof(ET.Client.TimeCueRuntimeComponent))]
     [FriendOfAttribute(typeof(ET.Client.CooldownEffectSpec))]
+    [FriendOf(typeof(SkillCardDeckComponent))]
+    [FriendOf(typeof(SkillCardRuntime))]
+    [FriendOf(typeof(SpecExecutionContext))]
 
     public static partial class GameplayAbilitySpecSystem
     {
@@ -343,6 +346,7 @@ namespace ET.Client
             SpecExecutionContext context = self.AddChild<SpecExecutionContext>();
             context.SetCaster(asc);
             context.SetAbilityLevel(self.Level);
+            self.ApplyActivatingCardAttributeOverrides(context);
             if (target != null)
             {
                 context.SetMainTarget(target);
@@ -678,6 +682,29 @@ namespace ET.Client
         public static float GetCurrentResolvedCardCostMp(this GameplayAbilitySpec self)
         {
             return self?.ActivatingCardResolvedCostMp ?? 0f;
+        }
+
+        private static void ApplyActivatingCardAttributeOverrides(this GameplayAbilitySpec self, SpecExecutionContext context)
+        {
+            if (self == null || context == null || self.ActivatingCardInstanceId <= 0)
+            {
+                return;
+            }
+
+            AbilitySystemComponent asc = self.GetASC;
+            SkillCardDeckComponent deck = asc?.GetParent<SkillUnit>()?.SkillCardDeck.As();
+            SkillCardRuntime card = deck?.GetChild<SkillCardRuntime>(self.ActivatingCardInstanceId);
+            if (card?.AttributeOverrides == null || card.AttributeOverrides.Count <= 0)
+            {
+                return;
+            }
+
+            foreach ((int numericType, float value) in card.AttributeOverrides)
+            {
+                context.CasterAttributeOverrides[numericType] = value;
+            }
+
+            SkillDiagFileLogger.Log($"[Ability] Apply card attribute overrides, SkillId={self.GetSkillNumericId()}, CardInstanceId={card.CardInstanceId}, OverrideCount={context.CasterAttributeOverrides.Count}");
         }
     }
 }

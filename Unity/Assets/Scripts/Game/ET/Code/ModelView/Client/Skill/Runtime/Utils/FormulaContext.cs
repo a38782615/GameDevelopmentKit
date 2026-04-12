@@ -25,6 +25,11 @@ namespace ET.Client
         public Dictionary<string, float> Variables { get; set; }
 
         /// <summary>
+        /// 当前施法卡牌对施法者属性的临时覆盖值。
+        /// </summary>
+        public Dictionary<int, float> CasterAttributeOverrides { get; set; }
+
+        /// <summary>
         /// 堆叠层数
         /// </summary>
         public int StackCount { get; set; } = 1;
@@ -45,6 +50,7 @@ namespace ET.Client
             {
                 CasterAttributes = execContext?.Caster.As()?.Attributes,
                 TargetAttributes = target?.Attributes ?? execContext?.MainTarget.As()?.Attributes,
+                CasterAttributeOverrides = execContext?.CasterAttributeOverrides,
                 Level = execContext?.AbilityLevel ?? 1,
                 StackCount = execContext?.StackCount ?? 1
             };

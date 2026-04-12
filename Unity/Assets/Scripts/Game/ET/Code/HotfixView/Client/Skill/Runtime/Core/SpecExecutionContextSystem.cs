@@ -27,6 +27,7 @@ namespace ET.Client
             self.Targets.Clear();
             self.AbilityLevel = 1;
             self.StackCount = 1;
+            self.CasterAttributeOverrides.Clear();
             self.CustomData.Clear();
         }
 
@@ -224,6 +225,10 @@ namespace ET.Client
             newContext.AbilityLevel = self.AbilityLevel;
             newContext.StackCount = self.StackCount;
             newContext.Targets.AddRange(self.Targets);
+            foreach ((int numericType, float value) in self.CasterAttributeOverrides)
+            {
+                newContext.CasterAttributeOverrides[numericType] = value;
+            }
 
             foreach (var kvp in self.CustomData)
                 newContext.CustomData[kvp.Key] = kvp.Value;
@@ -257,6 +262,10 @@ namespace ET.Client
             effectContext.AbilityLevel = self.AbilityLevel;
             effectContext.StackCount = self.StackCount;
             effectContext.Targets.AddRange(self.Targets);
+            foreach ((int numericType, float value) in self.CasterAttributeOverrides)
+            {
+                effectContext.CasterAttributeOverrides[numericType] = value;
+            }
 
             foreach ((string key, object value) in self.CustomData)
             {
@@ -369,6 +378,7 @@ namespace ET.Client
             {
                 SourceAttributes = self.GetCaster()?.Attributes,
                 TargetAttributes = target?.Attributes,
+                SourceAttributeOverrides = self.CasterAttributeOverrides,
                 EffectLevel = self.AbilityLevel
             };
         }
@@ -498,6 +508,10 @@ namespace ET.Client
             if (caster.Attributes != null)
             {
                 effectSpec.SnapshotValues = caster.Attributes.CreateSnapshot();
+                foreach ((int numericType, float value) in self.CasterAttributeOverrides)
+                {
+                    effectSpec.SnapshotValues[numericType] = value;
+                }
             }
 
             effectSpec.Duration = FormulaEvaluator.EvaluateSimple(effectData?.duration, 0f);

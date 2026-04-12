@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ET.Client
 {
     [ChildOf(typeof(SkillCardDeckComponent))]
@@ -11,5 +13,6 @@ namespace ET.Client
         public float OverrideCostMp;
         public bool HasOverrideCostMp;
         public int TriggerType;
+        public Dictionary<int, float> AttributeOverrides = new Dictionary<int, float>();
     }
 }

@@ -230,11 +230,17 @@ namespace ET.Client
         public global::ET.AttributeComponent SourceAttributes { get; set; }
         public global::ET.AttributeComponent TargetAttributes { get; set; }
         public Dictionary<int, float> SnapshotValues { get; set; }
+        public Dictionary<int, float> SourceAttributeOverrides { get; set; }
         public int EffectLevel { get; set; } = 1;
         public Dictionary<string, object> CustomData { get; set; }
 
         public float? GetSourceAttribute(int attrType)
         {
+            if (SourceAttributeOverrides != null && SourceAttributeOverrides.TryGetValue(attrType, out float overrideValue))
+            {
+                return overrideValue;
+            }
+
             return SourceAttributes?.GetCurrentValue(attrType);
         }
 

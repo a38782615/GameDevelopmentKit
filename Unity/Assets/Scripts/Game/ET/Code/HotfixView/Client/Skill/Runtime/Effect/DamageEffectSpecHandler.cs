@@ -88,13 +88,9 @@ namespace ET.Client
                     return nodeData.damageFixedValue;
 
                 case ModifierMagnitudeSourceType.Formula:
-                    return FormulaEvaluator.Evaluate(nodeData.damageFormula, new FormulaContext
-                    {
-                        CasterAttributes = context?.GetCaster()?.Attributes,
-                        TargetAttributes = target.Attributes,
-                        Level = Spec.Level,
-                        StackCount = context?.GetStackCount() ?? 1
-                    });
+                    FormulaContext formulaContext = FormulaContext.FromExecutionContext(context, target);
+                    formulaContext.Level = Spec.Level;
+                    return FormulaEvaluator.Evaluate(nodeData.damageFormula, formulaContext);
 
                 case ModifierMagnitudeSourceType.SetByCaller:
                     return Spec.GetSetByCallerValue(nodeData.damageSetByCallerKey, 0f);
@@ -109,6 +105,7 @@ namespace ET.Client
 
         private float CalculateMMCDamage(DamageEffectNodeData nodeData, AbilitySystemComponent target)
         {
+            SpecExecutionContext context = GetContext();
             if (nodeData.damageMMCType == MMCType.AttributeBased)
             {
                 float? attrValue = null;
@@ -125,7 +122,7 @@ namespace ET.Client
                 {
                     if (nodeData.damageMMCAttributeSource == MMCAttributeSource.Source)
                     {
-                        attrValue = Spec.Source.As()?.Attributes?.GetCurrentValue(nodeData.damageMMCCaptureAttribute);
+                        attrValue = context?.CreateModifierContext(target)?.GetSourceAttribute(nodeData.damageMMCCaptureAttribute);
                     }
                     else
                     {

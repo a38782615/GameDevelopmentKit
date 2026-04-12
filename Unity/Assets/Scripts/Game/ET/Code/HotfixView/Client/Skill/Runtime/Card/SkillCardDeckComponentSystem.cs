@@ -76,6 +76,7 @@ namespace ET.Client
             card.OverrideCostMp = skillConfig.CardBaseCostMp;
             card.HasOverrideCostMp = false;
             card.TriggerType = skillConfig.CardTriggerType;
+            self.ApplySkillAttributeConfig(card);
             self.DrawPileCardIds.Add(cardInstanceId);
             spec.BindCardInstance(cardInstanceId);
             SkillDiagFileLogger.Log($"[CardDeck] Add card, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, Zone={card.Zone}, BaseCostMp={card.BaseCostMp:F3}, TriggerType={card.TriggerType}");
@@ -206,6 +207,11 @@ namespace ET.Client
 
             float resolvedCost = self.GetResolvedCostMp();
             self.SetOverrideCostMp(resolvedCost + deltaMp, source);
+        }
+
+        public static SkillCardRuntime GetCard(this SkillCardDeckComponent self, long cardInstanceId)
+        {
+            return self?.GetChild<SkillCardRuntime>(cardInstanceId);
         }
 
         public static void Tick(this SkillCardDeckComponent self, float deltaTime)
@@ -593,6 +599,38 @@ namespace ET.Client
             float targetMp = self.InitMp > 0f ? UnityEngine.Mathf.Min(self.InitMp, maxMp) : maxMp;
             attributes.SetCurrentValue(global::ET.NumericType.Mp, targetMp);
             SkillDiagFileLogger.Log($"[CardDeck] Initialize MP, BattleCardConfigId={self.BattleCardConfigId}, InitMp={self.InitMp:F3}, MaxMp={maxMp:F3}, AppliedMp={targetMp:F3}");
+        }
+
+        private static void ApplySkillAttributeConfig(this SkillCardDeckComponent self, SkillCardRuntime card)
+        {
+            if (card == null)
+            {
+                return;
+            }
+
+            card.AttributeOverrides.Clear();
+
+            DRSkillAttribute skillAttributeConfig = Tables.Instance.DTSkillAttribute.GetOrDefault(card.SkillId);
+            if (skillAttributeConfig?.Attrs == null || skillAttributeConfig.Attrs.Count <= 0)
+            {
+                return;
+            }
+
+            foreach ((string key, int value) in skillAttributeConfig.Attrs)
+            {
+                if (!global::ET.NumericType.TryParseAttributeName(key, out int numericType) || numericType == global::ET.NumericType.None)
+                {
+                    Log.Warning($"[CardDeck] Unknown skill attribute key, SkillId: {card.SkillId}, CardInstanceId: {card.CardInstanceId}, Key: {key}");
+                    continue;
+                }
+
+                card.AttributeOverrides[numericType] = value;
+            }
+
+            if (card.AttributeOverrides.Count > 0)
+            {
+                SkillDiagFileLogger.Log($"[CardDeck] Apply skill attribute config, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, OverrideCount={card.AttributeOverrides.Count}");
+            }
         }
     }
 }

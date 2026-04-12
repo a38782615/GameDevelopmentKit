@@ -15,6 +15,7 @@ namespace ET.Client
         public EntityRef<AbilitySystemComponent> ParentInputTarget;
         public int AbilityLevel = 1;
         public int StackCount = 1;
+        public Dictionary<int, float> CasterAttributeOverrides = new Dictionary<int, float>();
         public Dictionary<string, object> CustomData = new Dictionary<string, object>();
     }
 }

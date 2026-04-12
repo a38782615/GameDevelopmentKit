@@ -124,13 +124,9 @@ namespace ET.Client
                         return 0f;
                     }
 
-                    return FormulaEvaluator.Evaluate(nodeData.healFormula, new FormulaContext
-                    {
-                        CasterAttributes = context?.GetCaster()?.Attributes,
-                        TargetAttributes = target.Attributes,
-                        Level = Spec.Level,
-                        StackCount = context?.GetStackCount() ?? 1
-                    });
+                    FormulaContext formulaContext = FormulaContext.FromExecutionContext(context, target);
+                    formulaContext.Level = Spec.Level;
+                    return FormulaEvaluator.Evaluate(nodeData.healFormula, formulaContext);
 
                 case ModifierMagnitudeSourceType.SetByCaller:
                     return Spec.GetSetByCallerValue(nodeData.healSetByCallerKey, 0f);
@@ -145,6 +141,7 @@ namespace ET.Client
 
         private float CalculateMMCHeal(HealEffectNodeData nodeData, AbilitySystemComponent target)
         {
+            SpecExecutionContext context = GetContext();
             if (nodeData.healMMCType == MMCType.AttributeBased)
             {
                 float? attrValue = null;
@@ -159,7 +156,7 @@ namespace ET.Client
                 {
                     if (nodeData.healMMCAttributeSource == MMCAttributeSource.Source)
                     {
-                        attrValue = Spec.Source.As().Attributes?.GetCurrentValue(nodeData.healMMCCaptureAttribute);
+                        attrValue = context?.CreateModifierContext(target)?.GetSourceAttribute(nodeData.healMMCCaptureAttribute);
                     }
                     else
                     {

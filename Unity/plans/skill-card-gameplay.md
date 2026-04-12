@@ -360,6 +360,17 @@
   - 目标：
     - 允许通过 `Spec` 快速反查当前关联卡实例
     - 允许读取基础消耗与当前覆盖消耗
+- [x] B4. 接入 `SkillAttribute` 到单卡实例运行时属性补正。
+  - 目标文件：
+    - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Card/SkillCardDeckComponentSystem.cs`
+    - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Ability/GameplayAbilitySpecSystem.cs`
+    - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Core/SpecExecutionContextSystem.cs`
+    - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Effect/DamageEffectSpecHandler.cs`
+    - `Assets/Scripts/Game/ET/Code/HotfixView/Client/Skill/Runtime/Effect/HealEffectSpecHandler.cs`
+  - 目标：
+    - 卡实例创建时读取 `DTSkillAttribute`
+    - 施法时将属性补正注入 `SpecExecutionContext`
+    - 让公式、MMC 与效果快照读取同一份单卡属性补正
 
 ### 第三批：施法与 MP 结算
 

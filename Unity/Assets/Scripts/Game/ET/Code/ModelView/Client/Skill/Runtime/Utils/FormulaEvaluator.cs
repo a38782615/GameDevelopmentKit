@@ -55,7 +55,14 @@ namespace ET.Client
                     float? value = null;
                     if (source == "Caster" && context.CasterAttributes != null)
                     {
-                        value = context.CasterAttributes.GetCurrentValue(numericType);
+                        if (context.CasterAttributeOverrides != null && context.CasterAttributeOverrides.TryGetValue(numericType, out float overrideValue))
+                        {
+                            value = overrideValue;
+                        }
+                        else
+                        {
+                            value = context.CasterAttributes.GetCurrentValue(numericType);
+                        }
                     }
                     else if (source == "Target" && context.TargetAttributes != null)
                     {

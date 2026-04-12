@@ -65,7 +65,10 @@ namespace ET.Client
 
             var source = self.GetSource();
             if (source?.Attributes != null)
+            {
                 self.SnapshotValues = source.Attributes.CreateSnapshot();
+                self.ApplySourceAttributeOverridesToSnapshot();
+            }
 
             self.Duration = FormulaEvaluator.EvaluateSimple(effectData?.duration, 0f);
             self.Period = FormulaEvaluator.EvaluateSimple(effectData?.period, 1f);
@@ -787,6 +790,7 @@ namespace ET.Client
                 SourceAttributes = source?.Attributes,
                 TargetAttributes = target?.Attributes,
                 SnapshotValues = self.SnapshotValues,
+                SourceAttributeOverrides = self.GetContext()?.CasterAttributeOverrides,
                 EffectLevel = self.Level
             };
         }
@@ -899,6 +903,20 @@ namespace ET.Client
             return self.GetEffectNodeData()?.durationType == EffectDurationType.Duration
                 ? math.max(0f, self.Duration - self.ElapsedTime)
                 : -1f;
+        }
+
+        private static void ApplySourceAttributeOverridesToSnapshot(this GameplayEffectSpec self)
+        {
+            SpecExecutionContext context = self.GetContext();
+            if (context?.CasterAttributeOverrides == null || context.CasterAttributeOverrides.Count <= 0 || self.SnapshotValues == null)
+            {
+                return;
+            }
+
+            foreach ((int numericType, float value) in context.CasterAttributeOverrides)
+            {
+                self.SnapshotValues[numericType] = value;
+            }
         }
     }
 }
