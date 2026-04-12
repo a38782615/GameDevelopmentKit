@@ -26,6 +26,7 @@ public partial class Tables
     public DTSkillCardRule DTSkillCardRule { private set; get; }
     public DTBattleCardConfig DTBattleCardConfig { private set; get; }
     public DTRelic DTRelic { private set; get; }
+    public DTSkillAttribute DTSkillAttribute { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -76,6 +77,9 @@ public partial class Tables
         DTRelic = new DTRelic(() => loader("dtrelic"));
         loadTasks.Add(DTRelic.LoadAsync());
         _tables.Add("DTRelic", DTRelic);
+        DTSkillAttribute = new DTSkillAttribute(() => loader("dtskillattribute"));
+        loadTasks.Add(DTSkillAttribute.LoadAsync());
+        _tables.Add("DTSkillAttribute", DTSkillAttribute);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -99,6 +103,7 @@ public partial class Tables
         DTSkillCardRule.ResolveRef(this);
         DTBattleCardConfig.ResolveRef(this);
         DTRelic.ResolveRef(this);
+        DTSkillAttribute.ResolveRef(this);
         PostResolveRef();
     }
 
