@@ -570,13 +570,26 @@ namespace ET.Client
         public static void InitializeMp(this SkillCardDeckComponent self)
         {
             AbilitySystemComponent asc = self.GetParent<SkillUnit>()?.ASC.As();
+            Unit unit = self.GetParent<SkillUnit>()?.Unit.As();
             var attributes = asc?.Attributes;
-            if (attributes == null)
+            if (attributes == null || unit == null)
             {
                 return;
             }
 
             float maxMp = attributes.GetCurrentValue(global::ET.NumericType.MaxMp);
+            if (maxMp <= 0f)
+            {
+                DRUnitAttribute unitAttributeConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 1)
+                    ?? Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
+                float configMaxMp = unitAttributeConfig?.MP ?? 0f;
+                maxMp = UnityEngine.Mathf.Max(configMaxMp, self.InitMp);
+                if (unitAttributeConfig != null)
+                {
+                    attributes.SetCurrentValue(global::ET.NumericType.MaxMp, maxMp);
+                }
+            }
+
             float targetMp = self.InitMp > 0f ? UnityEngine.Mathf.Min(self.InitMp, maxMp) : maxMp;
             attributes.SetCurrentValue(global::ET.NumericType.Mp, targetMp);
             SkillDiagFileLogger.Log($"[CardDeck] Initialize MP, BattleCardConfigId={self.BattleCardConfigId}, InitMp={self.InitMp:F3}, MaxMp={maxMp:F3}, AppliedMp={targetMp:F3}");
