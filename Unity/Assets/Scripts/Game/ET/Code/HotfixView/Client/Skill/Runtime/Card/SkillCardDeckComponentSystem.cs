@@ -395,6 +395,12 @@ namespace ET.Client
                 return;
             }
 
+            if (self.IsLocalPlayerUnit(unit))
+            {
+                self.StopMoveDrain();
+                return;
+            }
+
             if (!self.IsUnitMoving(unit))
             {
                 self.StopMoveDrain();
@@ -421,6 +427,23 @@ namespace ET.Client
             }
 
             SkillDiagFileLogger.Log($"[CardDeck] Move drain tick, UnitConfigId={unit.ConfigId}, DeltaTime={deltaTime:F3}, DrainMp={drainMp:F3}, BeforeMp={beforeMp:F3}, AfterMp={afterMp:F3}, MoveElapsed={self.CurrentMoveDrainTime:F3}");
+        }
+
+        private static bool IsLocalPlayerUnit(this SkillCardDeckComponent self, global::ET.Unit unit)
+        {
+            if (unit == null || unit.IsDisposed)
+            {
+                return false;
+            }
+
+            Scene currentScene = unit.Scene();
+            if (currentScene == null || currentScene.IsDisposed)
+            {
+                return false;
+            }
+
+            global::ET.Unit playerUnit = UnitHelper.GetMyUnitFromCurrentScene(currentScene);
+            return playerUnit != null && !playerUnit.IsDisposed && playerUnit.Id == unit.Id;
         }
 
         private static bool IsUnitMoving(this SkillCardDeckComponent self, global::ET.Unit unit)
