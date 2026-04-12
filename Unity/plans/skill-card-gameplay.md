@@ -353,7 +353,7 @@
     - 根据 `CardCopies` 生成多张卡实例并塞入抽牌区
     - 读取角色/单位技能组配置上的牌堆规则 Id
     - 从独立战斗配置初始化角色携带的遗物列表
-- [ ] B3. 给 `GameplayAbilitySpec` 补最小运行时桥接字段或扩展方法。
+- [x] B3. 给 `GameplayAbilitySpec` 补最小运行时桥接字段或扩展方法。
   - 目标文件：
     - `Assets/Scripts/Game/ET/Code/ModelView/Client/Skill/Runtime/Ability/GameplayAbilitySpec.cs`
     - 或其 `System` 扩展
@@ -363,7 +363,7 @@
 
 ### 第三批：施法与 MP 结算
 
-- [ ] C1. 统一技能卡施法入口。
+- [x] C1. 统一技能卡施法入口。
   - 不再从 UI 直接 `asc.TryActivateAbility(spec)`
   - 改为 `deck.TryCastCard(cardInstanceId)`
   - 主动技能卡打出后按原有技能链路执行。

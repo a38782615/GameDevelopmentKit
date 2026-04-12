@@ -5,6 +5,8 @@ namespace ET.Client
     [EntitySystemOf(typeof(SkillCardDeckComponent))]
     [FriendOf(typeof(SkillCardDeckComponent))]
     [FriendOf(typeof(SkillCardRuntime))]
+    [FriendOf(typeof(SkillUnit))]
+    [FriendOf(typeof(GameplayAbilitySpec))]
     public static partial class SkillCardDeckComponentSystem
     {
         [EntitySystem]
@@ -64,7 +66,70 @@ namespace ET.Client
             card.HasOverrideCostMp = false;
             card.TriggerType = skillConfig.CardTriggerType;
             self.DrawPileCardIds.Add(cardInstanceId);
+            spec.BindCardInstance(cardInstanceId);
             return card;
+        }
+
+        public static void DrawCards(this SkillCardDeckComponent self, int count)
+        {
+            if (count <= 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (!self.TryDrawOne())
+                {
+                    break;
+                }
+            }
+        }
+
+        public static bool TryCastCard(this SkillCardDeckComponent self, long cardInstanceId)
+        {
+            SkillCardRuntime card = self.GetChild<SkillCardRuntime>(cardInstanceId);
+            if (card == null)
+            {
+                Log.Warning($"[CardDeck] Missing card runtime, CardInstanceId: {cardInstanceId}");
+                return false;
+            }
+
+            if (card.Zone != SkillCardZone.Hand)
+            {
+                Log.Warning($"[CardDeck] Card is not in hand, CardInstanceId: {cardInstanceId}, Zone: {card.Zone}");
+                return false;
+            }
+
+            GameplayAbilitySpec spec = card.SpecRef.As();
+            AbilitySystemComponent asc = self.GetParent<SkillUnit>()?.ASC.As();
+            if (spec == null || asc == null)
+            {
+                Log.Warning($"[CardDeck] Missing cast context, CardInstanceId: {cardInstanceId}");
+                return false;
+            }
+
+            if (card.TriggerType == 1)
+            {
+                self.MoveCardToZone(card, SkillCardZone.Ability);
+                SkillDiagFileLogger.Log($"[CardDeck] Passive card entered ability zone, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
+                return true;
+            }
+
+            spec.SetActivatingCardInstance(cardInstanceId);
+            spec.ActivatingCardResolvedCostMp = card.GetResolvedCostMp();
+            bool activated = asc.TryActivateAbility(spec);
+            if (!activated)
+            {
+                spec.SetActivatingCardInstance(0);
+                spec.ActivatingCardResolvedCostMp = 0f;
+                Log.Warning($"[CardDeck] Active card cast failed, CardInstanceId: {cardInstanceId}, SkillId: {card.SkillId}");
+                return false;
+            }
+
+            self.MoveCardToZone(card, SkillCardZone.DiscardPile);
+            SkillDiagFileLogger.Log($"[CardDeck] Active card cast success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={card.GetResolvedCostMp()}");
+            return true;
         }
 
         public static float GetResolvedCostMp(this SkillCardRuntime self)
@@ -85,6 +150,7 @@ namespace ET.Client
 
             foreach (SkillCardRuntime card in cards)
             {
+                card.SpecRef.As()?.UnbindCardInstance(card.CardInstanceId);
                 card.Dispose();
             }
 
@@ -100,6 +166,59 @@ namespace ET.Client
             self.AbilityCardIds.Clear();
             self.DiscardPileCardIds.Clear();
             self.DestroyedCardIds.Clear();
+        }
+
+        private static bool TryDrawOne(this SkillCardDeckComponent self)
+        {
+            if (self.DrawPileCardIds.Count <= 0)
+            {
+                return false;
+            }
+
+            long cardInstanceId = self.DrawPileCardIds[0];
+            SkillCardRuntime card = self.GetChild<SkillCardRuntime>(cardInstanceId);
+            if (card == null)
+            {
+                self.DrawPileCardIds.RemoveAt(0);
+                return false;
+            }
+
+            self.MoveCardToZone(card, SkillCardZone.Hand);
+            return true;
+        }
+
+        private static void MoveCardToZone(this SkillCardDeckComponent self, SkillCardRuntime card, SkillCardZone zone)
+        {
+            if (card == null)
+            {
+                return;
+            }
+
+            self.RemoveCardFromAllZones(card.CardInstanceId);
+            card.Zone = zone;
+            self.GetZoneList(zone).Add(card.CardInstanceId);
+        }
+
+        private static void RemoveCardFromAllZones(this SkillCardDeckComponent self, long cardInstanceId)
+        {
+            self.DrawPileCardIds.Remove(cardInstanceId);
+            self.HandCardIds.Remove(cardInstanceId);
+            self.AbilityCardIds.Remove(cardInstanceId);
+            self.DiscardPileCardIds.Remove(cardInstanceId);
+            self.DestroyedCardIds.Remove(cardInstanceId);
+        }
+
+        private static List<long> GetZoneList(this SkillCardDeckComponent self, SkillCardZone zone)
+        {
+            return zone switch
+            {
+                SkillCardZone.DrawPile => self.DrawPileCardIds,
+                SkillCardZone.Hand => self.HandCardIds,
+                SkillCardZone.Ability => self.AbilityCardIds,
+                SkillCardZone.DiscardPile => self.DiscardPileCardIds,
+                SkillCardZone.Destroyed => self.DestroyedCardIds,
+                _ => self.DrawPileCardIds,
+            };
         }
     }
 }

@@ -55,6 +55,12 @@ namespace ET.Client
         /// </summary>
         public string AbilityNodeGuid;
 
+        public List<long> LinkedCardInstanceIds = new List<long>();
+
+        public long ActivatingCardInstanceId;
+
+        public float ActivatingCardResolvedCostMp;
+
         // ============ 鎵ц鐩稿叧 ============
         public EntityRef<SpecExecutionContext> Context;
 

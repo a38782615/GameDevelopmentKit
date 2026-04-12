@@ -98,8 +98,9 @@ namespace ET.Client
             self.GrantSkills(asc, heroData.PassiveSkill, grantedSpecs);
             self.CreatePlayerCards(grantedSpecs, heroData.ActiveSkill);
             self.CreatePlayerCards(grantedSpecs, heroData.PassiveSkill);
+            self.SkillCardDeck.As()?.DrawCards(self.SkillCardDeck.As()?.DrawCount ?? 0);
 
-            SkillDiagFileLogger.Log($"[PlayerCardInit] UnitConfigId={unitConfigId} BattleCardConfigId={battleCardConfig.Id} DrawPileCount={self.SkillCardDeck.As()?.DrawPileCardIds.Count ?? 0} RelicCount={self.RelicContainer.As()?.RelicInstanceIds.Count ?? 0}");
+            SkillDiagFileLogger.Log($"[PlayerCardInit] UnitConfigId={unitConfigId} BattleCardConfigId={battleCardConfig.Id} DrawPileCount={self.SkillCardDeck.As()?.DrawPileCardIds.Count ?? 0} HandCount={self.SkillCardDeck.As()?.HandCardIds.Count ?? 0} RelicCount={self.RelicContainer.As()?.RelicInstanceIds.Count ?? 0}");
         }
 
         private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, int unitConfigId)

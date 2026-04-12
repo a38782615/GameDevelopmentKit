@@ -35,6 +35,9 @@ namespace ET.Client
             self.DisposeExecutionContexts();
             self.RunningEffects.Clear();
             self.PendingRemoveEffects.Clear();
+            self.LinkedCardInstanceIds.Clear();
+            self.ActivatingCardInstanceId = 0;
+            self.ActivatingCardResolvedCostMp = 0f;
         }
 
         // ============ 初始化 ============
@@ -393,6 +396,8 @@ namespace ET.Client
                 asc.OwnedTags.RemoveTags(self.Tags.ActivationOwnedTags);
 
             SkillDiagFileLogger.Log($"[Ability] End skillId={self.SkillId} cancelled={wasCancelled}");
+            self.ActivatingCardInstanceId = 0;
+            self.ActivatingCardResolvedCostMp = 0f;
 
             EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnEnded()
             {
@@ -615,6 +620,48 @@ namespace ET.Client
             }
 
             return int.TryParse(self?.SkillId, out skillId) ? skillId : 0;
+        }
+
+        public static void BindCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
+        {
+            if (self == null || cardInstanceId <= 0)
+            {
+                return;
+            }
+
+            if (!self.LinkedCardInstanceIds.Contains(cardInstanceId))
+            {
+                self.LinkedCardInstanceIds.Add(cardInstanceId);
+            }
+        }
+
+        public static void UnbindCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
+        {
+            if (self == null || cardInstanceId <= 0)
+            {
+                return;
+            }
+
+            self.LinkedCardInstanceIds.Remove(cardInstanceId);
+            if (self.ActivatingCardInstanceId == cardInstanceId)
+            {
+                self.ActivatingCardInstanceId = 0;
+            }
+        }
+
+        public static void SetActivatingCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.ActivatingCardInstanceId = cardInstanceId;
+        }
+
+        public static float GetCurrentResolvedCardCostMp(this GameplayAbilitySpec self)
+        {
+            return self?.ActivatingCardResolvedCostMp ?? 0f;
         }
     }
 }
