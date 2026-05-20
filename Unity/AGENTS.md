@@ -52,6 +52,16 @@
 - 修改 UI / Entity / Scene / 配置相关功能时，同时检查 `Assets/Res/` 下对应资源与命名是否匹配。
 - 涉及 `MonoCodeBind`、`*.Bind.cs`、UI 绑定字段、组件引用变更时，必须先在 Unity 里调用 **Generate Bind Code** 生成绑定代码，再消费生成出的属性；不要自己写 `transform.Find`、`GetComponent`、`GetComponentsInChildren` 一类方法去补绑定。
 - 如果生成了新的 `*.Bind.cs`，业务代码必须以生成结果为准；字段名、组件类型、滚动列表类型都不要靠猜。
+- CodeBind 默认按分隔符 `_` 解析节点名；节点名格式必须是 `变量名_类型名`、`变量名_类型名_类型名...`，例如 `Map_ExButton`、`Root_RectTransform`、`Panel_RectTransform_GridLayoutGroup`。
+- CodeBind 生成字段时，`_` 前第一段是字段语义名，后续每一段都是待绑定组件类型名；生成结果形如 `m_MapExButton`、`m_RootRectTransform`，业务代码必须直接消费生成属性。
+- CodeBind 的类型名不是随便写字符串；必须以 `CodeBindName` 或 `CodeBindNameType` 配置为准。项目内优先参考 `Assets/Scripts/Game/Editor/CodeBindConfig/GameCodeBindNameTypeConfig.cs`，以及组件上的 `[CodeBindName(...)]`，例如 `ExButton` 来自 `Game.ExButton` 上的 `[CodeBindName("ExButton")]`。
+- 如果节点已经挂了目标组件，但类型段命名只是不规范，CodeBind 可能会尝试自动修正；但不要依赖自动修正兜底，新增或改名节点时仍然必须直接按规范写成最终命名。
+- 同一个绑定根节点下，不允许生成后得到重复字段名；例如两个 `Map_ExButton` 会冲突，提交前必须先消除重名。
+- 绑定数组节点必须保持同一字段名和同一类型组合，并以尾部索引标识，例如 `Reward_ExButton (0)`、`Reward_ExButton (1)`；不要手写不一致的数组节点名。
+- 嵌套 `MonoCodeBind` / `CodeBind` 根节点时，子绑定根内部节点由子根自行生成；不要跨绑定根引用对方子节点，避免生成结果串扰。
+- `UI_Main`、`UIMain` 这类带 `_` 但不包含合法类型段的命名不要当作可绑定节点名使用；真正参与绑定的节点仍然必须遵循 `变量名_类型名` 规则。
+- 执行 Generate Bind Code 的推荐顺序是：先确认目标 Mono 脚本带 `[MonoCodeBind]` 且类为 `partial`，再确认绑定根下节点命名符合 `_` 规则，再在 Unity 中执行 **Generate Bind Code**，等待编译完成后以生成的 `*.Bind.cs` 为准继续写业务代码。
+- 如果 `*.Bind.cs` 已生成但 Inspector 引用未刷新，先等待 Unity 编译完成并重新触发序列化/刷新；不要因此回退到手写绑定。
 - 像 `MonoUISkillItem` 这类 ET UI 列表项，如果参考 `MonoUIWidgetTest` 走 widget 开发模式，必须使用 `AETMonoUGFUIWidget + MonoCodeBind`，节点命名遵循 CodeBind 分隔规则，并优先复用 `Mono` 上已有的 `UGFUIWidget` 关联，不要重复 `AddUIWidget`。
 - `UIUnitAttribute` 以及同类 UI 的字体组件统一优先使用 `TextMeshProUGUI`；后续新增或改造 UI 文本时，不要继续使用旧版 `UnityEngine.UI.Text` 字体大小默认40。
 - 调试 Skill / 技能运行时链路时，优先使用 `SkillDiagFileLogger.Log(...)` 记录专用诊断日志；日志文件默认落到 `Temp/SkillDiagLogs`，需要控制台即时可见性时再补充常规日志。
