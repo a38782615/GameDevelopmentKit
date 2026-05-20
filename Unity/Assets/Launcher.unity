@@ -465,8 +465,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UIRootCanvasScaler: {fileID: 1576232205}
-  m_DefaultStandardWidth: 1080
-  m_DefaultStandardHeight: 1920
+  m_DefaultStandardWidth: 750
+  m_DefaultStandardHeight: 1335
 --- !u!1001 &343730742
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -899,7 +899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11499388, guid: adb3eb1c35fcff14f89fba7b05c9d71c, type: 3}
       propertyPath: m_EditorLanguage
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 11499388, guid: adb3eb1c35fcff14f89fba7b05c9d71c, type: 3}
       propertyPath: m_RunInBackground
@@ -1370,7 +1370,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1080, y: 1920}
+  m_ReferenceResolution: {x: 750, y: 1335}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

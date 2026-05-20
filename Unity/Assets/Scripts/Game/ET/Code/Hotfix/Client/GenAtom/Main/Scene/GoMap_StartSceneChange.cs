@@ -7,7 +7,8 @@ namespace ET.Client
     {
         protected override async UniTask Run(Scene scene, GoMap2d args)
         {
-            await SceneChangeHelper.SceneChangeTo2(scene, "Map2d", 1000000000000000000);
+            // await SceneChangeHelper.SceneChangeTo2(scene, "Map2d", 1000000000000000000);
+            await SceneChangeHelper.SceneChangeToUIMap(scene, "Map2d", 1000000000000000000);
             await UniTask.CompletedTask;
         }
     }

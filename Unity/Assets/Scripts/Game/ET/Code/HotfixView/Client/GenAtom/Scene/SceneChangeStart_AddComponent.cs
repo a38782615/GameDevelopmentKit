@@ -7,11 +7,10 @@ namespace ET.Client
     [Event(SceneType.GenAtom)]
     public class SceneChangeStart_AddComponent : AEvent<Scene, SceneChangeStart>
     {
-        protected override async UniTask Run(Scene root, SceneChangeStart args)
+        protected override async UniTask Run(Scene currentScene, SceneChangeStart args)
         {
             try
             {
-                Scene currentScene = root.CurrentScene();
                 await UGFComponent.Instance.UnloadAllScenesAsync();
                 await UGFComponent.Instance.LoadSceneAsync(AssetUtility.GetSceneAsset(currentScene.Name));
             }

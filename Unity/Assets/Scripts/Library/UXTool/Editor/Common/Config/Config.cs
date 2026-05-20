@@ -9,6 +9,7 @@ namespace ThunderFireUITool
     public partial class ThunderFireUIToolConfig
     {
         public static readonly string RootPath = "Assets/";
+        public static readonly string UIRoot = "Assets/Res/UI/UIForm/GenAtom";
 
         public static readonly string SamplesRootPath = "Assets/UX_Samples/";
 

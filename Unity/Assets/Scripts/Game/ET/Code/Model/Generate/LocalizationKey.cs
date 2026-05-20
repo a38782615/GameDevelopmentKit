@@ -34,6 +34,36 @@ namespace ET
         public const string Key_AskQuitGame_Title = "AskQuitGame.Title";
 
         /// <summary>
+        /// 背包
+        /// </summary>
+        public const string Key_Btm_Bag = "Btm_Bag";
+
+        /// <summary>
+        /// 修炼
+        /// </summary>
+        public const string Key_Btm_Do = "Btm_Do";
+
+        /// <summary>
+        /// 宗门
+        /// </summary>
+        public const string Key_Btm_Fac = "Btm_Fac";
+
+        /// <summary>
+        /// 洞府
+        /// </summary>
+        public const string Key_Btm_Home = "Btm_Home";
+
+        /// <summary>
+        /// 地图
+        /// </summary>
+        public const string Key_Btm_Map = "Btm_Map";
+
+        /// <summary>
+        /// 技能
+        /// </summary>
+        public const string Key_Btm_Skill = "Btm_Skill";
+
+        /// <summary>
         /// 取消
         /// </summary>
         public const string Key_Dialog_CancelButton = "Dialog.CancelButton";

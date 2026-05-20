@@ -8,6 +8,7 @@ using ThunderFireUITool;
 using Game.Editor;
 using MiniExcelLibs;
 using UnityEditor;
+using TMPro;
 
 namespace UnityEngine.UI
 {
@@ -130,17 +131,17 @@ namespace UnityEngine.UI
         private static List<string[]> GetAllKeyInGameObject(string filePath, GameObject root)
         {
             List<string[]> list = new List<string[]>();
-            ILocalizationText[] uxtexts = root.GetComponentsInChildren<ILocalizationText>(true);
+            UXTextMeshPro[] uxtexts = root.GetComponentsInChildren<UXTextMeshPro>(true);
             foreach (var uxt in uxtexts)
             {
-                if (!uxt.ignoreLocalization && uxt.localizationType == LocalizationHelper.TextLocalizationType.RuntimeUse && uxt.localizationID != "")
+                if (!uxt.ignoreLocalization && uxt.localizationType == LocalizationHelper.TextLocalizationType.Preview && uxt.previewID != "" && uxt.localizationID == "")
                 {
                     string[] item = new string[3];
                     for (int i = 0; i < item.Length; i++)
                     {
                         item[i] = "";
                     }
-                    item[0] = uxt.localizationID;
+                    item[0] = uxt.previewID;
                     item[2] = uxt.text;
                     Transform trans = uxt.transform;
                     while (trans != root.transform)
@@ -172,7 +173,7 @@ namespace UnityEngine.UI
         private static void WriteAllTextTableKey()
         {
             MiniExcel.Insert(ThunderFireUIToolConfig.TextTablePath, null, ThunderFireUIToolConfig.NoTranslateTextTableSheet, ExcelType.XLSX, overwriteSheet: true);
-            string[] guids = AssetDatabase.FindAssets("t:Prefab", new string[]{ ThunderFireUIToolConfig.RootPath });
+            string[] guids = AssetDatabase.FindAssets("t:Prefab", new string[]{ ThunderFireUIToolConfig.UIRoot });
             List<object> insertList = new List<object>();
             foreach (var guid in guids)
             {

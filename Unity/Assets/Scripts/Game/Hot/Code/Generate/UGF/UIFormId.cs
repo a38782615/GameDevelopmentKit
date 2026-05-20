@@ -68,5 +68,10 @@ namespace Game.Hot
         /// 单位属性界面
         /// </summary>
         public const int UIUnitAttribute = 805;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int UIMain = 806;
     }
 }

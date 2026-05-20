@@ -18,7 +18,7 @@ namespace ET.Client
             currentScene.AddComponent<MovementSimulationComponent>();
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
-            await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
+            await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeStart());
             await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeBeforeLoadUnit());
             // 等待CreateMyUnit的消息
             Wait_CreateMyUnit waitCreateMyUnit = await root.GetComponent<ObjectWait>().Wait<Wait_CreateMyUnit>();
@@ -46,11 +46,30 @@ namespace ET.Client
             currentScene.AddComponent<MovementSimulationComponent>();
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
-            await EventSystem.Instance.PublishAsync(root, new SceneChangeStart());
+            await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeStart());
             await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeBeforeLoadUnit());
 
             //创建units
             await CreateLocalUnitsFromTables(root, currentScene);
+
+            //加载个ui
+            EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());
+            // 通知等待场景切换的协程
+            root.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());
+        }
+
+        public static async UniTask SceneChangeToUIMap(Scene root, string sceneName, long sceneInstanceId)
+        {
+            root.RemoveComponent<AIComponent>();
+
+            CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
+            currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
+
+            Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
+            currentScene.AddComponent<UnitComponent>();
+
+            // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
+            await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeStart());
 
             //加载个ui
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());

@@ -49,7 +49,7 @@ namespace Game.Editor
         private void DrawToolbar()
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            string searchText = GUILayout.TextField(m_SearchText, GUI.skin.FindStyle("ToolbarSeachTextField"));
+            string searchText = GUILayout.TextField(m_SearchText);
             if (!string.Equals(searchText, m_SearchText, StringComparison.Ordinal))
             {
                 m_SearchText = searchText;

@@ -5,7 +5,7 @@ namespace ET.Client
     [Event(SceneType.GenAtom)]
     public class SceneChangeStart_ClearSkillHud : AEvent<Scene, SceneChangeStart>
     {
-        protected override async UniTask Run(Scene root, SceneChangeStart args)
+        protected override async UniTask Run(Scene currrent, SceneChangeStart args)
         {
             SkillHudManager.Instance?.ClearSceneHud();
             await UniTask.CompletedTask;

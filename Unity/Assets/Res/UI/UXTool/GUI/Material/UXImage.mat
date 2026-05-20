@@ -25,7 +25,6 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - GAMMA_TO_LINEAR
   - RADIUS_CORNER
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -53,7 +52,7 @@ Material:
     - _Contrast: 0
     - _DstBlend: 10
     - _EnableGrey: 0
-    - _GammaToLinear: 1
+    - _GammaToLinear: 0
     - _IsCalAlpha: 0
     - _LinearToGamma: 0
     - _RadiusCorner: 1
@@ -68,10 +67,11 @@ Material:
     - _hasTex: 1
     m_Colors:
     - _AlphaUV: {r: 0, g: 0, b: 1, a: 1}
-    - _AtlasPosition: {r: 0, g: 0, b: 443, a: 237}
+    - _AtlasPosition: {r: 0, g: 0, b: 113.97325, a: 335.97324}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SelfUV: {r: 0, g: 0, b: 1, a: 1}
-    - _halfSize: {r: 221.5, g: 118.5, b: 0, a: 0}
+    - _halfSize: {r: 61.5, g: 168.5, b: 0, a: 0}
     - _r: {r: 10, g: 10, b: 10, a: 10}
-    - _rect2props: {r: 0.000030517578, g: -0.000030517578, b: 233.34526, a: 233.34526}
+    - _rect2props: {r: 0, g: -0.000030517578, b: 155.5635, a: 155.5635}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
