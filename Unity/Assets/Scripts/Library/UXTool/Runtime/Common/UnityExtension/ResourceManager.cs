@@ -36,16 +36,19 @@ internal class ResourceManager
         }
     }
 
-    /// <summary>
-    /// 资源加载接口,接入时需要统一替换成项目使用的资源加载实现方式
-    /// </summary>
-    /// <param name="path">资源路径，可传相对于Assets的路径，可带扩展名</param>
-    /// <typeparam name="T">资源类型</typeparam>
-    /// <returns>资源</returns>
     internal static T Load<T>(string path) where T : Object
     {
-        if(string.IsNullOrEmpty(path)) return null;
+        if (string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+
 #if UNITY_EDITOR
+        if (!Application.isPlaying || s_ResourceComponent == null)
+        {
+            return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+        }
+
         if (s_PreloadAsset == null)
         {
             s_PreloadAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<AssetCollection>(UXGUIConfig.UXToolAssetCollectionPath);
@@ -104,10 +107,14 @@ internal class ResourceManager
             CurSprite = null;
         }
     }
-    
+
     internal static void LoadSprite(Image image, string path)
     {
-        if(string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+
         if (s_SpriteCollectionComponent != null)
         {
             UXImageLocalizationWaitSet waitSet = UXImageLocalizationWaitSet.Create(image, Path.ChangeExtension(path, ".asset"), path);

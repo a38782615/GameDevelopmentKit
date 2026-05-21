@@ -15,7 +15,14 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 21300000, guid: b9975f2be09eab4449a3f00368f0da41, type: 3}
+    - {fileID: 4900000, guid: fef68d1dd70201b4bb76246e05dbcf8d, type: 3}
+    - {fileID: 2100000, guid: 00cf0597250ef1d49b7946f79b3796dc, type: 2}
+    - {fileID: 2100000, guid: b44b5ab44e24caa4b80290b9fd405077, type: 2}
+    - {fileID: 4800000, guid: 85bf385d20f84094e8640d446e72f03a, type: 3}
+    - {fileID: 4800000, guid: ef43a0db1f649274590f3d130c1f0ff3, type: 3}
+    - {fileID: 10900000, guid: 209beda86bef4cdf945cf90c8999e832, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -34,12 +41,97 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
+      Data: 7
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/need_replace.png
+    - Name: $v
+      Entry: 10
       Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/thai_dict.txt
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/Material/Outline.mat
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/Material/UXImage.mat
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/Shader/Outline.shader
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/Shader/UXImage.shader
+    - Name: $v
+      Entry: 10
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Assets/Res/UI/UXTool/GUI/Shader/ShaderLibrary/SDFUtils.cginc
+    - Name: $v
+      Entry: 10
+      Data: 6
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
-  m_CollectionPatterns: 
-  m_CollectionPaths: []
+  m_CollectionPatterns: '*.*'
+  m_CollectionPathGUIDs:
+  - 8b773f8814eed104e972e457bb453592
