@@ -1,6 +1,7 @@
 using GameFramework;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Game.Editor
@@ -186,6 +187,15 @@ namespace Game.Editor
 
         private static string GetOwnerAssetPath(GameObject gameObject)
         {
+            PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage != null && prefabStage.prefabContentsRoot != null)
+            {
+                if (gameObject == prefabStage.prefabContentsRoot || gameObject.transform.IsChildOf(prefabStage.prefabContentsRoot.transform))
+                {
+                    return prefabStage.assetPath;
+                }
+            }
+
             string prefabAssetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
             if (!string.IsNullOrEmpty(prefabAssetPath))
             {
