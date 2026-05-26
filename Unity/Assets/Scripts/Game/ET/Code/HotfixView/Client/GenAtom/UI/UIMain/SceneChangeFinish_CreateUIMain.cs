@@ -9,7 +9,7 @@ namespace ET.Client
         protected override async UniTask Run(Scene scene, SceneChangeFinish args)
         {
             UIComponent uiComponent = scene.GetComponent<UIComponent>();
-            uiComponent.RemoveComponent<UIFormSkillComponent>();
+            uiComponent.RemoveComponent<UIFormSkill>();
             uiComponent.RemoveComponent<UIFormMain>();
 
             await uiComponent.AddUIFormComponentAsync<UIFormMain>(UGFUIFormId.UIMain);

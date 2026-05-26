@@ -5,7 +5,7 @@ namespace ET.Client
     public partial class MonoUIFormSkill
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private ET.Client.MonoUISkillItem m_ItemTemplateSkillItemTemplate;
+        private ET.Client.MonoUISkillItem m_ItemTemplateUISkillItem;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.InputField m_LakeCarveStrengthInputField;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
@@ -30,7 +30,7 @@ namespace ET.Client
         private UnityEngine.RectTransform m_SkillGridRectTransform;
 
 
-        public ET.Client.MonoUISkillItem ItemTemplateSkillItemTemplate => m_ItemTemplateSkillItemTemplate;
+        public ET.Client.MonoUISkillItem ItemTemplateUISkillItem => m_ItemTemplateUISkillItem;
         public UnityEngine.UI.InputField LakeCarveStrengthInputField => m_LakeCarveStrengthInputField;
         public UnityEngine.UI.InputField LakeCarveThresholdInputField => m_LakeCarveThresholdInputField;
         public UnityEngine.UI.Toggle LakeInlandMaskDefaultToggle => m_LakeInlandMaskDefaultToggle;
@@ -52,7 +52,7 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_ItemTemplateSkillItemTemplate == null) return true;
+            if (this.m_ItemTemplateUISkillItem == null) return true;
             if (this.m_LakeCarveStrengthInputField == null) return true;
             if (this.m_LakeCarveThresholdInputField == null) return true;
             if (this.m_LakeInlandMaskDefaultToggle == null) return true;

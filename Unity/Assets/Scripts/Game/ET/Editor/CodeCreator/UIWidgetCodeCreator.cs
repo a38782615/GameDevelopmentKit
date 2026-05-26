@@ -10,8 +10,8 @@ namespace ET.Editor
         private const string UIWidgetSystemCodeTemplateFile         = "Assets/Res/Editor/ET/Config/UIWidgetSystemCodeTemplate.txt";
         private const string MonoUIWidgetCodeTemplateFile          = "Assets/Res/Editor/ET/Config/MonoUIWidgetCodeTemplate.txt";
 
-        private const string UIWidgetModelViewCodePath              = "Assets/Scripts/Game/ET/Code/ModelView/Client/Game/UI";
-        private const string UIWidgetHotfixViewCodePath             = "Assets/Scripts/Game/ET/Code/HotfixView/Client/Game/UI";
+        private const string UIWidgetModelViewCodePath              = "Assets/Scripts/Game/ET/Code/ModelView/Client/GenAtom/UI";
+        private const string UIWidgetHotfixViewCodePath             = "Assets/Scripts/Game/ET/Code/HotfixView/Client/GenAtom/UI";
 
         public void OnEnable()
         {

@@ -12,10 +12,10 @@ namespace ET.Editor
         private const string UIFormSystemCodeTemplateFile     = "Assets/Res/Editor/ET/Config/UIFormSystemCodeTemplate.txt";
         private const string MonoUIFormCodeTemplateFile       = "Assets/Res/Editor/ET/Config/MonoUIFormCodeTemplate.txt";
 
-        private const string UIFormModelViewCodePath          = "Assets/Scripts/Game/ET/Code/ModelView/Client/Game/UI";
-        private const string UIFormHotfixViewCodePath         = "Assets/Scripts/Game/ET/Code/HotfixView/Client/Game/UI";
+        private const string UIFormModelViewCodePath          = "Assets/Scripts/Game/ET/Code/ModelView/Client/GenAtom/UI";
+        private const string UIFormHotfixViewCodePath         = "Assets/Scripts/Game/ET/Code/HotfixView/Client/GenAtom/UI";
 
-        private const string UIFormPrefabPath                 = "Assets/Res/UI/UIForm";
+        private const string UIFormPrefabPath                 = "Assets/Res/UI/UIForm/GenAtom";
         private const string AddUIFormNameKey                 = "NeedAddComponentUIFormName";
 
         public void OnEnable()

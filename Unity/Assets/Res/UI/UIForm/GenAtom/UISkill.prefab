@@ -2258,7 +2258,7 @@ GameObject:
   - component: {fileID: 5518384164556017055}
   - component: {fileID: 3941672496721904285}
   m_Layer: 5
-  m_Name: ItemTemplate_SkillItemTemplate
+  m_Name: ItemTemplate_UISkillItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2515,7 +2515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e04f8793bf686f438872925d7bca6e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ItemTemplateSkillItemTemplate: {fileID: 3941672496721904285}
+  m_ItemTemplateUISkillItem: {fileID: 3941672496721904285}
   m_LakeCarveStrengthInputField: {fileID: 5569164223086834902}
   m_LakeCarveThresholdInputField: {fileID: 8951152689478137189}
   m_LakeInlandMaskDefaultToggle: {fileID: 6952885465210854737}
