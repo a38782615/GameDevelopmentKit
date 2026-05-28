@@ -102,36 +102,28 @@ namespace Game.Editor
 
         private static void DrawEntry(RecentPrefabAccessService.RecentPrefabInfo entry)
         {
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            using (new EditorGUILayout.HorizontalScope(EditorStyles.helpBox))
             {
-                using (new EditorGUILayout.HorizontalScope())
+                using (new EditorGUI.DisabledScope(true))
                 {
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(entry.AssetPath);
-                        EditorGUILayout.ObjectField(prefab, typeof(GameObject), false);
-                    }
-
-                    if (GUILayout.Button("Show", GUILayout.Width(56f)))
-                    {
-                        RecentPrefabAccessService.ShowPrefab(entry.Guid);
-                    }
-
-                    if (GUILayout.Button("Open", GUILayout.Width(56f)))
-                    {
-                        RecentPrefabAccessService.OpenPrefab(entry.Guid);
-                    }
-
-                    if (GUILayout.Button("Locate", GUILayout.Width(56f)))
-                    {
-                        RecentPrefabAccessService.LocatePrefab(entry.Guid);
-                    }
+                    GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(entry.AssetPath);
+                    EditorGUILayout.ObjectField(prefab, typeof(GameObject), false);
                 }
 
-                EditorGUILayout.LabelField("Name", entry.DisplayName);
-                EditorGUILayout.LabelField("Path", entry.AssetPath);
-                EditorGUILayout.LabelField("Last Action", entry.LastAction);
-                EditorGUILayout.LabelField("Last Time", entry.LastAccessTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                if (GUILayout.Button("Show", GUILayout.Width(56f)))
+                {
+                    RecentPrefabAccessService.ShowPrefab(entry.Guid);
+                }
+
+                if (GUILayout.Button("Open", GUILayout.Width(56f)))
+                {
+                    RecentPrefabAccessService.OpenPrefab(entry.Guid);
+                }
+
+                if (GUILayout.Button("Locate", GUILayout.Width(56f)))
+                {
+                    RecentPrefabAccessService.LocatePrefab(entry.Guid);
+                }
             }
         }
     }
