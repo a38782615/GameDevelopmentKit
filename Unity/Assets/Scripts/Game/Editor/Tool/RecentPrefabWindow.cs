@@ -110,19 +110,9 @@ namespace Game.Editor
                     EditorGUILayout.ObjectField(prefab, typeof(GameObject), false);
                 }
 
-                if (GUILayout.Button("Show", GUILayout.Width(56f)))
-                {
-                    RecentPrefabAccessService.ShowPrefab(entry.Guid);
-                }
-
                 if (GUILayout.Button("Open", GUILayout.Width(56f)))
                 {
                     RecentPrefabAccessService.OpenPrefab(entry.Guid);
-                }
-
-                if (GUILayout.Button("Locate", GUILayout.Width(56f)))
-                {
-                    RecentPrefabAccessService.LocatePrefab(entry.Guid);
                 }
             }
         }
