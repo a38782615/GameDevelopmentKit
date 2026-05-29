@@ -44,10 +44,22 @@ namespace ET.Client
             button?.onClick.RemoveAllListeners();
         }
 
-        private static UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
+        private static async UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
         {
             Log.Info($"[UIMain] Click {actionName}");
-            return UniTask.CompletedTask;
+            if (actionName != "Map")
+            {
+                return;
+            }
+
+            UIComponent uiComponent = self.Scene()?.GetComponent<UIComponent>();
+            if (uiComponent == null)
+            {
+                return;
+            }
+
+            uiComponent.RemoveComponent<UIFormFight>();
+            await uiComponent.AddUIFormComponentAsync<UIFormFight>(UGFUIFormId.UIFormFight);
         }
     }
 }
