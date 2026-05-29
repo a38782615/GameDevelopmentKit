@@ -7,11 +7,11 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXImage m_FrameUXImage;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Image m_HeadImage;
+        private UnityEngine.UI.UXImage m_HeadUXImage;
 
 
         public UnityEngine.UI.UXImage FrameUXImage => m_FrameUXImage;
-        public UnityEngine.UI.Image HeadImage => m_HeadImage;
+        public UnityEngine.UI.UXImage HeadUXImage => m_HeadUXImage;
 
 
 #if UNITY_EDITOR
@@ -23,7 +23,7 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_FrameUXImage == null) return true;
-            if (this.m_HeadImage == null) return true;
+            if (this.m_HeadUXImage == null) return true;
             return false;
         }
 #endif

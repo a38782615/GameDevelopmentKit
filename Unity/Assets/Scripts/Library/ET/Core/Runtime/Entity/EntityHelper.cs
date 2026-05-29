@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace ET
 {
     public static class EntityHelper
@@ -21,10 +23,20 @@ namespace ET
         {
             return entity.IScene.Fiber.Root;
         }
-        
+
         public static Fiber Fiber(this Entity entity)
         {
             return entity.IScene.Fiber;
+        }
+        
+        public static T GetOrAddComponent<T>(this Entity entity, bool isFromPool = false) where T : Entity, IAwake, new()
+        {
+            var ret = entity.GetComponent<T>();
+            if(ret==null)
+            {
+                ret = entity.AddComponent<T>(isFromPool);
+            }
+            return ret;
         }
     }
 }

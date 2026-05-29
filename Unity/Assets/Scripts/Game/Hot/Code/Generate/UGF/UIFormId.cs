@@ -73,5 +73,10 @@ namespace Game.Hot
         /// 
         /// </summary>
         public const int UIMain = 806;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int UIFormFight = 807;
     }
 }

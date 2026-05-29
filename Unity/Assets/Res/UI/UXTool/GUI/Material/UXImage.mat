@@ -67,7 +67,7 @@ Material:
     - _hasTex: 1
     m_Colors:
     - _AlphaUV: {r: 0, g: 0, b: 1, a: 1}
-    - _AtlasPosition: {r: 0, g: 0, b: 113.97325, a: 335.97324}
+    - _AtlasPosition: {r: 0.076120496, g: 0.076120496, b: 120.92388, a: 336.9239}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _SelfUV: {r: 0, g: 0, b: 1, a: 1}
     - _halfSize: {r: 61.5, g: 168.5, b: 0, a: 0}

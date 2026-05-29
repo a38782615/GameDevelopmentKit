@@ -21,7 +21,6 @@
       <Resource Name="Res/Scene/Menu" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormFight" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormSkills" LoadType="0" Packed="False" />
-      <Resource Name="Res/UI/UIForm/GenAtom/UIHeadItem" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIHelp" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILobby" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILogin" LoadType="0" Packed="False" />
@@ -127,7 +126,6 @@
       <Asset Guid="359e359b1eb20bd47b300366fb19c4d7" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="36196fe174d6f29499a3bd38ff751236" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="375b66080af62fd40ae443f01b729af2" ResourceName="UI.UXTool" />
-      <Asset Guid="37b9da47a7f10b244bbf88a357f70e21" ResourceName="Res/UI/UIForm/GenAtom/UIHeadItem" />
       <Asset Guid="38f6322242a881141bfc1a69a80a65c5" ResourceName="UI.UXTool" />
       <Asset Guid="3a009db50675823478c23f6e6b0f866a" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="3b7910331870913419f6e73a758d246e" ResourceName="UI.UXTool" />

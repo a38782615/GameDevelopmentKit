@@ -115,5 +115,14 @@
     "UIGroupName": "Default",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false
+  },
+  {
+    "Id": 807,
+    "CSName": "UIFormFight",
+    "Desc": "",
+    "AssetName": "GenAtom/UIFormFight",
+    "UIGroupName": "Default",
+    "AllowMultiInstance": false,
+    "PauseCoveredUIForm": false
   }
 ]
