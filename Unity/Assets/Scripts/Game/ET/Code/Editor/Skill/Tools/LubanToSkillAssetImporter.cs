@@ -49,6 +49,7 @@ namespace ET.Client.Editor
             { 20, typeof(AnimationNodeData) },        // Animation
             { 21, typeof(GenericEffectNodeData) },    // GenericEffect
             { 22, typeof(DisplaceEffectNodeData) },   // DisplaceEffect
+            { 23, typeof(UnityAnimationNodeData) },  // UnityAnimation
         };
 
         private Vector2 _scrollPosition;

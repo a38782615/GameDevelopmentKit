@@ -68,6 +68,9 @@ namespace ET.Client
 
         //[InspectorName((("位移效果")]
         DisplaceEffect = 22,
+
+        //[InspectorName((("Unity动画")]
+        UnityAnimation = 23,
     }
 
     /// <summary>

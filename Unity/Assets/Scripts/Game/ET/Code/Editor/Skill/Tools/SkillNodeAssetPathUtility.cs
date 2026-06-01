@@ -44,6 +44,9 @@ namespace ET.Client.Editor
                     SyncAssetPath(ref animationNode.skeletonDataAssetPath, animationNode.skeletonDataAsset);
 #endif
                     break;
+                case UnityAnimationNodeData unityAnimationNode:
+                    SyncAssetPath(ref unityAnimationNode.animationPrefabPath, unityAnimationNode.animationPrefab);
+                    break;
             }
         }
 
@@ -67,6 +70,9 @@ namespace ET.Client.Editor
 #if Spine
                     RestoreAssetReference(ref animationNode.skeletonDataAsset, animationNode.skeletonDataAssetPath);
 #endif
+                    break;
+                case UnityAnimationNodeData unityAnimationNode:
+                    RestoreAssetReference(ref unityAnimationNode.animationPrefab, unityAnimationNode.animationPrefabPath);
                     break;
             }
         }
@@ -93,6 +99,9 @@ namespace ET.Client.Editor
 #else
                     jsonObject[nameof(AnimationNodeData.skeletonDataAssetPath)] = animationNode.skeletonDataAssetPath ?? string.Empty;
 #endif
+                    break;
+                case UnityAnimationNodeData unityAnimationNode:
+                    SetAssetPath(jsonObject, nameof(UnityAnimationNodeData.animationPrefab), nameof(UnityAnimationNodeData.animationPrefabPath), unityAnimationNode.animationPrefab);
                     break;
             }
         }

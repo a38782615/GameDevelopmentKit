@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_FrameUXImage: {fileID: 8754009186804431410}
   m_HeadUXImage: {fileID: 2833654168217245590}
+  m_RootAnimation: {fileID: 7154127450735695516}
 --- !u!1 &6119843354982572245
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,8 +192,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6849926804282279613}
   - component: {fileID: 24900564502538561}
+  - component: {fileID: 7154127450735695516}
   m_Layer: 5
-  m_Name: Root
+  m_Name: Root_Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,6 +229,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6215139879023770599}
   m_CullTransparentMesh: 1
+--- !u!111 &7154127450735695516
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6215139879023770599}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 7400000, guid: c33ec9b05a0bbb142bc2441d5a62ea76, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: c33ec9b05a0bbb142bc2441d5a62ea76, type: 2}
+  - {fileID: 7400000, guid: 56c761b2dd75de643bfd183bed6aa78d, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!1 &7885409560187715930
 GameObject:
   m_ObjectHideFlags: 0

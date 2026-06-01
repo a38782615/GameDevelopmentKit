@@ -37,7 +37,7 @@ namespace ET.Client.Editor
         private PlaybackIndicator _playbackIndicator; // 绿色播放指示器
 
         // 数据引用
-        private AnimationNodeData _data;
+        private NodeData _data;
         private Func<Port> _createPortFunc;
 
         // 事件
@@ -217,7 +217,7 @@ namespace ET.Client.Editor
         /// <summary>
         /// 初始化Timeline视图
         /// </summary>
-        public void Initialize(AnimationNodeData data, Func<Port> createPortFunc)
+        public void Initialize(NodeData data, Func<Port> createPortFunc)
         {
             _data = data;
             _createPortFunc = createPortFunc;
@@ -249,7 +249,7 @@ namespace ET.Client.Editor
             if (_data == null) return;
 
             // 尝试解析动画时长（帧数）
-            if (int.TryParse(_data.animationDuration, out int frames))
+            if (int.TryParse(GetAnimationDurationValue(), out int frames))
             {
                 DurationFrames = Mathf.Max(frames, MIN_DURATION);
             }
@@ -310,18 +310,20 @@ namespace ET.Client.Editor
             if (_data == null) return;
 
             // 裁剪时间效果
-            if (_data.timeEffects != null)
+            List<TimeEffectData> timeEffects = GetTimeEffects();
+            if (timeEffects != null)
             {
-                foreach (var effect in _data.timeEffects)
+                foreach (var effect in timeEffects)
                 {
                     effect.triggerTime = Mathf.Clamp(effect.triggerTime, 0, (int)DurationFrames);
                 }
             }
 
             // 裁剪时间Cue（只限制startTime下限，不限制上限）
-            if (_data.timeCues != null)
+            List<TimeCueData> timeCues = GetTimeCues();
+            if (timeCues != null)
             {
-                foreach (var cue in _data.timeCues)
+                foreach (var cue in timeCues)
                 {
                     cue.startTime = Mathf.Max(cue.startTime, 0);
                     if (cue.endTime >= 0)
@@ -340,8 +342,10 @@ namespace ET.Client.Editor
             if (_data == null) return;
 
             // 计算需要的轨道数量
-            int cueCount = _data.timeCues?.Count ?? 0;
-            int effectCount = _data.timeEffects?.Count ?? 0;
+            List<TimeCueData> timeCues = GetTimeCues();
+            List<TimeEffectData> timeEffects = GetTimeEffects();
+            int cueCount = timeCues?.Count ?? 0;
+            int effectCount = timeEffects?.Count ?? 0;
             int totalNeeded = cueCount + effectCount;
 
             // 如果轨道数量匹配，只需要更新布局，不重新创建
@@ -365,20 +369,20 @@ namespace ET.Client.Editor
             _trackContainer.Clear();
 
             // 先添加时间Cue轨道（显示在上面）
-            if (_data.timeCues != null)
+            if (timeCues != null)
             {
-                for (int i = 0; i < _data.timeCues.Count; i++)
+                for (int i = 0; i < timeCues.Count; i++)
                 {
-                    AddTimeCueTrack(_data.timeCues[i], i);
+                    AddTimeCueTrack(timeCues[i], i);
                 }
             }
 
             // 再添加时间效果轨道（显示在下面）
-            if (_data.timeEffects != null)
+            if (timeEffects != null)
             {
-                for (int i = 0; i < _data.timeEffects.Count; i++)
+                for (int i = 0; i < timeEffects.Count; i++)
                 {
-                    AddTimeEffectTrack(_data.timeEffects[i], i);
+                    AddTimeEffectTrack(timeEffects[i], i);
                 }
             }
         }
@@ -393,8 +397,9 @@ namespace ET.Client.Editor
             if (isCue)
             {
                 // 添加新的Cue轨道
-                int index = (_data.timeCues?.Count ?? 1) - 1;
-                var data = _data.timeCues[index];
+                List<TimeCueData> timeCues = GetTimeCues();
+                int index = (timeCues?.Count ?? 1) - 1;
+                var data = timeCues[index];
                 var track = new TimeCueTrack(this, data, index, _createPortFunc);
                 track.OnRemoveRequested += () => RemoveTimeCue(index);
                 track.OnDataModified += NotifyDataChanged;
@@ -421,8 +426,9 @@ namespace ET.Client.Editor
             else
             {
                 // 添加新的效果轨道
-                int index = (_data.timeEffects?.Count ?? 1) - 1;
-                var data = _data.timeEffects[index];
+                List<TimeEffectData> timeEffects = GetTimeEffects();
+                int index = (timeEffects?.Count ?? 1) - 1;
+                var data = timeEffects[index];
                 var track = new TimeEffectTrack(this, data, index, _createPortFunc);
                 track.OnRemoveRequested += () => RemoveTimeEffect(index);
                 track.OnDataModified += NotifyDataChanged;
@@ -476,10 +482,11 @@ namespace ET.Client.Editor
         /// </summary>
         private void RemoveTimeEffect(int index)
         {
-            if (_data == null || _data.timeEffects == null) return;
-            if (index < 0 || index >= _data.timeEffects.Count) return;
+            List<TimeEffectData> timeEffects = GetTimeEffects();
+            if (_data == null || timeEffects == null) return;
+            if (index < 0 || index >= timeEffects.Count) return;
 
-            _data.timeEffects.RemoveAt(index);
+            timeEffects.RemoveAt(index);
             NotifyDataChanged();
             RefreshAllTracks();
         }
@@ -489,12 +496,43 @@ namespace ET.Client.Editor
         /// </summary>
         private void RemoveTimeCue(int index)
         {
-            if (_data == null || _data.timeCues == null) return;
-            if (index < 0 || index >= _data.timeCues.Count) return;
+            List<TimeCueData> timeCues = GetTimeCues();
+            if (_data == null || timeCues == null) return;
+            if (index < 0 || index >= timeCues.Count) return;
 
-            _data.timeCues.RemoveAt(index);
+            timeCues.RemoveAt(index);
             NotifyDataChanged();
             RefreshAllTracks();
+        }
+
+        private string GetAnimationDurationValue()
+        {
+            return _data switch
+            {
+                AnimationNodeData animationNodeData => animationNodeData.animationDuration,
+                UnityAnimationNodeData unityAnimationNodeData => unityAnimationNodeData.animationDuration,
+                _ => "10"
+            };
+        }
+
+        private List<TimeEffectData> GetTimeEffects()
+        {
+            return _data switch
+            {
+                AnimationNodeData animationNodeData => animationNodeData.timeEffects,
+                UnityAnimationNodeData unityAnimationNodeData => unityAnimationNodeData.timeEffects,
+                _ => null
+            };
+        }
+
+        private List<TimeCueData> GetTimeCues()
+        {
+            return _data switch
+            {
+                AnimationNodeData animationNodeData => animationNodeData.timeCues,
+                UnityAnimationNodeData unityAnimationNodeData => unityAnimationNodeData.timeCues,
+                _ => null
+            };
         }
 
         /// <summary>

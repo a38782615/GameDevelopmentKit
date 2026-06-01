@@ -30,6 +30,7 @@ namespace ET.Client
             { "SearchTargetTaskNodeData", typeof(SearchTargetTaskNodeData) },
             { "EndAbilityTaskNodeData", typeof(EndAbilityTaskNodeData) },
             { "AnimationNodeData", typeof(AnimationNodeData) },
+            { "UnityAnimationNodeData", typeof(UnityAnimationNodeData) },
             { "AttributeCompareConditionNodeData", typeof(AttributeCompareConditionNodeData) },
         };
 
@@ -171,6 +172,7 @@ namespace ET.Client
                 NodeType.SearchTargetTask => typeof(SearchTargetTaskNodeData),
                 NodeType.EndAbilityTask => typeof(EndAbilityTaskNodeData),
                 NodeType.Animation => typeof(AnimationNodeData),
+                NodeType.UnityAnimation => typeof(UnityAnimationNodeData),
                 NodeType.AttributeCompareCondition => typeof(AttributeCompareConditionNodeData),
                 _ => typeof(NodeData)
             };

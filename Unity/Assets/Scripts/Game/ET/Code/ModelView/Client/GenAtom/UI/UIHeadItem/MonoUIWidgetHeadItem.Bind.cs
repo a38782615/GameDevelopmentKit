@@ -8,10 +8,13 @@ namespace ET.Client
         private UnityEngine.UI.UXImage m_FrameUXImage;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXImage m_HeadUXImage;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.Animation m_RootAnimation;
 
 
         public UnityEngine.UI.UXImage FrameUXImage => m_FrameUXImage;
         public UnityEngine.UI.UXImage HeadUXImage => m_HeadUXImage;
+        public UnityEngine.Animation RootAnimation => m_RootAnimation;
 
 
 #if UNITY_EDITOR
@@ -24,6 +27,7 @@ namespace ET.Client
         {
             if (this.m_FrameUXImage == null) return true;
             if (this.m_HeadUXImage == null) return true;
+            if (this.m_RootAnimation == null) return true;
             return false;
         }
 #endif

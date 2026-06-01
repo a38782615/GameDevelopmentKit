@@ -45,6 +45,7 @@ namespace ET.Client.Editor
             // ============ 动画节点 ============
             { NodeType.Animation, pos => new AnimationNode(pos) },
 #endif
+            { NodeType.UnityAnimation, pos => new UnityAnimationNode(pos) },
         };
 
 
@@ -119,6 +120,7 @@ namespace ET.Client.Editor
                     return NodeCategory.Cue;
 
                 case NodeType.Animation:
+                case NodeType.UnityAnimation:
                     return NodeCategory.Task;
 
                 default:

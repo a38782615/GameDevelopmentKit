@@ -48,6 +48,7 @@ namespace ET.Client.Editor
                 evt.menu.AppendAction("创建节点/任务节点/搜索目标", _ => CreateNode(NodeType.SearchTargetTask, graphMousePosition));
                 evt.menu.AppendAction("创建节点/任务节点/结束技能", _ => CreateNode(NodeType.EndAbilityTask, graphMousePosition));
                 evt.menu.AppendAction("创建节点/任务节点/动画", _ => CreateNode(NodeType.Animation, graphMousePosition));
+                evt.menu.AppendAction("创建节点/任务节点/Unity动画", _ => CreateNode(NodeType.UnityAnimation, graphMousePosition));
 
                 evt.menu.AppendSeparator("创建节点/");
 

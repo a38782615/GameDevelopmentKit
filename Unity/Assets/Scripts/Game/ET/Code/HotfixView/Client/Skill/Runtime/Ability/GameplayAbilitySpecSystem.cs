@@ -107,42 +107,60 @@ namespace ET.Client
             {
                 if (node is AnimationNodeData animNode)
                 {
-                    self.AnimationNodeGuid = animNode.guid;
-                    self.AnimationName = animNode.animationName;
-                    int durationFrames = (int)FormulaEvaluator.EvaluateSimple(animNode.animationDuration, 1f);
-                    self.AnimationDuration = SkillConstants.FramesToSeconds(durationFrames);
-                    self.IsAnimationLooping = animNode.isAnimationLooping;
-
-                    if (animNode.timeEffects != null)
-                    {
-                        foreach (var te in animNode.timeEffects)
-                        {
-                            timeEffectComp.TimeEffects.Add(new TimeEffectRuntime
-                            {
-                                TriggerTime = SkillConstants.FramesToSeconds(te.triggerTime),
-                                PortId = te.PortId,
-                                HasTriggered = false
-                            });
-                        }
-                    }
-
-                    if (animNode.timeCues != null)
-                    {
-                        foreach (var tc in animNode.timeCues)
-                        {
-                            timeCueComp.TimeCues.Add(new TimeCueRuntime
-                            {
-                                StartTime = SkillConstants.FramesToSeconds(tc.startTime),
-                                EndTime = tc.endTime < 0 ? -1f : SkillConstants.FramesToSeconds(tc.endTime),
-                                PortId = tc.PortId,
-                                HasStarted = false,
-                                HasEnded = false
-                            });
-                        }
-                    }
-
+                    self.ApplyAnimationNode(animNode.guid, animNode.animationName, animNode.animationDuration,
+                        animNode.isAnimationLooping, animNode.timeEffects, animNode.timeCues);
                     break;
                 }
+
+                if (node is UnityAnimationNodeData unityAnimationNode)
+                {
+                    self.ApplyAnimationNode(unityAnimationNode.guid, unityAnimationNode.animationName, unityAnimationNode.animationDuration,
+                        unityAnimationNode.isAnimationLooping, unityAnimationNode.timeEffects, unityAnimationNode.timeCues);
+                    break;
+                }
+            }
+        }
+
+        private static void ApplyAnimationNode(this GameplayAbilitySpec self, string animationNodeGuid, string animationName,
+            string animationDuration, bool isAnimationLooping, List<TimeEffectData> timeEffects, List<TimeCueData> timeCues)
+        {
+            var timeEffectComp = self.GetTimeEffectRuntime();
+            var timeCueComp = self.GetTimeCueRuntime();
+
+            self.AnimationNodeGuid = animationNodeGuid;
+            self.AnimationName = animationName;
+            int durationFrames = (int)FormulaEvaluator.EvaluateSimple(animationDuration, 1f);
+            self.AnimationDuration = SkillConstants.FramesToSeconds(durationFrames);
+            self.IsAnimationLooping = isAnimationLooping;
+
+            if (timeEffects != null)
+            {
+                foreach (var te in timeEffects)
+                {
+                    timeEffectComp.TimeEffects.Add(new TimeEffectRuntime
+                    {
+                        TriggerTime = SkillConstants.FramesToSeconds(te.triggerTime),
+                        PortId = te.PortId,
+                        HasTriggered = false
+                    });
+                }
+            }
+
+            if (timeCues == null)
+            {
+                return;
+            }
+
+            foreach (var tc in timeCues)
+            {
+                timeCueComp.TimeCues.Add(new TimeCueRuntime
+                {
+                    StartTime = SkillConstants.FramesToSeconds(tc.startTime),
+                    EndTime = tc.endTime < 0 ? -1f : SkillConstants.FramesToSeconds(tc.endTime),
+                    PortId = tc.PortId,
+                    HasStarted = false,
+                    HasEnded = false
+                });
             }
         }
 
