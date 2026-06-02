@@ -8,6 +8,8 @@ namespace ET.Client
     [FriendOf(typeof(AbilitySystemComponent))]
     public static partial class GameAIComponentSystem
     {
+        private const int FormationPositionCount = 4;
+
         public static Unit GetOwnerUnit(this GameAIComponent self)
         {
             return self.GetParent<Unit>();
@@ -194,8 +196,26 @@ namespace ET.Client
             }
 
             Vector3 selfPosition = selfUnit.GetWorldPosition();
+            float maxDistanceSqr = maxDistance > 0f ? maxDistance * maxDistance : float.MaxValue;
+            int startPosIdx = NormalizeFormationPosition(selfUnit.PosIdx);
+            for (int offset = 0; offset < FormationPositionCount; offset++)
+            {
+                int targetPosIdx = (startPosIdx + offset) % FormationPositionCount;
+                AbilitySystemComponent target = FindHostileTargetAtPosition(unitComponent, selfUnit, selfPosition, targetPosIdx, maxDistanceSqr);
+                if (target != null)
+                {
+                    return target;
+                }
+            }
+
+            return null;
+        }
+
+        private static AbilitySystemComponent FindHostileTargetAtPosition(UnitComponent unitComponent, Unit selfUnit, Vector3 selfPosition, int targetPosIdx,
+            float maxDistanceSqr)
+        {
             AbilitySystemComponent nearestTarget = null;
-            float nearestDistanceSqr = maxDistance > 0f ? maxDistance * maxDistance : float.MaxValue;
+            float nearestDistanceSqr = maxDistanceSqr;
 
             foreach (Entity entity in unitComponent.Children.Values)
             {
@@ -204,19 +224,13 @@ namespace ET.Client
                     continue;
                 }
 
-                if ((UnitType)otherUnit.Config().Type == (UnitType)selfUnit.Config().Type)
+                if (!IsHostileUnit(selfUnit, otherUnit) || NormalizeFormationPosition(otherUnit.PosIdx) != targetPosIdx)
                 {
                     continue;
                 }
 
                 AbilitySystemComponent targetAsc = otherUnit.GetComponent<SkillUnit>()?.ASC.As();
-                if (targetAsc == null)
-                {
-                    continue;
-                }
-
-                float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
-                if (health.HasValue && health.Value <= 0f)
+                if (!IsAliveTarget(targetAsc))
                 {
                     continue;
                 }
@@ -236,6 +250,28 @@ namespace ET.Client
             }
 
             return nearestTarget;
+        }
+
+        private static bool IsHostileUnit(Unit selfUnit, Unit otherUnit)
+        {
+            return (UnitType)otherUnit.Config().Type != (UnitType)selfUnit.Config().Type;
+        }
+
+        private static bool IsAliveTarget(AbilitySystemComponent targetAsc)
+        {
+            if (targetAsc == null)
+            {
+                return false;
+            }
+
+            float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
+            return !health.HasValue || health.Value > 0f;
+        }
+
+        private static int NormalizeFormationPosition(int posIdx)
+        {
+            int normalized = posIdx % FormationPositionCount;
+            return normalized < 0 ? normalized + FormationPositionCount : normalized;
         }
 
         public static Vector3 GetWorldPosition(this Unit unit)
