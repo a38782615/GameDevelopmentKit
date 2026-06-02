@@ -15,18 +15,14 @@ MonoBehaviour:
   SkillId: 7001
   nodes:
   - rid: 4204046695868924021
-  - rid: 4204046695868924022
   - rid: 4204046695868924023
   - rid: 4204046695868924024
   - rid: 4204046695868924025
   - rid: 4204046695868924026
   - rid: 4204046695868924027
   - rid: 4204046695868924028
+  - rid: 300804438656811091
   connections:
-  - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
-    outputPortId: 1002
-    inputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    inputPortId: 7001
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
     inputNodeGuid: c28fb88d-51b1-47b2-be59-859e0ac638e3
@@ -35,25 +31,53 @@ MonoBehaviour:
     outputPortId: 1003
     inputNodeGuid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
     inputPortId: 7001
-  - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortId: 2315086
-    inputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
-    inputPortId: 7001
   - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
     outputPortId: 5001
     inputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
-    inputPortId: 7001
-  - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-    outputPortId: 2715463
-    inputNodeGuid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
     inputPortId: 7001
   - outputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
     outputPortId: 3004
     inputNodeGuid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
     inputPortId: 7001
+  - outputNodeGuid: 08bcef27-5270-4668-be7d-bb9e9fc01e6a
+    outputPortId: 2131464
+    inputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
+    inputPortId: 7001
+  - outputNodeGuid: 08bcef27-5270-4668-be7d-bb9e9fc01e6a
+    outputPortId: 2547623
+    inputNodeGuid: 3aafa9a5-4766-4204-91ab-d797aeb3c0e1
+    inputPortId: 7001
   references:
     version: 2
     RefIds:
+    - rid: 300804438656811091
+      type: {class: UnityAnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
+      data:
+        guid: 08bcef27-5270-4668-be7d-bb9e9fc01e6a
+        nodeType: 23
+        position:
+          x: -634.6666
+          y: -2399.3333
+        targetType: 1
+        animationPrefab: {fileID: 710711765630721763, guid: 37b9da47a7f10b244bbf88a357f70e21,
+          type: 3}
+        animationPrefabPath: Assets/Res/UI/UIEntity/UIHeadItem.prefab
+        animationComponentPath: UIHeadItem(Clone)/Root_Animation
+        animationName: Attack
+        animationDuration: 10
+        isAnimationLooping: 0
+        timeEffects:
+        - triggerTime: 10
+          portIdValue: 2131464
+          legacyPortId: 
+        - triggerTime: 10
+          portIdValue: 2547623
+          legacyPortId: 
+        timeCues:
+        - startTime: 0
+          endTime: 8
+          portIdValue: 2247261
+          legacyPortId: 
     - rid: 4204046695868924021
       type: {class: EndAbilityTaskNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:
@@ -64,29 +88,6 @@ MonoBehaviour:
           y: -1987.3334
         targetType: 1
         endType: 0
-    - rid: 4204046695868924022
-      type: {class: AnimationNodeData, ns: ET.Client, asm: Game.ET.Code.ModelView}
-      data:
-        guid: 432ff1e3-b18d-476d-af80-d39ddc07402a
-        nodeType: 20
-        position:
-          x: -491.3333
-          y: -2478.6665
-        targetType: 1
-        skeletonDataAsset: {fileID: 11400000, guid: 11fcc4fd3f661ba4eb306f484db9605f,
-          type: 2}
-        skeletonDataAssetPath: Assets/Res/Spine/SP_Xiyiguai/SP_Xiyiguai_SkeletonData.asset
-        animationName: Attack
-        animationDuration: 24
-        isAnimationLooping: 0
-        timeEffects:
-        - triggerTime: 11
-          portIdValue: 2315086
-          legacyPortId: de0ba361-3aba-4ef0-bb07-9b418fcae591
-        - triggerTime: 24
-          portIdValue: 2715463
-          legacyPortId: 7ecf9fe6-7c5e-46ae-bade-7922214225e2
-        timeCues: []
     - rid: 4204046695868924023
       type: {class: CooldownEffectNodeData, ns: ET.Client, asm: Game.ET.Code.Model}
       data:

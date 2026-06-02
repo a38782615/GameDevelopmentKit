@@ -6,10 +6,10 @@ namespace ET
 {
     [ChildOf(typeof(UnitComponent))]
     [DebuggerDisplay("ViewName,nq")]
-    public partial class Unit: Entity, IAwake<int>
+    public partial class Unit : Entity, IAwake<int>
     {
         public int ConfigId { get; set; } //配置表id
-
+        public int PosIdx  { get; set;} 
         [BsonElement]
         private float3 position; //坐标
 

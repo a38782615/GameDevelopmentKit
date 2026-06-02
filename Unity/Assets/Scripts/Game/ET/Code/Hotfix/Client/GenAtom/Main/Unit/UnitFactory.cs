@@ -9,7 +9,7 @@ namespace ET.Client
             UnitComponent unitComponent = currentScene.GetComponent<UnitComponent>();
             Unit unit = unitComponent.AddChildWithId<Unit, int>(unitInfo.UnitId, unitInfo.ConfigId);
             unitComponent.Add(unit);
-
+            unit.PosIdx = unitInfo.PosIdx;
             unit.Position = unitInfo.Position;
             unit.Forward = unitInfo.Forward;
             unit.AddMoveComponentByMode();
@@ -33,8 +33,7 @@ namespace ET.Client
 
             unit.AddComponent<ObjectWait>();
 
-            if ((UnitType)unit.Config().Type == UnitType.Monster
-                && Tables.Instance.DTGameAI.GameAIs.ContainsKey(unit.ConfigId)
+            if (Tables.Instance.DTGameAI.GameAIs.ContainsKey(unit.ConfigId)
                 && unit.GetComponent<GameAIComponent>() == null)
             {
                 unit.AddComponent<GameAIComponent, int>(unit.ConfigId);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace ET.Client
 {
@@ -6,7 +7,8 @@ namespace ET.Client
     public class UIFormFight : UGFUIForm<MonoUIFormFight>, IAwake, IDestroy, IUGFUIFormOnOpen, IUGFUIFormOnClose
     {
         public readonly List<long> FightUnitIds = new List<long>();
-        public readonly List<EntityRef<UIWidgetHeadItem>> FightHeadItems = new List<EntityRef<UIWidgetHeadItem>>();
         public bool IsLoadingFightUnits;
+        public RectTransform[] LPos;
+        public RectTransform[] RPos;
     }
 }

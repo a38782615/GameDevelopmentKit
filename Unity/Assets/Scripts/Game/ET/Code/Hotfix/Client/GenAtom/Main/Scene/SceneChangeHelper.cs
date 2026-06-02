@@ -8,8 +8,6 @@ namespace ET.Client
         // 场景切换协程
         public static async UniTask SceneChangeTo(Scene root, string sceneName, long sceneInstanceId)
         {
-            root.RemoveComponent<AIComponent>();
-
             CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
@@ -26,7 +24,6 @@ namespace ET.Client
             Unit unit = UnitFactory.Create(currentScene, m2CCreateMyUnit.Unit);
             unitComponent.Add(unit);
             await EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
-            root.RemoveComponent<AIComponent>();
 
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish());
             // 通知等待场景切换的协程
@@ -35,8 +32,6 @@ namespace ET.Client
 
         public static async UniTask SceneChangeTo2(Scene root, string sceneName, long sceneInstanceId)
         {
-            root.RemoveComponent<AIComponent>();
-
             CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
 
@@ -60,8 +55,6 @@ namespace ET.Client
 
         public static async UniTask SceneChangeToUIMap(Scene root, string sceneName, long sceneInstanceId)
         {
-            root.RemoveComponent<AIComponent>();
-
             CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
 

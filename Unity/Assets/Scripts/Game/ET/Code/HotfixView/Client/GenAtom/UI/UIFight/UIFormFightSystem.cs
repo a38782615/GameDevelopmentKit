@@ -7,22 +7,13 @@ namespace ET.Client
     [FriendOf(typeof(UIFormFight))]
     [EntitySystemOf(typeof(UIFormFight))]
     public static partial class UIFormFightSystem
-    {
-        [EntitySystem]
-        private static void Awake(this UIFormFight self)
-        {
-            
-        }
-
-        [EntitySystem]
-        private static void Destroy(this UIFormFight self)
-        {
-            
-        }
+    { 
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
         {
+            self.LPos = new RectTransform[4] { self.View.L0RectTransform, self.View.L1RectTransform, self.View.L2RectTransform, self.View.L3RectTransform };
+            self.RPos = new RectTransform[4] { self.View.R0RectTransform, self.View.R1RectTransform, self.View.R2RectTransform, self.View.R3RectTransform };
             self.LoadFightUnitsAsync().Forget();
         }
         
@@ -51,13 +42,13 @@ namespace ET.Client
                     return;
                 }
 
-                await self.CreateFirstHeroAsync(view.L0RectTransform);
+                await self.CreateFirstHeroAsync(0);
                 if (self.IsDisposed)
                 {
                     return;
                 }
 
-                await self.CreateFirstMonsterAsync(view.R0RectTransform);
+                await self.CreateFirstMonsterAsync(0);
             }
             finally
             {
@@ -68,7 +59,7 @@ namespace ET.Client
             }
         }
 
-        private static async UniTask CreateFirstHeroAsync(this UIFormFight self, RectTransform slot)
+        private static async UniTask CreateFirstHeroAsync(this UIFormFight self, int pos)
         {
             if (Tables.Instance?.DTHero?.DataList == null || Tables.Instance.DTHero.DataList.Count == 0)
             {
@@ -83,8 +74,9 @@ namespace ET.Client
             unitInfo.ConfigId = config.UnitConfigId;
             unitInfo.Position = float3.zero;
             unitInfo.Forward = new float2(1f, 0f).ToModeDirection();
+            unitInfo.PosIdx = pos;
 
-            Unit unit = await self.CreateFightUnitAsync(unitInfo, slot);
+            Unit unit = await self.CreateFightUnitAsync(unitInfo);
             PlayerComponent playerComponent = self.Scene()?.Root()?.GetComponent<PlayerComponent>();
             if (unit != null && playerComponent != null)
             {
@@ -92,7 +84,7 @@ namespace ET.Client
             }
         }
 
-        private static async UniTask CreateFirstMonsterAsync(this UIFormFight self, RectTransform slot)
+        private static async UniTask CreateFirstMonsterAsync(this UIFormFight self, int pos)
         {
             if (Tables.Instance?.DTMonster?.DataList == null || Tables.Instance.DTMonster.DataList.Count == 0)
             {
@@ -107,23 +99,14 @@ namespace ET.Client
             unitInfo.ConfigId = config.UnitConfigId;
             unitInfo.Position = float3.zero;
             unitInfo.Forward = new float2(-1f, 0f).ToModeDirection();
+            unitInfo.PosIdx = pos;
 
-            await self.CreateFightUnitAsync(unitInfo, slot);
+            await self.CreateFightUnitAsync(unitInfo);
         }
 
-        private static async UniTask<Unit> CreateFightUnitAsync(this UIFormFight self, UnitInfo unitInfo, RectTransform slot)
+        private static async UniTask<Unit> CreateFightUnitAsync(this UIFormFight self, UnitInfo unitInfo)
         {
             Scene currentScene = self.Scene();
-            UnitComponent unitComponent = currentScene?.GetComponent<UnitComponent>();
-            if (unitComponent == null)
-            {
-                Log.Warning("[UIFormFight] Missing UnitComponent.");
-                return null;
-            }
-
-            Unit oldUnit = unitComponent.Get(unitInfo.UnitId);
-            oldUnit?.Dispose();
-
             Unit unit = UnitFactory.Create(currentScene, unitInfo);
             if (!self.FightUnitIds.Contains(unit.Id))
             {
@@ -136,22 +119,22 @@ namespace ET.Client
                 return unit;
             }
 
-            self.FightHeadItems.Add(headItem);
-            self.AttachHeadItemToSlot(headItem, slot);
+            self.AttachHeadItemToSlot(unitInfo, headItem);
             self.BindUnitView(unit, headItem);
             headItem.TryDynamicOpen();
             return unit;
         }
 
-        private static void AttachHeadItemToSlot(this UIFormFight self, UIWidgetHeadItem headItem, RectTransform slot)
+        private static void AttachHeadItemToSlot(this UIFormFight self, UnitInfo unit, UIWidgetHeadItem headItem)
         {
             RectTransform rectTransform = headItem?.CachedRectTransform;
-            if (rectTransform == null || slot == null)
+            if (rectTransform == null)
             {
                 return;
             }
-
-            rectTransform.SetParent(slot, false);
+            var slotRect = (unit.Type == (int)UnitType.Player) ? self.LPos[unit.PosIdx] : self.RPos[unit.PosIdx];
+            
+            rectTransform.SetParent(slotRect, false);
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
             rectTransform.offsetMin = Vector2.zero;
@@ -179,17 +162,16 @@ namespace ET.Client
 
         private static void ClearFightUnits(this UIFormFight self)
         {
-            UnitComponent unitComponent = self.Scene()?.GetComponent<UnitComponent>();
-            if (unitComponent != null)
+            UnitComponent unitComponent = self.Root().CurrentScene()?.GetComponent<UnitComponent>();
+            if (unitComponent == null)
             {
-                foreach (long unitId in self.FightUnitIds)
-                {
-                    unitComponent.Remove(unitId);
-                }
+                return;
             }
-
+            foreach (long unitId in self.FightUnitIds)
+            {
+                unitComponent.Remove(unitId);
+            }
             self.FightUnitIds.Clear();
-            self.FightHeadItems.Clear();
         }
     }
 }

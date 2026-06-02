@@ -574,6 +574,8 @@ namespace ET
         public Dictionary<int, long> KV { get; set; } = new();
         [MemoryPackOrder(6)]
         public MoveInfo MoveInfo { get; set; }
+        [MemoryPackOrder(7)]
+        public int PosIdx { get; set; }
         public override void Dispose() 
         {
             if (!this.IsFromPool) { return; }
@@ -584,11 +586,12 @@ namespace ET
             this.Forward = default;
             this.KV.Clear();
             this.MoveInfo = default;
+            this.PosIdx = default;
             ObjectPool.Instance.Recycle(this); 
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:64)
+    // proto file : ET-Client/OuterMessage.proto (line:65)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_CreateUnits)]
     public partial class M2C_CreateUnits: MessageObject, IMessage
@@ -608,7 +611,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:69)
+    // proto file : ET-Client/OuterMessage.proto (line:70)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_CreateMyUnit)]
     public partial class M2C_CreateMyUnit: MessageObject, IMessage
@@ -628,7 +631,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:74)
+    // proto file : ET-Client/OuterMessage.proto (line:75)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_StartSceneChange)]
     public partial class M2C_StartSceneChange: MessageObject, IMessage
@@ -651,7 +654,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:80)
+    // proto file : ET-Client/OuterMessage.proto (line:81)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_RemoveUnits)]
     public partial class M2C_RemoveUnits: MessageObject, IMessage
@@ -671,7 +674,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:85)
+    // proto file : ET-Client/OuterMessage.proto (line:86)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_PathfindingResult)]
     public partial class C2M_PathfindingResult: MessageObject, ILocationMessage
@@ -694,7 +697,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:91)
+    // proto file : ET-Client/OuterMessage.proto (line:92)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_Stop)]
     public partial class C2M_Stop: MessageObject, ILocationMessage
@@ -714,7 +717,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:96)
+    // proto file : ET-Client/OuterMessage.proto (line:97)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_PathfindingResult)]
     public partial class M2C_PathfindingResult: MessageObject, IMessage
@@ -740,7 +743,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:103)
+    // proto file : ET-Client/OuterMessage.proto (line:104)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_Stop)]
     public partial class M2C_Stop: MessageObject, IMessage
@@ -769,7 +772,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:112)
+    // proto file : ET-Client/OuterMessage.proto (line:113)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_Ping)]
     [ResponseType(nameof(G2C_Ping))]
@@ -790,7 +793,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:117)
+    // proto file : ET-Client/OuterMessage.proto (line:118)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Ping)]
     public partial class G2C_Ping: MessageObject, ISessionResponse
@@ -819,7 +822,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:126)
+    // proto file : ET-Client/OuterMessage.proto (line:127)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Test)]
     public partial class G2C_Test: MessageObject, ISessionMessage
@@ -836,7 +839,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:131)
+    // proto file : ET-Client/OuterMessage.proto (line:132)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_Reload)]
     [ResponseType(nameof(M2C_Reload))]
@@ -863,7 +866,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:138)
+    // proto file : ET-Client/OuterMessage.proto (line:139)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_Reload)]
     public partial class M2C_Reload: MessageObject, ISessionResponse
@@ -889,7 +892,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:146)
+    // proto file : ET-Client/OuterMessage.proto (line:147)
     [MemoryPackable]
     [Message(Message_ET_Client.C2R_Login)]
     [ResponseType(nameof(R2C_Login))]
@@ -922,7 +925,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:153)
+    // proto file : ET-Client/OuterMessage.proto (line:154)
     [MemoryPackable]
     [Message(Message_ET_Client.R2C_Login)]
     public partial class R2C_Login: MessageObject, ISessionResponse
@@ -957,7 +960,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:164)
+    // proto file : ET-Client/OuterMessage.proto (line:165)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_LoginGate)]
     [ResponseType(nameof(G2C_LoginGate))]
@@ -987,7 +990,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:171)
+    // proto file : ET-Client/OuterMessage.proto (line:172)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_LoginGate)]
     public partial class G2C_LoginGate: MessageObject, ISessionResponse
@@ -1016,7 +1019,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:179)
+    // proto file : ET-Client/OuterMessage.proto (line:180)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_TestHotfixMessage)]
     public partial class G2C_TestHotfixMessage: MessageObject, ISessionMessage
@@ -1036,7 +1039,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:185)
+    // proto file : ET-Client/OuterMessage.proto (line:186)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TestRobotCase)]
     [ResponseType(nameof(M2C_TestRobotCase))]
@@ -1060,7 +1063,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:191)
+    // proto file : ET-Client/OuterMessage.proto (line:192)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TestRobotCase)]
     public partial class M2C_TestRobotCase: MessageObject, ILocationResponse
@@ -1089,7 +1092,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:199)
+    // proto file : ET-Client/OuterMessage.proto (line:200)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TestRobotCase2)]
     public partial class C2M_TestRobotCase2: MessageObject, ILocationMessage
@@ -1112,7 +1115,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:205)
+    // proto file : ET-Client/OuterMessage.proto (line:206)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TestRobotCase2)]
     public partial class M2C_TestRobotCase2: MessageObject, ILocationMessage
@@ -1135,7 +1138,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:212)
+    // proto file : ET-Client/OuterMessage.proto (line:213)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TransferMap)]
     [ResponseType(nameof(M2C_TransferMap))]
@@ -1156,7 +1159,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:217)
+    // proto file : ET-Client/OuterMessage.proto (line:218)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TransferMap)]
     public partial class M2C_TransferMap: MessageObject, ILocationResponse
@@ -1182,7 +1185,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:225)
+    // proto file : ET-Client/OuterMessage.proto (line:226)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_Benchmark)]
     [ResponseType(nameof(G2C_Benchmark))]
@@ -1203,7 +1206,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:230)
+    // proto file : ET-Client/OuterMessage.proto (line:231)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Benchmark)]
     public partial class G2C_Benchmark: MessageObject, ISessionResponse
@@ -1229,4 +1232,55 @@ namespace ET
         }
     }
 
+    public static partial class Message_ET_Client
+    {
+         public const ushort Main2NetClient_Login = 10001;
+         public const ushort NetClient2Main_Login = 10002;
+         public const ushort C2G_Match = 10003;
+         public const ushort G2C_Match = 10004;
+         public const ushort Match2G_NotifyMatchSuccess = 10005;
+         public const ushort C2Room_ChangeSceneFinish = 10006;
+         public const ushort LockStepUnitInfo = 10007;
+         public const ushort Room2C_Start = 10008;
+         public const ushort FrameMessage = 10009;
+         public const ushort OneFrameInputs = 10010;
+         public const ushort Room2C_AdjustUpdateTime = 10011;
+         public const ushort C2Room_CheckHash = 10012;
+         public const ushort Room2C_CheckHashFail = 10013;
+         public const ushort G2C_Reconnect = 10014;
+         public const ushort HttpGetRouterResponse = 10015;
+         public const ushort RouterSync = 10016;
+         public const ushort C2M_TestRequest = 10017;
+         public const ushort M2C_TestResponse = 10018;
+         public const ushort C2G_EnterMap = 10019;
+         public const ushort G2C_EnterMap = 10020;
+         public const ushort MoveInfo = 10021;
+         public const ushort UnitInfo = 10022;
+         public const ushort M2C_CreateUnits = 10023;
+         public const ushort M2C_CreateMyUnit = 10024;
+         public const ushort M2C_StartSceneChange = 10025;
+         public const ushort M2C_RemoveUnits = 10026;
+         public const ushort C2M_PathfindingResult = 10027;
+         public const ushort C2M_Stop = 10028;
+         public const ushort M2C_PathfindingResult = 10029;
+         public const ushort M2C_Stop = 10030;
+         public const ushort C2G_Ping = 10031;
+         public const ushort G2C_Ping = 10032;
+         public const ushort G2C_Test = 10033;
+         public const ushort C2M_Reload = 10034;
+         public const ushort M2C_Reload = 10035;
+         public const ushort C2R_Login = 10036;
+         public const ushort R2C_Login = 10037;
+         public const ushort C2G_LoginGate = 10038;
+         public const ushort G2C_LoginGate = 10039;
+         public const ushort G2C_TestHotfixMessage = 10040;
+         public const ushort C2M_TestRobotCase = 10041;
+         public const ushort M2C_TestRobotCase = 10042;
+         public const ushort C2M_TestRobotCase2 = 10043;
+         public const ushort M2C_TestRobotCase2 = 10044;
+         public const ushort C2M_TransferMap = 10045;
+         public const ushort M2C_TransferMap = 10046;
+         public const ushort C2G_Benchmark = 10047;
+         public const ushort G2C_Benchmark = 10048;
+    }
 }
