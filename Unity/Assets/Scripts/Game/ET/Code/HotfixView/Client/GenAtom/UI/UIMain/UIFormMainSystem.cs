@@ -10,12 +10,12 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormMain self)
         {
-            self.BindButton(self.View.BagExButton, "Bag");
-            self.BindButton(self.View.MapExButton, "Map");
-            self.BindButton(self.View.HomeExButton, "Home");
-            self.BindButton(self.View.SkillExButton, "Skill");
-            self.BindButton(self.View.DoExButton, "Do");
-            self.BindButton(self.View.FacExButton, "Fac");
+            self.BindButton(self.View.MapExButton, GameConst.Btm_Map);
+            self.BindButton(self.View.BagExButton, GameConst.Btm_Bag);
+            self.BindButton(self.View.HomeExButton, GameConst.Btm_Home);
+            self.BindButton(self.View.SkillExButton, GameConst.Btm_Skill);
+            self.BindButton(self.View.DoExButton, GameConst.Btm_Do);
+            self.BindButton(self.View.FacExButton, GameConst.Btm_Fac);
         }
 
         [UGFUIFormSystem]
@@ -47,10 +47,6 @@ namespace ET.Client
         private static async UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
         {
             Log.Info($"[UIMain] Click {actionName}");
-            if (actionName != "Map")
-            {
-                return;
-            }
 
             UIComponent uiComponent = self.Scene()?.GetComponent<UIComponent>();
             if (uiComponent == null)
@@ -58,8 +54,17 @@ namespace ET.Client
                 return;
             }
 
-            uiComponent.RemoveComponent<UIFormFight>();
-            await uiComponent.AddUIFormComponentAsync<UIFormFight>(UGFUIFormId.UIFormFight);
+            if (actionName == GameConst.Btm_Map)
+            {
+                await UniTask.DelayFrame(2);
+                var root = self.Root();
+                await EventSystem.Instance.PublishAsync(root, new GoScene()
+                {
+                    SceneId = Tables.Instance.DTGameConfig.SceneMapFight
+                });
+
+                self.Visible = false;
+            }
         }
     }
 }
