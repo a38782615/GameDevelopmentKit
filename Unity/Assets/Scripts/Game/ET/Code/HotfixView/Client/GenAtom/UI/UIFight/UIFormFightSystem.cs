@@ -12,6 +12,8 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
         {
+            //创建units
+            CreateLocalUnitsFromTables(self.Root()).Forget();
         }
 
         [UGFUIFormSystem]

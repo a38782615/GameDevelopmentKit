@@ -11,9 +11,8 @@ namespace ET.Client
             CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
-            UnitComponent unitComponent = currentScene.AddComponent<UnitComponent>();
-            currentScene.AddComponent<BodyCheckComponent>();
-            currentScene.AddComponent<MovementSimulationComponent>();
+
+            await EventSystem.Instance.PublishAsync(currentScene, new AfterCreateCurrentScene());
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeStart()
@@ -23,6 +22,9 @@ namespace ET.Client
             // 等待CreateMyUnit的消息
             Wait_CreateMyUnit waitCreateMyUnit = await root.GetComponent<ObjectWait>().Wait<Wait_CreateMyUnit>();
             M2C_CreateMyUnit m2CCreateMyUnit = waitCreateMyUnit.Message;
+
+            var unitComponent = currentScene.GetComponent<UnitComponent>();
+
             Unit unit = UnitFactory.Create(currentScene, m2CCreateMyUnit.Unit);
             unitComponent.Add(unit);
             await EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
@@ -40,6 +42,8 @@ namespace ET.Client
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
 
             Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
+
+            await EventSystem.Instance.PublishAsync(currentScene, new AfterCreateCurrentScene());
 
             // 等待场景资源切换完成，避免后续运行时对象落到常驻管理场景。
             await EventSystem.Instance.PublishAsync(currentScene, new SceneChangeStart()

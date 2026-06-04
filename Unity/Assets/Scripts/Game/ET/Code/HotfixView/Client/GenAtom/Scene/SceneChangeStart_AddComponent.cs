@@ -4,7 +4,7 @@ using Game;
 
 namespace ET.Client
 {
-    [Event(SceneType.GenAtom)]
+    [Event(SceneType.Current)]
     public class SceneChangeStart_AddComponent : AEvent<Scene, SceneChangeStart>
     {
         protected override async UniTask Run(Scene currentScene, SceneChangeStart args)
