@@ -10,23 +10,25 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormMain self)
         {
-            self.BindButton(self.View.MapExButton, GameConst.Btm_Map);
-            self.BindButton(self.View.BagExButton, GameConst.Btm_Bag);
-            self.BindButton(self.View.HomeExButton, GameConst.Btm_Home);
-            self.BindButton(self.View.SkillExButton, GameConst.Btm_Skill);
-            self.BindButton(self.View.DoExButton, GameConst.Btm_Do);
-            self.BindButton(self.View.FacExButton, GameConst.Btm_Fac);
+            MonoUIWidgetBtmBar btmBarView = self.View?.BtmBarBtmBar;
+            self.BindButton(btmBarView?.MapExButton, GameConst.Btm_Map);
+            self.BindButton(btmBarView?.BagExButton, GameConst.Btm_Bag);
+            self.BindButton(btmBarView?.HomeExButton, GameConst.Btm_Home);
+            self.BindButton(btmBarView?.SkillExButton, GameConst.Btm_Skill);
+            self.BindButton(btmBarView?.DoExButton, GameConst.Btm_Do);
+            self.BindButton(btmBarView?.FacExButton, GameConst.Btm_Fac);
         }
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormMain self, bool isShutdown)
         {
-            self.UnbindButton(self.View?.BagExButton);
-            self.UnbindButton(self.View?.MapExButton);
-            self.UnbindButton(self.View?.HomeExButton);
-            self.UnbindButton(self.View?.SkillExButton);
-            self.UnbindButton(self.View?.DoExButton);
-            self.UnbindButton(self.View?.FacExButton);
+            MonoUIWidgetBtmBar btmBarView = self.View?.BtmBarBtmBar;
+            self.UnbindButton(btmBarView?.BagExButton);
+            self.UnbindButton(btmBarView?.MapExButton);
+            self.UnbindButton(btmBarView?.HomeExButton);
+            self.UnbindButton(btmBarView?.SkillExButton);
+            self.UnbindButton(btmBarView?.DoExButton);
+            self.UnbindButton(btmBarView?.FacExButton);
         }
 
         private static void BindButton(this UIFormMain self, UnityEngine.UI.Button button, string actionName)

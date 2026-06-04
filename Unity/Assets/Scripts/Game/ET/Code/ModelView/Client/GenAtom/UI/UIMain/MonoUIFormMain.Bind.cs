@@ -5,25 +5,10 @@ namespace ET.Client
     public partial class MonoUIFormMain
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_BagExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_DoExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_FacExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_HomeExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_MapExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_SkillExButton;
+        private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
 
 
-        public Game.ExButton BagExButton => m_BagExButton;
-        public Game.ExButton DoExButton => m_DoExButton;
-        public Game.ExButton FacExButton => m_FacExButton;
-        public Game.ExButton HomeExButton => m_HomeExButton;
-        public Game.ExButton MapExButton => m_MapExButton;
-        public Game.ExButton SkillExButton => m_SkillExButton;
+        public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
 
 
 #if UNITY_EDITOR
@@ -34,12 +19,7 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_BagExButton == null) return true;
-            if (this.m_DoExButton == null) return true;
-            if (this.m_FacExButton == null) return true;
-            if (this.m_HomeExButton == null) return true;
-            if (this.m_MapExButton == null) return true;
-            if (this.m_SkillExButton == null) return true;
+            if (this.m_BtmBarBtmBar == null) return true;
             return false;
         }
 #endif
