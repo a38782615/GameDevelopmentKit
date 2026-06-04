@@ -233,12 +233,7 @@ namespace ET
 
         public static quaternion GetFacingRotation(this Move2DComponent self, float2 faceV, quaternion currentRotation)
         {
-            if (math.abs(faceV.x) <= 0.01f)
-            {
-                return currentRotation;
-            }
-
-            return faceV.x < 0f ? quaternion.RotateY(math.PI) : quaternion.identity;
+            return faceV.x > 0f ? quaternion.RotateY(math.PI) : quaternion.identity;
         }
 
         public static float2 GetFaceV(this Move2DComponent self)
