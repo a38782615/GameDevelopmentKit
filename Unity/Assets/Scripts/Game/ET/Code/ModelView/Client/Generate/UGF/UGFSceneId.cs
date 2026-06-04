@@ -15,7 +15,7 @@ namespace ET.Client
         public const int Menu = 1;
 
         /// <summary>
-        /// 战斗场景
+        /// 主场景
         /// </summary>
         public const int Main = 2;
 
@@ -23,5 +23,10 @@ namespace ET.Client
         /// 2战斗
         /// </summary>
         public const int Map2d = 3;
+
+        /// <summary>
+        /// 2战斗
+        /// </summary>
+        public const int MapFight = 4;
     }
 }

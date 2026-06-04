@@ -126,18 +126,8 @@ namespace ET.Client
             if (resolvedTarget == null && spec.RequiresMainTarget())
             {
                 resolvedTarget = self.FindDefaultMainTarget();
-#if UNITY_EDITOR
-                if (spec.SkillId == "1010")
-                {
-                }
-#endif
                 if (resolvedTarget == null)
                 {
-#if UNITY_EDITOR
-                    if (spec.SkillId == "1010")
-                    {
-                    }
-#endif
                     return false;
                 }
             }

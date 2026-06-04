@@ -9,7 +9,7 @@
   {
     "Id": 2,
     "CSName": "Main",
-    "Desc": "战斗场景",
+    "Desc": "主场景",
     "AssetName": "Main",
     "BackgroundMusicId": 2
   },
@@ -18,6 +18,13 @@
     "CSName": "Map2d",
     "Desc": "2战斗",
     "AssetName": "Map2d",
+    "BackgroundMusicId": 2
+  },
+  {
+    "Id": 4,
+    "CSName": "MapFight",
+    "Desc": "2战斗",
+    "AssetName": "MapFight",
     "BackgroundMusicId": 2
   }
 ]

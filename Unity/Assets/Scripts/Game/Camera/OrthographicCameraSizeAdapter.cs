@@ -83,10 +83,15 @@ namespace Game
                 return;
             }
 
+            if(m_LastScreenWidth == Screen.width && m_LastScreenHeight == Screen.height)
+            {
+                return;
+            }
             m_LastScreenWidth = Screen.width;
             m_LastScreenHeight = Screen.height;
-            var ratio = m_LastScreenWidth / m_LastScreenHeight; 
-            float scale = ratio > 1f ? m_DesignResolution.x * 1f/ m_DesignResolution.y : 1f;
+            var desRatio = m_DesignResolution.x * 1.0f / m_DesignResolution.y;
+            var ratio = m_LastScreenWidth * 1.0f / m_LastScreenHeight; 
+            float scale = ratio >= desRatio ? 1f : (desRatio/ ratio);
             m_CachedCamera.orthographicSize = m_DesignOrthographicSize * scale;
         }
     }

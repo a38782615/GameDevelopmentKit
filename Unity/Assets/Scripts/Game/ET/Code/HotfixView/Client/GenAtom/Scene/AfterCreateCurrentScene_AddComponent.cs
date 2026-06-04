@@ -7,10 +7,17 @@ namespace ET.Client
     {
         protected override async UniTask Run(Scene scene, AfterCreateCurrentScene args)
         {
-            SkillHudManager.Instance?.ClearSceneHud();
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
-            scene.AddComponent<FightInputComponent>();
+            if(SceneChangeHelper.IsSceneName(scene.Name, Tables.Instance.DTGameConfig.SceneMapFight))
+            {
+                scene.AddComponent<UnitComponent>();
+                scene.AddComponent<BodyCheckComponent>();
+                scene.AddComponent<MovementSimulationComponent>();
+                
+                SkillHudManager.Instance?.ClearSceneHud();
+                scene.AddComponent<FightInputComponent>();
+            }
             await UniTask.CompletedTask;
         }
     }

@@ -13,10 +13,5 @@ namespace ET.Client
         /// 
         /// </summary>
         public const int WidgetTest = 1;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public const int UIHeadItem = 2;
     }
 }

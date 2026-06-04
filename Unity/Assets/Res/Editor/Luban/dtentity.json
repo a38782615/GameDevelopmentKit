@@ -1,17 +1,17 @@
 [
   {
     "Id": 1000001,
-    "CSName": "Hero1000001",
+    "CSName": "HeadItemHero",
     "Desc": "",
-    "AssetName": "Hero/Hero1000001",
+    "AssetName": "Head/HeadItem",
     "EntityGroupName": "Hero",
     "Priority": 90
   },
   {
     "Id": 2000001,
-    "CSName": "Monster2000001",
+    "CSName": "HeadItemMonster",
     "Desc": "",
-    "AssetName": "Monster/Monster2000001",
+    "AssetName": "Head/HeadItem",
     "EntityGroupName": "Monster",
     "Priority": 90
   },

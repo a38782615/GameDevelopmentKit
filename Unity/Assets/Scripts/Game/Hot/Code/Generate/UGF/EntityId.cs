@@ -12,12 +12,12 @@ namespace Game.Hot
         /// <summary>
         /// 
         /// </summary>
-        public const int Hero1000001 = 1000001;
+        public const int HeadItemHero = 1000001;
 
         /// <summary>
         /// 
         /// </summary>
-        public const int Monster2000001 = 2000001;
+        public const int HeadItemMonster = 2000001;
 
         /// <summary>
         /// 

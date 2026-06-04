@@ -8,9 +8,12 @@ namespace ET.Client
     {
         protected override async UniTask Run(Scene scene, SceneChangeFinish args)
         {
-            UIComponent uiComponent = scene.GetComponent<UIComponent>();
-            uiComponent.RemoveComponent<UIFormUnitAttributeComponent>();
-            await uiComponent.AddUIFormComponentAsync<UIFormUnitAttributeComponent>(UGFUIFormId.UIUnitAttribute);
+            if(SceneChangeHelper.IsSceneName(scene.Name , Tables.Instance.DTGameConfig.SceneMapFight))
+            {
+                // UIComponent uiComponent = scene.GetComponent<UIComponent>();
+                // uiComponent.RemoveComponent<UIFormUnitAttributeComponent>();
+                // await uiComponent.AddUIFormComponentAsync<UIFormUnitAttributeComponent>(UGFUIFormId.UIUnitAttribute);
+            }
         }
     }
 }

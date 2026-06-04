@@ -39,8 +39,9 @@ namespace ET.Client
         public Unit Unit;
     }
 
-    public struct GoMap2d
+    public struct GoScene
     {
+        public int SceneId;
     }
 
     public struct FightInputScreenClick

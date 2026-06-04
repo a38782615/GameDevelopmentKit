@@ -18,6 +18,7 @@
       <Resource Name="Res/Scene/Map1" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Map2" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Map2d" LoadType="0" Packed="False" />
+      <Resource Name="Res/Scene/MapFight" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Menu" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormFight" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormSkills" LoadType="0" Packed="False" />
@@ -101,6 +102,7 @@
       <Asset Guid="24ceddd13de2037439f8f856dd8d2811" ResourceName="UI.UXTool" />
       <Asset Guid="26490535866066e45b9aa2d9a5f09c68" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="265d0fb6f97c6e842a64fd1a3412464f" ResourceName="Res/UI/UISprite/SkillIcon" />
+      <Asset Guid="26923cefe3b969d4f880630b5d40f454" ResourceName="Res/Scene/MapFight" />
       <Asset Guid="279e5bc6249d3ff43b23cd4cc2d81154" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="27c1e5a103ab93a449454ffd8d3287a4" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="2890a546e5231b4459a3f811868cddd5" ResourceName="Res/UI/UISprite/SkillIcon" />
@@ -126,6 +128,7 @@
       <Asset Guid="359e359b1eb20bd47b300366fb19c4d7" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="36196fe174d6f29499a3bd38ff751236" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="375b66080af62fd40ae443f01b729af2" ResourceName="UI.UXTool" />
+      <Asset Guid="37b9da47a7f10b244bbf88a357f70e21" ResourceName="Entity" />
       <Asset Guid="38f6322242a881141bfc1a69a80a65c5" ResourceName="UI.UXTool" />
       <Asset Guid="3a009db50675823478c23f6e6b0f866a" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="3b7910331870913419f6e73a758d246e" ResourceName="UI.UXTool" />

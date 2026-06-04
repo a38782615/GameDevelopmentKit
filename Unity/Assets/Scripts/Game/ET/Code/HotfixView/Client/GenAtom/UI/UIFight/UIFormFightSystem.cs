@@ -12,166 +12,89 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
         {
-            self.LPos = new RectTransform[4] { self.View.L0RectTransform, self.View.L1RectTransform, self.View.L2RectTransform, self.View.L3RectTransform };
-            self.RPos = new RectTransform[4] { self.View.R0RectTransform, self.View.R1RectTransform, self.View.R2RectTransform, self.View.R3RectTransform };
-            self.LoadFightUnitsAsync().Forget();
         }
-        
+
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormFight self, bool isShutdown)
         {
-            self.ClearFightUnits();
         }
 
-        private static async UniTaskVoid LoadFightUnitsAsync(this UIFormFight self)
+        private static async UniTask CreateLocalUnitsFromTables(Scene root)
         {
-            if (self.IsLoadingFightUnits)
+            var current = root.CurrentScene();
+            var heros = Tables.Instance.DTHero;
+            var unis1 = new UniTask[heros.DataList.Count];
+            for (int i = 0; i < heros.DataList.Count; i++)
             {
-                return;
+                var config = heros.DataList[i];
+                UnitInfo unitInfo = CreateUnitInfo(config, i);
+                Unit unit = UnitFactory.Create(current, unitInfo);
+                if (i == 0)
+                {
+                    root.GetComponent<PlayerComponent>().MyId = unitInfo.UnitId;
+                }
+                var t = EventSystem.Instance.PublishAsync(current, new AfterUnitCreate() { Unit = unit });
+                unis1[i] = t;
+            }
+            await UniTask.WhenAll(unis1);
+
+            var configs = Tables.Instance.DTMonster;
+            var unis = new UniTask[configs.DataList.Count];
+            for (int i = 0; i < configs.DataList.Count; i++)
+            {
+                var config = configs.DataList[i];
+                UnitInfo unitInfo = CreateUnitInfo(config, i);
+                Unit unit = UnitFactory.Create(current, unitInfo);
+
+                var t = EventSystem.Instance.PublishAsync(current, new AfterUnitCreate() { Unit = unit });
+                unis[i] = t;
             }
 
-            self.IsLoadingFightUnits = true;
-            try
-            {
-                self.ClearFightUnits();
-
-                MonoUIFormFight view = self.View;
-                if (view?.L0RectTransform == null || view.R0RectTransform == null)
-                {
-                    Log.Warning("[UIFormFight] Missing L0 or R0 slot.");
-                    return;
-                }
-
-                await self.CreateFirstHeroAsync(0);
-                if (self.IsDisposed)
-                {
-                    return;
-                }
-
-                await self.CreateFirstMonsterAsync(0);
-            }
-            finally
-            {
-                if (!self.IsDisposed)
-                {
-                    self.IsLoadingFightUnits = false;
-                }
-            }
+            await UniTask.WhenAll(unis);
         }
 
-        private static async UniTask CreateFirstHeroAsync(this UIFormFight self, int pos)
+        private static UnitInfo CreateUnitInfo(DRHero config, int index)
         {
-            if (Tables.Instance?.DTHero?.DataList == null || Tables.Instance.DTHero.DataList.Count == 0)
-            {
-                Log.Warning("[UIFormFight] Missing hero config.");
-                return;
-            }
-
-            DRHero config = Tables.Instance.DTHero.DataList[0];
             UnitInfo unitInfo = UnitInfo.Create();
-            unitInfo.UnitId = IdGenerater.Instance.GenerateId();
+            unitInfo.UnitId = config.Id;
             unitInfo.Type = config.UnitConfigId_Ref.Type;
             unitInfo.ConfigId = config.UnitConfigId;
-            unitInfo.Position = float3.zero;
-            unitInfo.Forward = new float2(1f, 0f).ToModeDirection();
-            unitInfo.PosIdx = pos;
 
-            Unit unit = await self.CreateFightUnitAsync(unitInfo);
-            PlayerComponent playerComponent = self.Scene()?.Root()?.GetComponent<PlayerComponent>();
-            if (unit != null && playerComponent != null)
-            {
-                playerComponent.MyId = unit.Id;
-            }
+            unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
+            unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
+            return unitInfo;
         }
-
-        private static async UniTask CreateFirstMonsterAsync(this UIFormFight self, int pos)
+        private static UnitInfo CreateUnitInfo(DRMonster config, int index)
         {
-            if (Tables.Instance?.DTMonster?.DataList == null || Tables.Instance.DTMonster.DataList.Count == 0)
-            {
-                Log.Warning("[UIFormFight] Missing monster config.");
-                return;
-            }
-
-            DRMonster config = Tables.Instance.DTMonster.DataList[0];
             UnitInfo unitInfo = UnitInfo.Create();
-            unitInfo.UnitId = IdGenerater.Instance.GenerateId();
+            unitInfo.UnitId = config.Id;
             unitInfo.Type = config.UnitConfigId_Ref.Type;
             unitInfo.ConfigId = config.UnitConfigId;
-            unitInfo.Position = float3.zero;
-            unitInfo.Forward = new float2(-1f, 0f).ToModeDirection();
-            unitInfo.PosIdx = pos;
+            unitInfo.PosIdx = index;
 
-            await self.CreateFightUnitAsync(unitInfo);
+            unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
+            unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
+            return unitInfo;
         }
 
-        private static async UniTask<Unit> CreateFightUnitAsync(this UIFormFight self, UnitInfo unitInfo)
+        private static float3 GetLocalUnitPosition(UnitType unitType, int index)
         {
-            Scene currentScene = self.Scene();
-            Unit unit = UnitFactory.Create(currentScene, unitInfo);
-            if (!self.FightUnitIds.Contains(unit.Id))
+            return unitType switch
             {
-                self.FightUnitIds.Add(unit.Id);
-            }
-
-            UIWidgetHeadItem headItem = await self.LoadChildUIWidgetAsync<UIWidgetHeadItem>(UGFUIEntityId.UIHeadItem);
-            if (self.IsDisposed)
-            {
-                return unit;
-            }
-
-            self.AttachHeadItemToSlot(unitInfo, headItem);
-            self.BindUnitView(unit, headItem);
-            headItem.TryDynamicOpen();
-            return unit;
+                UnitType.Player => new float2(-3f + index * 2.5f, index * 1.5f).ToModePosition(),
+                UnitType.Monster => new float2(3f + index * 2.5f, index * 1.5f).ToModePosition(),
+                _ => new float2(index * 2.5f, -4f).ToModePosition(),
+            };
         }
 
-        private static void AttachHeadItemToSlot(this UIFormFight self, UnitInfo unit, UIWidgetHeadItem headItem)
+        private static float3 GetLocalUnitForward(UnitType unitType)
         {
-            RectTransform rectTransform = headItem?.CachedRectTransform;
-            if (rectTransform == null)
+            return unitType switch
             {
-                return;
-            }
-            var slotRect = (unit.Type == (int)UnitType.Player) ? self.LPos[unit.PosIdx] : self.RPos[unit.PosIdx];
-            
-            rectTransform.SetParent(slotRect, false);
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-            rectTransform.localScale = Vector3.one;
-        }
-
-        private static void BindUnitView(this UIFormFight self, Unit unit, UIWidgetHeadItem headItem)
-        {
-            if (unit == null || headItem?.CachedRectTransform == null)
-            {
-                return;
-            }
-
-            unit.GetOrAddComponent<EntityBody>();
-            SkillUnit skillUnit = unit.GetComponent<SkillUnit>() ?? unit.AddComponent<SkillUnit>();
-            GameObject viewGameObject = headItem.CachedRectTransform.gameObject;
-
-            GameObjectComponent gameObjectComponent = unit.GetOrAddComponent<GameObjectComponent>();
-            gameObjectComponent.GameObject = viewGameObject;
-
-            AbilitySystemComponent asc = skillUnit.ASC.As();
-            asc?.SetOwnerObject(viewGameObject);
-        }
-
-        private static void ClearFightUnits(this UIFormFight self)
-        {
-            UnitComponent unitComponent = self.Root().CurrentScene()?.GetComponent<UnitComponent>();
-            if (unitComponent == null)
-            {
-                return;
-            }
-            foreach (long unitId in self.FightUnitIds)
-            {
-                unitComponent.Remove(unitId);
-            }
-            self.FightUnitIds.Clear();
+                UnitType.Player => new float2(1f, 0f).ToModeDirection(),
+                UnitType.Monster => new float2(-1f, 0f).ToModeDirection(),
+                _ => float3.zero,
+            };
         }
     }
 }

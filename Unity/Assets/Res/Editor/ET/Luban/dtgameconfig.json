@@ -1,0 +1,8 @@
+[
+  {
+    "Scene_Menu": 1,
+    "Scene_Main": 2,
+    "Scene_Map2d": 3,
+    "Scene_MapFight": 4
+  }
+]

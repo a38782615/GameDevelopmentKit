@@ -16,6 +16,7 @@ public sealed partial class DRScene : Luban.BeanBase
     public DRScene(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
+        CSName = _buf.ReadString();
         AssetName = _buf.ReadString();
         BackgroundMusicId = _buf.ReadInt();
         BackgroundMusicId_Ref = null;
@@ -31,6 +32,10 @@ public sealed partial class DRScene : Luban.BeanBase
     /// 场景编号
     /// </summary>
     public readonly int Id;
+    /// <summary>
+    /// 场景编号代码名（程序填）
+    /// </summary>
+    public readonly string CSName;
     /// <summary>
     /// 资源名称
     /// </summary>
@@ -53,6 +58,7 @@ public sealed partial class DRScene : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "CSName:" + CSName + ","
         + "AssetName:" + AssetName + ","
         + "BackgroundMusicId:" + BackgroundMusicId + ","
         + "}";

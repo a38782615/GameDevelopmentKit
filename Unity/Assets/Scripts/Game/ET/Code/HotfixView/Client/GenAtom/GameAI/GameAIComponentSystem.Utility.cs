@@ -195,13 +195,11 @@ namespace ET.Client
                 return null;
             }
 
-            Vector3 selfPosition = selfUnit.GetWorldPosition();
-            float maxDistanceSqr = maxDistance > 0f ? maxDistance * maxDistance : float.MaxValue;
             int startPosIdx = NormalizeFormationPosition(selfUnit.PosIdx);
             for (int offset = 0; offset < FormationPositionCount; offset++)
             {
                 int targetPosIdx = (startPosIdx + offset) % FormationPositionCount;
-                AbilitySystemComponent target = FindHostileTargetAtPosition(unitComponent, selfUnit, selfPosition, targetPosIdx, maxDistanceSqr);
+                AbilitySystemComponent target = FindHostileTargetAtPosition(unitComponent, selfUnit, targetPosIdx);
                 if (target != null)
                 {
                     return target;
@@ -211,11 +209,9 @@ namespace ET.Client
             return null;
         }
 
-        private static AbilitySystemComponent FindHostileTargetAtPosition(UnitComponent unitComponent, Unit selfUnit, Vector3 selfPosition, int targetPosIdx,
-            float maxDistanceSqr)
+        private static AbilitySystemComponent FindHostileTargetAtPosition(UnitComponent unitComponent, Unit selfUnit,  int targetPosIdx)
         {
             AbilitySystemComponent nearestTarget = null;
-            float nearestDistanceSqr = maxDistanceSqr;
 
             foreach (Entity entity in unitComponent.Children.Values)
             {
@@ -235,18 +231,11 @@ namespace ET.Client
                     continue;
                 }
 
-                Vector3 targetPosition = otherUnit.GetWorldPosition();
-                float deltaX = targetPosition.x - selfPosition.x;
-                float deltaY = targetPosition.y - selfPosition.y;
-                float deltaZ = targetPosition.z - selfPosition.z;
-                float distanceSqr = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
-                if (distanceSqr > nearestDistanceSqr)
-                {
-                    continue;
-                }
-
-                nearestDistanceSqr = distanceSqr;
                 nearestTarget = targetAsc;
+                if (nearestTarget != null)
+                {
+                    break;
+                }
             }
 
             return nearestTarget;

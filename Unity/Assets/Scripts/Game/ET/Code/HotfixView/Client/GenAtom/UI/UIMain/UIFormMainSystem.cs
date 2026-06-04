@@ -54,7 +54,7 @@ namespace ET.Client
                 return;
             }
 
-            if (actionName == GameConst.Btm_Map)
+            if (actionName == GameConst.Btm_Bag)
             {
                 await UniTask.DelayFrame(2);
                 var root = self.Root();

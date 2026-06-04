@@ -5,6 +5,7 @@ namespace Game
 {
     public static partial class SceneExtension
     {
+
         public static bool SceneIsLoading(this SceneComponent sceneComponent, int sceneId)
         {
             DRScene drScene = GameEntry.Tables.DTScene.GetOrDefault(sceneId);

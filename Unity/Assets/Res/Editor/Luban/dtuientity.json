@@ -6,13 +6,5 @@
     "AssetName": "WidgetTest",
     "EntityGroupName": "UI",
     "Priority": 0
-  },
-  {
-    "Id": 2,
-    "CSName": "UIHeadItem",
-    "Desc": "",
-    "AssetName": "UIHeadItem",
-    "EntityGroupName": "UI",
-    "Priority": 0
   }
 ]

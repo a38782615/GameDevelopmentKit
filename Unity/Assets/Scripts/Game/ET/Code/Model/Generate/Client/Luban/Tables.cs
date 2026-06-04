@@ -13,6 +13,8 @@ namespace ET
 {
 public partial class Tables
 {
+    public DTScene DTScene { private set; get; }
+    public DTMusic DTMusic { private set; get; }
     public DTOneConfig DTOneConfig { private set; get; }
     public DTAIConfig DTAIConfig { private set; get; }
     public DTUnitConfig DTUnitConfig { private set; get; }
@@ -27,6 +29,7 @@ public partial class Tables
     public DTBattleCardConfig DTBattleCardConfig { private set; get; }
     public DTRelic DTRelic { private set; get; }
     public DTSkillAttribute DTSkillAttribute { private set; get; }
+    public DTGameConfig DTGameConfig { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -38,6 +41,12 @@ public partial class Tables
         _tables = new System.Collections.Generic.Dictionary<string, IDataTable>();
         var loadTasks = new System.Collections.Generic.List<Cysharp.Threading.Tasks.UniTask>();
 
+        DTScene = new DTScene(() => loader("dtscene"));
+        loadTasks.Add(DTScene.LoadAsync());
+        _tables.Add("DTScene", DTScene);
+        DTMusic = new DTMusic(() => loader("dtmusic"));
+        loadTasks.Add(DTMusic.LoadAsync());
+        _tables.Add("DTMusic", DTMusic);
         DTOneConfig = new DTOneConfig(() => loader("dtoneconfig"));
         loadTasks.Add(DTOneConfig.LoadAsync());
         _tables.Add("DTOneConfig", DTOneConfig);
@@ -80,6 +89,9 @@ public partial class Tables
         DTSkillAttribute = new DTSkillAttribute(() => loader("dtskillattribute"));
         loadTasks.Add(DTSkillAttribute.LoadAsync());
         _tables.Add("DTSkillAttribute", DTSkillAttribute);
+        DTGameConfig = new DTGameConfig(() => loader("dtgameconfig"));
+        loadTasks.Add(DTGameConfig.LoadAsync());
+        _tables.Add("DTGameConfig", DTGameConfig);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -90,6 +102,8 @@ public partial class Tables
 
     private void ResolveRef()
     {
+        DTScene.ResolveRef(this);
+        DTMusic.ResolveRef(this);
         DTOneConfig.ResolveRef(this);
         DTAIConfig.ResolveRef(this);
         DTUnitConfig.ResolveRef(this);
@@ -104,6 +118,7 @@ public partial class Tables
         DTBattleCardConfig.ResolveRef(this);
         DTRelic.ResolveRef(this);
         DTSkillAttribute.ResolveRef(this);
+        DTGameConfig.ResolveRef(this);
         PostResolveRef();
     }
 
