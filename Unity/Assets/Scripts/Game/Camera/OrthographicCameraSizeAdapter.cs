@@ -8,7 +8,7 @@ namespace Game
     public sealed class OrthographicCameraSizeAdapter : MonoBehaviour
     {
         [SerializeField]
-        private Vector2Int m_DesignResolution = new Vector2Int(1920, 1080);
+        private Vector2Int m_DesignResolution = new Vector2Int(750, 1335);
 
         [SerializeField]
         private float m_DesignOrthographicSize = 5f;
