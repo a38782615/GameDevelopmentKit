@@ -5,20 +5,19 @@ namespace ET.Client
 {
     [FriendOf(typeof(UIWidgetBtmBar))]
     [EntitySystemOf(typeof(UIWidgetBtmBar))]
-    public static partial class UIBtmBarSystem
+    public static partial class UIWidgetBtmBarSystem
     {
         [EntitySystem]
         private static void Awake(this UIWidgetBtmBar self)
         {
-            
+
         }
 
         [EntitySystem]
         private static void Destroy(this UIWidgetBtmBar self)
         {
-            
-        }
 
+        }
         [UGFUIWidgetSystem]
         private static void UGFUIWidgetOnOpen(this UIWidgetBtmBar self)
         {
@@ -60,7 +59,7 @@ namespace ET.Client
         {
             Log.Info($"[UIMain] Click {actionName}");
 
-            UIFormMain owner = self.GetParent<UIFormMain>();
+            UGFUIForm owner = self.GetParent<UGFUIForm>();
             if (owner == null)
             {
                 return;

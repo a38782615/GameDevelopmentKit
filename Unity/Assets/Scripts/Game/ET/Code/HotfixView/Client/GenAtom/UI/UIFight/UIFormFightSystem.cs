@@ -12,6 +12,7 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
         {
+            self.OpenAllUIWidgets();
             //创建units
             CreateLocalUnitsFromTables(self.Root()).Forget();
         }
