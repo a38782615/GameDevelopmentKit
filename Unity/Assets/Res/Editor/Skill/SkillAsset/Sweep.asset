@@ -16,12 +16,12 @@ MonoBehaviour:
   nodes:
   - rid: 4204046695868924066
   - rid: 4204046695868924069
-  - rid: 4204046695868924071
   - rid: 4204046695868924063
   - rid: 300804416242450521
-  - rid: 4204046695868924070
   - rid: 4204046695868924065
   - rid: 4204046695868924067
+  - rid: 4204046695868924071
+  - rid: 4204046695868924070
   - rid: 4204046695868924068
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -48,13 +48,13 @@ MonoBehaviour:
     outputPortId: 2095095
     inputNodeGuid: 2cfdacd2-0186-49dd-b177-4eb8c0ad87bd
     inputPortId: 7001
-  - outputNodeGuid: 79dea24a-eaf5-45f2-b5a0-cbb8c4ad6df2
-    outputPortId: 2893914
-    inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
-    inputPortId: 7001
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1002
     inputNodeGuid: 79dea24a-eaf5-45f2-b5a0-cbb8c4ad6df2
+    inputPortId: 7001
+  - outputNodeGuid: e33ab94c-1496-4d6a-ba5e-1afd38bb0c30
+    outputPortId: 4001
+    inputNodeGuid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
     inputPortId: 7001
   references:
     version: 2
@@ -70,10 +70,10 @@ MonoBehaviour:
         targetType: 1
         animationPrefab: {fileID: 710711765630721763, guid: 37b9da47a7f10b244bbf88a357f70e21,
           type: 3}
-        animationPrefabPath: Assets/Res/UI/UIEntity/UIHeadItem.prefab
-        animationComponentPath: UIHeadItem(Clone)/Root_Animation
+        animationPrefabPath: Assets/Res/Entity/Head/HeadItem.prefab
+        animationComponentPath: HeadItem(Clone)/Root_Animation
         animationName: Attack
-        animationDuration: 10
+        animationDuration: 15
         isAnimationLooping: 0
         timeEffects:
         - triggerTime: 3
@@ -309,21 +309,21 @@ MonoBehaviour:
         guid: cde57fb8-b693-4da8-a4a8-fd61e56c5dcd
         nodeType: 12
         position:
-          x: 821.3334
-          y: -2600.6665
+          x: 1005.3334
+          y: -2186
         targetType: 1
         requiredTags:
           Tags: []
         immunityTags:
           Tags: []
         destroyWithNode: 0
-        positionSource: 0
+        positionSource: 2
         particleEntityId: 50006
         particlePrefab: {fileID: 292125255928079858, guid: 804301720a808ab4885fc27e730bf28a,
           type: 3}
         particlePrefabPath: Assets/Res/Entity/Effect/ef_Zhanshi_attack_02.prefab
-        particleBindingName: down
-        particleOffset: {x: 5, y: 0, z: 0}
+        particleBindingName: head
+        particleOffset: {x: 0, y: 0, z: 0}
         particleScale: {x: 1, y: 1, z: 1}
         attachToTarget: 0
         particleLoop: 0
@@ -333,8 +333,8 @@ MonoBehaviour:
         guid: c353e286-8ef0-460a-b917-887f2aeb390a
         nodeType: 14
         position:
-          x: 1213.3334
-          y: -2354.6665
+          x: 1218.6667
+          y: -2347.3333
         targetType: 1
         requiredTags:
           Tags: []

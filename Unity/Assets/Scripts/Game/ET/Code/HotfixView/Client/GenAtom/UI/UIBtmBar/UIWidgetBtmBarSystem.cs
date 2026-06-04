@@ -70,18 +70,25 @@ namespace ET.Client
             {
                 return;
             }
+            Scene root = owner.Root();
+            await UniTask.DelayFrame(2);
 
             if (actionName == GameConst.Btm_Bag)
             {
-                await UniTask.DelayFrame(2);
-                Scene root = owner.Root();
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
                 {
                     SceneId = Tables.Instance.DTGameConfig.SceneMapFight
                 });
-
-                owner.Visible = false;
             }
+            else
+            {
+                await EventSystem.Instance.PublishAsync(root, new GoScene()
+                {
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain
+                });
+            }
+
+            owner.Visible = false;
         }
     }
 }
