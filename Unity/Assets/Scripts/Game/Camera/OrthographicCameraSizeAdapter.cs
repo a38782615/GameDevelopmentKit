@@ -3,12 +3,13 @@ using UnityGameFramework.Runtime;
 
 namespace Game
 {
+    [ExecuteAlways]
     [RequireComponent(typeof(Camera))]
     [DisallowMultipleComponent]
     public sealed class OrthographicCameraSizeAdapter : MonoBehaviour
     {
         [SerializeField]
-        private Vector2Int m_DesignResolution = new Vector2Int(750, 1335);
+        private Vector2 m_DesignResolution = new Vector2(750, 1335);
 
         [SerializeField]
         private float m_DesignOrthographicSize = 5f;
@@ -82,13 +83,10 @@ namespace Game
                 return;
             }
 
-            m_LastScreenWidth = Mathf.Max(Screen.width, 1);
-            m_LastScreenHeight = Mathf.Max(Screen.height, 1);
-
-            float widthRatio = m_LastScreenWidth / (float)m_DesignResolution.x;
-            float heightRatio = m_LastScreenHeight / (float)m_DesignResolution.y;
-            float resolutionRatio = Mathf.Min(widthRatio, heightRatio);
-            float scale = resolutionRatio < 1f ? 1f / resolutionRatio : 1f;
+            m_LastScreenWidth = Screen.width;
+            m_LastScreenHeight = Screen.height;
+            var ratio = m_LastScreenWidth / m_LastScreenHeight; 
+            float scale = ratio > 1f ? m_DesignResolution.x * 1f/ m_DesignResolution.y : 1f;
             m_CachedCamera.orthographicSize = m_DesignOrthographicSize * scale;
         }
     }
