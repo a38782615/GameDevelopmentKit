@@ -13,7 +13,8 @@ namespace ET.Client
             {
                 scene.AddComponent<UnitComponent>();
                 scene.AddComponent<BodyCheckComponent>();
-                scene.AddComponent<MovementSimulationComponent>();
+                // RVO
+                // scene.AddComponent<MovementSimulationComponent>();
                 
                 SkillHudManager.Instance?.ClearSceneHud();
                 scene.AddComponent<FightInputComponent>();

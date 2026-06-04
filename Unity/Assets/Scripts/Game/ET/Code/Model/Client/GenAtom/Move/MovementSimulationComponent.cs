@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace ET.Client
 {
+    //RVO
     [ComponentOf(typeof(Scene))]
     public class MovementSimulationComponent : Entity, IAwake, IDestroy
     {
