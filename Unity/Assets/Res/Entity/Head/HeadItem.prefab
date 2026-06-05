@@ -182,6 +182,8 @@ Animation:
   m_Animations:
   - {fileID: 7400000, guid: c33ec9b05a0bbb142bc2441d5a62ea76, type: 2}
   - {fileID: 7400000, guid: 56c761b2dd75de643bfd183bed6aa78d, type: 2}
+  - {fileID: 7400000, guid: cc4748260b5c7714899d1db0e83af83e, type: 2}
+  - {fileID: 7400000, guid: b282dc82fc2856944ac01a20a251767a, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0

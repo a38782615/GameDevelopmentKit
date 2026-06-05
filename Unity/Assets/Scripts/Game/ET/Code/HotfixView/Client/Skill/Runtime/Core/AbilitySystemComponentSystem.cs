@@ -61,6 +61,10 @@ namespace ET.Client
             if (after < before)
             {
                 self.DispatchGameplayEvent(GameplayEventType.OnTakeDamage);
+                if (after > 0f)
+                {
+                    self.PlayBeAttackPresentation();
+                }
             }
 
             if (before > 0f && after <= 0f)
@@ -68,6 +72,7 @@ namespace ET.Client
                 SkillDiagFileLogger.Log($"[Death] asc={self.InstanceId} unit={self.GetParent<SkillUnit>()?.Unit.As()?.Id ?? 0} hpBefore={before:F3} hpAfter={after:F3}");
                 self.DispatchGameplayEvent(GameplayEventType.OnDeath);
                 self.Abilities?.CancelAllAbilities();
+                self.PlayDeathPresentationAndRemove();
             }
         }
 

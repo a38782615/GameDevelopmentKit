@@ -21,6 +21,7 @@ namespace ET.Client
 
             
             GameObject viewGameObject = a.CachedTransform.gameObject;
+            unit.GetOrAddComponent<UnitViewComponent>().Bind(a);
             var gameObjectComponent = unit.GetOrAddComponent<GameObjectComponent>();
             gameObjectComponent.GameObject = viewGameObject;
             gameObjectComponent.Transform.position = unit.Position;

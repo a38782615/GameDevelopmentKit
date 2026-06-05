@@ -118,6 +118,34 @@ namespace ET.Client
             self.PlayAnimation(self.StandAnimationName, true);
         }
 
+        public static int GetAnimationLengthMs(this AnimationManagerComponent self, string name, string animationComponentPath, int fallbackMs)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return fallbackMs;
+            }
+
+            self.Bind();
+            Unit unit = self.GetParent<Unit>();
+            if (unit == null)
+            {
+                return fallbackMs;
+            }
+
+            float seconds = 0f;
+            switch (self.ResolvedDriverType)
+            {
+                case AnimationDriverType.Skelen:
+                    seconds = unit.GetOrAddComponent<SkelenAnimationComponent>().GetAnimationLengthSeconds(name);
+                    break;
+                case AnimationDriverType.Unity:
+                    seconds = unit.GetOrAddComponent<UnityAnimationComponent>().GetAnimationLengthSeconds(name, animationComponentPath);
+                    break;
+            }
+
+            return seconds > 0f ? UnityEngine.Mathf.CeilToInt(seconds * 1000f) : fallbackMs;
+        }
+
         private static void ResolveDriverType(this AnimationManagerComponent self)
         {
             if (self.DriverType != AnimationDriverType.Auto)

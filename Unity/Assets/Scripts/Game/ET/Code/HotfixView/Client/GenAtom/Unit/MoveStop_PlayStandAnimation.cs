@@ -16,6 +16,12 @@ namespace ET.Client
                 return;
             }
 
+            AbilitySystemComponent asc = unit.GetComponent<SkillUnit>()?.ASC.As();
+            if (!asc.IsAlive())
+            {
+                return;
+            }
+
             AnimationManagerComponent animationComponent = unit.GetComponent<AnimationManagerComponent>();
             if (animationComponent == null)
             {

@@ -71,6 +71,18 @@ namespace ET.Client
             self.Animation.Play(name, PlayMode.StopSameLayer);
         }
 
+        public static float GetAnimationLengthSeconds(this UnityAnimationComponent self, string name, string animationComponentPath)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return 0f;
+            }
+
+            self.Bind(animationComponentPath);
+            AnimationState state = self.Animation == null ? null : self.Animation[name];
+            return state == null ? 0f : state.length;
+        }
+
         private static Animation FindAnimationComponent(Animation[] animations, string targetPath, Transform root)
         {
             if (animations == null || animations.Length == 0)

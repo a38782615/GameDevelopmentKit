@@ -67,5 +67,20 @@ namespace ET.Client
             self.SkeletonAnimation.AnimationState.SetAnimation(0, name, loop);
 #endif
         }
+
+        public static float GetAnimationLengthSeconds(this SkelenAnimationComponent self, string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return 0f;
+            }
+
+            self.Bind();
+#if Spine
+            return self.SkeletonAnimation?.Skeleton?.Data?.FindAnimation(name)?.Duration ?? 0f;
+#else
+            return 0f;
+#endif
+        }
     }
 }
