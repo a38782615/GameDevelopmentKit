@@ -20,12 +20,6 @@ namespace ET.Client
             public float MaxHealth;
             public float HeadOffset;
             public float HealthBarVisibleUntil;
-            public GameObject BackgroundObject;
-            public GameObject ForegroundObject;
-            public Transform BackgroundTransform;
-            public Transform ForegroundTransform;
-            public MeshRenderer BackgroundRenderer;
-            public MeshRenderer ForegroundRenderer;
             public float LastRenderStateLogTime;
         }
 
@@ -56,6 +50,11 @@ namespace ET.Client
         private const float TextPopScale = 0.12f;
         private const float TextBaseRise = 0.85f;
         private const bool DebugPreviewEnabled = false;
+        private const bool VerboseHudLog = false;
+        private const int BloodBarSubMeshCount = 3;
+        private const int BloodBarBackgroundSubMesh = 0;
+        private const int BloodBarPlayerSubMesh = 1;
+        private const int BloodBarMonsterSubMesh = 2;
 
         [StaticField]
         private static readonly int HudColorId = Shader.PropertyToID("_Color");
@@ -81,18 +80,27 @@ namespace ET.Client
         private readonly Dictionary<long, UnitHudState> unitStates = new Dictionary<long, UnitHudState>();
         private readonly Dictionary<int, FloatingTextState> floatingTextStates = new Dictionary<int, FloatingTextState>();
         private readonly List<int> pendingFloatingTextRemovals = new List<int>();
+        private readonly List<Vector3> bloodBarVertices = new List<Vector3>(256);
+        private readonly List<Vector2> bloodBarUvs = new List<Vector2>(256);
+        private readonly List<int> bloodBarBackgroundTriangles = new List<int>(384);
+        private readonly List<int> bloodBarPlayerTriangles = new List<int>(384);
+        private readonly List<int> bloodBarMonsterTriangles = new List<int>(384);
 
         private readonly Color playerBarColor = new Color(0.20f, 0.83f, 0.45f, 0.95f);
         private readonly Color monsterBarColor = new Color(0.90f, 0.28f, 0.20f, 0.95f);
         private readonly Color barBackgroundColor = new Color(0.05f, 0.07f, 0.10f, 0.82f);
 
-        private MaterialPropertyBlock propertyBlock;
         private MaterialPropertyBlock textPropertyBlock;
         private SkillHudRenderDriver driver;
         private SkillHudTextAtlas textAtlas;
         private TextMeshPro textGenerator;
         private Mesh quadMesh;
+        private Mesh bloodBarMesh;
         private Material barMaterial;
+        private Material[] bloodBarMaterials;
+        private GameObject bloodBarBatchObject;
+        private MeshFilter bloodBarBatchFilter;
+        private MeshRenderer bloodBarBatchRenderer;
         private GameObject debugPreviewObject;
         private Transform debugPreviewTransform;
         private MeshRenderer debugPreviewRenderer;
@@ -130,7 +138,6 @@ namespace ET.Client
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
             state.HealthBarVisibleUntil = 0f;
-            DestroyBloodBarObjects(state);
             SkillDiagFileLogger.Log($"[HUD] Register asc={ascInstanceId} unitType={unitType} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} headOffset={state.HeadOffset:F3}");
         }
 
@@ -141,17 +148,12 @@ namespace ET.Client
                 return;
             }
 
-            if (unitStates.TryGetValue(asc.InstanceId, out UnitHudState state))
-            {
-                DestroyBloodBarObjects(state);
-            }
-
             unitStates.Remove(asc.InstanceId);
         }
 
         public void ClearSceneHud()
         {
-            DestroyAllBloodBarObjects();
+            ClearBloodBarBatch();
 
             foreach (FloatingTextState state in floatingTextStates.Values)
             {
@@ -185,7 +187,6 @@ namespace ET.Client
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
-            EnsureBloodBarObjects(state, ascInstanceId);
             SkillDiagFileLogger.Log($"[HUD] Update asc={ascInstanceId} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} changed={healthChanged} visibleUntil={state.HealthBarVisibleUntil:F3} now={Time.unscaledTime:F3}");
             if (healthChanged)
             {
@@ -286,7 +287,7 @@ namespace ET.Client
                 ReleaseFloatingTextState(state);
             }
 
-            DestroyAllBloodBarObjects();
+            DestroyBloodBarBatchObject();
             unitStates.Clear();
             floatingTextStates.Clear();
             pendingFloatingTextRemovals.Clear();
@@ -301,6 +302,15 @@ namespace ET.Client
             {
                 global::UnityEngine.Object.Destroy(barMaterial);
                 barMaterial = null;
+            }
+
+            DestroyMaterialArray(bloodBarMaterials);
+            bloodBarMaterials = null;
+
+            if (bloodBarMesh != null)
+            {
+                global::UnityEngine.Object.Destroy(bloodBarMesh);
+                bloodBarMesh = null;
             }
 
             if (quadMesh != null)
@@ -321,19 +331,24 @@ namespace ET.Client
 
         private bool EnsureRuntimeObjects()
         {
-            if (propertyBlock == null)
-            {
-                propertyBlock = new MaterialPropertyBlock();
-            }
-
             if (textPropertyBlock == null)
             {
                 textPropertyBlock = new MaterialPropertyBlock();
             }
 
-            if (quadMesh == null)
+            if (DebugPreviewEnabled && quadMesh == null)
             {
                 quadMesh = BuildQuadMesh();
+            }
+
+            if (bloodBarMesh == null)
+            {
+                bloodBarMesh = new Mesh
+                {
+                    name = "SkillHudBloodBarBatchMesh",
+                    indexFormat = IndexFormat.UInt32
+                };
+                bloodBarMesh.MarkDynamic();
             }
 
             if (textAtlas == null)
@@ -377,6 +392,18 @@ namespace ET.Client
                 SkillDiagFileLogger.Log($"[HUD] BaseMaterial shader={barMaterial.shader?.name} queue={barMaterial.renderQueue}");
             }
 
+            if (bloodBarMaterials == null)
+            {
+                bloodBarMaterials = new[]
+                {
+                    CreateRuntimeBarMaterial("SkillHudBloodBar_Background_Material", barBackgroundColor),
+                    CreateRuntimeBarMaterial("SkillHudBloodBar_Player_Material", playerBarColor),
+                    CreateRuntimeBarMaterial("SkillHudBloodBar_Monster_Material", monsterBarColor)
+                };
+            }
+
+            EnsureBloodBarBatchObject();
+
             if (textAtlas.EnsureReady())
             {
                 EnsureTextGenerator();
@@ -398,13 +425,18 @@ namespace ET.Client
             Vector3 up = camera.transform.up;
             int hudLayer = ResolveHudLayer(camera);
             int drawnCount = 0;
+            ClearBloodBarGeometry();
 
             foreach (KeyValuePair<long, UnitHudState> pair in unitStates)
             {
                 UnitHudState state = pair.Value;
                 if (state == null || state.Owner == null || !state.Owner.scene.IsValid() || !state.Owner.scene.isLoaded)
                 {
-                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=owner_invalid");
+                    if (VerboseHudLog)
+                    {
+                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=owner_invalid");
+                    }
+
                     removals ??= new List<long>();
                     removals.Add(pair.Key);
                     continue;
@@ -413,13 +445,21 @@ namespace ET.Client
                 float maxHealth = Mathf.Max(0f, state.MaxHealth);
                 if (maxHealth <= 0.01f)
                 {
-                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=maxhp_zero hp={state.CurrentHealth:F3} max={state.MaxHealth:F3}");
+                    if (VerboseHudLog)
+                    {
+                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=maxhp_zero hp={state.CurrentHealth:F3} max={state.MaxHealth:F3}");
+                    }
+
                     continue;
                 }
 
                 if (Time.unscaledTime > state.HealthBarVisibleUntil)
                 {
-                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=expired now={Time.unscaledTime:F3} until={state.HealthBarVisibleUntil:F3} hp={state.CurrentHealth:F3}/{maxHealth:F3}");
+                    if (VerboseHudLog)
+                    {
+                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=expired now={Time.unscaledTime:F3} until={state.HealthBarVisibleUntil:F3} hp={state.CurrentHealth:F3}/{maxHealth:F3}");
+                    }
+
                     continue;
                 }
 
@@ -431,48 +471,38 @@ namespace ET.Client
                 float foregroundWidth = Mathf.Max(barWidth * ratio, ratio > 0f ? MinForegroundWidth : 0f);
                 Vector3 backgroundPosition = anchor;
                 Vector3 foregroundPosition = anchor - right * ((barWidth - foregroundWidth) * 0.5f);
-                EnsureBloodBarObjects(state, pair.Key);
-                UpdateBloodBarRenderer(state.BackgroundObject, state.BackgroundTransform, state.BackgroundRenderer, backgroundPosition, rotation, new Vector3(barWidth, DefaultBarHeight, 1f), barBackgroundColor, hudLayer, true);
+                AddBloodBarQuad(BloodBarBackgroundSubMesh, backgroundPosition, rotation, barWidth, DefaultBarHeight);
 
                 if (foregroundWidth > 0f)
                 {
-                    UpdateBloodBarRenderer(
-                        state.ForegroundObject,
-                        state.ForegroundTransform,
-                        state.ForegroundRenderer,
+                    AddBloodBarQuad(
+                        state.UnitType == UnitType.Player ? BloodBarPlayerSubMesh : BloodBarMonsterSubMesh,
                         foregroundPosition,
                         rotation,
-                        new Vector3(foregroundWidth, DefaultBarHeight, 1f),
-                        state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
-                        hudLayer,
-                        true);
-                }
-                else
-                {
-                    UpdateBloodBarRenderer(
-                        state.ForegroundObject,
-                        state.ForegroundTransform,
-                        state.ForegroundRenderer,
-                        foregroundPosition,
-                        rotation,
-                        new Vector3(MinForegroundWidth, DefaultBarHeight, 1f),
-                        state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
-                        hudLayer,
-                        false);
+                        foregroundWidth,
+                        DefaultBarHeight);
                 }
 
-                SkillDiagFileLogger.Log(
-                    $"[HUD] DrawUnit asc={pair.Key} owner={state.Owner.name} hp={state.CurrentHealth:F3}/{maxHealth:F3} ratio={ratio:F3} " +
-                    $"anchor=({anchor.x:F3},{anchor.y:F3},{anchor.z:F3}) viewport=({viewport.x:F3},{viewport.y:F3},{viewport.z:F3}) " +
-                    $"headOffset={state.HeadOffset:F3} barWidth={barWidth:F3}");
+                if (VerboseHudLog)
+                {
+                    SkillDiagFileLogger.Log(
+                        $"[HUD] DrawUnit asc={pair.Key} owner={state.Owner.name} hp={state.CurrentHealth:F3}/{maxHealth:F3} ratio={ratio:F3} " +
+                        $"anchor=({anchor.x:F3},{anchor.y:F3},{anchor.z:F3}) viewport=({viewport.x:F3},{viewport.y:F3},{viewport.z:F3}) " +
+                        $"headOffset={state.HeadOffset:F3} barWidth={barWidth:F3}");
+                }
 
                 LogRenderStateIfNeeded(pair.Key, state);
                 drawnCount++;
             }
 
+            ApplyBloodBarBatch(hudLayer, drawnCount);
+
             if (drawnCount > 0)
             {
-                SkillDiagFileLogger.Log($"[HUD] Draw ascCount={drawnCount} camera={camera.name}");
+                if (VerboseHudLog)
+                {
+                    SkillDiagFileLogger.Log($"[HUD] Draw ascCount={drawnCount} camera={camera.name}");
+                }
             }
 
             if (removals == null)
@@ -569,50 +599,108 @@ namespace ET.Client
                 null);
         }
 
-        private void EnsureBloodBarObjects(UnitHudState state, long ascInstanceId)
+        private void EnsureBloodBarBatchObject()
         {
-            if (state == null || driver == null || barMaterial == null || quadMesh == null)
+            if (bloodBarBatchObject != null || driver == null || bloodBarMesh == null || bloodBarMaterials == null)
             {
                 return;
             }
 
-            if (state.BackgroundObject == null)
-            {
-                state.BackgroundObject = CreateBloodBarObject($"SkillHudBloodBar_BG_{ascInstanceId}");
-                state.BackgroundObject.transform.SetParent(driver.transform, false);
-                state.BackgroundTransform = state.BackgroundObject.transform;
-                state.BackgroundRenderer = state.BackgroundObject.GetComponent<MeshRenderer>();
-                state.BackgroundRenderer.sortingOrder = 5000;
-            }
+            bloodBarBatchObject = new GameObject("SkillHudBloodBarBatch");
+            bloodBarBatchObject.hideFlags = HideFlags.None;
+            bloodBarBatchObject.transform.SetParent(driver.transform, false);
+            bloodBarBatchObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            bloodBarBatchObject.transform.localScale = Vector3.one;
 
-            if (state.ForegroundObject == null)
+            bloodBarBatchFilter = bloodBarBatchObject.AddComponent<MeshFilter>();
+            bloodBarBatchFilter.sharedMesh = bloodBarMesh;
+
+            bloodBarBatchRenderer = bloodBarBatchObject.AddComponent<MeshRenderer>();
+            bloodBarBatchRenderer.sharedMaterials = bloodBarMaterials;
+            bloodBarBatchRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            bloodBarBatchRenderer.receiveShadows = false;
+            bloodBarBatchRenderer.lightProbeUsage = LightProbeUsage.Off;
+            bloodBarBatchRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            bloodBarBatchRenderer.allowOcclusionWhenDynamic = false;
+            bloodBarBatchRenderer.forceRenderingOff = false;
+            bloodBarBatchRenderer.rendererPriority = 100;
+            bloodBarBatchRenderer.sortingOrder = 5000;
+            bloodBarBatchRenderer.enabled = false;
+            SkillDiagFileLogger.Log($"[HUD] CreateBloodBarBatchObject materials={bloodBarMaterials.Length} shader={bloodBarMaterials[0]?.shader?.name}");
+        }
+
+        private void ClearBloodBarGeometry()
+        {
+            bloodBarVertices.Clear();
+            bloodBarUvs.Clear();
+            bloodBarBackgroundTriangles.Clear();
+            bloodBarPlayerTriangles.Clear();
+            bloodBarMonsterTriangles.Clear();
+        }
+
+        private void AddBloodBarQuad(int subMeshIndex, Vector3 center, Quaternion rotation, float width, float height)
+        {
+            Vector3 right = rotation * Vector3.right * (width * 0.5f);
+            Vector3 up = rotation * Vector3.up * (height * 0.5f);
+            int vertexStart = bloodBarVertices.Count;
+
+            bloodBarVertices.Add(center - right - up);
+            bloodBarVertices.Add(center - right + up);
+            bloodBarVertices.Add(center + right + up);
+            bloodBarVertices.Add(center + right - up);
+
+            bloodBarUvs.Add(new Vector2(0f, 0f));
+            bloodBarUvs.Add(new Vector2(0f, 1f));
+            bloodBarUvs.Add(new Vector2(1f, 1f));
+            bloodBarUvs.Add(new Vector2(1f, 0f));
+
+            List<int> triangles = GetBloodBarTriangles(subMeshIndex);
+            triangles.Add(vertexStart);
+            triangles.Add(vertexStart + 1);
+            triangles.Add(vertexStart + 2);
+            triangles.Add(vertexStart);
+            triangles.Add(vertexStart + 2);
+            triangles.Add(vertexStart + 3);
+        }
+
+        private List<int> GetBloodBarTriangles(int subMeshIndex)
+        {
+            switch (subMeshIndex)
             {
-                state.ForegroundObject = CreateBloodBarObject($"SkillHudBloodBar_FG_{ascInstanceId}");
-                state.ForegroundObject.transform.SetParent(driver.transform, false);
-                state.ForegroundTransform = state.ForegroundObject.transform;
-                state.ForegroundRenderer = state.ForegroundObject.GetComponent<MeshRenderer>();
-                state.ForegroundRenderer.sortingOrder = 5001;
+                case BloodBarPlayerSubMesh:
+                    return bloodBarPlayerTriangles;
+                case BloodBarMonsterSubMesh:
+                    return bloodBarMonsterTriangles;
+                default:
+                    return bloodBarBackgroundTriangles;
             }
         }
 
-        private GameObject CreateBloodBarObject(string name)
+        private void ApplyBloodBarBatch(int layer, int drawnCount)
         {
-            GameObject gameObject = new GameObject(name);
-            gameObject.hideFlags = HideFlags.None;
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = quadMesh;
+            if (bloodBarMesh == null || bloodBarBatchObject == null || bloodBarBatchRenderer == null)
+            {
+                return;
+            }
 
-            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = CreateRuntimeBarMaterial($"{name}_Material", Color.white);
-            meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
-            meshRenderer.receiveShadows = false;
-            meshRenderer.lightProbeUsage = LightProbeUsage.Off;
-            meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
-            meshRenderer.allowOcclusionWhenDynamic = false;
-            meshRenderer.forceRenderingOff = false;
-            meshRenderer.rendererPriority = 100;
-            SkillDiagFileLogger.Log($"[HUD] CreateBloodBarObject name={name} layer={gameObject.layer} material={meshRenderer.sharedMaterial?.name} shader={meshRenderer.sharedMaterial?.shader?.name}");
-            return gameObject;
+            if (drawnCount <= 0 || bloodBarVertices.Count == 0)
+            {
+                ClearBloodBarBatch();
+                return;
+            }
+
+            bloodBarBatchObject.layer = layer;
+            bloodBarBatchObject.SetActive(true);
+            bloodBarBatchRenderer.enabled = true;
+
+            bloodBarMesh.Clear(false);
+            bloodBarMesh.SetVertices(bloodBarVertices);
+            bloodBarMesh.SetUVs(0, bloodBarUvs);
+            bloodBarMesh.subMeshCount = BloodBarSubMeshCount;
+            bloodBarMesh.SetTriangles(bloodBarBackgroundTriangles, BloodBarBackgroundSubMesh, false);
+            bloodBarMesh.SetTriangles(bloodBarPlayerTriangles, BloodBarPlayerSubMesh, false);
+            bloodBarMesh.SetTriangles(bloodBarMonsterTriangles, BloodBarMonsterSubMesh, false);
+            bloodBarMesh.RecalculateBounds();
         }
 
         private Material CreateRuntimeBarMaterial(string name, Color color)
@@ -726,40 +814,6 @@ namespace ET.Client
             LogCameraStateIfNeeded(camera);
         }
 
-        private void UpdateBloodBarRenderer(
-            GameObject gameObject,
-            Transform transform,
-            MeshRenderer meshRenderer,
-            Vector3 position,
-            Quaternion rotation,
-            Vector3 scale,
-            Color color,
-            int layer,
-            bool active)
-        {
-            if (gameObject == null || transform == null || meshRenderer == null)
-            {
-                return;
-            }
-
-            if (!active)
-            {
-                if (gameObject.activeSelf)
-                {
-                    gameObject.SetActive(false);
-                }
-
-                return;
-            }
-
-            gameObject.layer = layer;
-            gameObject.SetActive(true);
-            transform.SetPositionAndRotation(position, rotation);
-            transform.localScale = scale;
-
-            SetRendererColor(meshRenderer, color);
-        }
-
         private void SetRendererColor(MeshRenderer meshRenderer, Color color)
         {
             if (meshRenderer == null)
@@ -824,58 +878,28 @@ namespace ET.Client
 
         private void LogRenderStateIfNeeded(long ascInstanceId, UnitHudState state)
         {
-            if (state == null || Time.unscaledTime < state.LastRenderStateLogTime + 0.5f)
+            if (!VerboseHudLog || state == null || Time.unscaledTime < state.LastRenderStateLogTime + 0.5f)
             {
                 return;
             }
 
             state.LastRenderStateLogTime = Time.unscaledTime;
-            LogRendererState("BG", ascInstanceId, state.BackgroundObject, state.BackgroundRenderer);
-            LogRendererState("FG", ascInstanceId, state.ForegroundObject, state.ForegroundRenderer);
+            LogBatchRenderState(ascInstanceId);
         }
 
-        private static void LogRendererState(string label, long ascInstanceId, GameObject gameObject, MeshRenderer meshRenderer)
+        private void LogBatchRenderState(long ascInstanceId)
         {
-            if (gameObject == null || meshRenderer == null)
+            if (bloodBarBatchObject == null || bloodBarBatchRenderer == null || bloodBarMesh == null)
             {
-                SkillDiagFileLogger.Log($"[HUD] RenderState {label} asc={ascInstanceId} objectOrRenderer=null");
+                SkillDiagFileLogger.Log($"[HUD] BatchRenderState asc={ascInstanceId} batch=null");
                 return;
             }
 
-            Bounds bounds = meshRenderer.bounds;
-            Transform transform = gameObject.transform;
-            Material material = meshRenderer.sharedMaterial;
+            Bounds bounds = bloodBarBatchRenderer.bounds;
             SkillDiagFileLogger.Log(
-                $"[HUD] RenderState {label} asc={ascInstanceId} active={gameObject.activeSelf} layer={gameObject.layer} enabled={meshRenderer.enabled} visible={meshRenderer.isVisible} " +
-                $"forceOff={meshRenderer.forceRenderingOff} material={material?.name} shader={material?.shader?.name} queue={material?.renderQueue ?? 0} " +
-                $"pos=({transform.position.x:F3},{transform.position.y:F3},{transform.position.z:F3}) scale=({transform.localScale.x:F3},{transform.localScale.y:F3},{transform.localScale.z:F3}) " +
+                $"[HUD] BatchRenderState asc={ascInstanceId} active={bloodBarBatchObject.activeSelf} layer={bloodBarBatchObject.layer} enabled={bloodBarBatchRenderer.enabled} visible={bloodBarBatchRenderer.isVisible} " +
+                $"vertexCount={bloodBarMesh.vertexCount} subMeshes={bloodBarMesh.subMeshCount} " +
                 $"bounds=({bounds.center.x:F3},{bounds.center.y:F3},{bounds.center.z:F3};{bounds.size.x:F3},{bounds.size.y:F3},{bounds.size.z:F3})");
-        }
-
-        private void DestroyBloodBarObjects(UnitHudState state)
-        {
-            if (state == null)
-            {
-                return;
-            }
-
-            if (state.BackgroundObject != null)
-            {
-                DestroyRendererMaterial(state.BackgroundRenderer);
-                global::UnityEngine.Object.Destroy(state.BackgroundObject);
-                state.BackgroundObject = null;
-                state.BackgroundTransform = null;
-                state.BackgroundRenderer = null;
-            }
-
-            if (state.ForegroundObject != null)
-            {
-                DestroyRendererMaterial(state.ForegroundRenderer);
-                global::UnityEngine.Object.Destroy(state.ForegroundObject);
-                state.ForegroundObject = null;
-                state.ForegroundTransform = null;
-                state.ForegroundRenderer = null;
-            }
         }
 
         private static void DestroyRendererMaterial(MeshRenderer meshRenderer)
@@ -892,11 +916,47 @@ namespace ET.Client
             }
         }
 
-        private void DestroyAllBloodBarObjects()
+        private void ClearBloodBarBatch()
         {
-            foreach (UnitHudState state in unitStates.Values)
+            ClearBloodBarGeometry();
+
+            if (bloodBarMesh != null)
             {
-                DestroyBloodBarObjects(state);
+                bloodBarMesh.Clear(false);
+            }
+
+            if (bloodBarBatchRenderer != null)
+            {
+                bloodBarBatchRenderer.enabled = false;
+            }
+        }
+
+        private void DestroyBloodBarBatchObject()
+        {
+            ClearBloodBarBatch();
+
+            if (bloodBarBatchObject != null)
+            {
+                global::UnityEngine.Object.Destroy(bloodBarBatchObject);
+                bloodBarBatchObject = null;
+                bloodBarBatchFilter = null;
+                bloodBarBatchRenderer = null;
+            }
+        }
+
+        private static void DestroyMaterialArray(Material[] materials)
+        {
+            if (materials == null)
+            {
+                return;
+            }
+
+            foreach (Material material in materials)
+            {
+                if (material != null)
+                {
+                    global::UnityEngine.Object.Destroy(material);
+                }
             }
         }
 
