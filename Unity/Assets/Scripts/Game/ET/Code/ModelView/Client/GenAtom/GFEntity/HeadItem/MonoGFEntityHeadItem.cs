@@ -3,7 +3,7 @@ using CodeBind;
 namespace ET.Client
 {
     [MonoCodeBind]
-    public partial class MonoUIWidgetHeadItem : AETMonoUGFUIWidget
+    public partial class MonoGFEntityHeadItem : AETMonoUGFEntity
     {
         
     }

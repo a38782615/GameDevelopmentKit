@@ -166,7 +166,6 @@ namespace ET.Client
                 if (distToTarget < nodeData.collisionRadius || (selfSpec.TotalDistance > 0f && selfSpec.TraveledDistance >= selfSpec.TotalDistance))
                 {
                     selfSpec.ReachedTarget = true;
-                    SkillDiagFileLogger.Log($"[ProjectileEffect] Reach skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} pos={selfSpec.EndPosition}");
                     GetContext()?.SetCustomData("ReachPosition", selfSpec.EndPosition);
                     GetContext()?.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
                 }
@@ -240,7 +239,6 @@ namespace ET.Client
             selfSpec.TraveledDistance = 0f;
             selfSpec.FlightProgress = 0f;
             selfSpec.CurrentDirection = math.normalizesafe(selfSpec.EndPosition - selfSpec.StartPosition, selfSpec.CurrentDirection);
-            SkillDiagFileLogger.Log($"[ProjectileEffect] Bounce skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} nextTarget={nextTarget.InstanceId} pos={selfSpec.CurrentPosition}");
             SpecExecutionContext bounceContext = GetContext()?.CreateWithParentInput(nextTarget);
             if (bounceContext != null)
             {
@@ -268,7 +266,6 @@ namespace ET.Client
             }
 
             selfSpec.HasTriggeredHit = true;
-            SkillDiagFileLogger.Log($"[ProjectileEffect] Hit skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} pos={hitPosition}");
             try
             {
                 hitContext.SetCustomData("HitPosition", hitPosition);
@@ -347,7 +344,6 @@ namespace ET.Client
 
             selfSpec.IsLogicActive = false;
             CancelProjectileView();
-            SkillDiagFileLogger.Log($"[ProjectileEffect] Destroy skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} pos={selfSpec.CurrentPosition}");
             Spec.RemoveEffect();
         }
 

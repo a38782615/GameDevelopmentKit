@@ -3,8 +3,7 @@ Shader "Game/HUD/InstancedBillboard"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _HudColor ("HUD Color", Color) = (1, 1, 1, 1)
-        _HudUvRect ("HUD UV Rect", Vector) = (0, 0, 1, 1)
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
 
     SubShader
@@ -34,8 +33,10 @@ Shader "Game/HUD/InstancedBillboard"
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
-            float4 _HudColor;
-            float4 _HudUvRect;
+
+            CBUFFER_START(UnityPerMaterial)
+                float4 _Color;
+            CBUFFER_END
 
             struct Attributes
             {
@@ -54,8 +55,8 @@ Shader "Game/HUD/InstancedBillboard"
             {
                 Varyings output;
                 output.positionHCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.uv = _HudUvRect.xy + input.uv * _HudUvRect.zw;
-                output.color = _HudColor;
+                output.uv = input.uv;
+                output.color = _Color;
                 return output;
             }
 

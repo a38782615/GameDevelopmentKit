@@ -268,7 +268,7 @@ MonoBehaviour:
         searchLineType: 0
         positionSource: 0
         positionBindingName: center
-        searchCircleRadius: 5
+        searchCircleRadius: 1
         searchSectorRadius: 5
         searchSectorAngle: 180
         searchLineDirectionOffsetAngle: 0

@@ -87,7 +87,6 @@ namespace ET.Client
             selfSpec.IsLogicActive = true;
             selfSpec.RuntimePosition = position;
             selfSpec.CurrentTargets.Clear();
-            SkillDiagFileLogger.Log($"[PlacementEffect] Start skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} pos={position}");
             SpawnPlacementViewAsync(position).Forget();
         }
 
@@ -115,7 +114,6 @@ namespace ET.Client
 
             if (Spec != null && !Spec.IsDisposed)
             {
-                SkillDiagFileLogger.Log($"[PlacementEffect] Cancel skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 Spec.CancelEffect();
             }
         }
@@ -133,7 +131,6 @@ namespace ET.Client
 
             if (nodeData.placementEntityId <= 0 && string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
             {
-                SkillDiagFileLogger.Log($"[PlacementEffect] NoView skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 return;
             }
 
@@ -173,7 +170,6 @@ namespace ET.Client
                 {
                     placementEntity.Dispose();
                 }
-                SkillDiagFileLogger.Log($"[PlacementEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
                 return;
             }

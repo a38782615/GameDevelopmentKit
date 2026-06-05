@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4274285038706011929}
+  - component: {fileID: 61788410951868381}
   m_Layer: 0
   m_Name: HeadItem
   m_TagString: Untagged
@@ -32,6 +33,21 @@ Transform:
   - {fileID: 6849926804282279613}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &61788410951868381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710711765630721763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 266ea1c7b4696874eb935f73edeab656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FrameSpriteRenderer: {fileID: 8383312854778274229}
+  m_HeadSpriteRenderer: {fileID: 3478165283120303471}
+  m_RootAnimation: {fileID: 7154127450735695516}
 --- !u!1 &6119843354982572245
 GameObject:
   m_ObjectHideFlags: 0
@@ -43,7 +59,7 @@ GameObject:
   - component: {fileID: 2695833072091024232}
   - component: {fileID: 3478165283120303471}
   m_Layer: 0
-  m_Name: Head_Sprite
+  m_Name: Head_SpriteRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182,7 +198,7 @@ GameObject:
   - component: {fileID: 8917117173615129616}
   - component: {fileID: 8383312854778274229}
   m_Layer: 0
-  m_Name: Frame_Sprite
+  m_Name: Frame_SpriteRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

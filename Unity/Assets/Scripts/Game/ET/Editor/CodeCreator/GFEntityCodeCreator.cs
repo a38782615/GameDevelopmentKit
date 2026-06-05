@@ -10,8 +10,8 @@ namespace ET.Editor
         private const string GFEntitySystemCodeTemplateFile         = "Assets/Res/Editor/ET/Config/GFEntitySystemCodeTemplate.txt";
         private const string MonoGFEntityCodeTemplateFile           = "Assets/Res/Editor/ET/Config/MonoGFEntityCodeTemplate.txt";
 
-        private const string GFEntityModelViewCodePath              = "Assets/Scripts/Game/ET/Code/ModelView/Client/Game/GFEntity";
-        private const string GFEntityHotfixViewCodePath             = "Assets/Scripts/Game/ET/Code/HotfixView/Client/Game/GFEntity";
+        private const string GFEntityModelViewCodePath              = "Assets/Scripts/Game/ET/Code/ModelView/Client/GenAtom/GFEntity";
+        private const string GFEntityHotfixViewCodePath             = "Assets/Scripts/Game/ET/Code/HotfixView/Client/GenAtom/GFEntity";
 
         public void OnEnable()
         {

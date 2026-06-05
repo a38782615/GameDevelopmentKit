@@ -61,7 +61,6 @@ namespace ET.Client
                 }
 
                 selfSpec.CurrentTargets[target.InstanceId] = target;
-                SkillDiagFileLogger.Log($"[PlacementEffect] Enter skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId}");
                 TriggerPlacementFlow(target, SkillPortId.PlacementEffect.OnEnter);
             }
 
@@ -78,7 +77,6 @@ namespace ET.Client
             {
                 AbilitySystemComponent target = selfSpec.CurrentTargets[targetId].As();
                 selfSpec.CurrentTargets.Remove(targetId);
-                SkillDiagFileLogger.Log($"[PlacementEffect] Exit skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target?.InstanceId ?? 0}");
                 TriggerPlacementFlow(target, SkillPortId.PlacementEffect.OnExit);
             }
         }
@@ -104,7 +102,6 @@ namespace ET.Client
             selfSpec.CurrentTargets.Clear();
             foreach (AbilitySystemComponent target in targets)
             {
-                SkillDiagFileLogger.Log($"[PlacementEffect] Exit skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId}");
                 TriggerPlacementFlow(target, SkillPortId.PlacementEffect.OnExit);
             }
         }

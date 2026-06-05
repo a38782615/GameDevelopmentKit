@@ -2,18 +2,18 @@
 
 namespace ET.Client
 {
-    public partial class MonoUIWidgetHeadItem
+    public partial class MonoGFEntityHeadItem
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.UXImage m_FrameUXImage;
+        private UnityEngine.SpriteRenderer m_FrameSpriteRenderer;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.UXImage m_HeadUXImage;
+        private UnityEngine.SpriteRenderer m_HeadSpriteRenderer;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.Animation m_RootAnimation;
 
 
-        public UnityEngine.UI.UXImage FrameUXImage => m_FrameUXImage;
-        public UnityEngine.UI.UXImage HeadUXImage => m_HeadUXImage;
+        public UnityEngine.SpriteRenderer FrameSpriteRenderer => m_FrameSpriteRenderer;
+        public UnityEngine.SpriteRenderer HeadSpriteRenderer => m_HeadSpriteRenderer;
         public UnityEngine.Animation RootAnimation => m_RootAnimation;
 
 
@@ -25,8 +25,8 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
-            if (this.m_FrameUXImage == null) return true;
-            if (this.m_HeadUXImage == null) return true;
+            if (this.m_FrameSpriteRenderer == null) return true;
+            if (this.m_HeadSpriteRenderer == null) return true;
             if (this.m_RootAnimation == null) return true;
             return false;
         }

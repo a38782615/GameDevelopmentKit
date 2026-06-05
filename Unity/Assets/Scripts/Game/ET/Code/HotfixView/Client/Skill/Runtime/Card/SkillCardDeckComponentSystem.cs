@@ -79,7 +79,6 @@ namespace ET.Client
             self.ApplySkillAttributeConfig(card);
             self.DrawPileCardIds.Add(cardInstanceId);
             spec.BindCardInstance(cardInstanceId);
-            SkillDiagFileLogger.Log($"[CardDeck] Add card, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, Zone={card.Zone}, BaseCostMp={card.BaseCostMp:F3}, TriggerType={card.TriggerType}");
             return card;
         }
 
@@ -137,7 +136,6 @@ namespace ET.Client
                 }
 
                 self.MoveCardToZone(card, SkillCardZone.Ability);
-                SkillDiagFileLogger.Log($"[CardDeck] Passive card entered ability zone, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={resolvedCostMp}");
                 return true;
             }
 
@@ -161,7 +159,6 @@ namespace ET.Client
             }
 
             self.MoveCardToZone(card, SkillCardZone.DiscardPile);
-            SkillDiagFileLogger.Log($"[CardDeck] Active card cast success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, CostMp={resolvedCostMp}");
             return true;
         }
 
@@ -181,7 +178,6 @@ namespace ET.Client
             self.HasOverrideCostMp = false;
             self.OverrideCostMp = self.BaseCostMp;
             float afterCost = self.GetResolvedCostMp();
-            SkillDiagFileLogger.Log($"[CardDeck] Card cost override reset, CardInstanceId={self.CardInstanceId}, SkillId={self.SkillId}, Source={source ?? "Unknown"}, BeforeCost={beforeCost:F3}, AfterCost={afterCost:F3}");
         }
 
         public static void SetOverrideCostMp(this SkillCardRuntime self, float overrideCostMp, string source = null)
@@ -195,7 +191,6 @@ namespace ET.Client
             self.HasOverrideCostMp = true;
             self.OverrideCostMp = UnityEngine.Mathf.Max(0f, overrideCostMp);
             float afterCost = self.GetResolvedCostMp();
-            SkillDiagFileLogger.Log($"[CardDeck] Card cost override set, CardInstanceId={self.CardInstanceId}, SkillId={self.SkillId}, Source={source ?? "Unknown"}, BeforeCost={beforeCost:F3}, AfterCost={afterCost:F3}");
         }
 
         public static void AddOverrideCostDeltaMp(this SkillCardRuntime self, float deltaMp, string source = null)
@@ -286,11 +281,9 @@ namespace ET.Client
                 ? SkillCardZone.Hand
                 : SkillCardZone.DiscardPile;
             self.MoveCardToZone(card, targetZone);
-            SkillDiagFileLogger.Log($"[CardDeck] Draw card, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, TargetZone={targetZone}, DrawPileRemaining={self.DrawPileCardIds.Count}, HandCount={self.HandCardIds.Count}, DiscardCount={self.DiscardPileCardIds.Count}");
 
             if (targetZone == SkillCardZone.DiscardPile)
             {
-                SkillDiagFileLogger.Log($"[CardDeck] Hand limit overflow to discard, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
             }
 
             return true;
@@ -411,7 +404,6 @@ namespace ET.Client
             {
                 self.IsMoveDraining = true;
                 self.CurrentMoveDrainTime = 0f;
-                SkillDiagFileLogger.Log($"[CardDeck] Move drain start, UnitConfigId={unit.ConfigId}, Rate={self.MoveDrainMpPerSecond}");
             }
 
             self.CurrentMoveDrainTime += deltaTime;
@@ -426,7 +418,6 @@ namespace ET.Client
                 return;
             }
 
-            SkillDiagFileLogger.Log($"[CardDeck] Move drain tick, UnitConfigId={unit.ConfigId}, DeltaTime={deltaTime:F3}, DrainMp={drainMp:F3}, BeforeMp={beforeMp:F3}, AfterMp={afterMp:F3}, MoveElapsed={self.CurrentMoveDrainTime:F3}");
         }
 
         private static bool IsLocalPlayerUnit(this SkillCardDeckComponent self, global::ET.Unit unit)
@@ -465,7 +456,6 @@ namespace ET.Client
                 return;
             }
 
-            SkillDiagFileLogger.Log($"[CardDeck] Move drain stop, Elapsed={self.CurrentMoveDrainTime:F3}");
             self.IsMoveDraining = false;
             self.CurrentMoveDrainTime = 0f;
         }
@@ -493,7 +483,6 @@ namespace ET.Client
             self.DrawCards(self.DrawCount);
             self.CurrentCycleTime = self.CycleSeconds;
             self.PassiveTriggerElapsed = 0f;
-            SkillDiagFileLogger.Log($"[CardDeck] Cycle reset, BattleCardConfigId={self.BattleCardConfigId}, DrawPile={self.DrawPileCardIds.Count}, Hand={self.HandCardIds.Count}, Discard={self.DiscardPileCardIds.Count}, Ability={self.AbilityCardIds.Count}");
         }
 
         private static void TickPassiveCards(this SkillCardDeckComponent self, float deltaTime)
@@ -534,7 +523,6 @@ namespace ET.Client
                 bool activated = asc.TryActivateAbility(spec);
                 if (activated)
                 {
-                    SkillDiagFileLogger.Log($"[CardDeck] Ability zone trigger success, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}");
                 }
             }
         }
@@ -580,7 +568,6 @@ namespace ET.Client
                 self.MoveCardToZone(card, SkillCardZone.DrawPile);
             }
 
-            SkillDiagFileLogger.Log($"[CardDeck] Reshuffle discard into draw pile, Count={self.DrawPileCardIds.Count}");
         }
 
         private static void ResetMpToMax(this SkillCardDeckComponent self)
@@ -621,7 +608,6 @@ namespace ET.Client
 
             float targetMp = self.InitMp > 0f ? UnityEngine.Mathf.Min(self.InitMp, maxMp) : maxMp;
             attributes.SetCurrentValue(global::ET.NumericType.Mp, targetMp);
-            SkillDiagFileLogger.Log($"[CardDeck] Initialize MP, BattleCardConfigId={self.BattleCardConfigId}, InitMp={self.InitMp:F3}, MaxMp={maxMp:F3}, AppliedMp={targetMp:F3}");
         }
 
         private static void ApplySkillAttributeConfig(this SkillCardDeckComponent self, SkillCardRuntime card)
@@ -643,7 +629,6 @@ namespace ET.Client
             {
                 if (!global::ET.NumericType.TryParseAttributeName(key, out int numericType) || numericType == global::ET.NumericType.None)
                 {
-                    Log.Warning($"[CardDeck] Unknown skill attribute key, SkillId: {card.SkillId}, CardInstanceId: {card.CardInstanceId}, Key: {key}");
                     continue;
                 }
 
@@ -652,7 +637,6 @@ namespace ET.Client
 
             if (card.AttributeOverrides.Count > 0)
             {
-                SkillDiagFileLogger.Log($"[CardDeck] Apply skill attribute config, CardInstanceId={card.CardInstanceId}, SkillId={card.SkillId}, OverrideCount={card.AttributeOverrides.Count}");
             }
         }
     }

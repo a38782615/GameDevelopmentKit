@@ -118,7 +118,6 @@ namespace ET.Client
             selfSpec.HitCount = 0;
             selfSpec.BounceCount = 0;
             selfSpec.HitTargetInstanceIds.Clear();
-            SkillDiagFileLogger.Log($"[ProjectileEffect] Start skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} launch={launchPosition} target={targetPosition}");
             SpawnProjectileViewAsync().Forget();
         }
 
@@ -133,7 +132,6 @@ namespace ET.Client
 
             if (Spec != null && !Spec.IsDisposed)
             {
-                SkillDiagFileLogger.Log($"[ProjectileEffect] Cancel skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 Spec.CancelEffect();
             }
         }
@@ -167,7 +165,6 @@ namespace ET.Client
 
             if (nodeData.projectileEntityId <= 0 && string.IsNullOrWhiteSpace(nodeData.projectilePrefabPath))
             {
-                SkillDiagFileLogger.Log($"[ProjectileEffect] NoView skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 return;
             }
 
@@ -224,7 +221,6 @@ namespace ET.Client
                 {
                     projectileEntity.Dispose();
                 }
-                SkillDiagFileLogger.Log($"[ProjectileEffect] ViewSpawnFailed skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
 
                 return;
             }

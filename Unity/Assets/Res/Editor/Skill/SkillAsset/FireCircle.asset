@@ -19,9 +19,9 @@ MonoBehaviour:
   - rid: 4204046695868924024
   - rid: 4204046695868924025
   - rid: 4204046695868924026
-  - rid: 4204046695868924027
   - rid: 4204046695868924028
   - rid: 300804438656811091
+  - rid: 4204046695868924027
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -56,15 +56,15 @@ MonoBehaviour:
         guid: 08bcef27-5270-4668-be7d-bb9e9fc01e6a
         nodeType: 23
         position:
-          x: -634.6666
-          y: -2399.3333
+          x: -677.3333
+          y: -2446.6665
         targetType: 1
         animationPrefab: {fileID: 710711765630721763, guid: 37b9da47a7f10b244bbf88a357f70e21,
           type: 3}
-        animationPrefabPath: Assets/Res/UI/UIEntity/UIHeadItem.prefab
-        animationComponentPath: UIHeadItem(Clone)/Root_Animation
+        animationPrefabPath: Assets/Res/Entity/Head/HeadItem.prefab
+        animationComponentPath: HeadItem(Clone)/Root_Animation
         animationName: Attack
-        animationDuration: 10
+        animationDuration: 15
         isAnimationLooping: 0
         timeEffects:
         - triggerTime: 10
