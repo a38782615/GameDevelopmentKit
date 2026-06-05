@@ -60,11 +60,7 @@ Shader "Game/HUD/TextBillboard"
 
             half4 frag(Varyings input) : SV_Target
             {
-                half4 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
-                half alpha = saturate(max(texColor.a, texColor.r));
-                half4 color = _Color;
-                color.a *= alpha;
-                return color;
+                return _Color;
             }
             ENDHLSL
         }

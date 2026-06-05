@@ -20,6 +20,13 @@ namespace ET.Client
             public float MaxHealth;
             public float HeadOffset;
             public float HealthBarVisibleUntil;
+            public GameObject BackgroundObject;
+            public GameObject ForegroundObject;
+            public Transform BackgroundTransform;
+            public Transform ForegroundTransform;
+            public MeshRenderer BackgroundRenderer;
+            public MeshRenderer ForegroundRenderer;
+            public float LastRenderStateLogTime;
         }
 
         [EnableClass]
@@ -38,14 +45,6 @@ namespace ET.Client
             public float VerticalRise;
         }
 
-        private struct QuadInstance
-        {
-            public Matrix4x4 Matrix;
-            public Vector4 Color;
-            public Vector4 UvRect;
-        }
-
-        private const int MaxBatchSize = 1023;
         private const float DefaultBarHeight = 0.12f;
         private const float DefaultBarYOffset = 0.28f;
         private const float DefaultHeadOffset = 1.4f;
@@ -56,23 +55,32 @@ namespace ET.Client
         private const float DefaultTextDuration = 1.2f;
         private const float TextPopScale = 0.12f;
         private const float TextBaseRise = 0.85f;
+        private const bool DebugPreviewEnabled = false;
 
         [StaticField]
-        private static readonly int HudColorId = Shader.PropertyToID("_HudColor");
+        private static readonly int HudColorId = Shader.PropertyToID("_Color");
         [StaticField]
-        private static readonly int HudUvRectId = Shader.PropertyToID("_HudUvRect");
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         [StaticField]
         private static readonly int FaceColorId = Shader.PropertyToID("_FaceColor");
         [StaticField]
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
         [StaticField]
-        private static readonly Vector4 FullUvRect = new Vector4(0f, 0f, 1f, 1f);
+        private static readonly int SurfaceId = Shader.PropertyToID("_Surface");
+        [StaticField]
+        private static readonly int BlendId = Shader.PropertyToID("_Blend");
+        [StaticField]
+        private static readonly int SrcBlendId = Shader.PropertyToID("_SrcBlend");
+        [StaticField]
+        private static readonly int DstBlendId = Shader.PropertyToID("_DstBlend");
+        [StaticField]
+        private static readonly int ZWriteId = Shader.PropertyToID("_ZWrite");
+        [StaticField]
+        private static readonly int CullId = Shader.PropertyToID("_Cull");
 
         private readonly Dictionary<long, UnitHudState> unitStates = new Dictionary<long, UnitHudState>();
         private readonly Dictionary<int, FloatingTextState> floatingTextStates = new Dictionary<int, FloatingTextState>();
         private readonly List<int> pendingFloatingTextRemovals = new List<int>();
-        private readonly List<QuadInstance> backgroundInstances = new List<QuadInstance>(128);
-        private readonly List<QuadInstance> foregroundInstances = new List<QuadInstance>(128);
 
         private readonly Color playerBarColor = new Color(0.20f, 0.83f, 0.45f, 0.95f);
         private readonly Color monsterBarColor = new Color(0.90f, 0.28f, 0.20f, 0.95f);
@@ -85,8 +93,12 @@ namespace ET.Client
         private TextMeshPro textGenerator;
         private Mesh quadMesh;
         private Material barMaterial;
+        private GameObject debugPreviewObject;
+        private Transform debugPreviewTransform;
+        private MeshRenderer debugPreviewRenderer;
         private Camera cachedCamera;
         private int nextFloatingTextId = 1;
+        private float lastCameraStateLogTime;
 
         public void Awake()
         {
@@ -118,6 +130,7 @@ namespace ET.Client
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
             state.HealthBarVisibleUntil = 0f;
+            DestroyBloodBarObjects(state);
             SkillDiagFileLogger.Log($"[HUD] Register asc={ascInstanceId} unitType={unitType} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} headOffset={state.HeadOffset:F3}");
         }
 
@@ -128,15 +141,17 @@ namespace ET.Client
                 return;
             }
 
+            if (unitStates.TryGetValue(asc.InstanceId, out UnitHudState state))
+            {
+                DestroyBloodBarObjects(state);
+            }
+
             unitStates.Remove(asc.InstanceId);
         }
 
         public void ClearSceneHud()
         {
-            int unitCount = unitStates.Count;
-            int floatingTextCount = floatingTextStates.Count;
-
-            unitStates.Clear();
+            DestroyAllBloodBarObjects();
 
             foreach (FloatingTextState state in floatingTextStates.Values)
             {
@@ -145,8 +160,7 @@ namespace ET.Client
 
             floatingTextStates.Clear();
             pendingFloatingTextRemovals.Clear();
-            backgroundInstances.Clear();
-            foregroundInstances.Clear();
+            unitStates.Clear();
         }
 
         public void UpdateUnitHealth(long ascInstanceId, GameObject owner, float currentHealth, float maxHealth)
@@ -171,6 +185,7 @@ namespace ET.Client
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
+            EnsureBloodBarObjects(state, ascInstanceId);
             SkillDiagFileLogger.Log($"[HUD] Update asc={ascInstanceId} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} changed={healthChanged} visibleUntil={state.HealthBarVisibleUntil:F3} now={Time.unscaledTime:F3}");
             if (healthChanged)
             {
@@ -254,15 +269,14 @@ namespace ET.Client
                 return;
             }
 
-            backgroundInstances.Clear();
-            foregroundInstances.Clear();
             pendingFloatingTextRemovals.Clear();
 
             CollectBloodBars(camera);
             CollectFloatingTexts(deltaTime, camera);
-
-            DrawInstances(backgroundInstances, barMaterial);
-            DrawInstances(foregroundInstances, barMaterial);
+            if (DebugPreviewEnabled)
+            {
+                UpdateDebugPreview(camera);
+            }
         }
 
         protected override void Destroy()
@@ -272,11 +286,10 @@ namespace ET.Client
                 ReleaseFloatingTextState(state);
             }
 
+            DestroyAllBloodBarObjects();
             unitStates.Clear();
             floatingTextStates.Clear();
             pendingFloatingTextRemovals.Clear();
-            backgroundInstances.Clear();
-            foregroundInstances.Clear();
 
             if (driver != null)
             {
@@ -294,6 +307,15 @@ namespace ET.Client
             {
                 global::UnityEngine.Object.Destroy(quadMesh);
                 quadMesh = null;
+            }
+
+            if (debugPreviewObject != null)
+            {
+                DestroyRendererMaterial(debugPreviewRenderer);
+                global::UnityEngine.Object.Destroy(debugPreviewObject);
+                debugPreviewObject = null;
+                debugPreviewTransform = null;
+                debugPreviewRenderer = null;
             }
         }
 
@@ -322,14 +344,25 @@ namespace ET.Client
             if (driver == null)
             {
                 GameObject driverObject = new GameObject("SkillHudRenderDriver");
-                driverObject.hideFlags = HideFlags.HideAndDontSave;
+                driverObject.hideFlags = HideFlags.None;
                 global::UnityEngine.Object.DontDestroyOnLoad(driverObject);
                 driver = driverObject.AddComponent<SkillHudRenderDriver>();
             }
 
-            Shader barShader = Shader.Find("Game/HUD/InstancedBillboard");
+            Shader barShader = Shader.Find("Universal Render Pipeline/Unlit");
             if (barShader == null)
             {
+                barShader = Shader.Find("Sprites/Default");
+            }
+
+            if (barShader == null)
+            {
+                barShader = Shader.Find("Game/HUD/TextBillboard");
+            }
+
+            if (barShader == null)
+            {
+                SkillDiagFileLogger.Log("[HUD] EnsureRuntimeObjects skip shader=null");
                 return false;
             }
 
@@ -338,14 +371,20 @@ namespace ET.Client
                 barMaterial = new Material(barShader)
                 {
                     enableInstancing = true,
-                    hideFlags = HideFlags.HideAndDontSave
+                    hideFlags = HideFlags.None
                 };
-                barMaterial.SetTexture(MainTexId, Texture2D.whiteTexture);
+                ConfigureHudMaterial(barMaterial, Color.white);
+                SkillDiagFileLogger.Log($"[HUD] BaseMaterial shader={barMaterial.shader?.name} queue={barMaterial.renderQueue}");
             }
 
             if (textAtlas.EnsureReady())
             {
                 EnsureTextGenerator();
+            }
+
+            if (DebugPreviewEnabled)
+            {
+                EnsureDebugPreviewObject();
             }
 
             return barMaterial != null;
@@ -357,6 +396,7 @@ namespace ET.Client
             Quaternion rotation = Quaternion.LookRotation(camera.transform.forward, camera.transform.up);
             Vector3 right = camera.transform.right;
             Vector3 up = camera.transform.up;
+            int hudLayer = ResolveHudLayer(camera);
             int drawnCount = 0;
 
             foreach (KeyValuePair<long, UnitHudState> pair in unitStates)
@@ -387,20 +427,38 @@ namespace ET.Client
                 float barWidth = state.UnitType == UnitType.Player ? PlayerBarWidth : MonsterBarWidth;
                 Vector3 anchor = state.Owner.transform.position + up * (state.HeadOffset + DefaultBarYOffset);
                 Vector3 viewport = camera.WorldToViewportPoint(anchor);
-                Vector3 backgroundBottomLeft = anchor - right * (barWidth * 0.5f);
-                AddQuad(backgroundInstances, backgroundBottomLeft, barWidth, DefaultBarHeight, rotation, barBackgroundColor, FullUvRect);
 
                 float foregroundWidth = Mathf.Max(barWidth * ratio, ratio > 0f ? MinForegroundWidth : 0f);
+                Vector3 backgroundPosition = anchor;
+                Vector3 foregroundPosition = anchor - right * ((barWidth - foregroundWidth) * 0.5f);
+                EnsureBloodBarObjects(state, pair.Key);
+                UpdateBloodBarRenderer(state.BackgroundObject, state.BackgroundTransform, state.BackgroundRenderer, backgroundPosition, rotation, new Vector3(barWidth, DefaultBarHeight, 1f), barBackgroundColor, hudLayer, true);
+
                 if (foregroundWidth > 0f)
                 {
-                    AddQuad(
-                        foregroundInstances,
-                        backgroundBottomLeft,
-                        foregroundWidth,
-                        DefaultBarHeight,
+                    UpdateBloodBarRenderer(
+                        state.ForegroundObject,
+                        state.ForegroundTransform,
+                        state.ForegroundRenderer,
+                        foregroundPosition,
                         rotation,
+                        new Vector3(foregroundWidth, DefaultBarHeight, 1f),
                         state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
-                        FullUvRect);
+                        hudLayer,
+                        true);
+                }
+                else
+                {
+                    UpdateBloodBarRenderer(
+                        state.ForegroundObject,
+                        state.ForegroundTransform,
+                        state.ForegroundRenderer,
+                        foregroundPosition,
+                        rotation,
+                        new Vector3(MinForegroundWidth, DefaultBarHeight, 1f),
+                        state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
+                        hudLayer,
+                        false);
                 }
 
                 SkillDiagFileLogger.Log(
@@ -408,6 +466,7 @@ namespace ET.Client
                     $"anchor=({anchor.x:F3},{anchor.y:F3},{anchor.z:F3}) viewport=({viewport.x:F3},{viewport.y:F3},{viewport.z:F3}) " +
                     $"headOffset={state.HeadOffset:F3} barWidth={barWidth:F3}");
 
+                LogRenderStateIfNeeded(pair.Key, state);
                 drawnCount++;
             }
 
@@ -510,48 +569,334 @@ namespace ET.Client
                 null);
         }
 
-        private void AddQuad(
-            List<QuadInstance> batch,
-            Vector3 bottomLeft,
-            float width,
-            float height,
-            Quaternion rotation,
-            Color color,
-            Vector4 uvRect)
+        private void EnsureBloodBarObjects(UnitHudState state, long ascInstanceId)
         {
-            batch.Add(new QuadInstance
-            {
-                Matrix = Matrix4x4.TRS(bottomLeft, rotation, new Vector3(width, height, 1f)),
-                Color = color,
-                UvRect = uvRect
-            });
-        }
-
-        private void DrawInstances(List<QuadInstance> instances, Material material)
-        {
-            if (instances.Count == 0 || material == null || quadMesh == null || cachedCamera == null)
+            if (state == null || driver == null || barMaterial == null || quadMesh == null)
             {
                 return;
             }
 
-            foreach (QuadInstance instance in instances)
+            if (state.BackgroundObject == null)
             {
-                propertyBlock.Clear();
-                propertyBlock.SetVector(HudColorId, instance.Color);
-                propertyBlock.SetVector(HudUvRectId, instance.UvRect);
-                Graphics.DrawMesh(
-                    quadMesh,
-                    instance.Matrix,
-                    material,
-                    0,
-                    cachedCamera,
-                    0,
-                    propertyBlock,
-                    ShadowCastingMode.Off,
-                    false,
-                    null,
-                    LightProbeUsage.Off,
-                    null);
+                state.BackgroundObject = CreateBloodBarObject($"SkillHudBloodBar_BG_{ascInstanceId}");
+                state.BackgroundObject.transform.SetParent(driver.transform, false);
+                state.BackgroundTransform = state.BackgroundObject.transform;
+                state.BackgroundRenderer = state.BackgroundObject.GetComponent<MeshRenderer>();
+                state.BackgroundRenderer.sortingOrder = 5000;
+            }
+
+            if (state.ForegroundObject == null)
+            {
+                state.ForegroundObject = CreateBloodBarObject($"SkillHudBloodBar_FG_{ascInstanceId}");
+                state.ForegroundObject.transform.SetParent(driver.transform, false);
+                state.ForegroundTransform = state.ForegroundObject.transform;
+                state.ForegroundRenderer = state.ForegroundObject.GetComponent<MeshRenderer>();
+                state.ForegroundRenderer.sortingOrder = 5001;
+            }
+        }
+
+        private GameObject CreateBloodBarObject(string name)
+        {
+            GameObject gameObject = new GameObject(name);
+            gameObject.hideFlags = HideFlags.None;
+            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = quadMesh;
+
+            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = CreateRuntimeBarMaterial($"{name}_Material", Color.white);
+            meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            meshRenderer.receiveShadows = false;
+            meshRenderer.lightProbeUsage = LightProbeUsage.Off;
+            meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            meshRenderer.allowOcclusionWhenDynamic = false;
+            meshRenderer.forceRenderingOff = false;
+            meshRenderer.rendererPriority = 100;
+            SkillDiagFileLogger.Log($"[HUD] CreateBloodBarObject name={name} layer={gameObject.layer} material={meshRenderer.sharedMaterial?.name} shader={meshRenderer.sharedMaterial?.shader?.name}");
+            return gameObject;
+        }
+
+        private Material CreateRuntimeBarMaterial(string name, Color color)
+        {
+            Material material = new Material(barMaterial)
+            {
+                name = name,
+                hideFlags = HideFlags.None,
+                renderQueue = (int)RenderQueue.Transparent + 100
+            };
+            ConfigureHudMaterial(material, color);
+            return material;
+        }
+
+        private static void ConfigureHudMaterial(Material material, Color color)
+        {
+            if (material == null)
+            {
+                return;
+            }
+
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.renderQueue = (int)RenderQueue.Transparent + 100;
+
+            if (material.HasProperty(MainTexId))
+            {
+                material.SetTexture(MainTexId, Texture2D.whiteTexture);
+            }
+
+            if (material.HasProperty(HudColorId))
+            {
+                material.SetColor(HudColorId, color);
+            }
+
+            if (material.HasProperty(BaseColorId))
+            {
+                material.SetColor(BaseColorId, color);
+            }
+
+            if (material.HasProperty(SurfaceId))
+            {
+                material.SetFloat(SurfaceId, 1f);
+            }
+
+            if (material.HasProperty(BlendId))
+            {
+                material.SetFloat(BlendId, 0f);
+            }
+
+            if (material.HasProperty(SrcBlendId))
+            {
+                material.SetFloat(SrcBlendId, (float)BlendMode.SrcAlpha);
+            }
+
+            if (material.HasProperty(DstBlendId))
+            {
+                material.SetFloat(DstBlendId, (float)BlendMode.OneMinusSrcAlpha);
+            }
+
+            if (material.HasProperty(ZWriteId))
+            {
+                material.SetFloat(ZWriteId, 0f);
+            }
+
+            if (material.HasProperty(CullId))
+            {
+                material.SetFloat(CullId, (float)CullMode.Off);
+            }
+        }
+
+        private void EnsureDebugPreviewObject()
+        {
+            if (debugPreviewObject != null || driver == null || barMaterial == null || quadMesh == null)
+            {
+                return;
+            }
+
+            debugPreviewObject = new GameObject("SkillHudDebugPreview");
+            debugPreviewObject.transform.SetParent(driver.transform, false);
+            debugPreviewTransform = debugPreviewObject.transform;
+
+            MeshFilter meshFilter = debugPreviewObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = quadMesh;
+
+            debugPreviewRenderer = debugPreviewObject.AddComponent<MeshRenderer>();
+            debugPreviewRenderer.sharedMaterial = CreateRuntimeBarMaterial("SkillHudDebugPreview_Material", new Color(1f, 0.95f, 0.1f, 1f));
+            debugPreviewRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            debugPreviewRenderer.receiveShadows = false;
+            debugPreviewRenderer.lightProbeUsage = LightProbeUsage.Off;
+            debugPreviewRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            debugPreviewRenderer.allowOcclusionWhenDynamic = false;
+            debugPreviewRenderer.forceRenderingOff = false;
+            debugPreviewRenderer.rendererPriority = 100;
+            debugPreviewRenderer.sortingOrder = 6000;
+            SkillDiagFileLogger.Log($"[HUD] CreateDebugPreviewObject material={debugPreviewRenderer.sharedMaterial?.name} shader={debugPreviewRenderer.sharedMaterial?.shader?.name}");
+        }
+
+        private void UpdateDebugPreview(Camera camera)
+        {
+            if (debugPreviewObject == null || debugPreviewTransform == null || debugPreviewRenderer == null || camera == null)
+            {
+                return;
+            }
+
+            debugPreviewObject.SetActive(true);
+            debugPreviewObject.layer = ResolveHudLayer(camera);
+            debugPreviewTransform.SetPositionAndRotation(camera.transform.position + camera.transform.forward * 2f, camera.transform.rotation);
+            debugPreviewTransform.localScale = new Vector3(2f, 0.3f, 1f);
+
+            SetRendererColor(debugPreviewRenderer, new Color(1f, 0.95f, 0.1f, 1f));
+            LogCameraStateIfNeeded(camera);
+        }
+
+        private void UpdateBloodBarRenderer(
+            GameObject gameObject,
+            Transform transform,
+            MeshRenderer meshRenderer,
+            Vector3 position,
+            Quaternion rotation,
+            Vector3 scale,
+            Color color,
+            int layer,
+            bool active)
+        {
+            if (gameObject == null || transform == null || meshRenderer == null)
+            {
+                return;
+            }
+
+            if (!active)
+            {
+                if (gameObject.activeSelf)
+                {
+                    gameObject.SetActive(false);
+                }
+
+                return;
+            }
+
+            gameObject.layer = layer;
+            gameObject.SetActive(true);
+            transform.SetPositionAndRotation(position, rotation);
+            transform.localScale = scale;
+
+            SetRendererColor(meshRenderer, color);
+        }
+
+        private void SetRendererColor(MeshRenderer meshRenderer, Color color)
+        {
+            if (meshRenderer == null)
+            {
+                return;
+            }
+
+            Material material = meshRenderer.sharedMaterial;
+            if (material == null)
+            {
+                return;
+            }
+
+            if (material.HasProperty(HudColorId))
+            {
+                material.SetColor(HudColorId, color);
+            }
+
+            if (material.HasProperty(BaseColorId))
+            {
+                material.SetColor(BaseColorId, color);
+            }
+        }
+
+        private static int ResolveHudLayer(Camera camera)
+        {
+            if (camera == null)
+            {
+                return 0;
+            }
+
+            int cullingMask = camera.cullingMask;
+            if ((cullingMask & 1) != 0)
+            {
+                return 0;
+            }
+
+            for (int layer = 1; layer < 32; ++layer)
+            {
+                if ((cullingMask & (1 << layer)) != 0)
+                {
+                    return layer;
+                }
+            }
+
+            return 0;
+        }
+
+        private void LogCameraStateIfNeeded(Camera camera)
+        {
+            if (camera == null || Time.unscaledTime < lastCameraStateLogTime + 1f)
+            {
+                return;
+            }
+
+            lastCameraStateLogTime = Time.unscaledTime;
+            SkillDiagFileLogger.Log(
+                $"[HUD] CameraState camera={camera.name} cullingMask={camera.cullingMask} hudLayer={ResolveHudLayer(camera)} " +
+                $"debugActive={debugPreviewObject?.activeSelf ?? false} debugVisible={debugPreviewRenderer?.isVisible ?? false} " +
+                $"debugLayer={debugPreviewObject?.layer ?? -1} debugEnabled={debugPreviewRenderer?.enabled ?? false}");
+        }
+
+        private void LogRenderStateIfNeeded(long ascInstanceId, UnitHudState state)
+        {
+            if (state == null || Time.unscaledTime < state.LastRenderStateLogTime + 0.5f)
+            {
+                return;
+            }
+
+            state.LastRenderStateLogTime = Time.unscaledTime;
+            LogRendererState("BG", ascInstanceId, state.BackgroundObject, state.BackgroundRenderer);
+            LogRendererState("FG", ascInstanceId, state.ForegroundObject, state.ForegroundRenderer);
+        }
+
+        private static void LogRendererState(string label, long ascInstanceId, GameObject gameObject, MeshRenderer meshRenderer)
+        {
+            if (gameObject == null || meshRenderer == null)
+            {
+                SkillDiagFileLogger.Log($"[HUD] RenderState {label} asc={ascInstanceId} objectOrRenderer=null");
+                return;
+            }
+
+            Bounds bounds = meshRenderer.bounds;
+            Transform transform = gameObject.transform;
+            Material material = meshRenderer.sharedMaterial;
+            SkillDiagFileLogger.Log(
+                $"[HUD] RenderState {label} asc={ascInstanceId} active={gameObject.activeSelf} layer={gameObject.layer} enabled={meshRenderer.enabled} visible={meshRenderer.isVisible} " +
+                $"forceOff={meshRenderer.forceRenderingOff} material={material?.name} shader={material?.shader?.name} queue={material?.renderQueue ?? 0} " +
+                $"pos=({transform.position.x:F3},{transform.position.y:F3},{transform.position.z:F3}) scale=({transform.localScale.x:F3},{transform.localScale.y:F3},{transform.localScale.z:F3}) " +
+                $"bounds=({bounds.center.x:F3},{bounds.center.y:F3},{bounds.center.z:F3};{bounds.size.x:F3},{bounds.size.y:F3},{bounds.size.z:F3})");
+        }
+
+        private void DestroyBloodBarObjects(UnitHudState state)
+        {
+            if (state == null)
+            {
+                return;
+            }
+
+            if (state.BackgroundObject != null)
+            {
+                DestroyRendererMaterial(state.BackgroundRenderer);
+                global::UnityEngine.Object.Destroy(state.BackgroundObject);
+                state.BackgroundObject = null;
+                state.BackgroundTransform = null;
+                state.BackgroundRenderer = null;
+            }
+
+            if (state.ForegroundObject != null)
+            {
+                DestroyRendererMaterial(state.ForegroundRenderer);
+                global::UnityEngine.Object.Destroy(state.ForegroundObject);
+                state.ForegroundObject = null;
+                state.ForegroundTransform = null;
+                state.ForegroundRenderer = null;
+            }
+        }
+
+        private static void DestroyRendererMaterial(MeshRenderer meshRenderer)
+        {
+            if (meshRenderer == null)
+            {
+                return;
+            }
+
+            Material material = meshRenderer.sharedMaterial;
+            if (material != null)
+            {
+                global::UnityEngine.Object.Destroy(material);
+            }
+        }
+
+        private void DestroyAllBloodBarObjects()
+        {
+            foreach (UnitHudState state in unitStates.Values)
+            {
+                DestroyBloodBarObjects(state);
             }
         }
 
@@ -575,26 +920,28 @@ namespace ET.Client
 
         private static Mesh BuildQuadMesh()
         {
-            Mesh mesh = new Mesh
+            GameObject quadObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            quadObject.hideFlags = HideFlags.HideAndDontSave;
+
+            MeshFilter meshFilter = quadObject.GetComponent<MeshFilter>();
+            Mesh sourceMesh = meshFilter != null ? meshFilter.sharedMesh : null;
+            Mesh mesh = sourceMesh != null ? global::UnityEngine.Object.Instantiate(sourceMesh) : null;
+
+            if (Application.isPlaying)
             {
-                name = "SkillHudQuad"
-            };
-            mesh.SetVertices(new List<Vector3>
+                global::UnityEngine.Object.Destroy(quadObject);
+            }
+            else
             {
-                new Vector3(0f, 0f, 0f),
-                new Vector3(1f, 0f, 0f),
-                new Vector3(0f, 1f, 0f),
-                new Vector3(1f, 1f, 0f)
-            });
-            mesh.SetUVs(0, new List<Vector2>
+                global::UnityEngine.Object.DestroyImmediate(quadObject);
+            }
+
+            if (mesh == null)
             {
-                new Vector2(0f, 0f),
-                new Vector2(1f, 0f),
-                new Vector2(0f, 1f),
-                new Vector2(1f, 1f)
-            });
-            mesh.SetTriangles(new[] { 0, 2, 1, 2, 3, 1 }, 0);
-            mesh.RecalculateBounds();
+                return null;
+            }
+
+            mesh.name = "SkillHudQuad";
             return mesh;
         }
 
