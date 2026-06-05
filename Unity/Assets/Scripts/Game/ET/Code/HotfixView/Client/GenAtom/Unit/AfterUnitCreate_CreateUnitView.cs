@@ -17,8 +17,7 @@ namespace ET.Client
             var config = unit.Config();
 
             var entiyId = config.EntityId;
-            UGFEntity a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<CommonUGFEntity>(entiyId);
-
+            UGFEntity a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<GFEntityHeadItem>(entiyId);
             
             GameObject viewGameObject = a.CachedTransform.gameObject;
             unit.GetOrAddComponent<UnitViewComponent>().Bind(a);

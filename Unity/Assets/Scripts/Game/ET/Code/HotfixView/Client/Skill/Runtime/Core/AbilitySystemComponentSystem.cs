@@ -241,8 +241,8 @@ namespace ET.Client
                 return false;
             }
 
-            float? health = self.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
-            return !health.HasValue || health.Value > 0f;
+            float health = self.Attributes.GetCurrentValue(global::ET.NumericType.Hp);
+            return health > 0f;
         }
 
         public static bool HasTag(this AbilitySystemComponent self, GameplayTag tag)

@@ -132,7 +132,7 @@ namespace ET.Client
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
             state.HealthBarVisibleUntil = 0f;
-            SkillDiagFileLogger.Log($"[HUD] Register asc={ascInstanceId} unitType={unitType} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} headOffset={state.HeadOffset:F3}");
+            
         }
 
         public void UnregisterUnit(AbilitySystemComponent asc)
@@ -181,11 +181,11 @@ namespace ET.Client
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
-            SkillDiagFileLogger.Log($"[HUD] Update asc={ascInstanceId} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} changed={healthChanged} visibleUntil={state.HealthBarVisibleUntil:F3} now={Time.unscaledTime:F3}");
+            
             if (healthChanged)
             {
                 state.HealthBarVisibleUntil = Time.unscaledTime + HealthBarVisibleDuration;
-                SkillDiagFileLogger.Log($"[HUD] VisibleWindow asc={ascInstanceId} until={state.HealthBarVisibleUntil:F3}");
+                
             }
         }
 
@@ -260,7 +260,7 @@ namespace ET.Client
             Camera camera = ResolveCamera();
             if (camera == null)
             {
-                SkillDiagFileLogger.Log("[HUD] Tick skip camera=null");
+                
                 return;
             }
 
@@ -348,7 +348,7 @@ namespace ET.Client
 
             if (barShader == null)
             {
-                SkillDiagFileLogger.Log("[HUD] EnsureRuntimeObjects skip shader=null");
+                
                 return false;
             }
 
@@ -360,7 +360,7 @@ namespace ET.Client
                     hideFlags = HideFlags.None
                 };
                 ConfigureHudMaterial(barMaterial, Color.white);
-                SkillDiagFileLogger.Log($"[HUD] BaseMaterial shader={barMaterial.shader?.name} queue={barMaterial.renderQueue}");
+                
             }
 
             if (bloodBarMaterials == null)
@@ -400,7 +400,7 @@ namespace ET.Client
                 {
                     if (VerboseHudLog)
                     {
-                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=owner_invalid");
+                        
                     }
 
                     removals ??= new List<long>();
@@ -413,7 +413,7 @@ namespace ET.Client
                 {
                     if (VerboseHudLog)
                     {
-                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=maxhp_zero hp={state.CurrentHealth:F3} max={state.MaxHealth:F3}");
+                        
                     }
 
                     continue;
@@ -423,7 +423,7 @@ namespace ET.Client
                 {
                     if (VerboseHudLog)
                     {
-                        SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=expired now={Time.unscaledTime:F3} until={state.HealthBarVisibleUntil:F3} hp={state.CurrentHealth:F3}/{maxHealth:F3}");
+                        
                     }
 
                     continue;
@@ -467,7 +467,7 @@ namespace ET.Client
             {
                 if (VerboseHudLog)
                 {
-                    SkillDiagFileLogger.Log($"[HUD] Draw ascCount={drawnCount} camera={camera.name}");
+                    
                 }
             }
 
@@ -592,7 +592,7 @@ namespace ET.Client
             bloodBarBatchRenderer.rendererPriority = 100;
             bloodBarBatchRenderer.sortingOrder = 5000;
             bloodBarBatchRenderer.enabled = false;
-            SkillDiagFileLogger.Log($"[HUD] CreateBloodBarBatchObject materials={bloodBarMaterials.Length} shader={bloodBarMaterials[0]?.shader?.name}");
+            
         }
 
         private void ClearBloodBarGeometry()
@@ -776,7 +776,7 @@ namespace ET.Client
         {
             if (bloodBarBatchObject == null || bloodBarBatchRenderer == null || bloodBarMesh == null)
             {
-                SkillDiagFileLogger.Log($"[HUD] BatchRenderState asc={ascInstanceId} batch=null");
+                
                 return;
             }
 
@@ -844,7 +844,7 @@ namespace ET.Client
                 cachedCamera = Camera.main;
             }
 
-            SkillDiagFileLogger.Log($"[HUD] ResolveCamera result={(cachedCamera == null ? "null" : cachedCamera.name)}");
+            
 
             return cachedCamera;
         }
@@ -937,7 +937,7 @@ namespace ET.Client
             if (bindingPoint != null)
             {
                 float offset = Mathf.Max(bindingPoint.position.y - obj.transform.position.y, 0f);
-                SkillDiagFileLogger.Log($"[HUD] HeadOffset binding={bindingName} obj={obj.name} offset={offset:F3}");
+                
                 return offset;
             }
 
@@ -945,7 +945,7 @@ namespace ET.Client
             if (bindingPoint != null)
             {
                 float offset = Mathf.Max(bindingPoint.position.y - obj.transform.position.y, 0f);
-                SkillDiagFileLogger.Log($"[HUD] HeadOffsetRecursive binding={bindingName} obj={obj.name} offset={offset:F3}");
+                
                 return offset;
             }
 
@@ -959,11 +959,11 @@ namespace ET.Client
                 }
 
                 float offset = Mathf.Max(bounds.max.y - obj.transform.position.y, DefaultHeadOffset);
-                SkillDiagFileLogger.Log($"[HUD] HeadOffsetBounds obj={obj.name} offset={offset:F3}");
+                
                 return offset;
             }
 
-            SkillDiagFileLogger.Log($"[HUD] HeadOffsetDefault obj={obj.name} offset={DefaultHeadOffset:F3}");
+            
             return DefaultHeadOffset;
         }
         private static Transform FindChildRecursive(Transform parent, string name)

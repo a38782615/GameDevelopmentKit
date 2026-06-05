@@ -264,7 +264,7 @@ MonoBehaviour:
           x: 731.3334
           y: -2344
         targetType: 1
-        searchShapeType: 0
+        searchShapeType: 3
         searchLineType: 0
         positionSource: 0
         positionBindingName: center

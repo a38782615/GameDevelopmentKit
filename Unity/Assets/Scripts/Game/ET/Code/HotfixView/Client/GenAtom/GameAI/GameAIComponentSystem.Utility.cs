@@ -8,7 +8,6 @@ namespace ET.Client
     [FriendOf(typeof(AbilitySystemComponent))]
     public static partial class GameAIComponentSystem
     {
-        private const int FormationPositionCount = 4;
 
         public static Unit GetOwnerUnit(this GameAIComponent self)
         {
@@ -196,9 +195,9 @@ namespace ET.Client
             }
 
             int startPosIdx = NormalizeFormationPosition(selfUnit.PosIdx);
-            for (int offset = 0; offset < FormationPositionCount; offset++)
+            for (int offset = 0; offset < GameConst.FormationPositionCount; offset++)
             {
-                int targetPosIdx = (startPosIdx + offset) % FormationPositionCount;
+                int targetPosIdx = (startPosIdx + offset) % GameConst.FormationPositionCount;
                 AbilitySystemComponent target = FindHostileTargetAtPosition(unitComponent, selfUnit, targetPosIdx);
                 if (target != null)
                 {
@@ -253,8 +252,8 @@ namespace ET.Client
 
         private static int NormalizeFormationPosition(int posIdx)
         {
-            int normalized = posIdx % FormationPositionCount;
-            return normalized < 0 ? normalized + FormationPositionCount : normalized;
+            int normalized = posIdx % GameConst.FormationPositionCount;
+            return normalized < 0 ? normalized + GameConst.FormationPositionCount : normalized;
         }
 
         public static Vector3 GetWorldPosition(this Unit unit)
