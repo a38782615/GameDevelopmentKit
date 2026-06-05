@@ -179,6 +179,9 @@ namespace ET.Client.Editor
 
                             UpdateLineParams(data.searchLineType);
                             break;
+
+                        case SearchShapeType.Counterpart:
+                            break;
                     }
                 }
 

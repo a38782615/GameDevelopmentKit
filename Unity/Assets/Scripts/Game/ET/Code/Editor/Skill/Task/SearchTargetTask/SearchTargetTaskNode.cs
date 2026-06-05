@@ -234,6 +234,8 @@ namespace ET.Client.Editor
                     shapeParamsContainer.Add(lineTypeContainer);
                     OnLineTypeChanged((SkillLineType)lineTypeField.value);
                     break;
+                case SearchShapeType.Counterpart:
+                    break;
             }
         }
 

@@ -153,11 +153,13 @@ namespace ET.Client
     public enum SearchShapeType
     {
         //[InspectorName((("圆形")]
-        Circle,
+        Circle = 0,
         //[InspectorName((("扇形")]
-        Sector,
+        Sector = 1,
         //[InspectorName((("直线")]
-        Line
+        Line = 2,
+        //[InspectorName((("按对位")]
+        Counterpart = 3
     }
 
     /// <summary>

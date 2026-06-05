@@ -52,6 +52,9 @@ namespace ET.Client
                 case SearchShapeType.Line:
                     this.SearchLine(foundTargets, bodyCheckComponent, centerPosition, centerTransform);
                     break;
+                case SearchShapeType.Counterpart:
+                    this.SearchCounterpart(foundTargets);
+                    break;
             }
 
             if (nodeData.maxTargets > 0 && foundTargets.Count > nodeData.maxTargets)
@@ -179,6 +182,54 @@ namespace ET.Client
             }
         }
 
+        private void SearchCounterpart(List<AbilitySystemComponent> foundTargets)
+        {
+            Unit selfUnit = this.GetContext()?.GetCaster()?.GetParent<SkillUnit>()?.Unit.As();
+            UnitComponent unitComponent = selfUnit?.Scene()?.GetComponent<UnitComponent>();
+            if (selfUnit == null || unitComponent?.Children == null)
+            {
+                return;
+            }
+
+            int startPosIdx = NormalizeFormationPosition(selfUnit.PosIdx);
+            for (int offset = 0; offset < global::ET.GameConst.FormationPositionCount; offset++)
+            {
+                int targetPosIdx = (startPosIdx + offset) % global::ET.GameConst.FormationPositionCount;
+                AbilitySystemComponent target = this.FindHostileTargetAtPosition(unitComponent, selfUnit, targetPosIdx);
+                if (target == null)
+                {
+                    continue;
+                }
+
+                foundTargets.Add(target);
+                return;
+            }
+        }
+
+        private AbilitySystemComponent FindHostileTargetAtPosition(UnitComponent unitComponent, Unit selfUnit, int targetPosIdx)
+        {
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is not Unit otherUnit || otherUnit.Id == selfUnit.Id)
+                {
+                    continue;
+                }
+
+                if (!IsHostileUnit(selfUnit, otherUnit) || NormalizeFormationPosition(otherUnit.PosIdx) != targetPosIdx)
+                {
+                    continue;
+                }
+
+                AbilitySystemComponent targetAsc = otherUnit.GetComponent<SkillUnit>()?.ASC.As();
+                if (this.IsValidTarget(targetAsc))
+                {
+                    return targetAsc;
+                }
+            }
+
+            return null;
+        }
+
         private BodyCheckComponent GetBodyCheckComponent()
         {
             Unit unit = this.GetContext()?.GetCaster()?.GetParent<SkillUnit>()?.Unit.As();
@@ -196,6 +247,17 @@ namespace ET.Client
         private float2 GetFacingDirection(Transform casterTransform)
         {
             return casterTransform.localScale.x >= 0 ? new float2(-1f, 0f) : new float2(1f, 0f);
+        }
+
+        private static bool IsHostileUnit(Unit selfUnit, Unit otherUnit)
+        {
+            return (global::ET.UnitType)otherUnit.Config().Type != (global::ET.UnitType)selfUnit.Config().Type;
+        }
+
+        private static int NormalizeFormationPosition(int posIdx)
+        {
+            int normalized = posIdx % global::ET.GameConst.FormationPositionCount;
+            return normalized < 0 ? normalized + global::ET.GameConst.FormationPositionCount : normalized;
         }
 
         private bool IsValidTarget(AbilitySystemComponent target)
