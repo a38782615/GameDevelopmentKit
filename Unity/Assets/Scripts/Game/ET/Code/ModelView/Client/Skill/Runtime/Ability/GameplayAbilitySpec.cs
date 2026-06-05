@@ -98,6 +98,8 @@ namespace ET.Client
         /// </summary>
         public string AnimationName;
 
+        public string AnimationComponentPath;
+
         /// <summary>
         /// 鍔ㄧ敾鏃堕暱
         /// </summary>

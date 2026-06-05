@@ -108,27 +108,28 @@ namespace ET.Client
                 if (node is AnimationNodeData animNode)
                 {
                     self.ApplyAnimationNode(animNode.guid, animNode.animationName, animNode.animationDuration,
-                        animNode.isAnimationLooping, animNode.timeEffects, animNode.timeCues);
+                        string.Empty, animNode.isAnimationLooping, animNode.timeEffects, animNode.timeCues);
                     break;
                 }
 
                 if (node is UnityAnimationNodeData unityAnimationNode)
                 {
                     self.ApplyAnimationNode(unityAnimationNode.guid, unityAnimationNode.animationName, unityAnimationNode.animationDuration,
-                        unityAnimationNode.isAnimationLooping, unityAnimationNode.timeEffects, unityAnimationNode.timeCues);
+                        unityAnimationNode.animationComponentPath, unityAnimationNode.isAnimationLooping, unityAnimationNode.timeEffects, unityAnimationNode.timeCues);
                     break;
                 }
             }
         }
 
         private static void ApplyAnimationNode(this GameplayAbilitySpec self, string animationNodeGuid, string animationName,
-            string animationDuration, bool isAnimationLooping, List<TimeEffectData> timeEffects, List<TimeCueData> timeCues)
+            string animationDuration, string animationComponentPath, bool isAnimationLooping, List<TimeEffectData> timeEffects, List<TimeCueData> timeCues)
         {
             var timeEffectComp = self.GetTimeEffectRuntime();
             var timeCueComp = self.GetTimeCueRuntime();
 
             self.AnimationNodeGuid = animationNodeGuid;
             self.AnimationName = animationName;
+            self.AnimationComponentPath = animationComponentPath ?? string.Empty;
             int durationFrames = (int)FormulaEvaluator.EvaluateSimple(animationDuration, 1f);
             self.AnimationDuration = SkillConstants.FramesToSeconds(durationFrames);
             self.IsAnimationLooping = isAnimationLooping;
@@ -378,7 +379,7 @@ namespace ET.Client
             self.GetTimeCueRuntime()?.ResetAll();
 
             // 播放动画
-            self.RequestPlayAnimation(self.AnimationName, self.IsAnimationLooping);
+            self.RequestPlayAnimation(self.AnimationName, self.AnimationComponentPath, self.IsAnimationLooping);
 
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
@@ -412,7 +413,7 @@ namespace ET.Client
             self.State = wasCancelled ? AbilityState.Cancelled : AbilityState.Ended;
             self.IsRunning = false;
 
-            self.RequestPlayAnimation("Stand", true);
+            self.RequestPlayAnimation("Stand", string.Empty, true);
             self.GetTimeCueRuntime()?.StopAll();
 
             // 清理运行中的Effect
@@ -578,7 +579,7 @@ namespace ET.Client
 
         // ============ 动画 ============
 
-        private static void RequestPlayAnimation(this GameplayAbilitySpec self, string name, bool loop)
+        private static void RequestPlayAnimation(this GameplayAbilitySpec self, string name, string animationComponentPath, bool loop)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -596,6 +597,7 @@ namespace ET.Client
             {
                 Unit = unit,
                 AnimationName = name,
+                AnimationComponentPath = animationComponentPath ?? string.Empty,
                 Loop = loop
             });
         }

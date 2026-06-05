@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 namespace ET.Client
 {
     [Event(SceneType.Current)]
-    [FriendOf(typeof(SkelenAnimationComponent))]
+    [FriendOf(typeof(AnimationManagerComponent))]
     public class SkillAnimationPlay_PlayUnitAnimation : AEvent<Scene, SkillAnimationPlay>
     {
         protected override async UniTask Run(Scene scene, SkillAnimationPlay args)
@@ -15,13 +15,13 @@ namespace ET.Client
                 return;
             }
 
-            SkelenAnimationComponent animationComponent = unit.GetComponent<SkelenAnimationComponent>();
+            AnimationManagerComponent animationComponent = unit.GetComponent<AnimationManagerComponent>();
             if (animationComponent == null)
             {
-                animationComponent = unit.AddComponent<SkelenAnimationComponent>();
+                animationComponent = unit.AddComponent<AnimationManagerComponent>();
             }
 
-            animationComponent.PlayAnimation(args.AnimationName, args.Loop);
+            animationComponent.PlayAnimation(args.AnimationName, args.Loop, args.AnimationComponentPath);
             await UniTask.CompletedTask;
         }
     }

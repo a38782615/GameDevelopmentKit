@@ -36,8 +36,9 @@ namespace ET.Client
                     (UnitType)unit.Config().Type,
                     asc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
                     asc.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
-                SkelenAnimationComponent skelenAnimationComponent = unit.GetOrAddComponent<SkelenAnimationComponent>();
-                skelenAnimationComponent.Bind();
+                    
+                AnimationManagerComponent animationManagerComponent = unit.GetOrAddComponent<AnimationManagerComponent>();
+                animationManagerComponent.Bind();
 
                 UnitMoveRestrictionComponent moveRestrictionComponent = unit.GetOrAddComponent<UnitMoveRestrictionComponent>();
                 moveRestrictionComponent.Bind();
