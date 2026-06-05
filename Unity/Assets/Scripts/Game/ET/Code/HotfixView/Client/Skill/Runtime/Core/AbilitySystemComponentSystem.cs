@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace ET.Client
@@ -15,15 +14,10 @@ namespace ET.Client
         private static void Awake(this AbilitySystemComponent self)
         {
             self.OwnedTagsRef = self.AddComponent<GameTagsComponent>();
-
-            // 添加子组件
             self.AddComponent<AbilityContainerComponent>();
             self.AddComponent<GameplayEffectContainerComponent>();
             self.AddComponent<GameplayCueContainerComponent>();
-
             self.Init();
-
-            // 订阅属性变化事件
         }
 
         public static void Init(this AbilitySystemComponent self)
@@ -59,12 +53,21 @@ namespace ET.Client
                     self.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
             }
 
-            if (numericType == global::ET.NumericType.Hp)
+            if (numericType != global::ET.NumericType.Hp)
             {
-                if (after < before)
-                {
-                    self.DispatchGameplayEvent(GameplayEventType.OnTakeDamage);
-                }
+                return;
+            }
+
+            if (after < before)
+            {
+                self.DispatchGameplayEvent(GameplayEventType.OnTakeDamage);
+            }
+
+            if (before > 0f && after <= 0f)
+            {
+                SkillDiagFileLogger.Log($"[Death] asc={self.InstanceId} unit={self.GetParent<SkillUnit>()?.Unit.As()?.Id ?? 0} hpBefore={before:F3} hpAfter={after:F3}");
+                self.DispatchGameplayEvent(GameplayEventType.OnDeath);
+                self.Abilities?.CancelAllAbilities();
             }
         }
 
@@ -86,6 +89,7 @@ namespace ET.Client
                 {
                     continue;
                 }
+
                 ability.OnGameplayEvent(gameplayEventType);
             }
         }
@@ -93,7 +97,6 @@ namespace ET.Client
         [EntitySystem]
         private static void Update(this AbilitySystemComponent self)
         {
-            // IUpdate 自动驱动，不再需要 GASHost
         }
 
         [EntitySystem]
@@ -106,11 +109,13 @@ namespace ET.Client
             self.IsInitialized = false;
         }
 
-        // ============ 技能相关 ============
-
         public static GameplayAbilitySpec GrantAbility(this AbilitySystemComponent self, SkillData abilityData)
         {
-            if (abilityData == null) return null;
+            if (abilityData == null)
+            {
+                return null;
+            }
+
             return self.Abilities?.GrantAbility(self, abilityData);
         }
 
@@ -121,7 +126,16 @@ namespace ET.Client
 
         public static bool TryActivateAbility(this AbilitySystemComponent self, GameplayAbilitySpec spec, AbilitySystemComponent target = null)
         {
-            if (spec == null) return false;
+            if (spec == null)
+            {
+                return false;
+            }
+
+            if (!self.IsAlive())
+            {
+                SkillDiagFileLogger.Log($"[Death] BlockActivate casterDead asc={self?.InstanceId ?? 0} skillId={spec.GetSkillNumericId()}");
+                return false;
+            }
 
             AbilitySystemComponent resolvedTarget = target;
             if (resolvedTarget == null && spec.RequiresMainTarget())
@@ -133,6 +147,12 @@ namespace ET.Client
                 }
             }
 
+            if (resolvedTarget != null && !resolvedTarget.IsAlive())
+            {
+                SkillDiagFileLogger.Log($"[Death] BlockActivate targetDead caster={self.InstanceId} target={resolvedTarget.InstanceId} skillId={spec.GetSkillNumericId()}");
+                return false;
+            }
+
             bool success = self.Abilities?.TryActivateAbility(self, spec, resolvedTarget) ?? false;
             if (success)
             {
@@ -141,6 +161,7 @@ namespace ET.Client
                     Spec = spec
                 });
             }
+
             return success;
         }
 
@@ -159,11 +180,9 @@ namespace ET.Client
             });
         }
 
-        // ============ 效果相关 ============
-
         public static bool RemoveActiveEffect(this AbilitySystemComponent self, GameplayEffectSpec effectSpec)
         {
-            var container = self.EffectContainer;
+            GameplayEffectContainerComponent container = self.EffectContainer;
             if (container == null || effectSpec == null || !container.ActiveEffects.Contains(effectSpec))
             {
                 return false;
@@ -191,7 +210,7 @@ namespace ET.Client
 
         public static int RemoveActiveEffectsWithTags(this AbilitySystemComponent self, GameplayTagSet tags)
         {
-            var container = self.EffectContainer;
+            GameplayEffectContainerComponent container = self.EffectContainer;
             if (container == null || tags.IsEmpty)
             {
                 return 0;
@@ -200,20 +219,26 @@ namespace ET.Client
             int removedCount = 0;
             for (int i = container.ActiveEffects.Count - 1; i >= 0; i--)
             {
-                var effect = container.ActiveEffects[i].As();
-                if (effect != null && effect.Tags.AssetTags.HasAnyTags(tags))
+                GameplayEffectSpec effect = container.ActiveEffects[i].As();
+                if (effect != null && effect.Tags.AssetTags.HasAnyTags(tags) && self.RemoveActiveEffect(effect))
                 {
-                    if (self.RemoveActiveEffect(effect))
-                    {
-                        removedCount++;
-                    }
+                    removedCount++;
                 }
             }
 
             return removedCount;
         }
 
-        // ============ 标签相关 ============
+        public static bool IsAlive(this AbilitySystemComponent self)
+        {
+            if (self == null)
+            {
+                return false;
+            }
+
+            float? health = self.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
+            return !health.HasValue || health.Value > 0f;
+        }
 
         public static bool HasTag(this AbilitySystemComponent self, GameplayTag tag)
         {
@@ -368,13 +393,7 @@ namespace ET.Client
                 }
 
                 AbilitySystemComponent targetAsc = unit.GetComponent<SkillUnit>()?.ASC.As();
-                if (targetAsc == null)
-                {
-                    continue;
-                }
-
-                float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
-                if (health.HasValue && health.Value <= 0f)
+                if (!targetAsc.IsAlive())
                 {
                     continue;
                 }
@@ -406,26 +425,9 @@ namespace ET.Client
                 : new UnityEngine.Vector3(unit.Position.x, unit.Position.y, unit.Position.z);
         }
 
-        private static string DescribeTarget(AbilitySystemComponent target)
-        {
-            if (target == null)
-            {
-                return "null";
-            }
-
-            Unit unit = target.GetParent<SkillUnit>()?.Unit.As();
-            UnityEngine.Vector3 position = GetWorldPosition(unit, target);
-            return $"cfg={unit?.ConfigId ?? 0} id={unit?.Id ?? 0} pos={position}";
-        }
-
         private static int GetAbilitySkillId(GameplayAbilitySpec spec)
         {
-            if (spec == null)
-            {
-                return 0;
-            }
-
-            return spec.GetSkillNumericId();
+            return spec == null ? 0 : spec.GetSkillNumericId();
         }
     }
 }

@@ -23,6 +23,12 @@ namespace ET.Client
                 return;
             }
 
+            if (!context.GetCaster().IsAlive())
+            {
+                context.ExecuteConnectedNodes(this.Spec.SkillId, this.Spec.NodeGuid, SkillPortId.SearchTargetTask.NoTarget);
+                return;
+            }
+
             BodyCheckComponent bodyCheckComponent = this.GetBodyCheckComponent();
             List<AbilitySystemComponent> foundTargets = new List<AbilitySystemComponent>();
             float2 centerPosition = ToPlanar(context.GetPosition(nodeData.positionSource, nodeData.positionBindingName));
@@ -195,6 +201,11 @@ namespace ET.Client
         private bool IsValidTarget(AbilitySystemComponent target)
         {
             if (target == null)
+            {
+                return false;
+            }
+
+            if (!target.IsAlive())
             {
                 return false;
             }

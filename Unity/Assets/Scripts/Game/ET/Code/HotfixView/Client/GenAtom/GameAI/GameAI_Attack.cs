@@ -9,7 +9,7 @@ namespace ET.Client
         public override int Check(GameAIComponent aiComponent, DRGameAI aiConfig)
         {
             AbilitySystemComponent asc = aiComponent?.GetOwnerASC();
-            if (asc?.Abilities == null)
+            if (asc?.Abilities == null || !asc.IsAlive())
             {
                 return 1;
             }
@@ -32,7 +32,7 @@ namespace ET.Client
 
             float attackRange = aiConfig.GetAttackRange();
             AbilitySystemComponent target = aiComponent.FindNearestTarget(attackRange);
-            return target != null ? 0 : 1;
+            return target != null && target.IsAlive() ? 0 : 1;
         }
 
         public override async UniTask Execute(GameAIComponent aiComponent, DRGameAI aiConfig, CancellationToken token)
@@ -40,7 +40,7 @@ namespace ET.Client
             while (!token.IsCancellationRequested)
             {
                 AbilitySystemComponent asc = aiComponent?.GetOwnerASC();
-                if (asc?.Abilities == null)
+                if (asc?.Abilities == null || !asc.IsAlive())
                 {
                     return;
                 }
@@ -52,7 +52,7 @@ namespace ET.Client
                 }
 
                 AbilitySystemComponent target = aiComponent.FindNearestTarget(aiConfig.GetAttackRange());
-                if (target == null)
+                if (target == null || !target.IsAlive())
                 {
                     return;
                 }

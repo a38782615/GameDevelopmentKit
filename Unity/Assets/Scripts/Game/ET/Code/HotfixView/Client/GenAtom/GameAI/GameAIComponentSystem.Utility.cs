@@ -248,13 +248,7 @@ namespace ET.Client
 
         private static bool IsAliveTarget(AbilitySystemComponent targetAsc)
         {
-            if (targetAsc == null)
-            {
-                return false;
-            }
-
-            float? health = targetAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp);
-            return !health.HasValue || health.Value > 0f;
+            return targetAsc.IsAlive();
         }
 
         private static int NormalizeFormationPosition(int posIdx)
