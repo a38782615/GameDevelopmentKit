@@ -74,10 +74,6 @@ namespace ET.Client
         private readonly List<QuadInstance> backgroundInstances = new List<QuadInstance>(128);
         private readonly List<QuadInstance> foregroundInstances = new List<QuadInstance>(128);
 
-        private readonly Matrix4x4[] matrixBuffer = new Matrix4x4[MaxBatchSize];
-        private readonly Vector4[] colorBuffer = new Vector4[MaxBatchSize];
-        private readonly Vector4[] uvRectBuffer = new Vector4[MaxBatchSize];
-
         private readonly Color playerBarColor = new Color(0.20f, 0.83f, 0.45f, 0.95f);
         private readonly Color monsterBarColor = new Color(0.90f, 0.28f, 0.20f, 0.95f);
         private readonly Color barBackgroundColor = new Color(0.05f, 0.07f, 0.10f, 0.82f);
@@ -390,6 +386,7 @@ namespace ET.Client
                 float ratio = Mathf.Clamp01(state.CurrentHealth / maxHealth);
                 float barWidth = state.UnitType == UnitType.Player ? PlayerBarWidth : MonsterBarWidth;
                 Vector3 anchor = state.Owner.transform.position + up * (state.HeadOffset + DefaultBarYOffset);
+                Vector3 viewport = camera.WorldToViewportPoint(anchor);
                 Vector3 backgroundBottomLeft = anchor - right * (barWidth * 0.5f);
                 AddQuad(backgroundInstances, backgroundBottomLeft, barWidth, DefaultBarHeight, rotation, barBackgroundColor, FullUvRect);
 
@@ -405,6 +402,11 @@ namespace ET.Client
                         state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
                         FullUvRect);
                 }
+
+                SkillDiagFileLogger.Log(
+                    $"[HUD] DrawUnit asc={pair.Key} owner={state.Owner.name} hp={state.CurrentHealth:F3}/{maxHealth:F3} ratio={ratio:F3} " +
+                    $"anchor=({anchor.x:F3},{anchor.y:F3},{anchor.z:F3}) viewport=({viewport.x:F3},{viewport.y:F3},{viewport.z:F3}) " +
+                    $"headOffset={state.HeadOffset:F3} barWidth={barWidth:F3}");
 
                 drawnCount++;
             }
@@ -527,37 +529,29 @@ namespace ET.Client
 
         private void DrawInstances(List<QuadInstance> instances, Material material)
         {
-            if (instances.Count == 0 || material == null || quadMesh == null)
+            if (instances.Count == 0 || material == null || quadMesh == null || cachedCamera == null)
             {
                 return;
             }
 
-            for (int start = 0; start < instances.Count; start += MaxBatchSize)
+            foreach (QuadInstance instance in instances)
             {
-                int count = Mathf.Min(MaxBatchSize, instances.Count - start);
-                for (int index = 0; index < count; ++index)
-                {
-                    QuadInstance instance = instances[start + index];
-                    matrixBuffer[index] = instance.Matrix;
-                    colorBuffer[index] = instance.Color;
-                    uvRectBuffer[index] = instance.UvRect;
-                }
-
                 propertyBlock.Clear();
-                propertyBlock.SetVectorArray(HudColorId, colorBuffer);
-                propertyBlock.SetVectorArray(HudUvRectId, uvRectBuffer);
-                Graphics.DrawMeshInstanced(
+                propertyBlock.SetVector(HudColorId, instance.Color);
+                propertyBlock.SetVector(HudUvRectId, instance.UvRect);
+                Graphics.DrawMesh(
                     quadMesh,
-                    0,
+                    instance.Matrix,
                     material,
-                    matrixBuffer,
-                    count,
+                    0,
+                    cachedCamera,
+                    0,
                     propertyBlock,
                     ShadowCastingMode.Off,
                     false,
-                    0,
-                    cachedCamera,
-                    LightProbeUsage.Off);
+                    null,
+                    LightProbeUsage.Off,
+                    null);
             }
         }
 
