@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game;
 
 using TMPro;
 
@@ -121,6 +122,7 @@ namespace ET.Client
             state.MaxHealth = maxHealth;
             state.HeadOffset = GetPositionFromObject(owner, "head");
             state.HealthBarVisibleUntil = 0f;
+            SkillDiagFileLogger.Log($"[HUD] Register asc={ascInstanceId} unitType={unitType} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} headOffset={state.HeadOffset:F3}");
         }
 
         public void UnregisterUnit(AbilitySystemComponent asc)
@@ -161,16 +163,23 @@ namespace ET.Client
             long key = ascInstanceId;
             if (!unitStates.TryGetValue(key, out UnitHudState state))
             {
-                return;
+                RegisterUnit(ascInstanceId, owner, UnitType.Monster, currentHealth, maxHealth);
+                if (!unitStates.TryGetValue(key, out state))
+                {
+                    return;
+                }
             }
 
             bool healthChanged = !Mathf.Approximately(state.CurrentHealth, currentHealth);
             state.Owner = owner;
             state.CurrentHealth = currentHealth;
             state.MaxHealth = maxHealth;
+            state.HeadOffset = GetPositionFromObject(owner, "head");
+            SkillDiagFileLogger.Log($"[HUD] Update asc={ascInstanceId} owner={owner.name} hp={currentHealth:F3}/{maxHealth:F3} changed={healthChanged} visibleUntil={state.HealthBarVisibleUntil:F3} now={Time.unscaledTime:F3}");
             if (healthChanged)
             {
                 state.HealthBarVisibleUntil = Time.unscaledTime + HealthBarVisibleDuration;
+                SkillDiagFileLogger.Log($"[HUD] VisibleWindow asc={ascInstanceId} until={state.HealthBarVisibleUntil:F3}");
             }
         }
 
@@ -245,6 +254,7 @@ namespace ET.Client
             Camera camera = ResolveCamera();
             if (camera == null)
             {
+                SkillDiagFileLogger.Log("[HUD] Tick skip camera=null");
                 return;
             }
 
@@ -351,12 +361,14 @@ namespace ET.Client
             Quaternion rotation = Quaternion.LookRotation(camera.transform.forward, camera.transform.up);
             Vector3 right = camera.transform.right;
             Vector3 up = camera.transform.up;
+            int drawnCount = 0;
 
             foreach (KeyValuePair<long, UnitHudState> pair in unitStates)
             {
                 UnitHudState state = pair.Value;
                 if (state == null || state.Owner == null || !state.Owner.scene.IsValid() || !state.Owner.scene.isLoaded)
                 {
+                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=owner_invalid");
                     removals ??= new List<long>();
                     removals.Add(pair.Key);
                     continue;
@@ -365,11 +377,13 @@ namespace ET.Client
                 float maxHealth = Mathf.Max(0f, state.MaxHealth);
                 if (maxHealth <= 0.01f)
                 {
+                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=maxhp_zero hp={state.CurrentHealth:F3} max={state.MaxHealth:F3}");
                     continue;
                 }
 
                 if (Time.unscaledTime > state.HealthBarVisibleUntil)
                 {
+                    SkillDiagFileLogger.Log($"[HUD] Skip asc={pair.Key} reason=expired now={Time.unscaledTime:F3} until={state.HealthBarVisibleUntil:F3} hp={state.CurrentHealth:F3}/{maxHealth:F3}");
                     continue;
                 }
 
@@ -391,6 +405,13 @@ namespace ET.Client
                         state.UnitType == UnitType.Player ? playerBarColor : monsterBarColor,
                         FullUvRect);
                 }
+
+                drawnCount++;
+            }
+
+            if (drawnCount > 0)
+            {
+                SkillDiagFileLogger.Log($"[HUD] Draw ascCount={drawnCount} camera={camera.name}");
             }
 
             if (removals == null)
@@ -547,7 +568,14 @@ namespace ET.Client
                 return cachedCamera;
             }
 
-            cachedCamera = Camera.main;
+            cachedCamera = GameEntry.Camera?.CurrentSceneCamera;
+            if (cachedCamera == null || !cachedCamera.isActiveAndEnabled)
+            {
+                cachedCamera = Camera.main;
+            }
+
+            SkillDiagFileLogger.Log($"[HUD] ResolveCamera result={(cachedCamera == null ? "null" : cachedCamera.name)}");
+
             return cachedCamera;
         }
 
@@ -662,12 +690,35 @@ namespace ET.Client
 
             Transform bindingPoint = obj.transform.Find(bindingName);
             if (bindingPoint != null)
-                return bindingPoint.position.y;
+            {
+                float offset = Mathf.Max(bindingPoint.position.y - obj.transform.position.y, 0f);
+                SkillDiagFileLogger.Log($"[HUD] HeadOffset binding={bindingName} obj={obj.name} offset={offset:F3}");
+                return offset;
+            }
 
             bindingPoint = FindChildRecursive(obj.transform, bindingName);
             if (bindingPoint != null)
-                return bindingPoint.position.y;
+            {
+                float offset = Mathf.Max(bindingPoint.position.y - obj.transform.position.y, 0f);
+                SkillDiagFileLogger.Log($"[HUD] HeadOffsetRecursive binding={bindingName} obj={obj.name} offset={offset:F3}");
+                return offset;
+            }
 
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+            if (renderers != null && renderers.Length > 0)
+            {
+                Bounds bounds = renderers[0].bounds;
+                for (int index = 1; index < renderers.Length; ++index)
+                {
+                    bounds.Encapsulate(renderers[index].bounds);
+                }
+
+                float offset = Mathf.Max(bounds.max.y - obj.transform.position.y, DefaultHeadOffset);
+                SkillDiagFileLogger.Log($"[HUD] HeadOffsetBounds obj={obj.name} offset={offset:F3}");
+                return offset;
+            }
+
+            SkillDiagFileLogger.Log($"[HUD] HeadOffsetDefault obj={obj.name} offset={DefaultHeadOffset:F3}");
             return DefaultHeadOffset;
         }
         private static Transform FindChildRecursive(Transform parent, string name)

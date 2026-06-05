@@ -51,6 +51,7 @@ namespace ET.Client
             UnityEngine.GameObject ownerObject = self.GetOwnerObject();
             if (ownerObject != null && (numericType == global::ET.NumericType.Hp || numericType == global::ET.NumericType.MaxHp))
             {
+                SkillDiagFileLogger.Log($"[HUD] AttributeChanged asc={self.InstanceId} unit={self.GetParent<SkillUnit>()?.Unit.As()?.Id ?? 0} type={numericType} before={before:F3} after={after:F3} owner={ownerObject.name}");
                 SkillHudManager.GetOrCreate().UpdateUnitHealth(
                     self.InstanceId,
                     ownerObject,
