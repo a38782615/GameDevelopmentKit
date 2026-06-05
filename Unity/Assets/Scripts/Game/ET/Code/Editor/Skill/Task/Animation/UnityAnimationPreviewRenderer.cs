@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace ET.Client.Editor
@@ -22,6 +23,7 @@ namespace ET.Client.Editor
         private UnityEngine.Animation _animationComponent;
         private GameObject _sampleTargetObject;
         private RenderTexture _renderTexture;
+        private UnityEngine.SceneManagement.Scene _previewScene;
 
         private bool _isInitialized;
         private bool _isPlaying;
@@ -57,6 +59,7 @@ namespace ET.Client.Editor
 
             try
             {
+                _previewScene = EditorSceneManager.NewPreviewScene();
                 _previewObject = UnityEngine.Object.Instantiate(prefab);
                 if (_previewObject == null)
                 {
@@ -64,6 +67,7 @@ namespace ET.Client.Editor
                     return false;
                 }
 
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(_previewObject, _previewScene);
                 ApplyHideFlags(_previewObject);
                 ApplyPreviewLayer(_previewObject.transform);
                 _previewObject.SetActive(true);
@@ -93,6 +97,7 @@ namespace ET.Client.Editor
 
                 _cameraObject = new GameObject("UnityAnimationPreviewCamera");
                 _cameraObject.hideFlags = HideFlags.HideAndDontSave;
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(_cameraObject, _previewScene);
 
                 _camera = _cameraObject.AddComponent<Camera>();
                 _camera.orthographic = true;
@@ -254,6 +259,12 @@ namespace ET.Client.Editor
                 _renderTexture.Release();
                 UnityEngine.Object.DestroyImmediate(_renderTexture);
                 _renderTexture = null;
+            }
+
+            if (_previewScene.IsValid())
+            {
+                EditorSceneManager.ClosePreviewScene(_previewScene);
+                _previewScene = default;
             }
         }
 
@@ -441,6 +452,42 @@ namespace ET.Client.Editor
             {
                 transform.gameObject.layer = PreviewLayer;
             }
+        }
+
+        [InitializeOnLoadMethod]
+        private static void CleanupLegacyPreviewObjectsOnLoad()
+        {
+            EditorApplication.delayCall += CleanupLegacyPreviewObjects;
+        }
+
+        private static void CleanupLegacyPreviewObjects()
+        {
+            GameObject[] gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (gameObject == null || EditorUtility.IsPersistent(gameObject))
+                {
+                    continue;
+                }
+
+                if (gameObject.name == "UnityAnimationPreviewCamera" ||
+                    IsLegacyPreviewRoot(gameObject))
+                {
+                    UnityEngine.Object.DestroyImmediate(gameObject);
+                }
+            }
+        }
+
+        private static bool IsLegacyPreviewRoot(GameObject gameObject)
+        {
+            if (gameObject.transform.parent != null ||
+                gameObject.hideFlags != HideFlags.HideAndDontSave ||
+                gameObject.layer != PreviewLayer)
+            {
+                return false;
+            }
+
+            return gameObject.GetComponentInChildren<UnityEngine.Animation>(true) != null;
         }
     }
 }
