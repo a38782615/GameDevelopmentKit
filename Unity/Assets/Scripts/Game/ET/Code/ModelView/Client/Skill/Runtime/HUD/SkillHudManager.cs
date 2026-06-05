@@ -49,7 +49,6 @@ namespace ET.Client
         private const float DefaultTextDuration = 1.2f;
         private const float TextPopScale = 0.12f;
         private const float TextBaseRise = 0.85f;
-        private const bool DebugPreviewEnabled = false;
         private const bool VerboseHudLog = false;
         private const int BloodBarSubMeshCount = 3;
         private const int BloodBarBackgroundSubMesh = 0;
@@ -94,19 +93,14 @@ namespace ET.Client
         private SkillHudRenderDriver driver;
         private SkillHudTextAtlas textAtlas;
         private TextMeshPro textGenerator;
-        private Mesh quadMesh;
         private Mesh bloodBarMesh;
         private Material barMaterial;
         private Material[] bloodBarMaterials;
         private GameObject bloodBarBatchObject;
         private MeshFilter bloodBarBatchFilter;
         private MeshRenderer bloodBarBatchRenderer;
-        private GameObject debugPreviewObject;
-        private Transform debugPreviewTransform;
-        private MeshRenderer debugPreviewRenderer;
         private Camera cachedCamera;
         private int nextFloatingTextId = 1;
-        private float lastCameraStateLogTime;
 
         public void Awake()
         {
@@ -274,10 +268,6 @@ namespace ET.Client
 
             CollectBloodBars(camera);
             CollectFloatingTexts(deltaTime, camera);
-            if (DebugPreviewEnabled)
-            {
-                UpdateDebugPreview(camera);
-            }
         }
 
         protected override void Destroy()
@@ -313,20 +303,6 @@ namespace ET.Client
                 bloodBarMesh = null;
             }
 
-            if (quadMesh != null)
-            {
-                global::UnityEngine.Object.Destroy(quadMesh);
-                quadMesh = null;
-            }
-
-            if (debugPreviewObject != null)
-            {
-                DestroyRendererMaterial(debugPreviewRenderer);
-                global::UnityEngine.Object.Destroy(debugPreviewObject);
-                debugPreviewObject = null;
-                debugPreviewTransform = null;
-                debugPreviewRenderer = null;
-            }
         }
 
         private bool EnsureRuntimeObjects()
@@ -334,11 +310,6 @@ namespace ET.Client
             if (textPropertyBlock == null)
             {
                 textPropertyBlock = new MaterialPropertyBlock();
-            }
-
-            if (DebugPreviewEnabled && quadMesh == null)
-            {
-                quadMesh = BuildQuadMesh();
             }
 
             if (bloodBarMesh == null)
@@ -407,11 +378,6 @@ namespace ET.Client
             if (textAtlas.EnsureReady())
             {
                 EnsureTextGenerator();
-            }
-
-            if (DebugPreviewEnabled)
-            {
-                EnsureDebugPreviewObject();
             }
 
             return barMaterial != null;
@@ -771,73 +737,6 @@ namespace ET.Client
             }
         }
 
-        private void EnsureDebugPreviewObject()
-        {
-            if (debugPreviewObject != null || driver == null || barMaterial == null || quadMesh == null)
-            {
-                return;
-            }
-
-            debugPreviewObject = new GameObject("SkillHudDebugPreview");
-            debugPreviewObject.transform.SetParent(driver.transform, false);
-            debugPreviewTransform = debugPreviewObject.transform;
-
-            MeshFilter meshFilter = debugPreviewObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = quadMesh;
-
-            debugPreviewRenderer = debugPreviewObject.AddComponent<MeshRenderer>();
-            debugPreviewRenderer.sharedMaterial = CreateRuntimeBarMaterial("SkillHudDebugPreview_Material", new Color(1f, 0.95f, 0.1f, 1f));
-            debugPreviewRenderer.shadowCastingMode = ShadowCastingMode.Off;
-            debugPreviewRenderer.receiveShadows = false;
-            debugPreviewRenderer.lightProbeUsage = LightProbeUsage.Off;
-            debugPreviewRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
-            debugPreviewRenderer.allowOcclusionWhenDynamic = false;
-            debugPreviewRenderer.forceRenderingOff = false;
-            debugPreviewRenderer.rendererPriority = 100;
-            debugPreviewRenderer.sortingOrder = 6000;
-            SkillDiagFileLogger.Log($"[HUD] CreateDebugPreviewObject material={debugPreviewRenderer.sharedMaterial?.name} shader={debugPreviewRenderer.sharedMaterial?.shader?.name}");
-        }
-
-        private void UpdateDebugPreview(Camera camera)
-        {
-            if (debugPreviewObject == null || debugPreviewTransform == null || debugPreviewRenderer == null || camera == null)
-            {
-                return;
-            }
-
-            debugPreviewObject.SetActive(true);
-            debugPreviewObject.layer = ResolveHudLayer(camera);
-            debugPreviewTransform.SetPositionAndRotation(camera.transform.position + camera.transform.forward * 2f, camera.transform.rotation);
-            debugPreviewTransform.localScale = new Vector3(2f, 0.3f, 1f);
-
-            SetRendererColor(debugPreviewRenderer, new Color(1f, 0.95f, 0.1f, 1f));
-            LogCameraStateIfNeeded(camera);
-        }
-
-        private void SetRendererColor(MeshRenderer meshRenderer, Color color)
-        {
-            if (meshRenderer == null)
-            {
-                return;
-            }
-
-            Material material = meshRenderer.sharedMaterial;
-            if (material == null)
-            {
-                return;
-            }
-
-            if (material.HasProperty(HudColorId))
-            {
-                material.SetColor(HudColorId, color);
-            }
-
-            if (material.HasProperty(BaseColorId))
-            {
-                material.SetColor(BaseColorId, color);
-            }
-        }
-
         private static int ResolveHudLayer(Camera camera)
         {
             if (camera == null)
@@ -860,20 +759,6 @@ namespace ET.Client
             }
 
             return 0;
-        }
-
-        private void LogCameraStateIfNeeded(Camera camera)
-        {
-            if (camera == null || Time.unscaledTime < lastCameraStateLogTime + 1f)
-            {
-                return;
-            }
-
-            lastCameraStateLogTime = Time.unscaledTime;
-            SkillDiagFileLogger.Log(
-                $"[HUD] CameraState camera={camera.name} cullingMask={camera.cullingMask} hudLayer={ResolveHudLayer(camera)} " +
-                $"debugActive={debugPreviewObject?.activeSelf ?? false} debugVisible={debugPreviewRenderer?.isVisible ?? false} " +
-                $"debugLayer={debugPreviewObject?.layer ?? -1} debugEnabled={debugPreviewRenderer?.enabled ?? false}");
         }
 
         private void LogRenderStateIfNeeded(long ascInstanceId, UnitHudState state)
@@ -900,20 +785,6 @@ namespace ET.Client
                 $"[HUD] BatchRenderState asc={ascInstanceId} active={bloodBarBatchObject.activeSelf} layer={bloodBarBatchObject.layer} enabled={bloodBarBatchRenderer.enabled} visible={bloodBarBatchRenderer.isVisible} " +
                 $"vertexCount={bloodBarMesh.vertexCount} subMeshes={bloodBarMesh.subMeshCount} " +
                 $"bounds=({bounds.center.x:F3},{bounds.center.y:F3},{bounds.center.z:F3};{bounds.size.x:F3},{bounds.size.y:F3},{bounds.size.z:F3})");
-        }
-
-        private static void DestroyRendererMaterial(MeshRenderer meshRenderer)
-        {
-            if (meshRenderer == null)
-            {
-                return;
-            }
-
-            Material material = meshRenderer.sharedMaterial;
-            if (material != null)
-            {
-                global::UnityEngine.Object.Destroy(material);
-            }
         }
 
         private void ClearBloodBarBatch()
@@ -976,33 +847,6 @@ namespace ET.Client
             SkillDiagFileLogger.Log($"[HUD] ResolveCamera result={(cachedCamera == null ? "null" : cachedCamera.name)}");
 
             return cachedCamera;
-        }
-
-        private static Mesh BuildQuadMesh()
-        {
-            GameObject quadObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            quadObject.hideFlags = HideFlags.HideAndDontSave;
-
-            MeshFilter meshFilter = quadObject.GetComponent<MeshFilter>();
-            Mesh sourceMesh = meshFilter != null ? meshFilter.sharedMesh : null;
-            Mesh mesh = sourceMesh != null ? global::UnityEngine.Object.Instantiate(sourceMesh) : null;
-
-            if (Application.isPlaying)
-            {
-                global::UnityEngine.Object.Destroy(quadObject);
-            }
-            else
-            {
-                global::UnityEngine.Object.DestroyImmediate(quadObject);
-            }
-
-            if (mesh == null)
-            {
-                return null;
-            }
-
-            mesh.name = "SkillHudQuad";
-            return mesh;
         }
 
         private void EnsureTextGenerator()
