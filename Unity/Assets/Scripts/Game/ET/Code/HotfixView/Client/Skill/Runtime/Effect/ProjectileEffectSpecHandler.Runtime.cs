@@ -114,12 +114,14 @@ namespace ET.Client
                     AbilitySystemComponent expectedTarget = GetTargetUnitFromPositionSource(nodeData.targetPositionSource);
                     if (target == expectedTarget)
                     {
-                        selfSpec.ReachedTarget = true;
-                        GetContext()?.SetCustomData("ReachPosition", selfSpec.EndPosition);
                         float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
-                        SkillDiagFileLogger.Log($"[ProjectileEffect] ReachTargetByCollision skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} dist={distToTarget:F3} radius={nodeData.collisionRadius:F3} parentInput={GetContext()?.GetParentInputTarget()?.InstanceId ?? 0}");
-                        GetContext()?.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
+                        TriggerProjectileReachTarget(target, "UnitCollision", distToTarget, nodeData.collisionRadius);
                     }
+                }
+                else if (!selfSpec.ReachedTarget && nodeData.projectileTargetType == ProjectileTargetType.Position)
+                {
+                    float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
+                    TriggerProjectileReachTarget(target, "PositionCollision", distToTarget, nodeData.collisionRadius);
                 }
 
                 selfSpec.HitTargetInstanceIds.Add(target.InstanceId);
@@ -184,10 +186,7 @@ namespace ET.Client
                     float reachRadius = Mathf.Max(nodeData.collisionRadius, 0.1f);
                     if (distToTarget <= reachRadius)
                     {
-                        selfSpec.ReachedTarget = true;
-                        GetContext()?.SetCustomData("ReachPosition", selfSpec.EndPosition);
-                        SkillDiagFileLogger.Log($"[ProjectileEffect] ReachTarget skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} targetType={nodeData.projectileTargetType} target={targetUnit.InstanceId} dist={distToTarget:F3} radius={reachRadius:F3} parentInput={GetContext()?.GetParentInputTarget()?.InstanceId ?? 0}");
-                        GetContext()?.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
+                        TriggerProjectileReachTarget(targetUnit, "UnitReach", distToTarget, reachRadius);
                         DestroyProjectileLogic();
                     }
                 }
@@ -200,10 +199,7 @@ namespace ET.Client
                 float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
                 if (distToTarget < nodeData.collisionRadius || (selfSpec.TotalDistance > 0f && selfSpec.TraveledDistance >= selfSpec.TotalDistance))
                 {
-                    selfSpec.ReachedTarget = true;
-                    GetContext()?.SetCustomData("ReachPosition", selfSpec.EndPosition);
-                    SkillDiagFileLogger.Log($"[ProjectileEffect] ReachTarget skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} targetType={nodeData.projectileTargetType} dist={distToTarget:F3} radius={nodeData.collisionRadius:F3} parentInput={GetContext()?.GetParentInputTarget()?.InstanceId ?? 0}");
-                    GetContext()?.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
+                    TriggerProjectileReachTarget(GetContext()?.GetParentInputTarget(), "PositionReach", distToTarget, nodeData.collisionRadius);
                 }
             }
 
@@ -310,6 +306,37 @@ namespace ET.Client
             finally
             {
                 hitContext.Dispose();
+            }
+        }
+
+        private void TriggerProjectileReachTarget(AbilitySystemComponent target, string reason, float distToTarget, float reachRadius)
+        {
+            ProjectileEffectSpec selfSpec = SelfSpec();
+            SpecExecutionContext context = GetContext();
+            if (selfSpec == null || context == null || selfSpec.ReachedTarget)
+            {
+                return;
+            }
+
+            selfSpec.ReachedTarget = true;
+            SpecExecutionContext executionContext = target == null ? context : context.CreateWithParentInput(target);
+            if (executionContext == null)
+            {
+                executionContext = context;
+            }
+
+            try
+            {
+                executionContext.SetCustomData("ReachPosition", selfSpec.EndPosition);
+                SkillDiagFileLogger.Log($"[ProjectileEffect] ReachTarget skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} reason={reason} targetType={GetNode()?.projectileTargetType} target={target?.InstanceId ?? 0} dist={distToTarget:F3} radius={reachRadius:F3} parentInput={executionContext.GetParentInputTarget()?.InstanceId ?? 0}");
+                executionContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnReachTarget);
+            }
+            finally
+            {
+                if (executionContext != context && !executionContext.IsDisposed)
+                {
+                    executionContext.Dispose();
+                }
             }
         }
 
