@@ -13,13 +13,13 @@ namespace ET.Client
             DRUnitConfig config = unit?.Config();
             if (config == null)
             {
-                self.Shape = EntityBody.CircleShape;
+                self.Shape = EntityBody.ShapeType.CircleShape;
                 self.Width = 0;
                 self.Height = 0;
                 return;
             }
 
-            self.Shape = config.Shape;
+            self.Shape = (EntityBody.ShapeType)config.Shape;
             self.Width = config.Width;
             self.Height = config.Height;
             unit.Scene()?.GetComponent<BodyCheckComponent>()?.Register(self);
@@ -44,7 +44,7 @@ namespace ET.Client
 
         public static bool IsCircle(this EntityBody self)
         {
-            return self != null && self.Shape == EntityBody.CircleShape;
+            return self != null && self.Shape == EntityBody.ShapeType.CircleShape;
         }
 
         public static float GetBoundingRadius(this EntityBody self)

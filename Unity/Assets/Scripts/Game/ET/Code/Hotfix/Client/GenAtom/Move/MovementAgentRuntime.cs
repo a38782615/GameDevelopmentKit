@@ -84,7 +84,7 @@ namespace ET.Client
                 return DefaultRadius;
             }
 
-            if (config.Shape == EntityBody.CircleShape && config.Width > 0)
+            if ((EntityBody.ShapeType)config.Shape == EntityBody.ShapeType.CircleShape && config.Width > 0)
             {
                 return config.Width * 0.5f;
             }

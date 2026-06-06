@@ -348,7 +348,7 @@ namespace ET.Client
 
         private static bool IsCircle(EntityBody body)
         {
-            return body != null && body.Shape == EntityBody.CircleShape;
+            return body != null && body.Shape == EntityBody.ShapeType.CircleShape;
         }
 
         private static bool OverlapOnAxis(float2 translation, float2 queryHalfExtents, float2 targetHalfExtents, float2 axis, float2 queryAxisX, float2 queryAxisY)
