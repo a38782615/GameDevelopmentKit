@@ -9,8 +9,8 @@ namespace ET.Client
             RectangleShape = 2
         }
 
-        public int Width;
-        public int Height;
+        public float Width;
+        public float Height;
         public ShapeType Shape;
     }
 }

@@ -84,8 +84,8 @@ namespace ET.Client
         {
             return unitType switch
             {
-                UnitType.Player => new float2(-1f , index * 1.5f).ToModePosition(),
-                _ => new float2(1f , index * 1.5f).ToModePosition(),
+                UnitType.Player => new float2(-2f , index * 1.5f).ToModePosition(),
+                _ => new float2(2f , index * 1.5f).ToModePosition(),
             };
         }
 
