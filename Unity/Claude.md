@@ -1,29 +1,23 @@
-﻿
-
-<!-- AIBRIDGE:START {"assistant":"claude","templateId":"unity-integration","version":1,"target":"root-rule"} -->
+﻿<!-- AIBRIDGE:START {"assistant":"claude","templateId":"unity-integration","version":2,"target":"root-rule"} -->
 ## AIBridge Unity Integration
 
-Use `AIBridgeCache/CLI/AIBridgeCLI.exe` to interact with Unity Editor through AIBridge.
+**Skill**: `aibridge` - Unity CLI automation tool
 
-**Skill**: `aibridge`
+**CLI**: `./AIBridgeCache/CLI/AIBridgeCLI.exe` (outputs JSON by default)
 
-**When to Use**:
-- Read Unity console errors and warnings
-- Trigger compile checks and inspect results
-- Create or modify GameObjects, Components, Scenes, and Prefabs
-- Search assets and capture screenshots or GIFs from Play Mode
+**Core Workflows**:
+- **Compile**: Use `compile unity` (default), `compile dotnet` (optional validation only)
+- **Asset Search**: Use `asset search/find --format paths` before generic filesystem search
+- **Console Logs**: `get_logs --logType Error`
+- **Scene/GameObject**: Create, modify, inspect hierarchy
+- **Visual Verification**: `screenshot game`, `screenshot gif --frameCount 50` (Play Mode)
 
 **Quick Reference**:
 ```bash
-# CLI Path
-AIBridgeCache/CLI/AIBridgeCLI.exe
-
-# Common Commands
-AIBridgeCLI.exe compile unity --raw
-AIBridgeCLI.exe get_logs --logType Error --raw
-AIBridgeCLI.exe asset search --mode script --keyword "Player" --raw
-AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube --raw
-AIBridgeCLI.exe transform set_position --path "Player" --x 0 --y 1 --z 0 --raw
+./AIBridgeCache/CLI/AIBridgeCLI.exe compile unity
+./AIBridgeCache/CLI/AIBridgeCLI.exe get_logs --logType Error
+./AIBridgeCache/CLI/AIBridgeCLI.exe asset search --mode script --keyword "Player" --format paths
+./AIBridgeCache/CLI/AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube
 ```
 
 **Skill Documentation**: [AIBridge Skill](/.claude/skills/aibridge/SKILL.md)
