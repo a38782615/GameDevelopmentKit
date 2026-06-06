@@ -214,6 +214,15 @@ namespace ET.Client
                     return;
                 }
             }
+            catch (OperationCanceledException)
+            {
+                if (!projectileEntity.IsDisposed)
+                {
+                    projectileEntity.Dispose();
+                }
+
+                return;
+            }
             catch (Exception e)
             {
                 Log.Error($"[ProjectileEffect] Spawn projectile failed. skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} error={e}");
