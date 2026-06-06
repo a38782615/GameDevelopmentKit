@@ -78,15 +78,6 @@ namespace ET.Client
                 return;
             }
 
-            if (nodeData.projectileTargetType != ProjectileTargetType.Position)
-            {
-                CheckProjectileCollision();
-                if (!selfSpec.IsLogicActive)
-                {
-                    return;
-                }
-            }
-
             SyncProjectileView();
         }
 
@@ -117,15 +108,6 @@ namespace ET.Client
                     continue;
                 }
 
-                if (!selfSpec.ReachedTarget && nodeData.projectileTargetType == ProjectileTargetType.Unit)
-                {
-                    AbilitySystemComponent expectedTarget = GetTargetUnitFromPositionSource(nodeData.targetPositionSource);
-                    if (target == expectedTarget)
-                    {
-                        float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
-                        TriggerProjectileReachTarget(target, "UnitCollision", distToTarget, nodeData.collisionRadius);
-                    }
-                }
                 selfSpec.HitTargetInstanceIds.Add(target.InstanceId);
                 selfSpec.HitCount++;
                 TriggerProjectileHit(target, selfSpec.CurrentPosition);
