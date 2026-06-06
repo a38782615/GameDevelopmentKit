@@ -14,13 +14,12 @@ namespace ET.Client
             unit.GetOrAddComponent<EntityBody>();
 
             var skillUnit = unit.AddComponent<SkillUnit>();
-            var config = unit.Config();
-
-            var entiyId = config.EntityId;
-            UGFEntity a = await scene.GetComponent<GFEntityComponent>().AddGFEntityChildAsync<GFEntityHeadItem>(entiyId);
             
-            GameObject viewGameObject = a.CachedTransform.gameObject;
-            unit.GetOrAddComponent<UnitViewComponent>().Bind(a);
+            GFEntityHeadItem headEntity =  unit.AddComponent<GFEntityHeadItem>();
+            var config = unit.Config();
+            await headEntity.ShowEntityAsync(config.EntityId);
+
+            GameObject viewGameObject = headEntity.CachedTransform.gameObject;
             var gameObjectComponent = unit.GetOrAddComponent<GameObjectComponent>();
             gameObjectComponent.GameObject = viewGameObject;
             gameObjectComponent.Transform.position = unit.Position;

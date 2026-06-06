@@ -160,21 +160,7 @@ namespace ET.Client
             }
 
             UGFEntityEffect effectEntity = self.AddChild<UGFEntityEffect, UGFEntityEffectInitData>(initData);
-            try
-            {
-                await effectEntity.ShowEntityAsync(particleEntityId);
-            }
-            catch (System.Exception e)
-            {
-                Log.Error($"[GameplayCue] Show particle effect entity failed. entityId={particleEntityId} error={e}");
-                if (!effectEntity.IsDisposed)
-                {
-                    effectEntity.Dispose();
-                }
-
-                self.Expire();
-                return;
-            }
+            await effectEntity.ShowEntityAsync(particleEntityId);
 
             if (self == null || self.IsDisposed || self.IsExpired)
             {
