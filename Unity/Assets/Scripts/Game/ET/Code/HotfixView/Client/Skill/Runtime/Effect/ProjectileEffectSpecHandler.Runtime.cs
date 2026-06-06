@@ -72,13 +72,21 @@ namespace ET.Client
                 selfSpec.CurrentPosition += selfSpec.CurrentDirection * moveDistance;
             }
 
-            CheckProjectileCollision();
+            CheckProjectileReachTarget();
             if (!selfSpec.IsLogicActive)
             {
                 return;
             }
 
-            CheckProjectileReachTarget();
+            if (nodeData.projectileTargetType != ProjectileTargetType.Position)
+            {
+                CheckProjectileCollision();
+                if (!selfSpec.IsLogicActive)
+                {
+                    return;
+                }
+            }
+
             SyncProjectileView();
         }
 
@@ -118,12 +126,6 @@ namespace ET.Client
                         TriggerProjectileReachTarget(target, "UnitCollision", distToTarget, nodeData.collisionRadius);
                     }
                 }
-                else if (!selfSpec.ReachedTarget && nodeData.projectileTargetType == ProjectileTargetType.Position)
-                {
-                    float distToTarget = math.distance(selfSpec.CurrentPosition, selfSpec.EndPosition);
-                    TriggerProjectileReachTarget(target, "PositionCollision", distToTarget, nodeData.collisionRadius);
-                }
-
                 selfSpec.HitTargetInstanceIds.Add(target.InstanceId);
                 selfSpec.HitCount++;
                 TriggerProjectileHit(target, selfSpec.CurrentPosition);
@@ -200,6 +202,7 @@ namespace ET.Client
                 if (distToTarget < nodeData.collisionRadius || (selfSpec.TotalDistance > 0f && selfSpec.TraveledDistance >= selfSpec.TotalDistance))
                 {
                     TriggerProjectileReachTarget(GetContext()?.GetParentInputTarget(), "PositionReach", distToTarget, nodeData.collisionRadius);
+                    DestroyProjectileLogic();
                 }
             }
 
@@ -396,7 +399,7 @@ namespace ET.Client
                 return;
             }
 
-            if (!selfSpec.HasTriggeredHit && nodeData != null && nodeData.projectileTargetType == ProjectileTargetType.Position)
+            if (!selfSpec.ReachedTarget && !selfSpec.HasTriggeredHit && nodeData != null && nodeData.projectileTargetType == ProjectileTargetType.Position)
             {
                 AbilitySystemComponent target = GetContext()?.GetMainTarget();
                 if (target != null && math.distance(selfSpec.CurrentPosition, selfSpec.ExpectedTargetPosition) <= Mathf.Max(nodeData.collisionRadius, 0.75f))
