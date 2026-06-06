@@ -72,6 +72,15 @@ namespace ET.Client
                 selfSpec.CurrentPosition += selfSpec.CurrentDirection * moveDistance;
             }
 
+            if (ShouldCheckProjectileCollision(nodeData))
+            {
+                CheckProjectileCollision();
+                if (!selfSpec.IsLogicActive)
+                {
+                    return;
+                }
+            }
+
             CheckProjectileReachTarget();
             if (!selfSpec.IsLogicActive)
             {
@@ -286,6 +295,7 @@ namespace ET.Client
             try
             {
                 hitContext.SetCustomData("HitPosition", hitPosition);
+                SkillDiagFileLogger.Log($"[ProjectileEffect] Hit skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} hitPosition={hitPosition} parentInput={hitContext.GetParentInputTarget()?.InstanceId ?? 0}");
                 hitContext.ExecuteConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnHit);
             }
             finally
@@ -323,6 +333,22 @@ namespace ET.Client
                     executionContext.Dispose();
                 }
             }
+        }
+
+        private bool ShouldCheckProjectileCollision(ProjectileEffectNodeData nodeData)
+        {
+            if (nodeData == null || Spec == null)
+            {
+                return false;
+            }
+
+            if (nodeData.isBouncing)
+            {
+                return true;
+            }
+
+            List<NodeData> hitNodes = SkillDataCenter.Instance.GetConnectedNodes(Spec.SkillId, Spec.NodeGuid, SkillPortId.ProjectileEffect.OnHit);
+            return hitNodes != null && hitNodes.Count > 0;
         }
 
         private bool IsProjectileValidTarget(AbilitySystemComponent target)
