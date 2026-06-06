@@ -28,12 +28,14 @@ namespace ET.Client
         {
             if (target == null)
             {
+                SkillDiagFileLogger.Log($"[DamageEffect] SkipNullTarget skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid}");
                 return;
             }
 
             DamageEffectNodeData nodeData = GetNode();
             if (nodeData == null)
             {
+                SkillDiagFileLogger.Log($"[DamageEffect] SkipNullNode skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId}");
                 return;
             }
 
@@ -65,12 +67,22 @@ namespace ET.Client
                 AttrCmp healthAttr = target.Attributes.GetAttribute(global::ET.NumericType.Hp);
                 if (healthAttr != null)
                 {
+                    float hpBefore = healthAttr.CurrentValue;
                     target.Attributes.SetBaseValue(healthAttr.NumericType, healthAttr.CurrentValue - baseDamage);
+                    SkillDiagFileLogger.Log($"[DamageEffect] Apply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hpBefore={hpBefore:F3} hpAfter={healthAttr.CurrentValue:F3}");
+                }
+                else
+                {
+                    SkillDiagFileLogger.Log($"[DamageEffect] MissingHp skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3}");
                 }
 
                 SpecExecutionContext executionContext = GetExecutionContext();
                 DamageResult damageResult = new DamageResult(baseDamage, false, false, nodeData.damageType);
                 executionContext.SetCustomData("DamageResult", damageResult);
+            }
+            else
+            {
+                SkillDiagFileLogger.Log($"[DamageEffect] NoApply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hasAttributes={target.Attributes != null}");
             }
 
             if (baseDamage > 0f)
