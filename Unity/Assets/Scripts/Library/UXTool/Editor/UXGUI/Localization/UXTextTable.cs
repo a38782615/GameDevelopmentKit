@@ -173,9 +173,8 @@ namespace UnityEngine.UI
         [MenuItem(ThunderFireUIToolConfig.Menu_Localization + "/写入所有文本表格Key (Write All Text Table Key)", false, 54)]
         private static void WriteAllTextTableKey()
         {
-            MiniExcel.Insert(ThunderFireUIToolConfig.TextTablePath, null, ThunderFireUIToolConfig.NoTranslateTextTableSheet, ExcelType.XLSX, overwriteSheet: true);
             string[] guids = AssetDatabase.FindAssets("t:Prefab", new string[]{ ThunderFireUIToolConfig.UIRoot });
-            List<object> insertList = new List<object>();
+            List<string[]> insertList = new List<string[]>();
             foreach (var guid in guids)
             {
                 string filePath = AssetDatabase.GUIDToAssetPath(guid);
@@ -200,10 +199,7 @@ namespace UnityEngine.UI
             {
                 workbook = new XSSFWorkbook(fs);
             }
-            int idx = workbook.GetSheetIndex(sheetName);
-            if (idx >= 0)
-                workbook.RemoveSheetAt(idx);
-            var ws = workbook.CreateSheet(sheetName);
+            var ws = CreateOrOverwriteSheet(workbook, sheetName);
             if (insertList.Count > 0)
             {
                 var headerRow = ws.CreateRow(0);
@@ -225,6 +221,17 @@ namespace UnityEngine.UI
             {
                 workbook.Write(fs);
             }
+        }
+
+        private static ISheet CreateOrOverwriteSheet(IWorkbook workbook, string sheetName)
+        {
+            int idx = workbook.GetSheetIndex(sheetName);
+            if (idx >= 0)
+            {
+                workbook.RemoveSheetAt(idx);
+            }
+
+            return workbook.CreateSheet(sheetName);
         }
     }
 }

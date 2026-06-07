@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MiniExcelLibs;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 using UnityEditor;
 using UnityEngine;
@@ -273,17 +274,17 @@ namespace ET.Client.Editor
         /// 从表头行构建 列头名称 → 列字母 的映射
         /// Luban Excel 结构：第1行主字段名，第3行子字段名
         /// </summary>
-        private static Dictionary<string, string> BuildColumnMap(IList<dynamic> rows)
+        private static Dictionary<string, string> BuildColumnMap(IList<Dictionary<string, string>> rows)
         {
             var columnMap = new Dictionary<string, string>();
 
             // 第1行（索引0）：主字段名 —— Id, Name, Description, *NodesJsons, *ConnectionsJson
-            var headerRow = rows[HEADER_ROW] as IDictionary<string, object>;
-            if (headerRow != null)
+            if (rows.Count > HEADER_ROW)
             {
+                var headerRow = rows[HEADER_ROW];
                 foreach (var kvp in headerRow)
                 {
-                    var headerName = kvp.Value?.ToString();
+                    var headerName = kvp.Value;
                     if (!string.IsNullOrEmpty(headerName) && !headerName.StartsWith("##"))
                     {
                         columnMap[headerName] = kvp.Key;
@@ -292,12 +293,12 @@ namespace ET.Client.Editor
             }
 
             // 第3行（索引2）：子字段名 —— nodeType, content（*NodesJsons 的子列）
-            var subHeaderRow = rows[SUB_HEADER_ROW] as IDictionary<string, object>;
-            if (subHeaderRow != null)
+            if (rows.Count > SUB_HEADER_ROW)
             {
+                var subHeaderRow = rows[SUB_HEADER_ROW];
                 foreach (var kvp in subHeaderRow)
                 {
-                    var subName = kvp.Value?.ToString();
+                    var subName = kvp.Value;
                     if (!string.IsNullOrEmpty(subName) && !subName.StartsWith("##"))
                     {
                         columnMap[subName] = kvp.Key;
@@ -311,7 +312,7 @@ namespace ET.Client.Editor
         /// <summary>
         /// 通过列头名称获取单元格值
         /// </summary>
-        private static string GetCellByHeader(IDictionary<string, object> row, Dictionary<string, string> columnMap, string headerName)
+        private static string GetCellByHeader(IDictionary<string, string> row, Dictionary<string, string> columnMap, string headerName)
         {
             if (columnMap.TryGetValue(headerName, out var colLetter))
             {
@@ -338,7 +339,7 @@ namespace ET.Client.Editor
             {
                 using (var stream = File.OpenRead(excelPath))
                 {
-                    var rows = MiniExcel.Query(stream, useHeaderRow: false, sheetName: "Sheet1").ToList();
+                    var rows = ReadSheetRows(stream, "Sheet1");
 
                     if (rows.Count < DATA_START_ROW)
                     {
@@ -363,8 +364,7 @@ namespace ET.Client.Editor
                     // 从第5行开始（索引4）
                     for (int i = DATA_START_ROW - 1; i < rows.Count; i++)
                     {
-                        var row = rows[i] as IDictionary<string, object>;
-                        if (row == null) continue;
+                        var row = rows[i];
 
                         // 检查是否是新技能（Id 列有值）
                         var idValue = GetCellByHeader(row, columnMap, COL_ID);
@@ -442,6 +442,60 @@ namespace ET.Client.Editor
             }
 
             return result;
+        }
+
+        private static List<Dictionary<string, string>> ReadSheetRows(Stream stream, string sheetName)
+        {
+            var rows = new List<Dictionary<string, string>>();
+            IWorkbook workbook = new XSSFWorkbook(stream);
+            ISheet sheet = workbook.GetSheet(sheetName) ?? workbook.GetSheetAt(0);
+            DataFormatter formatter = new DataFormatter();
+
+            if (sheet == null)
+            {
+                return rows;
+            }
+
+            for (int rowIndex = 0; rowIndex <= sheet.LastRowNum; rowIndex++)
+            {
+                IRow sourceRow = sheet.GetRow(rowIndex);
+                var row = new Dictionary<string, string>();
+                if (sourceRow != null)
+                {
+                    for (int cellIndex = 0; cellIndex < sourceRow.LastCellNum; cellIndex++)
+                    {
+                        ICell cell = sourceRow.GetCell(cellIndex);
+                        if (cell == null)
+                        {
+                            continue;
+                        }
+
+                        string value = formatter.FormatCellValue(cell);
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            row[GetColumnName(cellIndex)] = value;
+                        }
+                    }
+                }
+
+                rows.Add(row);
+            }
+
+            return rows;
+        }
+
+        private static string GetColumnName(int columnIndex)
+        {
+            string columnName = string.Empty;
+            int dividend = columnIndex + 1;
+            while (dividend > 0)
+            {
+                int modulo = (dividend - 1) % 26;
+                columnName = (char)('A' + modulo) + columnName;
+                dividend = (dividend - modulo) / 26;
+            }
+
+            return columnName;
         }
 
         /// <summary>
@@ -534,11 +588,11 @@ namespace ET.Client.Editor
         /// <summary>
         /// 获取单元格值
         /// </summary>
-        private static string GetCellValue(IDictionary<string, object> row, string column)
+        private static string GetCellValue(IDictionary<string, string> row, string column)
         {
             if (row.TryGetValue(column, out var value) && value != null)
             {
-                return value.ToString();
+                return value;
             }
             return null;
         }

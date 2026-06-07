@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 
 namespace ThunderFireUITool
 {
+        
     public class UXStyle : IStyle
     {
         public StyleLength width { get; set; }
@@ -104,6 +105,10 @@ namespace ThunderFireUITool
         public StyleList<FilterFunction> filter { get; set; }
         public StyleMaterialDefinition unityMaterial { get; set; }
         public StyleTextAutoSize unityTextAutoSize { get; set; }
+
+        public void Clear(bool clearSourceAssetStyles = true)
+        {
+        }
 #endif
     }
 }

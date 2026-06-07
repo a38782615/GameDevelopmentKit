@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Dynamic;
-using MiniExcelLibs;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -139,55 +139,55 @@ namespace ET.Client.Editor
                 return cache;
             }
 
-            List<string> sheetNames = MiniExcel.GetSheetNames(CommonEntityXlsx);
-            foreach (string sheetName in sheetNames)
+            DataFormatter formatter = new DataFormatter();
+            using (System.IO.FileStream stream = new System.IO.FileStream(CommonEntityXlsx, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
             {
-                if (string.IsNullOrWhiteSpace(sheetName) || sheetName.StartsWith("~"))
+                IWorkbook workbook = new XSSFWorkbook(stream);
+
+                for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
                 {
-                    continue;
-                }
-
-                IEnumerable<dynamic> rows = MiniExcel.Query(CommonEntityXlsx, sheetName: sheetName, excelType: ExcelType.XLSX, startCell: "A4");
-                foreach (dynamic row in rows)
-                {
-                    if (row is not ExpandoObject rowObject)
+                    ISheet sheet = workbook.GetSheetAt(sheetIndex);
+                    if (sheet == null || string.IsNullOrWhiteSpace(sheet.SheetName) || sheet.SheetName.StartsWith("~"))
                     {
                         continue;
                     }
 
-                    var values = (IDictionary<string, object>)rowObject;
-                    if (!TryGetIntValue(values, "B", out int id) || id <= 0)
+                    for (int rowIndex = 3; rowIndex <= sheet.LastRowNum; rowIndex++)
                     {
-                        continue;
-                    }
+                        IRow row = sheet.GetRow(rowIndex);
+                        if (row == null)
+                        {
+                            continue;
+                        }
 
-                    if (!values.TryGetValue("E", out object assetNameObject))
-                    {
-                        continue;
-                    }
+                        if (!TryGetIntValue(row.GetCell(1), formatter, out int id) || id <= 0)
+                        {
+                            continue;
+                        }
 
-                    string assetName = assetNameObject?.ToString();
-                    if (string.IsNullOrWhiteSpace(assetName))
-                    {
-                        continue;
-                    }
+                        string assetName = formatter.FormatCellValue(row.GetCell(4));
+                        if (string.IsNullOrWhiteSpace(assetName))
+                        {
+                            continue;
+                        }
 
-                    cache[id] = assetName;
+                        cache[id] = assetName;
+                    }
                 }
             }
 
             return cache;
         }
 
-        private static bool TryGetIntValue(IDictionary<string, object> values, string key, out int value)
+        private static bool TryGetIntValue(ICell cell, DataFormatter formatter, out int value)
         {
             value = 0;
-            if (!values.TryGetValue(key, out object rawValue) || rawValue == null)
+            if (cell == null)
             {
                 return false;
             }
 
-            return int.TryParse(rawValue.ToString(), out value);
+            return int.TryParse(formatter.FormatCellValue(cell), out value);
         }
 #endif
     }

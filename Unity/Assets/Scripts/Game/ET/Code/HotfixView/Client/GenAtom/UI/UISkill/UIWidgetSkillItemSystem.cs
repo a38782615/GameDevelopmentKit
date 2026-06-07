@@ -352,7 +352,7 @@ namespace ET.Client
 
             self.CachedIconPath = iconPath;
             string spritePath = GetSkillIconSpritePath(iconPath);
-            iconImage.SetSprite(SkillIconCollectionPath, spritePath);
+            iconImage.SetSprite(spritePath);
         }
 
         private static string GetSkillIconSpritePath(string iconPath)
