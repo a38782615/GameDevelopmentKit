@@ -55,20 +55,21 @@ namespace ET.Client
                 return;
             }
 
-            AnimationState state = self.Animation[name];
+            AnimationState state = ResolveAnimationState(self.Animation, name, out string resolvedName);
             if (state == null)
             {
                 return;
             }
 
-            if (self.Animation.IsPlaying(name) && state.wrapMode == (loop ? WrapMode.Loop : WrapMode.Once))
+            if (loop && self.Animation.IsPlaying(resolvedName) && state.wrapMode == WrapMode.Loop)
             {
                 return;
             }
 
             state.wrapMode = loop ? WrapMode.Loop : WrapMode.Once;
+            state.time = 0f;
             self.Animation.wrapMode = state.wrapMode;
-            self.Animation.Play(name, PlayMode.StopSameLayer);
+            self.Animation.Play(resolvedName, PlayMode.StopSameLayer);
         }
 
         public static float GetAnimationLengthSeconds(this UnityAnimationComponent self, string name, string animationComponentPath)
@@ -79,8 +80,31 @@ namespace ET.Client
             }
 
             self.Bind(animationComponentPath);
-            AnimationState state = self.Animation == null ? null : self.Animation[name];
+            AnimationState state = self.Animation == null ? null : ResolveAnimationState(self.Animation, name, out _);
             return state == null ? 0f : state.length;
+        }
+
+        private static AnimationState ResolveAnimationState(Animation animation, string name, out string resolvedName)
+        {
+            resolvedName = name;
+            if (animation == null)
+            {
+                return null;
+            }
+
+            AnimationState state = animation[name];
+            if (state != null || name != "Stand")
+            {
+                return state;
+            }
+
+            state = animation["Idle"];
+            if (state != null)
+            {
+                resolvedName = "Idle";
+            }
+
+            return state;
         }
 
         private static Animation FindAnimationComponent(Animation[] animations, string targetPath, Transform root)
