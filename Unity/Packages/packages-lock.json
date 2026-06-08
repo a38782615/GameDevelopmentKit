@@ -330,13 +330,6 @@
       "dependencies": {},
       "hash": "70eee1ee18304328efb281a716fac722dcdf11cb"
     },
-    "me.xw.toolbarextension": {
-      "version": "https://github.com/XuToWei/ToolbarExtension.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "9cb25fae3db67e463f4969a613557929d777cb27"
-    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
