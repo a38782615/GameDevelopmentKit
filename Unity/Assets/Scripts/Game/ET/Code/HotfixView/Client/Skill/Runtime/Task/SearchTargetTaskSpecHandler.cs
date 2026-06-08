@@ -254,6 +254,11 @@ namespace ET.Client
             return (global::ET.UnitType)otherUnit.Config().Type != (global::ET.UnitType)selfUnit.Config().Type;
         }
 
+        private static bool IsSameCampUnit(Unit selfUnit, Unit otherUnit)
+        {
+            return (global::ET.UnitType)otherUnit.Config().Type == (global::ET.UnitType)selfUnit.Config().Type;
+        }
+
         private static int NormalizeFormationPosition(int posIdx)
         {
             int normalized = posIdx % global::ET.GameConst.FormationPositionCount;
@@ -284,17 +289,74 @@ namespace ET.Client
                 return false;
             }
 
-            if (!nodeData.searchTargetTags.IsEmpty && !target.HasAnyTags(nodeData.searchTargetTags))
+            Unit sourceUnit = this.GetContext()?.GetCaster()?.GetParent<SkillUnit>()?.Unit.As();
+            Unit targetUnit = target.GetParent<SkillUnit>()?.Unit.As();
+
+            if (!nodeData.searchTargetTags.IsEmpty && !this.HasAnySearchTag(target, nodeData.searchTargetTags, sourceUnit, targetUnit))
             {
                 return false;
             }
 
-            if (!nodeData.searchExcludeTags.IsEmpty && target.HasAnyTags(nodeData.searchExcludeTags))
+            if (!nodeData.searchExcludeTags.IsEmpty && this.HasAnySearchTag(target, nodeData.searchExcludeTags, sourceUnit, targetUnit))
             {
                 return false;
             }
 
             return true;
+        }
+
+        private bool HasAnySearchTag(AbilitySystemComponent target, GameplayTagSet tagSet, Unit sourceUnit, Unit targetUnit)
+        {
+            if (tagSet.IsEmpty)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < tagSet.Count; i++)
+            {
+                GameplayTag tag = tagSet[i];
+                if (IsCampSearchTag(tag))
+                {
+                    if (MatchesCampSearchTag(tag, sourceUnit, targetUnit))
+                    {
+                        return true;
+                    }
+
+                    continue;
+                }
+
+                if (target.OwnedTags != null && target.OwnedTags.HasTag(tag))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsCampSearchTag(GameplayTag tag)
+        {
+            return tag == GameplayTagLibrary.campType_SelfCamp || tag == GameplayTagLibrary.campType_EnemyCamp;
+        }
+
+        private static bool MatchesCampSearchTag(GameplayTag tag, Unit sourceUnit, Unit targetUnit)
+        {
+            if (sourceUnit == null || targetUnit == null)
+            {
+                return false;
+            }
+
+            if (tag == GameplayTagLibrary.campType_SelfCamp)
+            {
+                return IsSameCampUnit(sourceUnit, targetUnit);
+            }
+
+            if (tag == GameplayTagLibrary.campType_EnemyCamp)
+            {
+                return IsHostileUnit(sourceUnit, targetUnit);
+            }
+
+            return false;
         }
 
         private void DebugDrawCircle(float2 center, float radius)

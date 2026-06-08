@@ -16,7 +16,7 @@ MonoBehaviour:
   - name: Root
     id: 0
     parentId: -1
-    childrenIds: 30000000440000004900000052000000
+    childrenIds: 3000000044000000490000005200000054000000
   - name: unitType
     id: 48
     parentId: 0
@@ -100,6 +100,18 @@ MonoBehaviour:
   - name: Running
     id: 83
     parentId: 82
+    childrenIds: 
+  - name: campType
+    id: 84
+    parentId: 0
+    childrenIds: 5500000056000000
+  - name: SelfCamp
+    id: 85
+    parentId: 84
+    childrenIds: 
+  - name: EnemyCamp
+    id: 86
+    parentId: 84
     childrenIds: 
   _cachedTags:
   - _name: Buff
@@ -209,6 +221,23 @@ MonoBehaviour:
     _ancestorHashCodes: fdea404e
     _ancestorNames:
     - Skill
+  - _name: campType
+    _hashCode: -312381257
+    _shortName: campType
+    _ancestorHashCodes: 
+    _ancestorNames: []
+  - _name: campType.EnemyCamp
+    _hashCode: 713889996
+    _shortName: EnemyCamp
+    _ancestorHashCodes: b77061ed
+    _ancestorNames:
+    - campType
+  - _name: campType.SelfCamp
+    _hashCode: -1514860624
+    _shortName: SelfCamp
+    _ancestorHashCodes: b77061ed
+    _ancestorNames:
+    - campType
   - _name: unitType
     _hashCode: 1600484460
     _shortName: unitType
@@ -226,4 +255,4 @@ MonoBehaviour:
     _ancestorHashCodes: 6c74655f
     _ancestorNames:
     - unitType
-  _nextId: 84
+  _nextId: 87

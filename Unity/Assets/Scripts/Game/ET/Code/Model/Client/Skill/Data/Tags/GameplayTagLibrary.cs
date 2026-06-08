@@ -106,6 +106,21 @@ namespace ET.Client
         public static GameplayTag Skill_Running { get; } = new GameplayTag("Skill.Running");
 
         /// <summary>
+        /// campType
+        /// </summary>
+        public static GameplayTag campType { get; } = new GameplayTag("campType");
+
+        /// <summary>
+        /// campType.EnemyCamp
+        /// </summary>
+        public static GameplayTag campType_EnemyCamp { get; } = new GameplayTag("campType.EnemyCamp");
+
+        /// <summary>
+        /// campType.SelfCamp
+        /// </summary>
+        public static GameplayTag campType_SelfCamp { get; } = new GameplayTag("campType.SelfCamp");
+
+        /// <summary>
         /// unitType
         /// </summary>
         public static GameplayTag unitType { get; } = new GameplayTag("unitType");
@@ -148,6 +163,9 @@ namespace ET.Client
             ["CD.Wind"] = CD_Wind,
             ["Skill"] = Skill,
             ["Skill.Running"] = Skill_Running,
+            ["campType"] = campType,
+            ["campType.EnemyCamp"] = campType_EnemyCamp,
+            ["campType.SelfCamp"] = campType_SelfCamp,
             ["unitType"] = unitType,
             ["unitType.hero"] = unitType_hero,
             ["unitType.monster"] = unitType_monster,
