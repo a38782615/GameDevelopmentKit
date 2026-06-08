@@ -25,6 +25,7 @@ namespace ET.Client
 			if (afterCreateTasks.Count > 0)
 			{
 				await UniTask.WhenAll(afterCreateTasks);
+				currentScene.TriggerGameAIChecks();
 			}
 		}
 	}

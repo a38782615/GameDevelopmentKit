@@ -7,13 +7,13 @@ namespace ET.Client
     [FriendOf(typeof(UIFormFight))]
     [EntitySystemOf(typeof(UIFormFight))]
     public static partial class UIFormFightSystem
-    { 
+    {
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
         {
             self.OpenAllUIWidgets();
-            //创建units
+            // 创建本地战斗单位
             CreateLocalUnitsFromTables(self.Root()).Forget();
         }
 
@@ -54,6 +54,7 @@ namespace ET.Client
             }
 
             await UniTask.WhenAll(unis);
+            current.TriggerGameAIChecks();
         }
 
         private static UnitInfo CreateUnitInfo(DRHero config, int index)
@@ -62,11 +63,13 @@ namespace ET.Client
             unitInfo.UnitId = config.Id;
             unitInfo.Type = config.UnitConfigId_Ref.Type;
             unitInfo.ConfigId = config.UnitConfigId;
+            unitInfo.PosIdx = index;
 
             unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, index);
             unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
             return unitInfo;
         }
+
         private static UnitInfo CreateUnitInfo(DRMonster config, int index)
         {
             UnitInfo unitInfo = UnitInfo.Create();
@@ -84,8 +87,8 @@ namespace ET.Client
         {
             return unitType switch
             {
-                UnitType.Player => new float2(-2f , index * 1.5f).ToModePosition(),
-                _ => new float2(2f , index * 1.5f).ToModePosition(),
+                UnitType.Player => new float2(-2f, index * 1.5f).ToModePosition(),
+                _ => new float2(2f, index * 1.5f).ToModePosition(),
             };
         }
 

@@ -121,5 +121,41 @@ namespace ET.Client
             self.CancellationTokenSource = null;
             self.Current = 0;
         }
+
+        public static void TriggerCheckNow(this GameAIComponent self)
+        {
+            if (self == null || self.IsDisposed)
+            {
+                return;
+            }
+
+            try
+            {
+                self.Check();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"game ai trigger check error: {self.Id}\n{e}");
+            }
+        }
+
+        public static void TriggerGameAIChecks(this Scene scene)
+        {
+            UnitComponent unitComponent = scene?.GetComponent<UnitComponent>();
+            if (unitComponent?.Children == null)
+            {
+                return;
+            }
+
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is not Unit unit)
+                {
+                    continue;
+                }
+
+                unit.GetComponent<GameAIComponent>()?.TriggerCheckNow();
+            }
+        }
     }
 }
