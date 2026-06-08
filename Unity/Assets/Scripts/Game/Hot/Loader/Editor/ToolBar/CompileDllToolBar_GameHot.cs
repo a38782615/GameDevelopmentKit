@@ -6,10 +6,15 @@ namespace Game.Hot.Editor
 {
     internal sealed class CompileDllToolBar_GameHot
     {
-        [ToolbarButton(OnGUISide.Left, 50, "HotCompile", "Compile GameHot Dll.")]
-        private static void BuildHotDll()
+        private static readonly GUIContent s_ButtonGUIContent = new GUIContent("HotCompile", "Compile GameHot Dll.");
+
+        [Toolbar(OnGUISide.Left, 50)]
+        static void OnToolbarGUI()
         {
-            BuildAssemblyTool.Build();
+            if (GUILayout.Button(s_ButtonGUIContent))
+            {
+                BuildAssemblyTool.Build();
+            }
         }
     }
 }

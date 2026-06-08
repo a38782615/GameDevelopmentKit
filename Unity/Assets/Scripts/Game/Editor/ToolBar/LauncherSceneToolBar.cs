@@ -8,16 +8,20 @@ namespace Game.Editor
 {
     internal sealed class LauncherSceneToolBar
     {
-        [ToolbarButton(OnGUISide.Left, 100, "Launcher", "Start Run Launcher Scene.")]
-        private static void StartLauncherScene()
-        {
-            if (EditorApplication.isPlaying)
-            {
-                return;
-            }
+        private static readonly GUIContent m_ButtonGUIContent = new GUIContent("Launcher", "Start Run Launcher Scene.");
 
-            BuildSceneSetting.AllScenes();
-            SceneHelper.StartScene(EntryUtility.LauncherScenePath);
+        [Toolbar(OnGUISide.Left, 100)]
+        static void OnToolbarGUI()
+        {
+            EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
+            {
+                if (GUILayout.Button(m_ButtonGUIContent))
+                {
+                    BuildSceneSetting.AllScenes();
+                    SceneHelper.StartScene(EntryUtility.LauncherScenePath);
+                }
+            }
+            EditorGUI.EndDisabledGroup();
         }
     }
 

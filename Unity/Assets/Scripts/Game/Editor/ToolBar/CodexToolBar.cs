@@ -5,10 +5,15 @@ namespace Game.Editor
 {
     internal sealed class CodexToolBar
     {
-        [ToolbarButton(OnGUISide.Right, 97, "CodexAdmin", "Open Windows Terminal admin PowerShell and run codex in the Unity project root.")]
-        private static void OpenCodexAdminPowerShell()
+        private static readonly GUIContent s_ButtonGUIContent = new GUIContent("CodexAdmin", "Open Windows Terminal admin PowerShell and run codex in the Unity project root.");
+
+        [Toolbar(OnGUISide.Right, 97)]
+        private static void OnToolbarGUI()
         {
-            CodexTool.OpenCodexAdminPowerShell();
+            if (GUILayout.Button(s_ButtonGUIContent))
+            {
+                CodexTool.OpenCodexAdminPowerShell();
+            }
         }
     }
 }
