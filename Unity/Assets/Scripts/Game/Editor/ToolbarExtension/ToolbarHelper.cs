@@ -10,56 +10,119 @@ namespace ToolbarExtension
     [InitializeOnLoad]
     internal static class ToolbarHelper
     {
-        private const string LeftZoneName = "ToolbarZoneLeftAlign";
-        private const string RightZoneName = "ToolbarZoneRightAlign";
-        private const string LeftContainerName = "ToolbarExtension_Left";
-        private const string RightContainerName = "ToolbarExtension_Right";
+        private const string ToolbarContainerName = "GameDevelopmentKitToolbar";
+        private const string LegacyLeftContainerName = "GameDevelopmentKitToolbar_Left";
+        private const string LegacyRightContainerName = "GameDevelopmentKitToolbar_Right";
+        private const string PackageLeftContainerName = "ToolbarExtension_Left";
+        private const string PackageRightContainerName = "ToolbarExtension_Right";
+        private const float ToolbarLeft = 520f;
+        private const float ToolbarTop = 5f;
 
-        private static readonly Type s_ToolbarType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.Toolbar");
-        private static readonly List<(int Priority, Action Handler)> s_LeftToolbarGUI = new List<(int Priority, Action Handler)>();
-        private static readonly List<(int Priority, Action Handler)> s_RightToolbarGUI = new List<(int Priority, Action Handler)>();
+        private static readonly List<ToolbarElementMethod> s_LeftElements = new List<ToolbarElementMethod>();
+        private static readonly List<ToolbarElementMethod> s_RightElements = new List<ToolbarElementMethod>();
 
-        private static ScriptableObject s_ToolbarScriptableObject;
-        private static FieldInfo s_ToolbarRootFieldInfo;
+        private static EditorWindow s_MainToolbarWindow;
         private static VisualElement s_ToolbarRootVisualElement;
         private static bool s_Registered;
 
         static ToolbarHelper()
         {
-            CollectToolbarMethods();
+            CollectToolbarElements();
             EditorApplication.update -= OnUpdate;
             EditorApplication.update += OnUpdate;
         }
 
-        private static void CollectToolbarMethods()
+        private static void CollectToolbarElements()
+        {
+            s_LeftElements.Clear();
+            s_RightElements.Clear();
+
+            CollectToolbarButtons();
+            CollectToolbarDropdowns();
+            CollectLegacyToolbars();
+
+            s_LeftElements.Sort((left, right) => left.Priority - right.Priority);
+            s_RightElements.Sort((left, right) => right.Priority - left.Priority);
+        }
+
+        private static void CollectToolbarButtons()
+        {
+            Type attributeType = typeof(ToolbarButtonAttribute);
+
+            foreach (MethodInfo methodInfo in TypeCache.GetMethodsWithAttribute<ToolbarButtonAttribute>())
+            {
+                object[] attributes = methodInfo.GetCustomAttributes(attributeType, false);
+                if (attributes.Length == 0 || !IsValidStaticMethod(methodInfo, 0))
+                {
+                    continue;
+                }
+
+                ToolbarButtonAttribute attribute = (ToolbarButtonAttribute)attributes[0];
+                ToolbarElementMethod toolbarButton = ToolbarElementMethod.CreateButton(attribute.Priority, attribute.Text, attribute.Tooltip, methodInfo);
+                AddToolbarElement(attribute.Side, toolbarButton);
+            }
+        }
+
+        private static void CollectToolbarDropdowns()
+        {
+            Type attributeType = typeof(ToolbarDropdownAttribute);
+
+            foreach (MethodInfo methodInfo in TypeCache.GetMethodsWithAttribute<ToolbarDropdownAttribute>())
+            {
+                object[] attributes = methodInfo.GetCustomAttributes(attributeType, false);
+                if (attributes.Length == 0 || !IsValidStaticMethod(methodInfo, 1))
+                {
+                    continue;
+                }
+
+                ParameterInfo[] parameters = methodInfo.GetParameters();
+                if (parameters[0].ParameterType != typeof(GenericMenu))
+                {
+                    continue;
+                }
+
+                ToolbarDropdownAttribute attribute = (ToolbarDropdownAttribute)attributes[0];
+                ToolbarElementMethod toolbarDropdown = ToolbarElementMethod.CreateDropdown(attribute.Priority, attribute.Text, attribute.Tooltip, methodInfo);
+                AddToolbarElement(attribute.Side, toolbarDropdown);
+            }
+        }
+
+        private static void CollectLegacyToolbars()
         {
             Type attributeType = typeof(ToolbarAttribute);
 
             foreach (MethodInfo methodInfo in TypeCache.GetMethodsWithAttribute<ToolbarAttribute>())
             {
                 object[] attributes = methodInfo.GetCustomAttributes(attributeType, false);
-                if (attributes.Length == 0 || !methodInfo.IsStatic)
+                if (attributes.Length == 0 || !IsValidStaticMethod(methodInfo, 0))
                 {
                     continue;
                 }
 
                 ToolbarAttribute attribute = (ToolbarAttribute)attributes[0];
-                Action handler = () => methodInfo.Invoke(null, null);
+                string text = ObjectNames.NicifyVariableName(methodInfo.Name);
+                ToolbarElementMethod legacyToolbar = ToolbarElementMethod.CreateLegacyGUI(attribute.Priority, text, methodInfo);
+                AddToolbarElement(attribute.Side, legacyToolbar);
+            }
+        }
 
-                if (attribute.Side == OnGUISide.Left)
-                {
-                    s_LeftToolbarGUI.Add((attribute.Priority, handler));
-                    continue;
-                }
+        private static bool IsValidStaticMethod(MethodInfo methodInfo, int parameterCount)
+        {
+            return methodInfo.IsStatic && methodInfo.GetParameters().Length == parameterCount;
+        }
 
-                if (attribute.Side == OnGUISide.Right)
-                {
-                    s_RightToolbarGUI.Add((attribute.Priority, handler));
-                }
+        private static void AddToolbarElement(OnGUISide side, ToolbarElementMethod toolbarElement)
+        {
+            if (side == OnGUISide.Left)
+            {
+                s_LeftElements.Add(toolbarElement);
+                return;
             }
 
-            s_LeftToolbarGUI.Sort((left, right) => left.Priority - right.Priority);
-            s_RightToolbarGUI.Sort((left, right) => right.Priority - left.Priority);
+            if (side == OnGUISide.Right)
+            {
+                s_RightElements.Add(toolbarElement);
+            }
         }
 
         private static void OnUpdate()
@@ -75,103 +138,242 @@ namespace ToolbarExtension
                 s_Registered = false;
             }
 
-            if (s_Registered)
+            if (s_Registered && s_ToolbarRootVisualElement.Q(ToolbarContainerName) != null)
             {
                 return;
             }
 
-            bool leftRegistered = RegisterCallback(LeftZoneName, LeftContainerName, GUILeft);
-            bool rightRegistered = RegisterCallback(RightZoneName, RightContainerName, GUIRight);
-            s_Registered = leftRegistered && rightRegistered;
+            s_Registered = RegisterElements();
         }
 
         private static bool TryGetToolbarRoot(out VisualElement root)
         {
             root = null;
 
-            if (s_ToolbarType == null)
+            if (s_MainToolbarWindow == null)
             {
-                return false;
+                foreach (EditorWindow window in Resources.FindObjectsOfTypeAll<EditorWindow>())
+                {
+                    if (window.GetType().FullName == "UnityEditor.MainToolbarWindow")
+                    {
+                        s_MainToolbarWindow = window;
+                        break;
+                    }
+                }
+
+                if (s_MainToolbarWindow == null)
+                {
+                    return false;
+                }
             }
 
-            if (s_ToolbarScriptableObject == null)
-            {
-                UnityEngine.Object[] toolbars = Resources.FindObjectsOfTypeAll(s_ToolbarType);
-                s_ToolbarScriptableObject = toolbars.Length > 0 ? toolbars[0] as ScriptableObject : null;
-            }
-
-            if (s_ToolbarScriptableObject == null)
-            {
-                return false;
-            }
-
-            if (s_ToolbarRootFieldInfo == null)
-            {
-                s_ToolbarRootFieldInfo = s_ToolbarScriptableObject.GetType()
-                    .GetField("m_Root", BindingFlags.NonPublic | BindingFlags.Instance);
-            }
-
-            if (s_ToolbarRootFieldInfo == null)
-            {
-                return false;
-            }
-
-            root = s_ToolbarRootFieldInfo.GetValue(s_ToolbarScriptableObject) as VisualElement;
+            root = s_MainToolbarWindow.rootVisualElement;
             return root != null;
         }
 
-        private static bool RegisterCallback(string zoneName, string containerName, Action callback)
+        private static bool RegisterElements()
         {
-            VisualElement toolbarZone = s_ToolbarRootVisualElement?.Q(zoneName);
-            if (toolbarZone == null)
+            if (s_ToolbarRootVisualElement == null)
             {
                 return false;
             }
 
-            if (toolbarZone.Q(containerName) != null)
-            {
-                return true;
-            }
+            RemoveOldContainers();
 
-            VisualElement parent = new VisualElement
+            VisualElement container = new VisualElement
             {
-                name = containerName,
+                name = ToolbarContainerName,
                 style =
                 {
-                    flexGrow = 1,
                     flexDirection = FlexDirection.Row,
+                    alignItems = Align.Center,
+                    flexShrink = 0,
+                    flexGrow = 0,
+                    position = Position.Absolute,
+                    left = ToolbarLeft,
+                    top = ToolbarTop,
                 }
             };
 
-            IMGUIContainer container = new IMGUIContainer(() => callback?.Invoke());
-            container.style.flexGrow = 1;
-            parent.Add(container);
-            toolbarZone.Add(parent);
+            bool toolsInserted = false;
+            for (int i = 0; i < s_LeftElements.Count; i++)
+            {
+                AddElement(container, s_LeftElements[i]);
+
+                if (!toolsInserted && s_RightElements.Count > 0)
+                {
+                    AddToolsMenu(container);
+                    toolsInserted = true;
+                }
+            }
+
+            if (!toolsInserted && s_RightElements.Count > 0)
+            {
+                AddToolsMenu(container);
+            }
+
+            s_ToolbarRootVisualElement.Add(container);
             return true;
         }
 
-        private static void GUILeft()
+        private static void RemoveOldContainers()
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            foreach ((int Priority, Action Handler) handler in s_LeftToolbarGUI)
-            {
-                handler.Handler();
-            }
-
-            GUILayout.EndHorizontal();
+            RemoveContainer(ToolbarContainerName);
+            RemoveContainer(LegacyLeftContainerName);
+            RemoveContainer(LegacyRightContainerName);
+            RemoveContainer(PackageLeftContainerName);
+            RemoveContainer(PackageRightContainerName);
         }
 
-        private static void GUIRight()
+        private static void RemoveContainer(string containerName)
         {
-            GUILayout.BeginHorizontal();
-            foreach ((int Priority, Action Handler) handler in s_RightToolbarGUI)
+            VisualElement container = s_ToolbarRootVisualElement.Q(containerName);
+            container?.RemoveFromHierarchy();
+        }
+
+        private static void AddElement(VisualElement container, ToolbarElementMethod elementMethod)
+        {
+            VisualElement element = elementMethod.CreateElement();
+            element.style.height = 20;
+            element.style.marginLeft = 1;
+            element.style.marginRight = 1;
+            element.style.flexShrink = 0;
+            container.Add(element);
+        }
+
+        private static void AddToolsMenu(VisualElement container)
+        {
+            Button toolsButton = null;
+            toolsButton = new Button(() => ShowToolsMenu(toolsButton))
             {
-                handler.Handler();
+                text = "Tools v",
+                tooltip = "GameDevelopmentKit toolbar tools.",
+            };
+            toolsButton.style.height = 20;
+            toolsButton.style.marginLeft = 1;
+            toolsButton.style.marginRight = 4;
+            toolsButton.style.paddingLeft = 5;
+            toolsButton.style.paddingRight = 5;
+            toolsButton.style.flexShrink = 0;
+            container.Add(toolsButton);
+        }
+
+        private static void ShowToolsMenu(VisualElement anchor)
+        {
+            GenericMenu menu = new GenericMenu();
+            foreach (ToolbarElementMethod element in s_RightElements)
+            {
+                element.AppendToMenu(menu);
             }
 
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
+            ShowGenericMenu(anchor, menu);
+        }
+
+        private static void ShowGenericMenu(VisualElement anchor, GenericMenu menu)
+        {
+            Rect worldBound = anchor.worldBound;
+            menu.DropDown(new Rect(worldBound.x, worldBound.yMax, worldBound.width, worldBound.height));
+        }
+
+        private enum ToolbarElementKind
+        {
+            Button,
+            Dropdown,
+            LegacyGUI,
+        }
+
+        private sealed class ToolbarElementMethod
+        {
+            public readonly int Priority;
+            private readonly string m_Text;
+            private readonly string m_Tooltip;
+            private readonly MethodInfo m_MethodInfo;
+            private readonly ToolbarElementKind m_Kind;
+
+            private ToolbarElementMethod(int priority, string text, string tooltip, MethodInfo methodInfo, ToolbarElementKind kind)
+            {
+                Priority = priority;
+                m_Text = text;
+                m_Tooltip = tooltip;
+                m_MethodInfo = methodInfo;
+                m_Kind = kind;
+            }
+
+            public static ToolbarElementMethod CreateButton(int priority, string text, string tooltip, MethodInfo methodInfo)
+            {
+                return new ToolbarElementMethod(priority, text, tooltip, methodInfo, ToolbarElementKind.Button);
+            }
+
+            public static ToolbarElementMethod CreateDropdown(int priority, string text, string tooltip, MethodInfo methodInfo)
+            {
+                return new ToolbarElementMethod(priority, text, tooltip, methodInfo, ToolbarElementKind.Dropdown);
+            }
+
+            public static ToolbarElementMethod CreateLegacyGUI(int priority, string text, MethodInfo methodInfo)
+            {
+                return new ToolbarElementMethod(priority, text, text, methodInfo, ToolbarElementKind.LegacyGUI);
+            }
+
+            public VisualElement CreateElement()
+            {
+                if (m_Kind == ToolbarElementKind.Dropdown)
+                {
+                    Button dropdownButton = null;
+                    dropdownButton = new Button(() => ShowDropdownMenu(dropdownButton))
+                    {
+                        text = m_Text + " v",
+                        tooltip = m_Tooltip,
+                    };
+                    dropdownButton.style.paddingLeft = 5;
+                    dropdownButton.style.paddingRight = 5;
+                    return dropdownButton;
+                }
+
+                if (m_Kind == ToolbarElementKind.LegacyGUI)
+                {
+                    IMGUIContainer container = new IMGUIContainer(Invoke);
+                    container.tooltip = m_Tooltip;
+                    return container;
+                }
+
+                Button button = new Button(Invoke)
+                {
+                    text = m_Text,
+                    tooltip = m_Tooltip,
+                };
+                button.style.paddingLeft = 5;
+                button.style.paddingRight = 5;
+                return button;
+            }
+
+            public void AppendToMenu(GenericMenu menu)
+            {
+                if (m_Kind == ToolbarElementKind.Dropdown)
+                {
+                    m_MethodInfo.Invoke(null, new object[] { menu });
+                    return;
+                }
+
+                if (m_Kind == ToolbarElementKind.LegacyGUI)
+                {
+                    menu.AddDisabledItem(new GUIContent(m_Text));
+                    return;
+                }
+
+                menu.AddItem(new GUIContent(m_Text), false, Invoke);
+            }
+
+            private void Invoke()
+            {
+                m_MethodInfo.Invoke(null, null);
+            }
+
+            private void ShowDropdownMenu(VisualElement anchor)
+            {
+                GenericMenu menu = new GenericMenu();
+                m_MethodInfo.Invoke(null, new object[] { menu });
+                ShowGenericMenu(anchor, menu);
+            }
         }
     }
 }

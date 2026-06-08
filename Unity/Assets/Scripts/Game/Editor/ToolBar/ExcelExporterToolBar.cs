@@ -5,15 +5,10 @@ namespace Game.Editor
 {
     sealed class ExcelExporterToolBar
     {
-        private static readonly GUIContent s_ExportButtonGUIContent = new GUIContent("ExportExcel", "Export All Excel!");
-
-        [Toolbar(OnGUISide.Right, 99)]
-        private static void OnToolbarGUI()
+        [ToolbarButton(OnGUISide.Right, 99, "ExportExcel", "Export All Excel!")]
+        private static void ExportExcel()
         {
-            if (GUILayout.Button(s_ExportButtonGUIContent))
-            {
-                EditorTool.ExcelExporter();
-            }
+            EditorTool.ExcelExporter();
         }
     }
 }

@@ -8,47 +8,42 @@ namespace ET.Editor
 {
     sealed class CompileDllToolBar_ET
     {
-        private static readonly GUIContent s_BuildReloadHotfixButtonGUIContent = new GUIContent("ETReload", "Compile And Reload ET.Hotfix Dll When Playing.");
-        private static readonly GUIContent s_BuildHotfixModelButtonGUIContent = new GUIContent("ETCompile", "Compile All ET Dll.");
         private static bool s_IsReloading = false;
 
-        [Toolbar(OnGUISide.Left, 0)]
-        static void OnToolbarGUI()
+        [ToolbarButton(OnGUISide.Left, 0, "ETReload", "Compile And Reload ET.Hotfix Dll When Playing.")]
+        private static void BuildReloadHotfix()
         {
-            EditorGUI.BeginDisabledGroup(!Application.isPlaying || s_IsReloading);
+            if (!Application.isPlaying || s_IsReloading)
             {
-                if (GUILayout.Button(s_BuildReloadHotfixButtonGUIContent))
+                return;
+            }
+
+            BuildAssemblyTool.Build();
+            Debug.Log("compile success!");
+
+            s_IsReloading = true;
+
+            async UniTaskVoid ReloadAsync()
+            {
+                try
                 {
-                    BuildAssemblyTool.Build();
-                    Debug.Log("compile success!");
-
-                    if (s_IsReloading)
-                        return;
-                    s_IsReloading = true;
-
-                    async UniTaskVoid ReloadAsync()
-                    {
-                        try
-                        {
-                            await CodeLoaderComponent.Instance.ReloadAsync();
-                            Debug.Log("reload hotfix success!");
-                        }
-                        finally
-                        {
-                            s_IsReloading = false;
-                        }
-                    }
-
-                    ReloadAsync().Forget();
+                    await CodeLoaderComponent.Instance.ReloadAsync();
+                    Debug.Log("reload hotfix success!");
+                }
+                finally
+                {
+                    s_IsReloading = false;
                 }
             }
-            EditorGUI.EndDisabledGroup();
 
-            if (GUILayout.Button(s_BuildHotfixModelButtonGUIContent))
-            {
-                BuildAssemblyTool.Build();
-                Debug.Log("compile success!");
-            }
+            ReloadAsync().Forget();
+        }
+
+        [ToolbarButton(OnGUISide.Left, 1, "ETCompile", "Compile All ET Dll.")]
+        private static void BuildHotfixModel()
+        {
+            BuildAssemblyTool.Build();
+            Debug.Log("compile success!");
         }
     }
 }

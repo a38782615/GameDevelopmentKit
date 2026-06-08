@@ -20,4 +20,38 @@ namespace ToolbarExtension
             Priority = priority;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class ToolbarButtonAttribute : Attribute
+    {
+        public OnGUISide Side { get; }
+        public int Priority { get; }
+        public string Text { get; }
+        public string Tooltip { get; }
+
+        public ToolbarButtonAttribute(OnGUISide side, int priority, string text, string tooltip = null)
+        {
+            Side = side;
+            Priority = priority;
+            Text = text;
+            Tooltip = tooltip ?? text;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed class ToolbarDropdownAttribute : Attribute
+    {
+        public OnGUISide Side { get; }
+        public int Priority { get; }
+        public string Text { get; }
+        public string Tooltip { get; }
+
+        public ToolbarDropdownAttribute(OnGUISide side, int priority, string text, string tooltip = null)
+        {
+            Side = side;
+            Priority = priority;
+            Text = text;
+            Tooltip = tooltip ?? text;
+        }
+    }
 }
