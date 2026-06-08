@@ -12,8 +12,6 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.TimeEffectRuntimeComponent))]
     [FriendOfAttribute(typeof(ET.Client.TimeCueRuntimeComponent))]
     [FriendOfAttribute(typeof(ET.Client.CooldownEffectSpec))]
-    [FriendOf(typeof(SkillCardDeckComponent))]
-    [FriendOf(typeof(SkillCardRuntime))]
     [FriendOf(typeof(SpecExecutionContext))]
 
     public static partial class GameplayAbilitySpecSystem
@@ -35,12 +33,10 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this GameplayAbilitySpec self)
         {
+            self.GetBattleTurnComponent()?.UnregisterAttack(self);
             self.DisposeExecutionContexts();
             self.RunningEffects.Clear();
             self.PendingRemoveEffects.Clear();
-            self.LinkedCardInstanceIds.Clear();
-            self.ActivatingCardInstanceId = 0;
-            self.ActivatingCardResolvedCostMp = 0f;
         }
 
         // ============ 初始化 ============
@@ -212,19 +208,6 @@ namespace ET.Client
 
         public static bool CanAffordCost(this GameplayAbilitySpec self)
         {
-            if (self.ActivatingCardInstanceId > 0)
-            {
-                var ownerAsc = self.GetASC;
-                var attributes = ownerAsc?.Attributes;
-                if (attributes == null)
-                {
-                    return false;
-                }
-
-                float currentMp = attributes.GetCurrentValue(global::ET.NumericType.Mp);
-                return currentMp >= self.GetCurrentResolvedCardCostMp();
-            }
-
             if (string.IsNullOrEmpty(self.CostNodeGuid)) return true;
 
             var costNodeData = SkillDataCenter.Instance.GetNodeData(self.SkillId, self.CostNodeGuid) as CostEffectNodeData;
@@ -365,11 +348,11 @@ namespace ET.Client
             SpecExecutionContext context = self.AddChild<SpecExecutionContext>();
             context.SetCaster(asc);
             context.SetAbilityLevel(self.Level);
-            self.ApplyActivatingCardAttributeOverrides(context);
             if (target != null)
             {
                 context.SetMainTarget(target);
                 context.AddTarget(target);
+                self.GetBattleTurnComponent()?.RegisterAttack(self);
             }
             self.Context = context;
 
@@ -388,10 +371,7 @@ namespace ET.Client
                 Unit unit = skillUnit?.Unit.As();
                 SkillDiagFileLogger.Log($"[Ability] Activate skillId={self.SkillId} abilityNodeGuid={self.AbilityNodeGuid} target={target?.InstanceId ?? 0}");
                 SkillDiagFileLogger.LogAbilityActivated(self.SkillId, unit?.Id ?? 0, asc.InstanceId, target?.InstanceId ?? 0, self.AbilityNodeGuid);
-                if (self.ActivatingCardInstanceId <= 0)
-                {
-                    context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
-                }
+                context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cooldown);
                 context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Activate);
             }
@@ -408,6 +388,7 @@ namespace ET.Client
             if (self.State != AbilityState.Active) return;
 
             var asc = self.GetASC;
+            self.GetBattleTurnComponent()?.UnregisterAttack(self);
 
             self.UnregisterTagListener();
             // if (asc != null)
@@ -438,8 +419,6 @@ namespace ET.Client
                 asc.OwnedTags.RemoveTags(self.Tags.ActivationOwnedTags);
 
             SkillDiagFileLogger.Log($"[Ability] End skillId={self.SkillId} cancelled={wasCancelled}");
-            self.ActivatingCardInstanceId = 0;
-            self.ActivatingCardResolvedCostMp = 0f;
 
             EventSystem.Instance.Publish(self.Root(), new GameplayAbilitySpec.OnEnded()
             {
@@ -663,71 +642,6 @@ namespace ET.Client
             }
 
             return int.TryParse(self?.SkillId, out skillId) ? skillId : 0;
-        }
-
-        public static void BindCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
-        {
-            if (self == null || cardInstanceId <= 0)
-            {
-                return;
-            }
-
-            if (!self.LinkedCardInstanceIds.Contains(cardInstanceId))
-            {
-                self.LinkedCardInstanceIds.Add(cardInstanceId);
-            }
-        }
-
-        public static void UnbindCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
-        {
-            if (self == null || cardInstanceId <= 0)
-            {
-                return;
-            }
-
-            self.LinkedCardInstanceIds.Remove(cardInstanceId);
-            if (self.ActivatingCardInstanceId == cardInstanceId)
-            {
-                self.ActivatingCardInstanceId = 0;
-            }
-        }
-
-        public static void SetActivatingCardInstance(this GameplayAbilitySpec self, long cardInstanceId)
-        {
-            if (self == null)
-            {
-                return;
-            }
-
-            self.ActivatingCardInstanceId = cardInstanceId;
-        }
-
-        public static float GetCurrentResolvedCardCostMp(this GameplayAbilitySpec self)
-        {
-            return self?.ActivatingCardResolvedCostMp ?? 0f;
-        }
-
-        private static void ApplyActivatingCardAttributeOverrides(this GameplayAbilitySpec self, SpecExecutionContext context)
-        {
-            if (self == null || context == null || self.ActivatingCardInstanceId <= 0)
-            {
-                return;
-            }
-
-            AbilitySystemComponent asc = self.GetASC;
-            SkillCardDeckComponent deck = asc?.GetParent<SkillUnit>()?.SkillCardDeck.As();
-            SkillCardRuntime card = deck?.GetChild<SkillCardRuntime>(self.ActivatingCardInstanceId);
-            if (card?.AttributeOverrides == null || card.AttributeOverrides.Count <= 0)
-            {
-                return;
-            }
-
-            foreach ((int numericType, float value) in card.AttributeOverrides)
-            {
-                context.CasterAttributeOverrides[numericType] = value;
-            }
-
-            SkillDiagFileLogger.Log($"[Ability] Apply card attribute overrides, SkillId={self.GetSkillNumericId()}, CardInstanceId={card.CardInstanceId}, OverrideCount={context.CasterAttributeOverrides.Count}");
         }
     }
 }

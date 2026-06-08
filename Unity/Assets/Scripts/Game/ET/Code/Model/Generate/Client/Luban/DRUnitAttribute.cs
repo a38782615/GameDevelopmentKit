@@ -25,7 +25,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         Attack = _buf.ReadFloat();
         Armor = _buf.ReadFloat();
         MoveSpeed = _buf.ReadLong();
-        AttackSpeed = _buf.ReadFloat();
+        AttackSpeed = _buf.ReadLong();
         PostInit();
     }
 
@@ -71,7 +71,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
     /// <summary>
     /// 攻击速度
     /// </summary>
-    public readonly float AttackSpeed;
+    public readonly long AttackSpeed;
     public const int __ID__ = -227056758;
     public override int GetTypeId() => __ID__;
 

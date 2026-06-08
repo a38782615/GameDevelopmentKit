@@ -40,8 +40,8 @@ namespace ET.Client
         }
 
         private const float DefaultBarHeight = 0.12f;
-        private const float DefaultBarYOffset = 0.28f;
-        private const float DefaultHeadOffset = 1.4f;
+        private const float DefaultBarYOffset = 0.08f;
+        private const float DefaultHeadOffset = 0f;
         private const float HealthBarVisibleDuration = 3f;
         private const float PlayerBarWidth = 1.35f;
         private const float MonsterBarWidth = 1.15f;

@@ -4,118 +4,112 @@ using System.Collections.Generic;
 namespace ET.Client
 {
     /// <summary>
-    /// 鎶€鑳借繍琛屾椂瀹炰緥 - 瀵瑰簲GAS鐨凢GameplayAbilitySpec
-    /// 姣忎釜鎺堜簣鐨勬妧鑳介兘鏈変竴涓猄pec瀹炰緥锛屽寘鍚繍琛屾椂鐘舵€佸拰鎵ц閫昏緫
+    /// 技能运行时实例，对应 GAS 的 GameplayAbilitySpec。
+    /// 每个授予的技能都有一个 Spec 实例，包含运行时状态和执行逻辑。
     /// </summary>
     [ChildOf(typeof(AbilityContainerComponent))]
     public partial class GameplayAbilitySpec : Entity, IAwake, IUpdate, IDestroy
     {
         /// <summary>
-        /// 鎶€鑳絀D锛堢敤浜庝粠鏁版嵁涓績鑾峰彇鏁版嵁锛?
+        /// 技能 ID，用于从数据中心获取数据。
         /// </summary>
         public string SkillId;
 
         /// <summary>
-        /// 鎷ユ湁姝ゆ妧鑳界殑ASC鐨凟ntity Id
+        /// 拥有此技能的 ASC。
         /// </summary>
         public EntityRef<AbilitySystemComponent> Owner;
 
         /// <summary>
-        /// 褰撳墠鐘舵€?
+        /// 当前状态。
         /// </summary>
         public AbilityState State = AbilityState.Inactive;
 
         /// <summary>
-        /// 鎶€鑳界瓑绾?
+        /// 技能等级。
         /// </summary>
         public int Level = 1;
 
         /// <summary>
-        /// 鏍囩瀹瑰櫒
+        /// 标签容器。
         /// </summary>
         public AbilityTagContainer Tags;
 
         /// <summary>
-        /// 婵€娲绘椂闂?
+        /// 激活时间。
         /// </summary>
         public float ActivationTime;
 
         /// <summary>
-        /// 鏄惁姝ｅ湪婵€娲?
+        /// 是否正在激活。
         /// </summary>
         public bool IsActive => State == AbilityState.Active;
 
         /// <summary>
-        /// 鏄惁姝ｅ湪鎵ц
+        /// 是否正在执行。
         /// </summary>
         public bool IsRunning;
 
         /// <summary>
-        /// Ability鑺傜偣鐨刧uid
+        /// Ability 节点 guid。
         /// </summary>
         public string AbilityNodeGuid;
 
-        public List<long> LinkedCardInstanceIds = new List<long>();
-
-        public long ActivatingCardInstanceId;
-
-        public float ActivatingCardResolvedCostMp;
-
-        // ============ 鎵ц鐩稿叧 ============
+        // ============ 执行相关 ============
         public EntityRef<SpecExecutionContext> Context;
 
         /// <summary>
-        /// 姝ｅ湪鎵ц鐨凟ffect鍒楄〃锛堟妧鑳界鐞嗘寔缁?鍛ㄦ湡Effect锛?
+        /// 正在执行的 Effect 列表。
         /// </summary>
         public List<EntityRef<GameplayEffectSpec>> RunningEffects = new List<EntityRef<GameplayEffectSpec>>();
 
         /// <summary>
-        /// 寰呯Щ闄ょ殑Effect
+        /// 待移除的 Effect。
         /// </summary>
         public List<EntityRef<GameplayEffectSpec>> PendingRemoveEffects = new List<EntityRef<GameplayEffectSpec>>();
 
-        // ============ 缂撳瓨鐨勮妭鐐规暟鎹?============
+        // ============ 缓存的节点数据 ============
 
         /// <summary>
-        /// 娑堣€楄妭鐐笹uid
+        /// 消耗节点 Guid。
         /// </summary>
         public string CostNodeGuid;
 
         /// <summary>
-        /// 鍐峰嵈鑺傜偣Guid
+        /// 冷却节点 Guid。
         /// </summary>
         public string CooldownNodeGuid;
 
         /// <summary>
-        /// 鍔ㄧ敾鑺傜偣Guid
+        /// 动画节点 Guid。
         /// </summary>
         public string AnimationNodeGuid;
 
-        // ============ 鍔ㄧ敾鐩稿叧 ============
+        // ============ 动画相关 ============
 
         /// <summary>
-        /// 鍔ㄧ敾鍚嶇О
+        /// 动画名称。
         /// </summary>
         public string AnimationName;
 
         public string AnimationComponentPath;
 
         /// <summary>
-        /// 鍔ㄧ敾鏃堕暱
+        /// 动画时长。
         /// </summary>
         public float AnimationDuration;
 
         /// <summary>
-        /// 鏄惁寰幆鎾斁鍔ㄧ敾
+        /// 是否循环播放动画。
         /// </summary>
         public bool IsAnimationLooping;
 
         /// <summary>
-        /// 褰撳墠鎾斁鏃堕棿
+        /// 当前播放时间。
         /// </summary>
         public float CurrentPlayTime;
 
-        // ============ 浜嬩欢 ============
+        // ============ 事件 ============
 
         public struct OnActivated
         {
@@ -128,20 +122,20 @@ namespace ET.Client
             public bool End;
         }
 
-        // ============ 渚挎嵎璁块棶 ============
+        // ============ 便捷访问 ============
 
         /// <summary>
-        /// 鑾峰彇鎵€灞濧SC
+        /// 获取所属 ASC。
         /// </summary>
         public AbilitySystemComponent GetASC => this.GetParent<AbilityContainerComponent>()?.GetASC;
 
         /// <summary>
-        /// 鑾峰彇鏃堕棿Cue杩愯鏃剁粍浠?
+        /// 获取时间 Cue 运行时组件。
         /// </summary>
         public TimeCueRuntimeComponent GetTimeCueRuntime => this.GetComponent<TimeCueRuntimeComponent>();
 
         /// <summary>
-        /// 鑾峰彇鏃堕棿鏁堟灉杩愯鏃剁粍浠?
+        /// 获取时间效果运行时组件。
         /// </summary>
         public TimeEffectRuntimeComponent GetTimeEffectRuntime => this.GetComponent<TimeEffectRuntimeComponent>();
     }

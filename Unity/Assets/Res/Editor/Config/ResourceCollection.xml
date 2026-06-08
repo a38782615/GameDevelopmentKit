@@ -9,12 +9,14 @@
       <Resource Name="GameHot" FileSystem="GameData" LoadType="0" Packed="False" />
       <Resource Name="Luban" FileSystem="GameData" LoadType="0" Packed="False" />
       <Resource Name="Res/Localization/ChineseSimplified/Localization" LoadType="0" Packed="False" />
+      <Resource Name="Res/Prefab/map/FightRoot" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/map/Map" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Materials/skeleton_D" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Skeleton" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/SkeletonController" LoadType="0" Packed="False" />
       <Resource Name="Res/Prefab/Skeleton/Texture/Skeleton_D" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Main" LoadType="0" Packed="False" />
+      <Resource Name="Res/Scene/MainOld" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Map1" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Map2" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Map2d" LoadType="0" Packed="False" />
@@ -51,6 +53,7 @@
       <Asset Guid="0240f7f08e046d04e9c3086a48e58ecf" ResourceName="UI.UXTool" />
       <Asset Guid="02f7c91eb3902ae40a86fda557478f4d" ResourceName="UI.UXTool" />
       <Asset Guid="03b0038fb3e26ca4fbd5a9ab04f935a2" ResourceName="UI.UXTool" />
+      <Asset Guid="03e43d68043525646b6f7f04a8a0880d" ResourceName="Res/Scene/Main" />
       <Asset Guid="047c406e53e7b5948ae4bf585ca68b79" ResourceName="UI.UXTool" />
       <Asset Guid="04a51275db702354395ae5b64b914973" ResourceName="UI.UXTool" />
       <Asset Guid="05844f1dbf6eef142bf155cde2a346a8" ResourceName="Res/UI/UISprite/SkillIcon" />
@@ -142,10 +145,11 @@
       <Asset Guid="3f54fcfdac53aec42ae18a6a1c6d8cb1" ResourceName="Res/UI/UISprite/Common" />
       <Asset Guid="3fd3f828a2683444287b8005fba0396a" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="40ce6803183529f4f8cb189d4c09c141" ResourceName="UI.UXTool" />
+      <Asset Guid="41559969aca826042a0dcf0b4213e241" ResourceName="Res/Prefab/map/FightRoot" />
       <Asset Guid="422fb7f3ee7a2b844afff2b4a294ce2f" ResourceName="Entity" />
       <Asset Guid="4246f559900e348418853c33d3cdfd1b" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="429a61e760425094db4d273b7f08474c" ResourceName="Res/UI/UISprite/SkillIcon" />
-      <Asset Guid="4473d81b14ddb0143addf0e6050d8491" ResourceName="Res/Scene/Main" />
+      <Asset Guid="4473d81b14ddb0143addf0e6050d8491" ResourceName="Res/Scene/MainOld" />
       <Asset Guid="450c79ca9b8e7964e90ea146676f9442" ResourceName="ET.Code" />
       <Asset Guid="457a2709b87f0d94fbc97b41cfa89fae" ResourceName="UI.UXTool" />
       <Asset Guid="46357d966518ac54a88866197d668f4e" ResourceName="Res/UI/UISprite/SkillIcon" />

@@ -953,7 +953,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 359876813}
-  - component: {fileID: 359876814}
   m_Layer: 0
   m_Name: Sprite Collection
   m_TagString: Untagged
@@ -976,18 +975,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 119167776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &359876814
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 359876812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1acd8f9411104171af77c152b8de0dc4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &432952642 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 430602, guid: adb3eb1c35fcff14f89fba7b05c9d71c,
@@ -1589,9 +1576,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1867878128}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7ee647bae594d45864b3af677f21947, type: 3}
+  m_Script: {fileID: 11500000, guid: 34a27d16ee8fecf41b7fc17fb15560b8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: UnityGameFramework.Extension::UnityGameFramework.Extension.AssetSetComponent
+  m_FileSystemMaxFileLength: 64
+  m_InitBufferLength: 65536
+  m_CheckCanReleaseInterval: 30
+  m_AutoReleaseInterval: 60
+  m_PoolCapacity: 16
+  m_PoolExpireTime: 60
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -8,7 +8,6 @@ namespace ET.Client
     [FriendOf(typeof(UIWidgetSkillItem))]
     [FriendOf(typeof(UIFormSkill))]
     [FriendOf(typeof(GameplayAbilitySpec))]
-    [FriendOf(typeof(SkillCardRuntime))]
     public static partial class UIWidgetSkillItemSystem
     {
         private const float StateRefreshInterval = 0.1f;
@@ -65,26 +64,20 @@ namespace ET.Client
             self.ResetCooldownVisual();
         }
 
-        public static void Bind(this UIWidgetSkillItem self, SkillCardRuntime card)
+        public static void Bind(this UIWidgetSkillItem self, GameplayAbilitySpec spec)
         {
-            if (self.View == null || card == null)
+            if (self.View == null || spec == null)
             {
                 return;
             }
 
-            bool cardChanged = self.Card.As() != card;
-            self.Card = card;
+            bool specChanged = self.Spec.As() != spec;
+            self.Spec = spec;
 
-            GameplayAbilitySpec spec = card.SpecRef.As();
-            if (spec == null)
+            if (specChanged)
             {
-                return;
-            }
-
-            if (cardChanged)
-            {
-                global::ET.DRSkill skillData = self.GetSkillData(card);
-                string skillLabel = skillData?.Name ?? card.SkillId.ToString();
+                global::ET.DRSkill skillData = self.GetSkillData(spec);
+                string skillLabel = skillData?.Name ?? spec.GetSkillNumericId().ToString();
                 string iconPath = skillData?.IconPath;
 
                 if (self.View.NameText != null)
@@ -102,13 +95,13 @@ namespace ET.Client
 
         private static void OnClickCastButton(this UIWidgetSkillItem self)
         {
-            SkillCardRuntime card = self.Card.As();
-            if (card == null)
+            GameplayAbilitySpec spec = self.Spec.As();
+            if (spec == null)
             {
                 return;
             }
 
-            self.TryCastSkill(card);
+            self.TryCastSkill(spec);
             self.StateRefreshLeftTime = 0f;
             self.RefreshState();
         }
@@ -116,10 +109,9 @@ namespace ET.Client
         private static void RefreshState(this UIWidgetSkillItem self)
         {
             MonoUISkillItem view = self.View;
-            SkillCardRuntime card = self.Card.As();
-            GameplayAbilitySpec spec = card?.SpecRef.As();
+            GameplayAbilitySpec spec = self.Spec.As();
             AbilitySystemComponent asc = spec?.GetASC;
-            if (view == null || card == null || spec == null || asc == null)
+            if (view == null || spec == null || asc == null)
             {
                 return;
             }
@@ -132,12 +124,11 @@ namespace ET.Client
             SkillCooldownInfo cooldownInfo = spec.GetCooldownInfo();
             self.RefreshCooldownVisual(cooldownInfo);
             float currentMp = asc.Attributes?.GetCurrentValue(global::ET.NumericType.Mp) ?? 0f;
-            float resolvedCostMp = card.GetResolvedCostMp();
-            bool canCast = card.Zone == SkillCardZone.Hand &&
-                !spec.IsActive &&
+            float resolvedCostMp = spec.GetResolvedCostMp();
+            bool canCast = !spec.IsActive &&
                 !cooldownInfo.IsOnCooldown &&
                 currentMp >= resolvedCostMp;
-            string stateText = self.GetStateText(card, spec, cooldownInfo, currentMp, resolvedCostMp);
+            string stateText = self.GetStateText(spec, cooldownInfo, currentMp, resolvedCostMp);
 
             if (!self.StateInitialized || self.CachedCanCast != canCast)
             {
@@ -195,36 +186,30 @@ namespace ET.Client
 #endif
         }
 
-        private static string GetStateText(this UIWidgetSkillItem self, SkillCardRuntime card, GameplayAbilitySpec spec, SkillCooldownInfo cooldownInfo, float currentMp, float resolvedCostMp)
+        private static string GetStateText(this UIWidgetSkillItem self, GameplayAbilitySpec spec, SkillCooldownInfo cooldownInfo, float currentMp, float resolvedCostMp)
         {
-            string triggerText = card.TriggerType == 1 ? "被动" : "主动";
             string resourceText = $"耗能 {resolvedCostMp:0.#} | MP {currentMp:0.#}";
             if (spec.IsActive)
             {
-                return $"{triggerText}\n{resourceText}\n施放中";
+                return $"{resourceText}\n施放中";
             }
 
             if (cooldownInfo.IsChargeCooldown && cooldownInfo.CurrentCharges < cooldownInfo.MaxCharges)
             {
-                return $"{triggerText}\n{resourceText}\n充能 {cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
+                return $"{resourceText}\n充能 {cooldownInfo.CurrentCharges}/{cooldownInfo.MaxCharges}";
             }
 
             if (cooldownInfo.IsOnCooldown)
             {
-                return $"{triggerText}\n{resourceText}\n冷却 {cooldownInfo.RemainingTime:0.0}";
-            }
-
-            if (card.Zone != SkillCardZone.Hand)
-            {
-                return $"{triggerText}\n{resourceText}\n{self.GetZoneText(card.Zone)}";
+                return $"{resourceText}\n冷却 {cooldownInfo.RemainingTime:0.0}";
             }
 
             if (currentMp < resolvedCostMp)
             {
-                return $"{triggerText}\n{resourceText}\n法力不足";
+                return $"{resourceText}\n法力不足";
             }
 
-            return $"{triggerText}\n{resourceText}";
+            return resourceText;
         }
 
         private static void RefreshCooldownVisual(this UIWidgetSkillItem self, SkillCooldownInfo cooldownInfo)
@@ -306,26 +291,51 @@ namespace ET.Client
             self.CachedCooldownFillAmount = 0f;
         }
 
-        private static bool TryCastSkill(this UIWidgetSkillItem self, SkillCardRuntime card)
+        private static bool TryCastSkill(this UIWidgetSkillItem self, GameplayAbilitySpec spec)
         {
-            SkillCardDeckComponent deck = card?.GetParent<SkillCardDeckComponent>();
-            if (card == null || deck == null)
+            AbilitySystemComponent asc = spec?.GetASC;
+            if (asc == null || spec == null)
             {
                 return false;
             }
 
-            return deck.TryCastCard(card.CardInstanceId);
+            return asc.TryActivateAbility(spec);
         }
 
-        private static global::ET.DRSkill GetSkillData(this UIWidgetSkillItem self, SkillCardRuntime card)
+        private static global::ET.DRSkill GetSkillData(this UIWidgetSkillItem self, GameplayAbilitySpec spec)
         {
-            int skillId = card?.SkillId ?? 0;
+            int skillId = spec?.GetSkillNumericId() ?? 0;
             if (skillId <= 0)
             {
                 return null;
             }
 
             return Tables.Instance.DTSkill.GetOrDefault(skillId);
+        }
+
+        private static float GetResolvedCostMp(this GameplayAbilitySpec spec)
+        {
+            CostEffectNodeData costNodeData = string.IsNullOrEmpty(spec?.CostNodeGuid)
+                ? null
+                : SkillDataCenter.Instance.GetNodeData(spec.SkillId, spec.CostNodeGuid) as CostEffectNodeData;
+            if (costNodeData?.attributeModifiers == null)
+            {
+                return 0f;
+            }
+
+            float costMp = 0f;
+            foreach (AttributeModifierData modData in costNodeData.attributeModifiers)
+            {
+                AttributeModifier modifier = AttributeModifier.FromData(modData);
+                if (modifier.TargetAttrType != global::ET.NumericType.Mp)
+                {
+                    continue;
+                }
+
+                costMp += Mathf.Abs(modifier.CalculateMagnitude(null));
+            }
+
+            return costMp;
         }
 
         private static void SetIcon(this UIWidgetSkillItem self, string iconPath)
@@ -367,17 +377,5 @@ namespace ET.Client
             return $"Assets/Res/UI/UISprite/SkillIcon/{iconName}.png";
         }
 
-        private static string GetZoneText(this UIWidgetSkillItem self, SkillCardZone zone)
-        {
-            return zone switch
-            {
-                SkillCardZone.DrawPile => "抽牌区",
-                SkillCardZone.Hand => "出牌区",
-                SkillCardZone.Ability => "能力区",
-                SkillCardZone.DiscardPile => "弃牌区",
-                SkillCardZone.Destroyed => "销毁区",
-                _ => string.Empty,
-            };
-        }
     }
 }

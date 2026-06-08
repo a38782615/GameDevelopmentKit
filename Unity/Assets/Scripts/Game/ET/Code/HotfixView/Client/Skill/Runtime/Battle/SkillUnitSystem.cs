@@ -5,16 +5,12 @@ namespace ET.Client
     [EntitySystemOf(typeof(SkillUnit))]
     [FriendOf(typeof(SkillUnit))]
     [FriendOf(typeof(AbilitySystemComponent))]
-    [FriendOf(typeof(SkillCardDeckComponent))]
-    [FriendOf(typeof(RelicContainerComponent))]
     public static partial class SkillUnitSystem
     {
         [EntitySystem]
         private static void Awake(this SkillUnit self)
         {
             self.AddComponent<AbilitySystemComponent>();
-            self.AddComponent<SkillCardDeckComponent>();
-            self.AddComponent<RelicContainerComponent>();
             self.InitFromTable();
         }
 
@@ -80,27 +76,8 @@ namespace ET.Client
                 return;
             }
 
-            DRBattleCardConfig battleCardConfig = heroData.BattleCardConfigId_Ref
-                ?? Tables.Instance.DTBattleCardConfig.GetOrDefault(heroData.BattleCardConfigId);
-            if (battleCardConfig == null)
-            {
-                Log.Warning($"[SkillUnit] Missing battle card config, HeroId: {heroData.Id}, BattleCardConfigId: {heroData.BattleCardConfigId}");
-                self.GrantSkills(asc, heroData.ActiveSkill);
-                self.GrantSkills(asc, heroData.PassiveSkill, true);
-                return;
-            }
-
-            self.SkillCardDeck.As()?.Initialize(battleCardConfig);
-            self.RelicContainer.As()?.Initialize(battleCardConfig);
-
-            Dictionary<int, GameplayAbilitySpec> grantedSpecs = new Dictionary<int, GameplayAbilitySpec>();
-            self.GrantSkills(asc, heroData.ActiveSkill, grantedSpecs);
-            self.GrantSkills(asc, heroData.PassiveSkill, grantedSpecs);
-            self.CreatePlayerCards(grantedSpecs, heroData.ActiveSkill);
-            self.CreatePlayerCards(grantedSpecs, heroData.PassiveSkill);
-            self.SkillCardDeck.As()?.InitializeMp();
-            self.SkillCardDeck.As()?.DrawCards(self.SkillCardDeck.As()?.DrawCount ?? 0);
-
+            self.GrantSkills(asc, heroData.ActiveSkill);
+            self.GrantSkills(asc, heroData.PassiveSkill, true);
         }
 
         private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, int unitConfigId)
@@ -126,75 +103,6 @@ namespace ET.Client
                 case UnitType.Monster:
                     asc.OwnedTags.AddTag(GameplayTagLibrary.unitType_monster);
                     break;
-            }
-        }
-
-        private static void CreatePlayerCards(this SkillUnit self, Dictionary<int, GameplayAbilitySpec> grantedSpecs, int[] skillIds)
-        {
-            SkillCardDeckComponent deck = self.SkillCardDeck.As();
-            if (deck == null || skillIds == null)
-            {
-                return;
-            }
-
-            foreach (int skillId in skillIds)
-            {
-                if (!grantedSpecs.TryGetValue(skillId, out GameplayAbilitySpec spec) || spec == null)
-                {
-                    continue;
-                }
-
-                DRSkill skillConfig = Tables.Instance.DTSkill.GetOrDefault(skillId);
-                if (skillConfig == null)
-                {
-                    Log.Warning($"[CardDeck] Missing skill config, SkillId: {skillId}");
-                    continue;
-                }
-
-                int copies = UnityEngine.Mathf.Max(skillConfig.CardCopies, 1);
-                for (int i = 0; i < copies; i++)
-                {
-                    deck.AddCard(skillId, spec, skillConfig);
-                }
-            }
-        }
-
-        private static void GrantSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds, Dictionary<int, GameplayAbilitySpec> grantedSpecs)
-        {
-            if (skillIds == null)
-            {
-                return;
-            }
-
-            var tbSkill = Tables.Instance.DTSkill;
-            var skillDataCenter = SkillDataCenter.Instance;
-            if (skillDataCenter == null)
-            {
-                Log.Warning("[SkillUnit] SkillDataCenter is not initialized.");
-                return;
-            }
-
-            foreach (int skillId in skillIds)
-            {
-                DRSkill skillData = tbSkill.GetOrDefault(skillId);
-                if (skillData == null)
-                {
-                    Log.Warning($"[SkillUnit] Missing skill config, SkillId: {skillId}");
-                    continue;
-                }
-
-                SkillData graphData = skillDataCenter.GetSkillGraph(skillData.Id.ToString());
-                if (graphData == null)
-                {
-                    Log.Warning($"[SkillUnit] Missing skill graph, SkillId: {skillId}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
-                    continue;
-                }
-
-                GameplayAbilitySpec spec = asc.GrantAbility(graphData);
-                if (spec != null && !grantedSpecs.ContainsKey(skillId))
-                {
-                    grantedSpecs.Add(skillId, spec);
-                }
             }
         }
 

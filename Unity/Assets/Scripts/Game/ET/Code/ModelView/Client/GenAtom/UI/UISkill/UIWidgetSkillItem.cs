@@ -3,7 +3,7 @@ namespace ET.Client
     [ComponentOf(typeof(UIFormSkill))]
     public class UIWidgetSkillItem : UGFUIWidget<MonoUISkillItem>, IAwake, IUGFUIWidgetOnOpen, IUGFUIWidgetOnUpdate, IUGFUIWidgetOnClose
     {
-        public EntityRef<SkillCardRuntime> Card;
+        public EntityRef<GameplayAbilitySpec> Spec;
         public float StateRefreshLeftTime;
         public bool StateInitialized;
         public bool CachedCanCast;

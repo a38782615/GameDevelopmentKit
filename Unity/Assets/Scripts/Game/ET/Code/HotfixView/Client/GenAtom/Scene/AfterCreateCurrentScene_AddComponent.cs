@@ -13,6 +13,7 @@ namespace ET.Client
             {
                 scene.AddComponent<UnitComponent>();
                 scene.AddComponent<BodyCheckComponent>();
+                scene.AddComponent<BattleTurnComponent>();
                 // RVO
                 // scene.AddComponent<MovementSimulationComponent>();
                 

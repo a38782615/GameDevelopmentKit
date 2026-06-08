@@ -82,6 +82,18 @@ namespace ET.Client
 #endif
         }
 
+        [Conditional("UNITY_EDITOR")]
+        public static void LogTimingSinceLoad(string category, string message)
+        {
+#if UNITY_EDITOR
+            lock (SyncRoot)
+            {
+                long nowMs = GetRealtimeMs();
+                WriteLine($"[Timing] {category} sinceLoadMs={FormatDurationSinceLoad(nowMs)} loadContext={battleLoadContext} realtimeMs={nowMs} {message}");
+            }
+#endif
+        }
+
 #if UNITY_EDITOR
         private static void WriteLine(string message)
         {

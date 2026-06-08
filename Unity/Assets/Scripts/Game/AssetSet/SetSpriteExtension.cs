@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Extension;
 
@@ -6,11 +7,6 @@ namespace Game
 {
     public static partial class AssetSetExtension
     {
-        /// <summary>
-        /// 设置精灵
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="spritePath">精灵图路径</param>
         public static UniTask SetSpriteAsync(this Image image, string spritePath)
         {
             AutoResetUniTaskCompletionSource tcs = AutoResetUniTaskCompletionSource.Create();
@@ -25,19 +21,26 @@ namespace Game
             return tcs.Task;
         }
 
-        /// <summary>
-        /// 设置精灵
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="spritePath">精灵图路径</param>
+        public static UniTask SetSpriteAsync(this SpriteRenderer spriteRenderer, string spritePath)
+        {
+            AutoResetUniTaskCompletionSource tcs = AutoResetUniTaskCompletionSource.Create();
+            GameEntry.AssetSet.SetByResource(WaitableSpriteRendererSet.Create(spriteRenderer, spritePath, tcs));
+            return tcs.Task;
+        }
+
         public static void SetSprite(this Image image, string spritePath)
         {
             GameEntry.AssetSet.SetByResource(ImageSet.Create(image, spritePath));
         }
-        
+
         public static void SetSprite(this UXImage uxImage, string spritePath)
         {
             GameEntry.AssetSet.SetByResource(UXImageSet.Create(uxImage, spritePath));
+        }
+
+        public static void SetSprite(this SpriteRenderer spriteRenderer, string spritePath)
+        {
+            GameEntry.AssetSet.SetByResource(SpriteRendererSet.Create(spriteRenderer, spritePath));
         }
 
         public static UniTask SetTextureByResourceAsync(this RawImage rawImage, string texturePath)

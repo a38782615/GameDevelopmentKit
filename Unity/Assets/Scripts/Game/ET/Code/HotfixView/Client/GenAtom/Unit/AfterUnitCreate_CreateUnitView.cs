@@ -18,6 +18,7 @@ namespace ET.Client
             GFEntityHeadItem headEntity =  unit.AddComponent<GFEntityHeadItem>();
             var config = unit.Config();
             await headEntity.ShowEntityAsync(config.EntityId);
+            await headEntity.SetHeadIconAsync(unit);
 
             GameObject viewGameObject = headEntity.CachedTransform.gameObject;
             var gameObjectComponent = unit.GetOrAddComponent<GameObjectComponent>();

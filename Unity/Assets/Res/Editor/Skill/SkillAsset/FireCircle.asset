@@ -20,8 +20,8 @@ MonoBehaviour:
   - rid: 4204046695868924024
   - rid: 4204046695868924023
   - rid: 4204046695868924021
-  - rid: 300804530587041793
   - rid: 4204046695868924025
+  - rid: 300804530587041793
   - rid: 4204046695868924027
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -117,12 +117,12 @@ MonoBehaviour:
         maxTargets: 1
         searchTargetTags:
           Tags:
-          - Name: unitType.monster
-            HashCode: -2021655864
-            ShortName: monster
-            AncestorHashCodes: 6c74655f
+          - Name: campType.EnemyCamp
+            HashCode: 713889996
+            ShortName: EnemyCamp
+            AncestorHashCodes: b77061ed
             AncestorNames:
-            - unitType
+            - campType
         searchExcludeTags:
           Tags: []
     - rid: 4204046695868924021
@@ -363,12 +363,12 @@ MonoBehaviour:
         maxPierceCount: 1
         collisionTargetTags:
           Tags:
-          - Name: unitType.monster
-            HashCode: -2021655864
-            ShortName: monster
-            AncestorHashCodes: 6c74655f
+          - Name: campType.EnemyCamp
+            HashCode: 713889996
+            ShortName: EnemyCamp
+            AncestorHashCodes: b77061ed
             AncestorNames:
-            - unitType
+            - campType
         collisionExcludeTags:
           Tags: []
         isBouncing: 0

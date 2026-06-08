@@ -42,6 +42,7 @@ namespace ET.Client
             self.CancellationTokenSource = null;
             self.Current = 0;
             self.PatrolIdleUntil = 0;
+            self.PatrolIdleRemainingMs = 0;
         }
 
         private static void Check(this GameAIComponent self)
@@ -53,6 +54,11 @@ namespace ET.Client
             }
 
             if (!Tables.Instance.DTGameAI.GameAIs.TryGetValue(self.AIConfigId, out var oneAI) || oneAI == null || oneAI.Count == 0)
+            {
+                return;
+            }
+
+            if (self.IsAnyAttackInProgress())
             {
                 return;
             }
@@ -85,9 +91,10 @@ namespace ET.Client
                 return;
             }
 
-            if (self.PatrolIdleUntil <= 0 || self.PatrolIdleUntil <= TimeInfo.Instance.ClientNow())
+            if (self.PatrolIdleRemainingMs <= 0)
             {
                 self.PatrolIdleUntil = 0;
+                self.PatrolIdleRemainingMs = 0;
                 return;
             }
 

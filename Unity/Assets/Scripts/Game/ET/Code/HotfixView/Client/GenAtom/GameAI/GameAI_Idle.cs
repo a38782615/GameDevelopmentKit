@@ -5,6 +5,8 @@ namespace ET.Client
 {
     public class GameAI_Idle : AGameAIHandler
     {
+        private const int IdlePollIntervalMs = 50;
+
         public override int Check(GameAIComponent aiComponent, DRGameAI aiConfig)
         {
             Unit unit = aiComponent?.GetOwnerUnit();
@@ -18,20 +20,35 @@ namespace ET.Client
 
         public override async UniTask Execute(GameAIComponent aiComponent, DRGameAI aiConfig, CancellationToken token)
         {
-            int remainingMs = aiComponent.GetRemainingPatrolIdleMs();
-            if (remainingMs <= 0)
+            TimerComponent timerComponent = aiComponent.Root().GetComponent<TimerComponent>();
+            while (!token.IsCancellationRequested)
             {
-                aiComponent.ClearPatrolIdle();
-                return;
+                int remainingMs = aiComponent.GetRemainingPatrolIdleMs();
+                if (remainingMs <= 0)
+                {
+                    aiComponent.ClearPatrolIdle();
+                    return;
+                }
+
+                int waitMs = System.Math.Min(IdlePollIntervalMs, remainingMs);
+                bool canceled = await timerComponent.WaitAsync(waitMs, token).SuppressCancellationThrow();
+                if (canceled)
+                {
+                    return;
+                }
+
+                if (aiComponent.IsAnyAttackInProgress())
+                {
+                    continue;
+                }
+
+                aiComponent.ConsumePatrolIdleMs(waitMs);
             }
 
-            bool canceled = await aiComponent.Root().GetComponent<TimerComponent>().WaitAsync(remainingMs, token).SuppressCancellationThrow();
-            if (canceled)
+            if (token.IsCancellationRequested)
             {
                 return;
             }
-
-            aiComponent.ClearPatrolIdle();
         }
     }
 }

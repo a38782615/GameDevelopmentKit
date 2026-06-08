@@ -29,6 +29,71 @@ namespace ET.Client
             return aiConfig.NodeParams[0] > 0 ? aiConfig.NodeParams[0] : defaultValue;
         }
 
+        public static int GetAttackIntervalMs(this GameAIComponent self, int defaultValue = 500)
+        {
+            AbilitySystemComponent asc = self.GetOwnerASC();
+            float attackSpeed = asc?.Attributes?.GetCurrentValue(global::ET.NumericType.AttackSpeed) ?? 0f;
+            if (attackSpeed > 0f)
+            {
+                return Mathf.Max(1, Mathf.RoundToInt(attackSpeed));
+            }
+
+            Unit unit = self.GetOwnerUnit();
+            int level = unit?.GetComponent<global::ET.AttributeComponent>()?.Level ?? 1;
+            DRUnitAttribute unitAttribute = unit == null
+                ? null
+                : Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level) ?? Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
+            return unitAttribute?.AttackSpeed > 0
+                ? Mathf.Max(1, (int)unitAttribute.AttackSpeed)
+                : defaultValue;
+        }
+
+        public static void MarkPatrolIdle(this GameAIComponent self, DRGameAI aiConfig)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            int idleMs = self.GetAttackIntervalMs();
+            self.PatrolIdleRemainingMs = idleMs;
+            self.PatrolIdleUntil = TimeInfo.Instance.ClientNow() + idleMs;
+        }
+
+        public static bool HasPendingPatrolIdle(this GameAIComponent self)
+        {
+            return self != null && self.PatrolIdleRemainingMs > 0;
+        }
+
+        public static int GetRemainingPatrolIdleMs(this GameAIComponent self)
+        {
+            return self == null ? 0 : Mathf.Max(0, self.PatrolIdleRemainingMs);
+        }
+
+        public static void ConsumePatrolIdleMs(this GameAIComponent self, int elapsedMs)
+        {
+            if (self == null || elapsedMs <= 0 || self.PatrolIdleRemainingMs <= 0)
+            {
+                return;
+            }
+
+            self.PatrolIdleRemainingMs = Mathf.Max(0, self.PatrolIdleRemainingMs - elapsedMs);
+            self.PatrolIdleUntil = self.PatrolIdleRemainingMs > 0
+                ? TimeInfo.Instance.ClientNow() + self.PatrolIdleRemainingMs
+                : 0;
+        }
+
+        public static void ClearPatrolIdle(this GameAIComponent self)
+        {
+            if (self == null)
+            {
+                return;
+            }
+
+            self.PatrolIdleUntil = 0;
+            self.PatrolIdleRemainingMs = 0;
+        }
+
         public static int GetPreferSkillId(this DRGameAI aiConfig)
         {
             if (aiConfig?.NodeParams == null || aiConfig.NodeParams.Count < 2)
@@ -59,58 +124,6 @@ namespace ET.Client
         {
             float minDistance = aiConfig.GetPatrolMinDistance();
             return Mathf.Max(minDistance, aiConfig.GetNodeParam(1, Mathf.RoundToInt(defaultValue)));
-        }
-
-        public static int GetIdleMinSeconds(this DRGameAI aiConfig, int defaultValue = 1)
-        {
-            return Mathf.Max(1, aiConfig.GetNodeParam(0, defaultValue));
-        }
-
-        public static int GetIdleMaxSeconds(this DRGameAI aiConfig, int defaultValue = 3)
-        {
-            int minSeconds = aiConfig.GetIdleMinSeconds();
-            return Mathf.Max(minSeconds, aiConfig.GetNodeParam(1, defaultValue));
-        }
-
-        public static void MarkPatrolIdle(this GameAIComponent self, DRGameAI aiConfig)
-        {
-            DRGameAI idleConfig = self.FindAIConfigByName("Idle");
-            int minSeconds = idleConfig?.GetIdleMinSeconds() ?? 1;
-            int maxSeconds = idleConfig?.GetIdleMaxSeconds() ?? 3;
-            int idleSeconds = UnityEngine.Random.Range(minSeconds, maxSeconds + 1);
-            self.PatrolIdleUntil = TimeInfo.Instance.ClientNow() + idleSeconds * 1000L;
-        }
-
-        public static void ClearPatrolIdle(this GameAIComponent self)
-        {
-            self.PatrolIdleUntil = 0;
-        }
-
-        public static bool HasPendingPatrolIdle(this GameAIComponent self)
-        {
-            if (self == null || self.PatrolIdleUntil <= 0)
-            {
-                return false;
-            }
-
-            if (self.PatrolIdleUntil <= TimeInfo.Instance.ClientNow())
-            {
-                self.PatrolIdleUntil = 0;
-                return false;
-            }
-
-            return true;
-        }
-
-        public static int GetRemainingPatrolIdleMs(this GameAIComponent self)
-        {
-            if (!self.HasPendingPatrolIdle())
-            {
-                return 0;
-            }
-
-            long remaining = self.PatrolIdleUntil - TimeInfo.Instance.ClientNow();
-            return remaining > int.MaxValue ? int.MaxValue : Mathf.Max(0, (int)remaining);
         }
 
         public static bool HasAIHandler(this GameAIComponent self, string nodeName)
