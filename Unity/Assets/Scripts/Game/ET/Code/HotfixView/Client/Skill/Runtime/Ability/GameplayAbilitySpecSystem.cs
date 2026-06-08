@@ -384,7 +384,10 @@ namespace ET.Client
             // 执行消耗、冷却、激活
             if (!string.IsNullOrEmpty(self.AbilityNodeGuid))
             {
+                SkillUnit skillUnit = asc.GetParent<SkillUnit>();
+                Unit unit = skillUnit?.Unit.As();
                 SkillDiagFileLogger.Log($"[Ability] Activate skillId={self.SkillId} abilityNodeGuid={self.AbilityNodeGuid} target={target?.InstanceId ?? 0}");
+                SkillDiagFileLogger.LogAbilityActivated(self.SkillId, unit?.Id ?? 0, asc.InstanceId, target?.InstanceId ?? 0, self.AbilityNodeGuid);
                 if (self.ActivatingCardInstanceId <= 0)
                 {
                     context.ExecuteConnectedNodes(self.SkillId, self.AbilityNodeGuid, SkillPortId.Ability.Cost);

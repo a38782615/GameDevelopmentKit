@@ -70,6 +70,9 @@ namespace ET.Client
                     float hpBefore = healthAttr.CurrentValue;
                     target.Attributes.SetBaseValue(healthAttr.NumericType, healthAttr.CurrentValue - baseDamage);
                     SkillDiagFileLogger.Log($"[DamageEffect] Apply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hpBefore={hpBefore:F3} hpAfter={healthAttr.CurrentValue:F3}");
+                    AbilitySystemComponent casterAsc = context?.GetCaster();
+                    Unit casterUnit = casterAsc?.GetParent<SkillUnit>()?.Unit.As();
+                    SkillDiagFileLogger.LogDamageApplied(Spec.SkillId, casterUnit?.Id ?? 0, casterAsc?.InstanceId ?? 0, target.InstanceId, Spec.NodeGuid, baseDamage, hpBefore, healthAttr.CurrentValue);
                 }
                 else
                 {

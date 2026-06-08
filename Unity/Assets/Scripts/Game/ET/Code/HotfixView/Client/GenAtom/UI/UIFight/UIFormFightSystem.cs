@@ -54,6 +54,7 @@ namespace ET.Client
             }
 
             await UniTask.WhenAll(unis);
+            SkillDiagFileLogger.MarkBattleLoadComplete("LocalFightUnits");
             current.TriggerGameAIChecks();
         }
 
