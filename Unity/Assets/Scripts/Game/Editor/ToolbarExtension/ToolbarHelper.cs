@@ -15,7 +15,7 @@ namespace ToolbarExtension
         private const string LegacyRightContainerName = "GameDevelopmentKitToolbar_Right";
         private const string PackageLeftContainerName = "ToolbarExtension_Left";
         private const string PackageRightContainerName = "ToolbarExtension_Right";
-        private const float ToolbarLeft = 520f;
+        private const float ToolbarLeft = 390f;
         private const float ToolbarTop = 5f;
 
         private static readonly List<ToolbarElementMethod> s_LeftElements = new List<ToolbarElementMethod>();
@@ -195,22 +195,7 @@ namespace ToolbarExtension
                 }
             };
 
-            bool toolsInserted = false;
-            for (int i = 0; i < s_LeftElements.Count; i++)
-            {
-                AddElement(container, s_LeftElements[i]);
-
-                if (!toolsInserted && s_RightElements.Count > 0)
-                {
-                    AddToolsMenu(container);
-                    toolsInserted = true;
-                }
-            }
-
-            if (!toolsInserted && s_RightElements.Count > 0)
-            {
-                AddToolsMenu(container);
-            }
+            AddMainMenu(container);
 
             s_ToolbarRootVisualElement.Add(container);
             return true;
@@ -231,42 +216,43 @@ namespace ToolbarExtension
             container?.RemoveFromHierarchy();
         }
 
-        private static void AddElement(VisualElement container, ToolbarElementMethod elementMethod)
+        private static void AddMainMenu(VisualElement container)
         {
-            VisualElement element = elementMethod.CreateElement();
-            element.style.height = 20;
-            element.style.marginLeft = 1;
-            element.style.marginRight = 1;
-            element.style.flexShrink = 0;
-            container.Add(element);
-        }
-
-        private static void AddToolsMenu(VisualElement container)
-        {
-            Button toolsButton = null;
-            toolsButton = new Button(() => ShowToolsMenu(toolsButton))
+            Button menuButton = null;
+            menuButton = new Button(() => ShowMainMenu(menuButton))
             {
-                text = "Tools v",
-                tooltip = "GameDevelopmentKit toolbar tools.",
+                text = "GDK v",
+                tooltip = "GameDevelopmentKit toolbar.",
             };
-            toolsButton.style.height = 20;
-            toolsButton.style.marginLeft = 1;
-            toolsButton.style.marginRight = 4;
-            toolsButton.style.paddingLeft = 5;
-            toolsButton.style.paddingRight = 5;
-            toolsButton.style.flexShrink = 0;
-            container.Add(toolsButton);
+            menuButton.style.height = 20;
+            menuButton.style.marginLeft = 1;
+            menuButton.style.marginRight = 1;
+            menuButton.style.paddingLeft = 5;
+            menuButton.style.paddingRight = 5;
+            menuButton.style.flexShrink = 0;
+            container.Add(menuButton);
         }
 
-        private static void ShowToolsMenu(VisualElement anchor)
+        private static void ShowMainMenu(VisualElement anchor)
         {
             GenericMenu menu = new GenericMenu();
-            foreach (ToolbarElementMethod element in s_RightElements)
+            AppendElementsToMenu(menu, s_LeftElements);
+
+            if (s_LeftElements.Count > 0 && s_RightElements.Count > 0)
+            {
+                menu.AddSeparator(string.Empty);
+            }
+
+            AppendElementsToMenu(menu, s_RightElements);
+            ShowGenericMenu(anchor, menu);
+        }
+
+        private static void AppendElementsToMenu(GenericMenu menu, List<ToolbarElementMethod> elements)
+        {
+            foreach (ToolbarElementMethod element in elements)
             {
                 element.AppendToMenu(menu);
             }
-
-            ShowGenericMenu(anchor, menu);
         }
 
         private static void ShowGenericMenu(VisualElement anchor, GenericMenu menu)
