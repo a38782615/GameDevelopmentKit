@@ -17,8 +17,10 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
     {
         Id = _buf.ReadInt();
         Id_Ref = null;
+        Level = _buf.ReadInt();
         Desc = _buf.ReadString();
-        {int n0 = _buf.ReadSize(); Attrs = new System.Collections.Generic.Dictionary<string, int>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { string _k0;  _k0 = _buf.ReadString(); int _v0;  _v0 = _buf.ReadInt();     Attrs.Add(_k0, _v0);}}
+        CostMana = _buf.ReadInt();
+        Attack = _buf.ReadInt();
         PostInit();
     }
 
@@ -29,14 +31,16 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
 
     public readonly int Id;
     public DRSkill Id_Ref { private set; get; }
+    public readonly int Level;
     /// <summary>
     /// 描述
     /// </summary>
     public readonly string Desc;
+    public readonly int CostMana;
     /// <summary>
     /// 属性映射
     /// </summary>
-    public readonly System.Collections.Generic.Dictionary<string, int> Attrs;
+    public readonly int Attack;
     public const int __ID__ = 507563897;
     public override int GetTypeId() => __ID__;
 
@@ -50,8 +54,10 @@ public sealed partial class DRSkillAttribute : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "Level:" + Level + ","
         + "Desc:" + Desc + ","
-        + "Attrs:" + Luban.StringUtil.CollectionToString(Attrs) + ","
+        + "CostMana:" + CostMana + ","
+        + "Attack:" + Attack + ","
         + "}";
     }
 

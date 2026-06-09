@@ -17,12 +17,12 @@ MonoBehaviour:
   - rid: 300804438656811091
   - rid: 4204046695868924028
   - rid: 4204046695868924026
-  - rid: 4204046695868924024
   - rid: 4204046695868924023
   - rid: 4204046695868924021
-  - rid: 4204046695868924025
   - rid: 300804530587041793
+  - rid: 4204046695868924024
   - rid: 4204046695868924027
+  - rid: 4204046695868924025
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -184,7 +184,7 @@ MonoBehaviour:
         guid: 9d6f459d-b588-4b64-843b-1b71e8f299ae
         nodeType: 3
         position:
-          x: -1317.3333
+          x: -1316
           y: -2446.6665
         targetType: 1
         assetTags:
@@ -258,15 +258,15 @@ MonoBehaviour:
           Tags: []
         cancelOnAbilityEnd: 1
         damageType: 1
-        damageSourceType: 0
-        damageFixedValue: 10
+        damageSourceType: 3
+        damageFixedValue: 50
         damageFormula: 
         damageMMCType: 0
-        damageSetByCallerKey: 
-        damageMMCCaptureAttribute: 200
+        damageSetByCallerKey: AttackDamage
+        damageMMCCaptureAttribute: 1006
         damageMMCAttributeSource: 0
         damageMMCCoefficient: 1
-        damageMMCUseSnapshot: 1
+        damageMMCUseSnapshot: 0
         damageMultiplyByStackCount: 0
         damageCalculationType: 0
         enableHitKnockback: 0

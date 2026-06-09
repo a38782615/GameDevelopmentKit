@@ -18,11 +18,11 @@ MonoBehaviour:
   - rid: 4204046695868924069
   - rid: 4204046695868924063
   - rid: 300804416242450521
-  - rid: 4204046695868924067
   - rid: 4204046695868924070
-  - rid: 4204046695868924065
   - rid: 4204046695868924071
   - rid: 4204046695868924068
+  - rid: 4204046695868924065
+  - rid: 4204046695868924067
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -241,11 +241,11 @@ MonoBehaviour:
           Tags: []
         cancelOnAbilityEnd: 1
         damageType: 1
-        damageSourceType: 0
+        damageSourceType: 3
         damageFixedValue: 10
         damageFormula: 
-        damageMMCType: 0
-        damageSetByCallerKey: 
+        damageMMCType: 1
+        damageSetByCallerKey: AttackDamage
         damageMMCCaptureAttribute: 1006
         damageMMCAttributeSource: 0
         damageMMCCoefficient: 1

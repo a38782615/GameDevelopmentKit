@@ -40,6 +40,11 @@ namespace ET.Client
             }
 
             SpecExecutionContext context = GetContext();
+
+            int.TryParse(Spec.SkillId, out var m_skill);
+            var v = Tables.Instance.DTSkillAttribute.Get(m_skill, 0).Attack;
+            Spec.SetSetByCallerValue(nodeData.damageSetByCallerKey, v);
+
             float baseDamage = CalculateDamage(nodeData, target);
 
             if (nodeData.damageMultiplyByStackCount)

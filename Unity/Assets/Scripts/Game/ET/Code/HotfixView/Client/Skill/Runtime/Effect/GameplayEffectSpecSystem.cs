@@ -77,7 +77,11 @@ namespace ET.Client
             {
                 self.Modifiers.Clear();
                 foreach (var modData in effectData.attributeModifiers)
-                    self.Modifiers.Add(AttributeModifier.FromData(modData));
+                {
+                    var data = AttributeModifier.FromData(modData);
+                    
+                    self.Modifiers.Add(data);
+                }
             }
 
             self.OnInitialize();

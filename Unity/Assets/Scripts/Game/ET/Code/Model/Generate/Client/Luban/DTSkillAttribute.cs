@@ -13,8 +13,8 @@ namespace ET
 {
 public partial class DTSkillAttribute : IDataTable
 {
-    private System.Collections.Generic.Dictionary<int, DRSkillAttribute> _dataMap;
     private System.Collections.Generic.List<DRSkillAttribute> _dataList;
+    private System.Collections.Generic.Dictionary<(int, int), DRSkillAttribute> _dataMapUnion;
     private readonly System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> _loadFunc;
 
     public DTSkillAttribute(System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> loadFunc)
@@ -26,14 +26,12 @@ public partial class DTSkillAttribute : IDataTable
     {
         ByteBuf _buf = await _loadFunc();
         int n = _buf.ReadSize();
-        if(_dataMap == null)
+        if(_dataList == null)
         {
-            _dataMap = new System.Collections.Generic.Dictionary<int, DRSkillAttribute>(n);
             _dataList = new System.Collections.Generic.List<DRSkillAttribute>(n);
         }
         else
         {
-            _dataMap.Clear();
             _dataList.Clear();
         }
         for(int i = n ; i > 0 ; --i)
@@ -41,16 +39,24 @@ public partial class DTSkillAttribute : IDataTable
             DRSkillAttribute _v;
             _v = global::ET.DRSkillAttribute.DeserializeDRSkillAttribute(_buf);
             _dataList.Add(_v);
-            _dataMap.Add(_v.Id, _v);
+        }
+        if(_dataMapUnion == null)
+        {
+            _dataMapUnion = new System.Collections.Generic.Dictionary<(int, int), DRSkillAttribute>(n);
+        }
+        else
+        {
+            _dataMapUnion.Clear();
+        }
+        foreach(var _v in _dataList)
+        {
+            _dataMapUnion.Add((_v.Id, _v.Level), _v);
         }
         PostInit();
     }
 
-    public System.Collections.Generic.IReadOnlyDictionary<int, DRSkillAttribute> DataMap => _dataMap;
     public System.Collections.Generic.IReadOnlyList<DRSkillAttribute> DataList => _dataList;
-    public DRSkillAttribute GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
-    public DRSkillAttribute Get(int key) => _dataMap[key];
-    public DRSkillAttribute this[int key] => _dataMap[key];
+    public DRSkillAttribute Get(int Id, int Level) => _dataMapUnion.TryGetValue((Id, Level), out DRSkillAttribute __v) ? __v : default;
 
     public void ResolveRef(Tables tables)
     {
@@ -60,7 +66,6 @@ public partial class DTSkillAttribute : IDataTable
         }
         PostResolveRef();
     }
-
 
     partial void PostInit();
     partial void PostResolveRef();
