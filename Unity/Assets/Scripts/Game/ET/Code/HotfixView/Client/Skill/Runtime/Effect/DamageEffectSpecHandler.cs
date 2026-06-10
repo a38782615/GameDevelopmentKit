@@ -41,9 +41,7 @@ namespace ET.Client
 
             SpecExecutionContext context = GetContext();
 
-            int.TryParse(Spec.SkillId, out var m_skill);
-            var v = Tables.Instance.DTSkillAttribute.Get(m_skill, 0).Attack;
-            Spec.SetSetByCallerValue(nodeData.damageSetByCallerKey, v);
+            TryApplySkillAttributeDamage(nodeData);
 
             float baseDamage = CalculateDamage(nodeData, target);
 
@@ -113,7 +111,7 @@ namespace ET.Client
                     return FormulaEvaluator.Evaluate(nodeData.damageFormula, formulaContext);
 
                 case ModifierMagnitudeSourceType.SetByCaller:
-                    return Spec.GetSetByCallerValue(nodeData.damageSetByCallerKey, 0f);
+                    return Spec.GetSetByCallerValue(nodeData.damageSetByCallerKey, nodeData.damageFixedValue);
 
                 case ModifierMagnitudeSourceType.ModifierMagnitudeCalculation:
                     return CalculateMMCDamage(nodeData, target);
@@ -121,6 +119,29 @@ namespace ET.Client
                 default:
                     return 0f;
             }
+        }
+
+        private void TryApplySkillAttributeDamage(DamageEffectNodeData nodeData)
+        {
+            if (nodeData.damageSourceType != ModifierMagnitudeSourceType.SetByCaller || string.IsNullOrEmpty(nodeData.damageSetByCallerKey))
+            {
+                return;
+            }
+
+            if (!int.TryParse(Spec.SkillId, out int skillId))
+            {
+                SkillDiagFileLogger.Log($"[DamageEffect] InvalidSkillId skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} fallbackDamage={nodeData.damageFixedValue:F3}");
+                return;
+            }
+
+            global::ET.DRSkillAttribute skillAttribute = Tables.Instance?.DTSkillAttribute?.Get(skillId, 0);
+            if (skillAttribute == null)
+            {
+                SkillDiagFileLogger.Log($"[DamageEffect] MissingSkillAttribute skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} fallbackDamage={nodeData.damageFixedValue:F3}");
+                return;
+            }
+
+            Spec.SetSetByCallerValue(nodeData.damageSetByCallerKey, skillAttribute.Attack);
         }
 
         private float CalculateMMCDamage(DamageEffectNodeData nodeData, AbilitySystemComponent target)
