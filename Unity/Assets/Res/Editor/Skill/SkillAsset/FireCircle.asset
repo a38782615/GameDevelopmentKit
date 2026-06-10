@@ -20,9 +20,9 @@ MonoBehaviour:
   - rid: 4204046695868924021
   - rid: 300804438656811091
   - rid: 4204046695868924024
-  - rid: 300804530587041793
-  - rid: 4204046695868924027
   - rid: 4204046695868924025
+  - rid: 4204046695868924027
+  - rid: 300804530587041793
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -114,7 +114,7 @@ MonoBehaviour:
         searchLineAbsoluteAngle: 0
         searchLineAbsoluteWidth: 1
         searchLineAbsoluteLength: 10
-        maxTargets: 1
+        maxTargets: 2
         searchTargetTags:
           Tags:
           - Name: campType.EnemyCamp
@@ -317,7 +317,7 @@ MonoBehaviour:
         nodeType: 8
         position:
           x: 620.6666
-          y: -2102.6667
+          y: -2103.3333
         targetType: 1
         assetTags:
           Tags: []

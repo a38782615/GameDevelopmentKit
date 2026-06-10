@@ -19,8 +19,8 @@ MonoBehaviour:
   - rid: 4204046695868923999
   - rid: 4204046695868924000
   - rid: 4204046695868924001
-  - rid: 4204046695868924002
   - rid: 4204046695868924003
+  - rid: 4204046695868924002
   - rid: 4204046695868924004
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
@@ -212,8 +212,8 @@ MonoBehaviour:
         guid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
         nodeType: 1
         position:
-          x: 45.333344
-          y: -1806.6667
+          x: 52
+          y: -1836.6667
         targetType: 0
         assetTags:
           Tags: []
@@ -323,8 +323,8 @@ MonoBehaviour:
         guid: 2d7e41c4-8e90-4b61-879c-4b2e5b9486db
         nodeType: 14
         position:
-          x: 408.66666
-          y: -1747.3334
+          x: 378.00003
+          y: -1836.6667
         targetType: 1
         requiredTags:
           Tags: []

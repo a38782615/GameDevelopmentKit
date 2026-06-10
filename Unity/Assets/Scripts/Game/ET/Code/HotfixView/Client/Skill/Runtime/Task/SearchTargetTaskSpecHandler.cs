@@ -202,7 +202,6 @@ namespace ET.Client
                 }
 
                 foundTargets.Add(target);
-                return;
             }
         }
 
