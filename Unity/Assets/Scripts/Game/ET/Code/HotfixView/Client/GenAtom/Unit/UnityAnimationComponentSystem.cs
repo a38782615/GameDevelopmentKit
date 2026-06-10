@@ -42,34 +42,34 @@ namespace ET.Client
             self.AnimationComponentPath = self.Animation == null ? string.Empty : GetTransformPath(self.Animation.transform, viewGameObject.transform);
         }
 
-        public static void PlayAnimation(this UnityAnimationComponent self, string name, bool loop, string animationComponentPath)
+        public static bool PlayAnimation(this UnityAnimationComponent self, string name, bool loop, string animationComponentPath)
         {
             if (string.IsNullOrEmpty(name))
             {
-                return;
+                return false;
             }
 
             self.Bind(animationComponentPath);
             if (self.Animation == null)
             {
-                return;
+                return false;
             }
 
             AnimationState state = ResolveAnimationState(self.Animation, name, out string resolvedName);
             if (state == null)
             {
-                return;
+                return false;
             }
 
             if (loop && self.Animation.IsPlaying(resolvedName) && state.wrapMode == WrapMode.Loop)
             {
-                return;
+                return true;
             }
 
             state.wrapMode = loop ? WrapMode.Loop : WrapMode.Once;
             state.time = 0f;
             self.Animation.wrapMode = state.wrapMode;
-            self.Animation.Play(resolvedName, PlayMode.StopSameLayer);
+            return self.Animation.Play(resolvedName, PlayMode.StopSameLayer);
         }
 
         public static float GetAnimationLengthSeconds(this UnityAnimationComponent self, string name, string animationComponentPath)

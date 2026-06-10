@@ -44,27 +44,30 @@ namespace ET.Client
 #endif
         }
 
-        public static void PlayAnimation(this SkelenAnimationComponent self, string name, bool loop)
+        public static bool PlayAnimation(this SkelenAnimationComponent self, string name, bool loop)
         {
             if (string.IsNullOrEmpty(name))
             {
-                return;
+                return false;
             }
 
             self.Bind();
 #if Spine
             if (self.SkeletonAnimation?.AnimationState == null)
             {
-                return;
+                return false;
             }
 
             var current = self.SkeletonAnimation.AnimationState.GetCurrent(0);
-            if (current?.Animation?.Name == name)
+            if (current?.Animation?.Name == name && loop)
             {
-                return;
+                return true;
             }
 
             self.SkeletonAnimation.AnimationState.SetAnimation(0, name, loop);
+            return true;
+#else
+            return false;
 #endif
         }
 

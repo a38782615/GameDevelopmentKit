@@ -11,5 +11,7 @@ namespace ET.Client
         public string StunAnimationName = "Stun";
         public AnimationDriverType DriverType = AnimationDriverType.Auto;
         public AnimationDriverType ResolvedDriverType;
+        public string CurrentAnimationName = string.Empty;
+        public long AnimationVersion;
     }
 }

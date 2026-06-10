@@ -22,6 +22,8 @@ namespace ET.Client
         {
             self.UnregisterTagListeners();
             self.ASC = default;
+            self.CurrentAnimationName = string.Empty;
+            self.AnimationVersion = 0;
         }
 
         public static void Bind(this AnimationManagerComponent self)
@@ -62,34 +64,44 @@ namespace ET.Client
             self.Bind();
         }
 
-        public static void PlayAnimation(this AnimationManagerComponent self, string name, bool loop)
+        public static bool PlayAnimation(this AnimationManagerComponent self, string name, bool loop)
         {
-            self.PlayAnimation(name, loop, string.Empty);
+            return self.PlayAnimation(name, loop, string.Empty);
         }
 
-        public static void PlayAnimation(this AnimationManagerComponent self, string name, bool loop, string animationComponentPath)
+        public static bool PlayAnimation(this AnimationManagerComponent self, string name, bool loop, string animationComponentPath)
         {
             if (string.IsNullOrEmpty(name))
             {
-                return;
+                return false;
             }
 
             self.Bind();
             Unit unit = self.GetParent<Unit>();
             if (unit == null)
             {
-                return;
+                return false;
             }
 
+            bool played = false;
             switch (self.ResolvedDriverType)
             {
                 case AnimationDriverType.Skelen:
-                    unit.GetOrAddComponent<SkelenAnimationComponent>().PlayAnimation(name, loop);
+                    played = unit.GetOrAddComponent<SkelenAnimationComponent>().PlayAnimation(name, loop);
                     break;
                 case AnimationDriverType.Unity:
-                    unit.GetOrAddComponent<UnityAnimationComponent>().PlayAnimation(name, loop, animationComponentPath);
+                    played = unit.GetOrAddComponent<UnityAnimationComponent>().PlayAnimation(name, loop, animationComponentPath);
                     break;
             }
+
+            if (!played)
+            {
+                return false;
+            }
+
+            self.CurrentAnimationName = name;
+            ++self.AnimationVersion;
+            return true;
         }
 
         public static bool IsAnimationStunned(this AnimationManagerComponent self)
@@ -116,6 +128,23 @@ namespace ET.Client
             }
 
             self.PlayAnimation(self.StandAnimationName, true);
+        }
+
+        public static void PlayLocomotionAnimation(this AnimationManagerComponent self)
+        {
+            Unit unit = self.GetParent<Unit>();
+            if (unit == null)
+            {
+                return;
+            }
+
+            if (unit.IsMoveArrived())
+            {
+                self.PlayStandAnimation();
+                return;
+            }
+
+            self.PlayMoveAnimation();
         }
 
         public static int GetAnimationLengthMs(this AnimationManagerComponent self, string name, string animationComponentPath, int fallbackMs)
