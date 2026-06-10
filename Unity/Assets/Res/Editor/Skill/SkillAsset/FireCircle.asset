@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 7001
   nodes:
-  - rid: 300804438656811091
   - rid: 4204046695868924028
   - rid: 4204046695868924026
   - rid: 4204046695868924023
   - rid: 4204046695868924021
-  - rid: 300804530587041793
+  - rid: 300804438656811091
   - rid: 4204046695868924024
-  - rid: 4204046695868924027
+  - rid: 300804530587041793
   - rid: 4204046695868924025
+  - rid: 4204046695868924027
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -54,6 +54,10 @@ MonoBehaviour:
     inputPortId: 7001
   - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
     outputPortId: 5001
+    inputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
+    inputPortId: 7001
+  - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
+    outputPortId: 5002
     inputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
     inputPortId: 7001
   references:
@@ -206,7 +210,7 @@ MonoBehaviour:
         - attrType: 1003
           operation: 0
           magnitudeSourceType: 0
-          fixedValue: -100
+          fixedValue: -10
           formula: 
           mmcType: 0
           setByCallerKey: 
@@ -358,7 +362,7 @@ MonoBehaviour:
         projectilePrefabPath: Assets/Res/Entity/Effect/ef_fashi_gandian_buff.prefab
         speed: 3
         maxDistance: 10
-        collisionRadius: 0.1
+        collisionRadius: 0.2
         isPiercing: 0
         maxPierceCount: 1
         collisionTargetTags:
