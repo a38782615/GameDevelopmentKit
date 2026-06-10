@@ -21,8 +21,8 @@ MonoBehaviour:
   - rid: 300804438656811091
   - rid: 4204046695868924024
   - rid: 300804530587041793
-  - rid: 4204046695868924025
   - rid: 4204046695868924027
+  - rid: 4204046695868924025
   connections:
   - outputNodeGuid: 356907e0-1488-4128-bfcc-7ff73cfc3330
     outputPortId: 1004
@@ -51,10 +51,6 @@ MonoBehaviour:
   - outputNodeGuid: 08bcef27-5270-4668-be7d-bb9e9fc01e6a
     outputPortId: 2131464
     inputNodeGuid: 93b489d8-3d60-4ded-9f04-789fe2990ece
-    inputPortId: 7001
-  - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
-    outputPortId: 5001
-    inputNodeGuid: eae41233-d297-46fe-a6c8-0b5c876fbb2a
     inputPortId: 7001
   - outputNodeGuid: 90bacd9f-d882-4bba-aaa8-41ed993ac3ff
     outputPortId: 5002
