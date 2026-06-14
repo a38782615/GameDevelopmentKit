@@ -37,11 +37,11 @@ namespace ET.Client
 
         public static ArchiveComponent LoadArchive(this ArchiveMgrComponent self, string archiveName, string password = null)
         {
-            string normalizedName = NormalizeArchiveName(archiveName);
-            string archivePath = GetArchivePath(normalizedName);
+            CheckArchiveName(archiveName);
+            string archivePath = GetArchivePath(archiveName);
 
             ArchiveComponent currentArchive = self.CurrentArchive;
-            if (currentArchive != null && self.CurrentArchiveName == normalizedName && self.CurrentArchivePath == archivePath)
+            if (currentArchive != null && self.CurrentArchiveName == archiveName && self.CurrentArchivePath == archivePath)
             {
                 return currentArchive;
             }
@@ -50,7 +50,7 @@ namespace ET.Client
 
             ArchiveComponent archiveComponent = self.AddComponent<ArchiveComponent, string, string>(archivePath, password);
             self.CurrentArchive = archiveComponent;
-            self.CurrentArchiveName = normalizedName;
+            self.CurrentArchiveName = archiveName;
             self.CurrentArchivePath = archivePath;
             return archiveComponent;
         }
@@ -62,17 +62,17 @@ namespace ET.Client
 
         public static async UniTask<ArchiveComponent> ResetArchive(this ArchiveMgrComponent self, string archiveName, string password = null)
         {
-            string normalizedName = NormalizeArchiveName(archiveName);
-            string archivePath = GetArchivePath(normalizedName);
+            CheckArchiveName(archiveName);
+            string archivePath = GetArchivePath(archiveName);
 
-            self.CloseArchiveIfCurrent(normalizedName, archivePath);
+            self.CloseArchiveIfCurrent(archiveName, archivePath);
 
-            using (await self.WaitArchiveMgrLock(normalizedName))
+            using (await self.WaitArchiveMgrLock(archiveName))
             {
                 DeleteArchiveFiles(archivePath);
             }
 
-            return self.LoadArchive(normalizedName, password);
+            return self.LoadArchive(archiveName, password);
         }
 
         public static string GetDefaultArchiveName()
@@ -82,8 +82,8 @@ namespace ET.Client
 
         public static string GetArchivePath(string archiveName)
         {
-            string normalizedName = NormalizeArchiveName(archiveName);
-            string fileName = $"{normalizedName}{ArchiveFileExtension}";
+            CheckArchiveName(archiveName);
+            string fileName = $"{archiveName}{ArchiveFileExtension}";
             return Path.GetFullPath(Path.Combine(GetArchiveDirectory(), fileName));
         }
 
@@ -143,20 +143,12 @@ namespace ET.Client
             }
         }
 
-        private static string NormalizeArchiveName(string archiveName)
+        private static void CheckArchiveName(string archiveName)
         {
             if (string.IsNullOrWhiteSpace(archiveName))
             {
                 throw new ArgumentException("archive name is null or empty", nameof(archiveName));
             }
-
-            string normalizedName = archiveName.Trim();
-            foreach (char invalidChar in Path.GetInvalidFileNameChars())
-            {
-                normalizedName = normalizedName.Replace(invalidChar, '_');
-            }
-
-            return normalizedName;
         }
 
         private static string GetDeviceId()
@@ -168,7 +160,7 @@ namespace ET.Client
                 throw new InvalidOperationException("GameConst.DeviceId is null or empty");
             }
 
-            return NormalizeArchiveName(deviceId);
+            return deviceId;
         }
 
         private static string GetArchiveDirectory()
@@ -183,10 +175,10 @@ namespace ET.Client
                 const long offset = 1469598103934665603;
                 const long prime = 1099511628211;
                 long hash = offset;
-                string normalized = value.ToLowerInvariant();
-                for (int i = 0; i < normalized.Length; ++i)
+                string lowerValue = value.ToLowerInvariant();
+                for (int i = 0; i < lowerValue.Length; ++i)
                 {
-                    hash ^= normalized[i];
+                    hash ^= lowerValue[i];
                     hash *= prime;
                 }
 
