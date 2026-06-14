@@ -9,5 +9,10 @@ namespace ET.Client
         public string NickName; //昵称
         public int Diamond; //灵石
         public ET.XRoot XRoot; // 灵根
+        public int ElixirPoison; // 丹毒
+        public int Physique; // 体魄
+        public int Comprehension; // 悟性
+        public int DivineSense; // 神识
+        public int Fortune; // 福缘
     }
 }
