@@ -347,6 +347,24 @@ namespace ET.Client
             }
         }
 
+        public static async UniTask ResetDatabase(this ArchiveComponent self, bool shrink = true)
+        {
+            using (await self.WaitArchiveLock())
+            {
+                self.CheckDatabase();
+                List<string> collectionNames = self.Database.GetCollectionNames().ToList();
+                foreach (string collectionName in collectionNames)
+                {
+                    self.Database.DropCollection(collectionName);
+                }
+
+                if (shrink)
+                {
+                    self.Database.Shrink();
+                }
+            }
+        }
+
         public static async UniTask<long> Shrink(this ArchiveComponent self, string password = null)
         {
             using (await self.WaitArchiveLock())
