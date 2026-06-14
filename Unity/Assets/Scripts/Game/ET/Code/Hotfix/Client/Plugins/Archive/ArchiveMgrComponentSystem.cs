@@ -161,7 +161,12 @@ namespace ET.Client
 
         private static string GetDeviceId()
         {
-            string deviceId = Environment.MachineName;
+            string deviceId = global::ET.GameConst.DeviceId;
+            if (string.IsNullOrWhiteSpace(deviceId))
+            {
+                deviceId = Environment.MachineName;
+            }
+
             if (string.IsNullOrWhiteSpace(deviceId))
             {
                 deviceId = Environment.UserName;

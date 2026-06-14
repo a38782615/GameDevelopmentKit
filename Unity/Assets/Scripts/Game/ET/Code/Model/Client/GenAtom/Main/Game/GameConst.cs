@@ -3,6 +3,8 @@ namespace ET
 {
     public static class GameConst
     {
+        [StaticField]
+        public static string DeviceId = "";
         public const string Btm_Bag = "Bag";
         public const string Btm_Map = "Map";
         public const string Btm_Home = "Home";
