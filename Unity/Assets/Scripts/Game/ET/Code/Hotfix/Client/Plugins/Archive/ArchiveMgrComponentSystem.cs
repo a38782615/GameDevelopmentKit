@@ -162,19 +162,10 @@ namespace ET.Client
         private static string GetDeviceId()
         {
             string deviceId = global::ET.GameConst.DeviceId;
-            if (string.IsNullOrWhiteSpace(deviceId))
-            {
-                deviceId = Environment.MachineName;
-            }
 
             if (string.IsNullOrWhiteSpace(deviceId))
             {
-                deviceId = Environment.UserName;
-            }
-
-            if (string.IsNullOrWhiteSpace(deviceId))
-            {
-                deviceId = "UnknownDevice";
+                throw new InvalidOperationException("GameConst.DeviceId is null or empty");
             }
 
             return NormalizeArchiveName(deviceId);
@@ -182,13 +173,7 @@ namespace ET.Client
 
         private static string GetArchiveDirectory()
         {
-            string localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            if (string.IsNullOrEmpty(localApplicationData))
-            {
-                localApplicationData = AppContext.BaseDirectory;
-            }
-
-            return Path.Combine(localApplicationData, DefaultApplicationName, ArchiveDirectoryName);
+            return Path.Combine(AppContext.BaseDirectory, DefaultApplicationName, ArchiveDirectoryName);
         }
 
         private static long GetLockKey(string value)
