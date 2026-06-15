@@ -1,4 +1,4 @@
-using UltraLiteDB;
+using LiteDB;
 
 namespace ET.Client
 {
@@ -9,6 +9,6 @@ namespace ET.Client
         public string Password;
         public long LockKey;
         public BsonMapper Mapper;
-        public UltraLiteDatabase Database;
+        public LiteDatabase Database;
     }
 }

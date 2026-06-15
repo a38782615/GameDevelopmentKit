@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using UltraLiteDB;
-using UltraLiteQuery = UltraLiteDB.Query;
+using LiteDB;
+using LiteDB.Engine;
 
 namespace ET.Client
 {
@@ -189,7 +189,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<T> QueryOne<T>(this ArchiveComponent self, UltraLiteQuery query, string collection = null)
+        public static async UniTask<T> QueryOne<T>(this ArchiveComponent self, Query query, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
@@ -197,7 +197,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<List<T>> Query<T>(this ArchiveComponent self, UltraLiteQuery query, int skip = 0, int limit = int.MaxValue, string collection = null)
+        public static async UniTask<List<T>> Query<T>(this ArchiveComponent self, Query query, int skip = 0, int limit = int.MaxValue, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
@@ -213,7 +213,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> Exists<T>(this ArchiveComponent self, UltraLiteQuery query, string collection = null)
+        public static async UniTask<bool> Exists<T>(this ArchiveComponent self, Query query, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
@@ -229,7 +229,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<int> Count<T>(this ArchiveComponent self, UltraLiteQuery query, string collection = null)
+        public static async UniTask<int> Count<T>(this ArchiveComponent self, Query query, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
@@ -245,7 +245,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<long> LongCount<T>(this ArchiveComponent self, UltraLiteQuery query, string collection = null)
+        public static async UniTask<long> LongCount<T>(this ArchiveComponent self, Query query, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
@@ -261,11 +261,13 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<int> Remove<T>(this ArchiveComponent self, UltraLiteQuery query, string collection = null)
+        public static async UniTask<int> Remove<T>(this ArchiveComponent self, Query query, string collection = null)
         {
             using (await self.WaitArchiveLock())
             {
-                return self.GetCollection<T>(collection).Delete(GetAllQuery(query));
+                ILiteCollection<T> liteCollection = self.GetCollection<T>(collection);
+                Query deleteQuery = GetAllQuery(query);
+                return deleteQuery.Where.Count == 0 ? liteCollection.DeleteAll() : liteCollection.DeleteMany(GetDeletePredicate(deleteQuery));
             }
         }
 
@@ -347,7 +349,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask ResetDatabase(this ArchiveComponent self, bool shrink = true)
+        public static async UniTask ResetDatabase(this ArchiveComponent self, bool rebuild = true)
         {
             using (await self.WaitArchiveLock())
             {
@@ -358,18 +360,19 @@ namespace ET.Client
                     self.Database.DropCollection(collectionName);
                 }
 
-                if (shrink)
+                if (rebuild)
                 {
-                    self.Database.Shrink();
+                    self.RebuildDatabase(self.Password);
                 }
             }
         }
 
-        public static async UniTask<long> Shrink(this ArchiveComponent self, string password = null)
+        public static async UniTask<long> Rebuild(this ArchiveComponent self, string password = null)
         {
             using (await self.WaitArchiveLock())
             {
-                return password == null ? self.Database.Shrink() : self.Database.Shrink(password);
+                self.CheckDatabase();
+                return self.RebuildDatabase(password ?? self.Password);
             }
         }
 
@@ -407,10 +410,10 @@ namespace ET.Client
             self.Password = password;
             self.LockKey = GetLockKey(fullPath);
             self.Mapper = mapper;
-            self.Database = new UltraLiteDatabase(connectionString, mapper, null);
+            self.Database = new LiteDatabase(connectionString, mapper);
         }
 
-        private static UltraLiteCollection<T> GetCollection<T>(this ArchiveComponent self, string collection)
+        private static ILiteCollection<T> GetCollection<T>(this ArchiveComponent self, string collection)
         {
             self.CheckDatabase();
             return self.Database.GetCollection<T>(string.IsNullOrEmpty(collection) ? typeof(T).FullName : collection);
@@ -454,9 +457,31 @@ namespace ET.Client
             }
         }
 
-        private static UltraLiteQuery GetAllQuery(UltraLiteQuery query)
+        private static Query GetAllQuery(Query query)
         {
-            return query ?? UltraLiteQuery.All(1);
+            return query ?? LiteDB.Query.All();
+        }
+
+        private static long RebuildDatabase(this ArchiveComponent self, string password)
+        {
+            long diff = self.Database.Rebuild(new RebuildOptions
+            {
+                Password = password,
+                Collation = self.Database.Collation,
+            });
+
+            self.Password = password;
+            return diff;
+        }
+
+        private static BsonExpression GetDeletePredicate(Query query)
+        {
+            if (query.Where.Count == 1)
+            {
+                return query.Where[0];
+            }
+
+            return BsonExpression.Create(string.Join(" AND ", query.Where.Select(expression => $"({expression.Source})")));
         }
 
         private static void ResolveArchiveMember(Type type, System.Reflection.MemberInfo memberInfo, MemberMapper member)
