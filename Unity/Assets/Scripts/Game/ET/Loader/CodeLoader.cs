@@ -89,6 +89,8 @@ namespace ET
                     {typeof (World).Assembly, typeof(Init).Assembly, m_Model, m_ModelView, hotfix, hotfixView});
             }
             
+            SetGameConstDataPath(m_Model);
+
             IStaticMethod start = new StaticMethod(m_Model, "ET.Entry", "Start");
             start.Run();
         }
@@ -115,6 +117,19 @@ namespace ET
             Assembly hotfix = Assembly.Load(assBytesHotfix, pdbBytesHotfix);
             Assembly hotfixView = Assembly.Load(assBytesHotfixView, pdbBytesHotfixView);
             return (hotfix, hotfixView);
+        }
+
+        private static void SetGameConstDataPath(Assembly modelAssembly)
+        {
+            System.Type gameConstType = modelAssembly?.GetType("ET.GameConst");
+            FieldInfo dataPathField = gameConstType?.GetField("DataPath", BindingFlags.Public | BindingFlags.Static);
+            if (dataPathField == null)
+            {
+                Log.Error("ET.GameConst.DataPath field not found");
+                return;
+            }
+
+            dataPathField.SetValue(null, Application.dataPath);
         }
 
         private async UniTask<byte[]> LoadCodeBytesAsync(string fileName)

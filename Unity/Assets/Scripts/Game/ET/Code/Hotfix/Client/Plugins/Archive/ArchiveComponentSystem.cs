@@ -385,7 +385,7 @@ namespace ET.Client
                 throw new ArgumentException("archive database path is null or empty", nameof(databasePath));
             }
 
-            string fullPath = Path.GetFullPath(databasePath);
+            string fullPath = GetArchiveFullPath(databasePath);
             string directory = Path.GetDirectoryName(fullPath);
             if (!string.IsNullOrEmpty(directory))
             {
@@ -432,6 +432,23 @@ namespace ET.Client
             };
             self.Database = new LiteDatabase(connectionString, mapper);
 #endif
+        }
+
+        private static string GetArchiveFullPath(string databasePath)
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            if (!Path.IsPathRooted(databasePath))
+            {
+                if (string.IsNullOrEmpty(GameConst.DataPath))
+                {
+                    Log.Error("archive data path is not initialized");
+                    return Path.GetFullPath(databasePath);
+                }
+
+                return Path.GetFullPath(Path.Combine(GameConst.DataPath, databasePath));
+            }
+#endif
+            return Path.GetFullPath(databasePath);
         }
 
         private static Stream CreateArchiveStream(string path, string password, bool appendOnly)
