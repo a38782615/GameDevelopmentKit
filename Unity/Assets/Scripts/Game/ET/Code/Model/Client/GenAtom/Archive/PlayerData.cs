@@ -1,8 +1,12 @@
 
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace ET.Client
 {
     public partial class PlayerData : Object
     {
+        [BsonId]
+        public int Id;
         public int Age; //年龄
         public int Exp; //经验
         public int Level; //等级

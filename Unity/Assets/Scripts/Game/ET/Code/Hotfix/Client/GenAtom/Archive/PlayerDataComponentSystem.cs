@@ -6,7 +6,8 @@ namespace ET.Client
     [FriendOf(typeof(PlayerDataComponent))]
     public static partial class PlayerDataComponentSystem
     {
-        private const string PlayerDataDocumentId = nameof(PlayerData);
+        private const int PlayerDataId = 1;
+        private const string LegacyPlayerDataDocumentId = nameof(PlayerData);
 
         [EntitySystem]
         private static void Awake(this PlayerDataComponent self)
@@ -21,8 +22,20 @@ namespace ET.Client
 
         public static async UniTask LoadPlayerData(this PlayerDataComponent self, ArchiveComponent archiveComponent)
         {
-            PlayerData playerData = await archiveComponent.QueryById<PlayerData>(PlayerDataDocumentId);
+            PlayerData playerData = await archiveComponent.QueryById<PlayerData>(PlayerDataId);
             bool needSave = false;
+            bool needRemoveLegacyData = false;
+            if (playerData == null)
+            {
+                playerData = await archiveComponent.QueryById<PlayerData>(LegacyPlayerDataDocumentId);
+                if (playerData != null)
+                {
+                    playerData.Id = PlayerDataId;
+                    needSave = true;
+                    needRemoveLegacyData = true;
+                }
+            }
+
             if (playerData == null)
             {
                 playerData = CreateDefaultPlayerData();
@@ -36,11 +49,16 @@ namespace ET.Client
             }
 
             self.PlayerData = playerData;
-            Log.Info($"PlayerData loaded: Age={playerData.Age}, Level={playerData.Level}, Exp={playerData.Exp}, NickName={playerData.NickName}");
+            Log.Info($"PlayerData loaded: Id={playerData.Id}, Age={playerData.Age}, Level={playerData.Level}, Exp={playerData.Exp}, NickName={playerData.NickName}");
 
             if (needSave)
             {
-                await archiveComponent.Save(PlayerDataDocumentId, playerData);
+                await archiveComponent.Save(playerData);
+            }
+
+            if (needRemoveLegacyData)
+            {
+                await archiveComponent.Remove<PlayerData>(LegacyPlayerDataDocumentId);
             }
         }
 
@@ -51,7 +69,8 @@ namespace ET.Client
                 return;
             }
 
-            await archiveComponent.Save(PlayerDataDocumentId, self.PlayerData);
+            self.PlayerData.Id = PlayerDataId;
+            await archiveComponent.Save(self.PlayerData);
         }
 
         public static void SetPlayerData(this PlayerDataComponent self, PlayerData playerData)
@@ -63,6 +82,7 @@ namespace ET.Client
         {
             return new PlayerData
             {
+                Id = PlayerDataId,
                 Age = 16,
                 Exp = 0,
                 Level = 1,
