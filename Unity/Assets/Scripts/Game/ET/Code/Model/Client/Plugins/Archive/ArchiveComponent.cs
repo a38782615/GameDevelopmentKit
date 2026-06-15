@@ -1,3 +1,4 @@
+using System.IO;
 using LiteDB;
 
 namespace ET.Client
@@ -10,5 +11,8 @@ namespace ET.Client
         public long LockKey;
         public BsonMapper Mapper;
         public LiteDatabase Database;
+        public Stream DatabaseStream;
+        public Stream LogStream;
+        public bool UseStreamDatabase;
     }
 }

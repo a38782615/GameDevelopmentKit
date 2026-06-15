@@ -29,10 +29,12 @@ namespace ET.Client
         {
             self.Database?.Dispose();
             self.Database = null;
+            self.DisposeArchiveStreams();
             self.Mapper = null;
             self.DatabasePath = null;
             self.Password = null;
             self.LockKey = 0;
+            self.UseStreamDatabase = false;
         }
 
         public static async UniTask<BsonValue> Insert<T>(this ArchiveComponent self, T entity, string collection = null)
@@ -400,17 +402,64 @@ namespace ET.Client
             };
             mapper.ResolveMember = ResolveArchiveMember;
 
+            self.DatabasePath = fullPath;
+            self.Password = password;
+            self.LockKey = GetLockKey(fullPath);
+            self.Mapper = mapper;
+            self.OpenDatabase(fullPath, password, mapper);
+        }
+
+        private static void OpenDatabase(this ArchiveComponent self, string fullPath, string password, BsonMapper mapper)
+        {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            self.UseStreamDatabase = true;
+            try
+            {
+                self.DatabaseStream = CreateArchiveStream(fullPath, password, false);
+                self.LogStream = CreateArchiveStream(GetLogPath(fullPath), password, true);
+                self.Database = new LiteDatabase(self.DatabaseStream, mapper, self.LogStream);
+            }
+            catch
+            {
+                self.DisposeArchiveStreams();
+                throw;
+            }
+#else
             ConnectionString connectionString = new ConnectionString
             {
                 Filename = fullPath,
                 Password = password,
             };
-
-            self.DatabasePath = fullPath;
-            self.Password = password;
-            self.LockKey = GetLockKey(fullPath);
-            self.Mapper = mapper;
             self.Database = new LiteDatabase(connectionString, mapper);
+#endif
+        }
+
+        private static Stream CreateArchiveStream(string path, string password, bool appendOnly)
+        {
+            FileStream fileStream = new FileStream(
+                path,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                FileShare.Read,
+                8192,
+                appendOnly ? FileOptions.SequentialScan : FileOptions.RandomAccess);
+
+            return string.IsNullOrEmpty(password) ? fileStream : new AesStream(password, fileStream);
+        }
+
+        private static string GetLogPath(string databasePath)
+        {
+            return Path.Combine(
+                Path.GetDirectoryName(databasePath) ?? string.Empty,
+                $"{Path.GetFileNameWithoutExtension(databasePath)}-log{Path.GetExtension(databasePath)}");
+        }
+
+        private static void DisposeArchiveStreams(this ArchiveComponent self)
+        {
+            self.DatabaseStream?.Dispose();
+            self.DatabaseStream = null;
+            self.LogStream?.Dispose();
+            self.LogStream = null;
         }
 
         private static ILiteCollection<T> GetCollection<T>(this ArchiveComponent self, string collection)
@@ -464,6 +513,17 @@ namespace ET.Client
 
         private static long RebuildDatabase(this ArchiveComponent self, string password)
         {
+            if (self.UseStreamDatabase)
+            {
+                if (password != self.Password)
+                {
+                    throw new NotSupportedException("archive rebuild with password change is not supported in stream database mode");
+                }
+
+                self.Database.Checkpoint();
+                return 0;
+            }
+
             long diff = self.Database.Rebuild(new RebuildOptions
             {
                 Password = password,
