@@ -14,16 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 1002
   nodes:
-  - rid: 4204046695868924029
   - rid: 4204046695868924030
-  - rid: 4204046695868924031
   - rid: 4204046695868924032
   - rid: 4204046695868924033
   - rid: 4204046695868924034
-  - rid: 4204046695868924035
+  - rid: 4204046695868924029
+  - rid: 4204046695868924038
   - rid: 4204046695868924036
   - rid: 4204046695868924037
-  - rid: 4204046695868924038
+  - rid: 4204046695868924035
+  - rid: 4204046695868924031
   connections:
   - outputNodeGuid: 432ff1e3-b18d-476d-af80-d39ddc07402a
     outputPortId: 2287012
@@ -89,10 +89,10 @@ MonoBehaviour:
         period: 1
         executeOnApplication: 0
         attributeModifiers:
-        - attrType: 100
+        - attrType: 1003
           operation: 0
           magnitudeSourceType: 0
-          fixedValue: 10
+          fixedValue: -10
           formula: 
           mmcType: 0
           setByCallerKey: 
@@ -158,8 +158,8 @@ MonoBehaviour:
         guid: c353e286-8ef0-460a-b917-887f2aeb390a
         nodeType: 14
         position:
-          x: 383.33334
-          y: -1531.3334
+          x: 707.3334
+          y: -1616
         targetType: 1
         requiredTags:
           Tags: []
@@ -265,8 +265,8 @@ MonoBehaviour:
         guid: cb1df36f-5729-423e-9d1a-287db5a433f0
         nodeType: 11
         position:
-          x: -160.66666
-          y: -1761.3334
+          x: 143.33334
+          y: -1786.6667
         targetType: 0
         assetTags:
           Tags:
@@ -345,8 +345,8 @@ MonoBehaviour:
         guid: f8947676-1084-4228-b991-1509cc7fe851
         nodeType: 1
         position:
-          x: 195.33334
-          y: -1761.3334
+          x: 443.33334
+          y: -1786.6667
         targetType: 0
         assetTags:
           Tags: []
@@ -373,7 +373,7 @@ MonoBehaviour:
         ongoingRequiredTags:
           Tags: []
         cancelOnAbilityEnd: 1
-        damageType: 0
+        damageType: 1
         damageSourceType: 0
         damageFixedValue: 20
         damageFormula: 

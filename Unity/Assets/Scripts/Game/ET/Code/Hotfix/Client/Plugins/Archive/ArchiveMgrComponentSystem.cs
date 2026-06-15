@@ -8,13 +8,10 @@ namespace ET.Client
     [FriendOf(typeof(ArchiveMgrComponent))]
     public static partial class ArchiveMgrComponentSystem
     {
-        private const string ArchiveDirectoryName = "Archive";
-        private const string ArchiveFileExtension = ".db";
-        private const string DefaultApplicationName = "myGameDevelopmentKit";
-
         [EntitySystem]
         private static void Awake(this ArchiveMgrComponent self)
         {
+            self.LoadDefaultArchive();
         }
 
         [EntitySystem]
@@ -22,7 +19,6 @@ namespace ET.Client
         {
             self.CloseCurrentArchive();
             self.CurrentArchiveName = null;
-            self.CurrentArchivePath = null;
         }
 
         public static ArchiveComponent GetCurrentArchive(this ArchiveMgrComponent self)
@@ -38,20 +34,18 @@ namespace ET.Client
         public static ArchiveComponent LoadArchive(this ArchiveMgrComponent self, string archiveName, string password = null)
         {
             CheckArchiveName(archiveName);
-            string archivePath = GetArchivePath(archiveName);
 
             ArchiveComponent currentArchive = self.CurrentArchive;
-            if (currentArchive != null && self.CurrentArchiveName == archiveName && self.CurrentArchivePath == archivePath)
+            if (currentArchive != null && self.CurrentArchiveName == archiveName)
             {
                 return currentArchive;
             }
 
             self.CloseCurrentArchive();
 
-            ArchiveComponent archiveComponent = self.AddComponent<ArchiveComponent, string, string>(archivePath, password);
+            ArchiveComponent archiveComponent = self.AddComponent<ArchiveComponent, string, string>(archiveName, password);
             self.CurrentArchive = archiveComponent;
             self.CurrentArchiveName = archiveName;
-            self.CurrentArchivePath = archivePath;
             return archiveComponent;
         }
 
@@ -63,14 +57,8 @@ namespace ET.Client
         public static async UniTask<ArchiveComponent> ResetArchive(this ArchiveMgrComponent self, string archiveName, string password = null)
         {
             CheckArchiveName(archiveName);
-            string archivePath = GetArchivePath(archiveName);
 
-            self.CloseArchiveIfCurrent(archiveName, archivePath);
-
-            using (await self.WaitArchiveMgrLock(archiveName))
-            {
-                DeleteArchiveFiles(archivePath);
-            }
+            self.CloseArchiveIfCurrent(archiveName);
 
             return self.LoadArchive(archiveName, password);
         }
@@ -80,14 +68,7 @@ namespace ET.Client
             return $"Save{GetDeviceId()}";
         }
 
-        public static string GetArchivePath(string archiveName)
-        {
-            CheckArchiveName(archiveName);
-            string fileName = $"{archiveName}{ArchiveFileExtension}";
-            return Path.GetFullPath(Path.Combine(GetArchiveDirectory(), fileName));
-        }
-
-        private static void CloseArchiveIfCurrent(this ArchiveMgrComponent self, string archiveName, string archivePath)
+        private static void CloseArchiveIfCurrent(this ArchiveMgrComponent self, string archiveName)
         {
             ArchiveComponent currentArchive = self.CurrentArchive;
             if (currentArchive == null)
@@ -95,7 +76,7 @@ namespace ET.Client
                 return;
             }
 
-            if (self.CurrentArchiveName != archiveName && self.CurrentArchivePath != archivePath)
+            if (self.CurrentArchiveName != archiveName)
             {
                 return;
             }
@@ -113,34 +94,6 @@ namespace ET.Client
 
             self.CurrentArchive = null;
             self.CurrentArchiveName = null;
-            self.CurrentArchivePath = null;
-        }
-
-        private static async UniTask<CoroutineLock> WaitArchiveMgrLock(this ArchiveMgrComponent self, string archiveName)
-        {
-            CoroutineLockComponent coroutineLockComponent = self.Root().GetComponent<CoroutineLockComponent>();
-            if (coroutineLockComponent == null)
-            {
-                throw new InvalidOperationException("ArchiveMgrComponent requires CoroutineLockComponent on root");
-            }
-
-            return await coroutineLockComponent.Wait(CoroutineLockType.DB, GetLockKey(archiveName));
-        }
-
-        private static void DeleteArchiveFiles(string archivePath)
-        {
-            string fullPath = Path.GetFullPath(archivePath);
-            string directory = Path.GetDirectoryName(fullPath);
-            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
-            {
-                return;
-            }
-
-            string fileName = Path.GetFileName(fullPath);
-            foreach (string filePath in Directory.GetFiles(directory, $"{fileName}*"))
-            {
-                File.Delete(filePath);
-            }
         }
 
         private static void CheckArchiveName(string archiveName)
@@ -155,36 +108,7 @@ namespace ET.Client
         {
             string deviceId = global::ET.GameConst.DeviceId;
 
-            if (string.IsNullOrWhiteSpace(deviceId))
-            {
-                throw new InvalidOperationException("GameConst.DeviceId is null or empty");
-            }
-
             return deviceId;
-        }
-
-        private static string GetArchiveDirectory()
-        {
-            return Path.Combine(AppContext.BaseDirectory, DefaultApplicationName, ArchiveDirectoryName);
-        }
-
-        private static long GetLockKey(string value)
-        {
-            unchecked
-            {
-                const long offset = 1469598103934665603;
-                const long prime = 1099511628211;
-                long hash = offset;
-                string lowerValue = value.ToLowerInvariant();
-                for (int i = 0; i < lowerValue.Length; ++i)
-                {
-                    hash ^= lowerValue[i];
-                    hash *= prime;
-                }
-
-                hash &= long.MaxValue;
-                return hash == 0 ? 1 : hash;
-            }
         }
     }
 }

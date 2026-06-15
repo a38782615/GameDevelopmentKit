@@ -26,6 +26,8 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         Armor = _buf.ReadFloat();
         MoveSpeed = _buf.ReadLong();
         AttackSpeed = _buf.ReadLong();
+        MaxExp = _buf.ReadLong();
+        MaxAge = _buf.ReadInt();
         PostInit();
     }
 
@@ -72,6 +74,14 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
     /// 攻击速度
     /// </summary>
     public readonly long AttackSpeed;
+    /// <summary>
+    /// 当前最大经验
+    /// </summary>
+    public readonly long MaxExp;
+    /// <summary>
+    /// 年龄
+    /// </summary>
+    public readonly int MaxAge;
     public const int __ID__ = -227056758;
     public override int GetTypeId() => __ID__;
 
@@ -94,6 +104,8 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         + "Armor:" + Armor + ","
         + "MoveSpeed:" + MoveSpeed + ","
         + "AttackSpeed:" + AttackSpeed + ","
+        + "MaxExp:" + MaxExp + ","
+        + "MaxAge:" + MaxAge + ","
         + "}";
     }
 

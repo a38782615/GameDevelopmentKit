@@ -4,7 +4,6 @@ namespace ET.Client
     public class ArchiveMgrComponent : Entity, IAwake, IDestroy
     {
         public string CurrentArchiveName;
-        public string CurrentArchivePath;
         public EntityRef<ArchiveComponent> CurrentArchive;
     }
 }
