@@ -22,13 +22,26 @@ namespace ET.Client
         public static async UniTask LoadPlayerData(this PlayerDataComponent self, ArchiveComponent archiveComponent)
         {
             PlayerData playerData = await archiveComponent.QueryById<PlayerData>(PlayerDataDocumentId);
+            bool needSave = false;
             if (playerData == null)
             {
                 playerData = CreateDefaultPlayerData();
-                await archiveComponent.Save(PlayerDataDocumentId, playerData);
+                needSave = true;
+            }
+
+            if (playerData.Age == 0)
+            {
+                playerData.Age = 16;
+                needSave = true;
             }
 
             self.PlayerData = playerData;
+            Log.Info($"PlayerData loaded: Age={playerData.Age}, Level={playerData.Level}, Exp={playerData.Exp}, NickName={playerData.NickName}");
+
+            if (needSave)
+            {
+                await archiveComponent.Save(PlayerDataDocumentId, playerData);
+            }
         }
 
         public static async UniTask SavePlayerData(this PlayerDataComponent self, ArchiveComponent archiveComponent)
@@ -50,7 +63,7 @@ namespace ET.Client
         {
             return new PlayerData
             {
-                Age = 0,
+                Age = 16,
                 Exp = 0,
                 Level = 1,
                 NickName = string.Empty,
