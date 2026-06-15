@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 
 namespace ET.Client
@@ -7,73 +6,95 @@ namespace ET.Client
     [FriendOf(typeof(GameDataMgrComponent))]
     public static partial class GameDataMgrComponentSystem
     {
-        private const string PlayerDataDocumentId = "PlayerData";
-
         [EntitySystem]
         private static void Awake(this GameDataMgrComponent self)
         {
+            self.EnsureDataComponents();
         }
 
         [EntitySystem]
         private static void Destroy(this GameDataMgrComponent self)
         {
-            self.PlayerData = null;
+            self.PlayerDataComponent = null;
+            self.TaskDataComponent = null;
         }
 
         public static async UniTask LoadAllData(this GameDataMgrComponent self)
         {
-            self.PlayerData = await self.LoadData(PlayerDataDocumentId, CreateDefaultPlayerData);
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            self.EnsureDataComponents();
+            await self.GetPlayerDataComponent().LoadPlayerData(archiveComponent);
+            await self.GetTaskDataComponent().LoadTaskData(archiveComponent);
         }
 
         public static async UniTask SaveAllData(this GameDataMgrComponent self)
         {
-            await self.SaveData(PlayerDataDocumentId, self.PlayerData);
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            self.EnsureDataComponents();
+            await self.GetPlayerDataComponent().SavePlayerData(archiveComponent);
+            await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
+        }
+
+        public static PlayerDataComponent GetPlayerDataComponent(this GameDataMgrComponent self)
+        {
+            PlayerDataComponent playerDataComponent = self.PlayerDataComponent;
+            if (playerDataComponent == null)
+            {
+                playerDataComponent = self.GetOrAddComponent<PlayerDataComponent>();
+                self.PlayerDataComponent = playerDataComponent;
+            }
+
+            return playerDataComponent;
+        }
+
+        public static TaskDataComponent GetTaskDataComponent(this GameDataMgrComponent self)
+        {
+            TaskDataComponent taskDataComponent = self.TaskDataComponent;
+            if (taskDataComponent == null)
+            {
+                taskDataComponent = self.GetOrAddComponent<TaskDataComponent>();
+                self.TaskDataComponent = taskDataComponent;
+            }
+
+            return taskDataComponent;
         }
 
         public static async UniTask SavePlayerData(this GameDataMgrComponent self)
         {
-            await self.SaveData(PlayerDataDocumentId, self.PlayerData);
-        }
-
-        public static void SetPlayerData(this GameDataMgrComponent self, PlayerData playerData)
-        {
-            self.PlayerData = playerData;
-        }
-
-        private static async UniTask<T> LoadData<T>(this GameDataMgrComponent self, string documentId, Func<T> defaultFactory) where T : class
-        {
-            ArchiveComponent archiveComponent = self.GetArchiveComponent();
-            if (archiveComponent == null)
-            {
-                return null;
-            }
-
-            T data = await archiveComponent.QueryById<T>(documentId);
-            if (data != null)
-            {
-                return data;
-            }
-
-            data = defaultFactory();
-            await archiveComponent.Save(documentId, data);
-            return data;
-        }
-
-        private static async UniTask SaveData<T>(this GameDataMgrComponent self, string documentId, T data) where T : class
-        {
-            if (data == null)
-            {
-                Log.Error($"GameDataMgrComponent save failed: {documentId} is null.");
-                return;
-            }
-
             ArchiveComponent archiveComponent = self.GetArchiveComponent();
             if (archiveComponent == null)
             {
                 return;
             }
 
-            await archiveComponent.Save(documentId, data);
+            await self.GetPlayerDataComponent().SavePlayerData(archiveComponent);
+        }
+
+        public static async UniTask SaveTaskData(this GameDataMgrComponent self)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
+        }
+
+        private static void EnsureDataComponents(this GameDataMgrComponent self)
+        {
+            self.GetPlayerDataComponent();
+            self.GetTaskDataComponent();
         }
 
         private static ArchiveComponent GetArchiveComponent(this GameDataMgrComponent self)
@@ -93,24 +114,6 @@ namespace ET.Client
             }
 
             return archiveComponent;
-        }
-
-        private static PlayerData CreateDefaultPlayerData()
-        {
-            return new PlayerData
-            {
-                Age = 0,
-                Exp = 0,
-                Level = 1,
-                NickName = string.Empty,
-                Diamond = 0,
-                XRoot = default,
-                ElixirPoison = 0,
-                Physique = 0,
-                Comprehension = 0,
-                DivineSense = 0,
-                Fortune = 0,
-            };
         }
     }
 }

@@ -3,6 +3,7 @@ namespace ET.Client
     [ComponentOf(typeof(Scene))]
     public class GameDataMgrComponent : Entity, IAwake, IDestroy
     {
-        public PlayerData PlayerData;
+        public EntityRef<PlayerDataComponent> PlayerDataComponent;
+        public EntityRef<TaskDataComponent> TaskDataComponent;
     }
 }
