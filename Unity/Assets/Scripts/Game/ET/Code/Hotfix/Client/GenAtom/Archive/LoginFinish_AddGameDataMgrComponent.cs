@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 namespace ET.Client
 {
     [Event(SceneType.GenAtom)]
-    public class LoginFinish_AddPlayerMgrComponent : AEvent<Scene, LoginFinish>
+    public class LoginFinish_AddGameDataMgrComponent : AEvent<Scene, LoginFinish>
     {
         protected override async UniTask Run(Scene scene, LoginFinish args)
         {
@@ -12,13 +12,13 @@ namespace ET.Client
                 scene.AddComponent<ArchiveMgrComponent>();
             }
 
-            PlayerMgrComponent playerMgrComponent = scene.GetComponent<PlayerMgrComponent>();
-            if (playerMgrComponent == null)
+            GameDataMgrComponent gameDataMgrComponent = scene.GetComponent<GameDataMgrComponent>();
+            if (gameDataMgrComponent == null)
             {
-                playerMgrComponent = scene.AddComponent<PlayerMgrComponent>();
+                gameDataMgrComponent = scene.AddComponent<GameDataMgrComponent>();
             }
 
-            await playerMgrComponent.LoadPlayerData();
+            await gameDataMgrComponent.LoadAllData();
         }
     }
 }
