@@ -64,7 +64,21 @@ namespace ET.Client
             }
         }
 
-        public int BaseValueInt => TruncateToInt(BaseValue);
+        public int BaseValueInt
+        {
+            get
+            {
+                NumericComponent numericComponent = GetNumericComponent();
+                if (numericComponent == null)
+                {
+                    return 0;
+                }
+
+                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
+                int targetNumericType = baseNumericType == global::ET.NumericType.None ? numericType : baseNumericType;
+                return TruncateRawNumericToInt(numericComponent.GetAsInt(targetNumericType));
+            }
+        }
 
         public float CurrentValue
         {
@@ -81,7 +95,14 @@ namespace ET.Client
             }
         }
 
-        public int CurrentValueInt => TruncateToInt(CurrentValue);
+        public int CurrentValueInt
+        {
+            get
+            {
+                NumericComponent numericComponent = GetNumericComponent();
+                return numericComponent == null ? 0 : TruncateRawNumericToInt(numericComponent.GetAsInt(numericType));
+            }
+        }
 
         public void Initialize(float value)
         {
@@ -482,9 +503,9 @@ namespace ET.Client
             return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
         }
 
-        private static int TruncateToInt(float value)
+        private static int TruncateRawNumericToInt(int value)
         {
-            return (int)value;
+            return value / 10000;
         }
     }
 
