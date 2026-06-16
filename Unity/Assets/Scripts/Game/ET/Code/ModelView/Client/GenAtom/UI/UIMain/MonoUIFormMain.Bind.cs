@@ -6,9 +6,12 @@ namespace ET.Client
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private ET.Client.MonoUIWidgetTopBar m_TopBarTopBar;
 
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
+        public ET.Client.MonoUIWidgetTopBar TopBarTopBar => m_TopBarTopBar;
 
 
 #if UNITY_EDITOR
@@ -20,6 +23,7 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_BtmBarBtmBar == null) return true;
+            if (this.m_TopBarTopBar == null) return true;
             return false;
         }
 #endif
