@@ -64,7 +64,22 @@ namespace ET.Client
             }
         }
 
-        public int BaseValueInt => (int)BaseValue;
+        public int BaseValueInt
+        {
+            get
+            {
+                NumericComponent numericComponent = GetNumericComponent();
+                if (numericComponent == null)
+                {
+                    return 0;
+                }
+
+                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
+                return baseNumericType == global::ET.NumericType.None
+                    ? numericComponent.GetAsInt(numericType)
+                    : numericComponent.GetAsInt(baseNumericType);
+            }
+        }
 
         public float CurrentValue
         {
@@ -81,7 +96,14 @@ namespace ET.Client
             }
         }
 
-        public int CurrentValueInt => (int)CurrentValue;
+        public int CurrentValueInt
+        {
+            get
+            {
+                NumericComponent numericComponent = GetNumericComponent();
+                return numericComponent == null ? 0 : numericComponent.GetAsInt(numericType);
+            }
+        }
 
         public void Initialize(float value)
         {
