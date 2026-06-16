@@ -18,6 +18,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         ConfigId = _buf.ReadInt();
         ConfigId_Ref = null;
         Level = _buf.ReadInt();
+        SubLevel = _buf.ReadInt();
         HP = _buf.ReadFloat();
         CriticalProbability = _buf.ReadFloat();
         Mode = _buf.ReadFloat();
@@ -26,6 +27,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         Armor = _buf.ReadFloat();
         MoveSpeed = _buf.ReadLong();
         AttackSpeed = _buf.ReadLong();
+        NextExp = _buf.ReadLong();
         MaxExp = _buf.ReadLong();
         MaxAge = _buf.ReadInt();
         PostInit();
@@ -42,6 +44,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
     public readonly int ConfigId;
     public DRUnitConfig ConfigId_Ref { private set; get; }
     public readonly int Level;
+    public readonly int SubLevel;
     /// <summary>
     /// 生命值
     /// </summary>
@@ -75,7 +78,11 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
     /// </summary>
     public readonly long AttackSpeed;
     /// <summary>
-    /// 当前最大经验
+    /// 下个等级经验
+    /// </summary>
+    public readonly long NextExp;
+    /// <summary>
+    /// 当前最大等级经验
     /// </summary>
     public readonly long MaxExp;
     /// <summary>
@@ -96,6 +103,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         return "{ "
         + "ConfigId:" + ConfigId + ","
         + "Level:" + Level + ","
+        + "SubLevel:" + SubLevel + ","
         + "HP:" + HP + ","
         + "CriticalProbability:" + CriticalProbability + ","
         + "Mode:" + Mode + ","
@@ -104,6 +112,7 @@ public sealed partial class DRUnitAttribute : Luban.BeanBase
         + "Armor:" + Armor + ","
         + "MoveSpeed:" + MoveSpeed + ","
         + "AttackSpeed:" + AttackSpeed + ","
+        + "NextExp:" + NextExp + ","
         + "MaxExp:" + MaxExp + ","
         + "MaxAge:" + MaxAge + ","
         + "}";

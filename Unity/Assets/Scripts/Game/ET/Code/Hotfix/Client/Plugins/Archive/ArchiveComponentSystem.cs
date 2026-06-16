@@ -37,13 +37,14 @@ namespace ET.Client
             self.UseStreamDatabase = false;
         }
 
-        public static async UniTask<BsonValue> Insert<T>(this ArchiveComponent self, T entity, string collection = null)
+        public static async UniTask<BsonValue> Insert<T>(this ArchiveComponent self, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
                 Log.Error($"archive insert entity is null: {typeof(T).FullName}");
                 return BsonValue.Null;
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -51,13 +52,14 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask Insert<T>(this ArchiveComponent self, BsonValue id, T entity, string collection = null)
+        public static async UniTask Insert<T>(this ArchiveComponent self, BsonValue id, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
                 Log.Error($"archive insert entity is null: {typeof(T).FullName}");
                 return;
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -65,7 +67,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<int> InsertBatch<T>(this ArchiveComponent self, IEnumerable<T> entities, string collection = null)
+        public static async UniTask<int> InsertBatch<T>(this ArchiveComponent self, IEnumerable<T> entities)
         {
             if (entities == null)
             {
@@ -73,19 +75,21 @@ namespace ET.Client
                 return 0;
             }
 
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Insert(entities);
             }
         }
 
-        public static async UniTask<bool> Update<T>(this ArchiveComponent self, T entity, string collection = null)
+        public static async UniTask<bool> Update<T>(this ArchiveComponent self, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
                 Log.Error($"archive update entity is null: {typeof(T).FullName}");
                 return false;
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -93,7 +97,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> Update<T>(this ArchiveComponent self, BsonValue id, T entity, string collection = null)
+        public static async UniTask<bool> Update<T>(this ArchiveComponent self, BsonValue id, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
@@ -101,13 +105,14 @@ namespace ET.Client
                 return false;
             }
 
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Update(id, entity);
             }
         }
 
-        public static async UniTask<int> UpdateBatch<T>(this ArchiveComponent self, IEnumerable<T> entities, string collection = null)
+        public static async UniTask<int> UpdateBatch<T>(this ArchiveComponent self, IEnumerable<T> entities)
         {
             if (entities == null)
             {
@@ -115,34 +120,37 @@ namespace ET.Client
                 return 0;
             }
 
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Update(entities);
             }
         }
 
-        public static async UniTask<bool> Save<T>(this ArchiveComponent self, T entity, string collection = null)
+        public static async UniTask<bool> Save<T>(this ArchiveComponent self, T entity)
         {
-            return await self.Upsert(entity, collection);
+            return await self.Upsert(entity);
         }
 
-        public static async UniTask<bool> Save<T>(this ArchiveComponent self, BsonValue id, T entity, string collection = null)
+        public static async UniTask<bool> Save<T>(this ArchiveComponent self, BsonValue id, T entity)
         {
-            return await self.Upsert(id, entity, collection);
+            return await self.Upsert(id, entity);
         }
 
-        public static async UniTask<int> SaveBatch<T>(this ArchiveComponent self, IEnumerable<T> entities, string collection = null)
+        public static async UniTask<int> SaveBatch<T>(this ArchiveComponent self, IEnumerable<T> entities)
         {
-            return await self.UpsertBatch(entities, collection);
+            return await self.UpsertBatch(entities);
         }
 
-        public static async UniTask<bool> Upsert<T>(this ArchiveComponent self, T entity, string collection = null)
+        public static async UniTask<bool> Upsert<T>(this ArchiveComponent self, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
                 Log.Error($"archive upsert entity is null: {typeof(T).FullName}");
                 return false;
             }
+
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -150,13 +158,14 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> Upsert<T>(this ArchiveComponent self, BsonValue id, T entity, string collection = null)
+        public static async UniTask<bool> Upsert<T>(this ArchiveComponent self, BsonValue id, T entity)
         {
             if (ReferenceEquals(entity, null))
             {
                 Log.Error($"archive upsert entity is null: {typeof(T).FullName}");
                 return false;
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -164,7 +173,7 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<int> UpsertBatch<T>(this ArchiveComponent self, IEnumerable<T> entities, string collection = null)
+        public static async UniTask<int> UpsertBatch<T>(this ArchiveComponent self, IEnumerable<T> entities)
         {
             if (entities == null)
             {
@@ -172,99 +181,111 @@ namespace ET.Client
                 return 0;
             }
 
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Upsert(entities);
             }
         }
 
-        public static async UniTask<T> Query<T>(this ArchiveComponent self, BsonValue id, string collection = null)
+        public static async UniTask<T> Query<T>(this ArchiveComponent self, BsonValue id)
         {
-            return await self.QueryById<T>(id, collection);
+            return await self.QueryById<T>(id);
         }
 
-        public static async UniTask<T> QueryById<T>(this ArchiveComponent self, BsonValue id, string collection = null)
+        public static async UniTask<T> QueryById<T>(this ArchiveComponent self, BsonValue id)
         {
             using (await self.WaitArchiveLock())
             {
+                var collection = nameof(T);
                 return self.GetCollection<T>(collection).FindById(id);
             }
         }
 
-        public static async UniTask<T> QueryOne<T>(this ArchiveComponent self, Query query, string collection = null)
+        public static async UniTask<T> QueryOne<T>(this ArchiveComponent self, Query query)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).FindOne(GetAllQuery(query));
             }
         }
 
-        public static async UniTask<List<T>> Query<T>(this ArchiveComponent self, Query query, int skip = 0, int limit = int.MaxValue, string collection = null)
+        public static async UniTask<List<T>> Query<T>(this ArchiveComponent self, Query query, int skip = 0, int limit = int.MaxValue)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Find(GetAllQuery(query), skip, limit).ToList();
             }
         }
 
-        public static async UniTask<List<T>> QueryAll<T>(this ArchiveComponent self, string collection = null)
+        public static async UniTask<List<T>> QueryAll<T>(this ArchiveComponent self)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).FindAll().ToList();
             }
         }
 
-        public static async UniTask<bool> Exists<T>(this ArchiveComponent self, Query query, string collection = null)
+        public static async UniTask<bool> Exists<T>(this ArchiveComponent self, Query query)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Exists(GetAllQuery(query));
             }
         }
 
-        public static async UniTask<int> Count<T>(this ArchiveComponent self, string collection = null)
+        public static async UniTask<int> Count<T>(this ArchiveComponent self)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Count();
             }
         }
 
-        public static async UniTask<int> Count<T>(this ArchiveComponent self, Query query, string collection = null)
+        public static async UniTask<int> Count<T>(this ArchiveComponent self, Query query)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Count(GetAllQuery(query));
             }
         }
 
-        public static async UniTask<long> LongCount<T>(this ArchiveComponent self, string collection = null)
+        public static async UniTask<long> LongCount<T>(this ArchiveComponent self)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).LongCount();
             }
         }
 
-        public static async UniTask<long> LongCount<T>(this ArchiveComponent self, Query query, string collection = null)
+        public static async UniTask<long> LongCount<T>(this ArchiveComponent self, Query query)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).LongCount(GetAllQuery(query));
             }
         }
 
-        public static async UniTask<bool> Remove<T>(this ArchiveComponent self, BsonValue id, string collection = null)
+        public static async UniTask<bool> Remove<T>(this ArchiveComponent self, BsonValue id)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Delete(id);
             }
         }
 
-        public static async UniTask<int> Remove<T>(this ArchiveComponent self, Query query, string collection = null)
+        public static async UniTask<int> Remove<T>(this ArchiveComponent self, Query query)
         {
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 ILiteCollection<T> liteCollection = self.GetCollection<T>(collection);
@@ -273,12 +294,13 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> EnsureIndex<T>(this ArchiveComponent self, string field, bool unique = false, string collection = null)
+        public static async UniTask<bool> EnsureIndex<T>(this ArchiveComponent self, string field, bool unique = false)
         {
             if (string.IsNullOrEmpty(field))
             {
                 throw new ArgumentException("archive index field is null or empty", nameof(field));
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -286,12 +308,13 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> DropIndex<T>(this ArchiveComponent self, string field, string collection = null)
+        public static async UniTask<bool> DropIndex<T>(this ArchiveComponent self, string field)
         {
             if (string.IsNullOrEmpty(field))
             {
                 throw new ArgumentException("archive index field is null or empty", nameof(field));
             }
+            var collection = nameof(T);
 
             using (await self.WaitArchiveLock())
             {
@@ -299,13 +322,9 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> CollectionExists(this ArchiveComponent self, string collection)
+        public static async UniTask<bool> CollectionExists<T>(this ArchiveComponent self)
         {
-            if (string.IsNullOrEmpty(collection))
-            {
-                throw new ArgumentException("archive collection is null or empty", nameof(collection));
-            }
-
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.Database.CollectionExists(collection);
@@ -320,13 +339,9 @@ namespace ET.Client
             }
         }
 
-        public static async UniTask<bool> DropCollection(this ArchiveComponent self, string collection)
+        public static async UniTask<bool> DropCollection<T>(this ArchiveComponent self)
         {
-            if (string.IsNullOrEmpty(collection))
-            {
-                throw new ArgumentException("archive collection is null or empty", nameof(collection));
-            }
-
+            var collection = nameof(T);
             using (await self.WaitArchiveLock())
             {
                 return self.Database.DropCollection(collection);

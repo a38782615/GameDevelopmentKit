@@ -14,7 +14,7 @@ namespace ET
 public partial class DTUnitAttribute : IDataTable
 {
     private System.Collections.Generic.List<DRUnitAttribute> _dataList;
-    private System.Collections.Generic.Dictionary<(int, int), DRUnitAttribute> _dataMapUnion;
+    private System.Collections.Generic.Dictionary<(int, int, int), DRUnitAttribute> _dataMapUnion;
     private readonly System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> _loadFunc;
 
     public DTUnitAttribute(System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> loadFunc)
@@ -42,7 +42,7 @@ public partial class DTUnitAttribute : IDataTable
         }
         if(_dataMapUnion == null)
         {
-            _dataMapUnion = new System.Collections.Generic.Dictionary<(int, int), DRUnitAttribute>(n);
+            _dataMapUnion = new System.Collections.Generic.Dictionary<(int, int, int), DRUnitAttribute>(n);
         }
         else
         {
@@ -50,13 +50,13 @@ public partial class DTUnitAttribute : IDataTable
         }
         foreach(var _v in _dataList)
         {
-            _dataMapUnion.Add((_v.ConfigId, _v.Level), _v);
+            _dataMapUnion.Add((_v.ConfigId, _v.Level, _v.SubLevel), _v);
         }
         PostInit();
     }
 
     public System.Collections.Generic.IReadOnlyList<DRUnitAttribute> DataList => _dataList;
-    public DRUnitAttribute Get(int ConfigId, int Level) => _dataMapUnion.TryGetValue((ConfigId, Level), out DRUnitAttribute __v) ? __v : default;
+    public DRUnitAttribute Get(int ConfigId, int Level, int SubLevel) => _dataMapUnion.TryGetValue((ConfigId, Level, SubLevel), out DRUnitAttribute __v) ? __v : default;
 
     public void ResolveRef(Tables tables)
     {

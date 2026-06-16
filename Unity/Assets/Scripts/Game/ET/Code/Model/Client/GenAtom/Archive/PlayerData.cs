@@ -18,5 +18,6 @@ namespace ET.Client
         public int Comprehension; // 悟性
         public int DivineSense; // 神识
         public int Fortune; // 福缘
+        public int SubLevel;//子等级
     }
 }

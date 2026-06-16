@@ -30,7 +30,7 @@ namespace ET.Client
                 return;
             }
 
-            if (TryGetUnitBaseConfig(self, out Unit unit, out int level, out DRUnitAttribute unitBaseConfig))
+            if (TryGetUnitBaseConfig(self, out Unit unit, out DRUnitAttribute unitBaseConfig))
             {
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
@@ -43,7 +43,6 @@ namespace ET.Client
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Speed, unitBaseConfig.MoveSpeed);
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.AttackSpeed, ToNumericLong(unitBaseConfig.AttackSpeed));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Level, level);
             }
 
             self.RefreshRuntimeAttributesFromNumeric(true);
@@ -110,23 +109,17 @@ namespace ET.Client
         private static bool TryGetUnitBaseConfig(
             global::ET.AttributeComponent self,
             out Unit unit,
-            out int level,
             out DRUnitAttribute unitBaseConfig)
         {
             unit = self.GetParent<Unit>();
-            level = self.Level > 0 ? self.Level : 1;
             unitBaseConfig = null;
             if (unit == null)
             {
                 return false;
             }
 
-            unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level);
-            if (unitBaseConfig == null && level != 0)
-            {
-                unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
-            }
-
+            PlayerData playerData = self.Root()?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
+            unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, playerData.Level, playerData.SubLevel);
             return unitBaseConfig != null;
         }
 

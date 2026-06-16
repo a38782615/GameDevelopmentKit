@@ -7,7 +7,6 @@ namespace ET
     [ComponentOf(typeof(Unit))]
     public partial class AttributeComponent : Entity, IAwake, IDestroy
     {
-        public int Level;
         public float Hp => NumericComponent.GetAsFloat(NumericType.Hp);
         public float MaxHp => NumericComponent.GetAsFloat(NumericType.MaxHp);
         public float Mode => NumericComponent.GetAsFloat(NumericType.Mode);
