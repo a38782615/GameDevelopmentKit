@@ -64,6 +64,8 @@ namespace ET.Client
             }
         }
 
+        public int BaseValueInt => RoundToInt(BaseValue);
+
         public float CurrentValue
         {
             get
@@ -78,6 +80,8 @@ namespace ET.Client
                 ClampDependentAttributes();
             }
         }
+
+        public int CurrentValueInt => RoundToInt(CurrentValue);
 
         public void Initialize(float value)
         {
@@ -476,6 +480,11 @@ namespace ET.Client
         private NumericComponent GetNumericComponent()
         {
             return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
+        }
+
+        private static int RoundToInt(float value)
+        {
+            return (int)math.round(value);
         }
     }
 

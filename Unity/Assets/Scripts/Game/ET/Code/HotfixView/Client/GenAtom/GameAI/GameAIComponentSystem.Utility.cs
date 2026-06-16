@@ -39,12 +39,10 @@ namespace ET.Client
             }
 
             Unit unit = self.GetOwnerUnit();
-            int level = unit?.GetComponent<global::ET.AttributeComponent>()?.Level ?? 1;
-            DRUnitAttribute unitAttribute = unit == null
-                ? null
-                : Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, level) ?? Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, 0);
-            return unitAttribute?.AttackSpeed > 0
-                ? Mathf.Max(1, (int)unitAttribute.AttackSpeed)
+            var attr = unit?.GetComponent<global::ET.AttributeComponent>();
+            AttrCmp attack = attr?.GetAttribute(NumericType.AttackSpeed);
+            return attack != null
+                ? Mathf.Max(1, attack.CurrentValueInt)
                 : defaultValue;
         }
 
