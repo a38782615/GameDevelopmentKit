@@ -145,6 +145,9 @@ namespace ET
 		public const int IncomingHeal = 1027;
 		public const int IncomingHealBase = IncomingHeal * 10 + 1;
 
+		public const int MaxAge = 1028;
+		public const int MaxAgeBase = MaxAge * 10 + 1;
+
 		public const int AOI = 3003;
 		public const int AOIBase = AOI * 10 + 1;
 		public const int AOIAdd = AOI * 10 + 2;
@@ -175,6 +178,7 @@ namespace ET
 				Experience,
 				IncomingDamage,
 				IncomingHeal,
+				MaxAge,
 			};
 		}
 
@@ -226,6 +230,8 @@ namespace ET
 					return IncomingDamageBase;
 				case IncomingHeal:
 					return IncomingHealBase;
+				case MaxAge:
+					return MaxAgeBase;
 				default:
 					return None;
 			}
@@ -254,6 +260,7 @@ namespace ET
 				case Experience: return "Experience";
 				case IncomingDamage: return "Incoming Damage";
 				case IncomingHeal: return "Incoming Heal";
+				case MaxAge: return "Max Age";
 				default: return numericType.ToString();
 			}
 		}
@@ -341,6 +348,10 @@ namespace ET
 					return true;
 				case "incomingheal":
 					numericType = IncomingHeal;
+					return true;
+				case "maxage":
+				case "maximumage":
+					numericType = MaxAge;
 					return true;
 				default:
 					numericType = None;
