@@ -79,6 +79,12 @@ namespace ET.Client
                     ? numericComponent.GetAsInt(numericType)
                     : numericComponent.GetAsInt(baseNumericType);
             }
+            set
+            {
+                WriteBaseValue(value, true);
+                MarkDirty();
+                Recalculate();
+            }
         }
 
         public float CurrentValue
@@ -102,6 +108,11 @@ namespace ET.Client
             {
                 NumericComponent numericComponent = GetNumericComponent();
                 return numericComponent == null ? 0 : numericComponent.GetAsInt(numericType);
+            }
+            set
+            {
+                WriteCurrentValue(value, true);
+                ClampDependentAttributes();
             }
         }
 
@@ -481,6 +492,32 @@ namespace ET.Client
             }
         }
 
+        private void WriteBaseValue(int value, bool publishEvent)
+        {
+            NumericComponent numericComponent = GetNumericComponent();
+            if (numericComponent == null)
+            {
+                return;
+            }
+
+            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
+            if (baseNumericType == global::ET.NumericType.None)
+            {
+                WriteCurrentValue(value, publishEvent);
+                return;
+            }
+
+            if (publishEvent)
+            {
+                numericComponent.Set(baseNumericType, value);
+            }
+            else
+            {
+                numericComponent.SetNoEvent(baseNumericType, value);
+                numericComponent.Update(baseNumericType, false);
+            }
+        }
+
         private void WriteCurrentValue(float value, bool publishEvent)
         {
             NumericComponent numericComponent = GetNumericComponent();
@@ -496,6 +533,24 @@ namespace ET.Client
             else
             {
                 numericComponent.SetNoEvent(numericType, (long)(value * 10000));
+            }
+        }
+
+        private void WriteCurrentValue(int value, bool publishEvent)
+        {
+            NumericComponent numericComponent = GetNumericComponent();
+            if (numericComponent == null)
+            {
+                return;
+            }
+
+            if (publishEvent)
+            {
+                numericComponent.Set(numericType, value);
+            }
+            else
+            {
+                numericComponent.SetNoEvent(numericType, value);
             }
         }
 
