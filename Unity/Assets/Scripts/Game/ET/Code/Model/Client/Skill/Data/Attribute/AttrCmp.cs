@@ -64,21 +64,7 @@ namespace ET.Client
             }
         }
 
-        public int BaseValueInt
-        {
-            get
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                if (numericComponent == null)
-                {
-                    return 0;
-                }
-
-                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-                int targetNumericType = baseNumericType == global::ET.NumericType.None ? numericType : baseNumericType;
-                return TruncateRawNumericToInt(numericComponent.GetAsInt(targetNumericType));
-            }
-        }
+        public int BaseValueInt => (int)BaseValue;
 
         public float CurrentValue
         {
@@ -95,14 +81,7 @@ namespace ET.Client
             }
         }
 
-        public int CurrentValueInt
-        {
-            get
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                return numericComponent == null ? 0 : TruncateRawNumericToInt(numericComponent.GetAsInt(numericType));
-            }
-        }
+        public int CurrentValueInt => (int)CurrentValue;
 
         public void Initialize(float value)
         {
@@ -503,10 +482,6 @@ namespace ET.Client
             return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
         }
 
-        private static int TruncateRawNumericToInt(int value)
-        {
-            return value / 10000;
-        }
     }
 
     public struct ActiveModifier
