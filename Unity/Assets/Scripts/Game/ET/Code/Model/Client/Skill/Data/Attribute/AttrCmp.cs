@@ -64,7 +64,7 @@ namespace ET.Client
             }
         }
 
-        public int BaseValueInt => RoundToInt(BaseValue);
+        public int BaseValueInt => TruncateToInt(BaseValue);
 
         public float CurrentValue
         {
@@ -81,7 +81,7 @@ namespace ET.Client
             }
         }
 
-        public int CurrentValueInt => RoundToInt(CurrentValue);
+        public int CurrentValueInt => TruncateToInt(CurrentValue);
 
         public void Initialize(float value)
         {
@@ -482,9 +482,9 @@ namespace ET.Client
             return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
         }
 
-        private static int RoundToInt(float value)
+        private static int TruncateToInt(float value)
         {
-            return (int)math.round(value);
+            return (int)value;
         }
     }
 
