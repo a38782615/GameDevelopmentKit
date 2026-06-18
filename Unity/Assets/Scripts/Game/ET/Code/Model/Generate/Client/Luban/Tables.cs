@@ -30,6 +30,7 @@ public partial class Tables
     public DTRelic DTRelic { private set; get; }
     public DTSkillAttribute DTSkillAttribute { private set; get; }
     public DTGameConfig DTGameConfig { private set; get; }
+    public DTItems DTItems { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -92,6 +93,9 @@ public partial class Tables
         DTGameConfig = new DTGameConfig(() => loader("dtgameconfig"));
         loadTasks.Add(DTGameConfig.LoadAsync());
         _tables.Add("DTGameConfig", DTGameConfig);
+        DTItems = new DTItems(() => loader("dtitems"));
+        loadTasks.Add(DTItems.LoadAsync());
+        _tables.Add("DTItems", DTItems);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -119,6 +123,7 @@ public partial class Tables
         DTRelic.ResolveRef(this);
         DTSkillAttribute.ResolveRef(this);
         DTGameConfig.ResolveRef(this);
+        DTItems.ResolveRef(this);
         PostResolveRef();
     }
 
