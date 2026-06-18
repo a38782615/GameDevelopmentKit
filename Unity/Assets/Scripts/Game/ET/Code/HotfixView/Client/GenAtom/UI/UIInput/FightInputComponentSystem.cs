@@ -187,7 +187,7 @@ namespace ET.Client
             Vector2 normalizedDirectionVector2 = new Vector2(normalizedDirection.x, normalizedDirection.y);
 
             global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
-            float speed = attributeComponent?.GetCurrentValue(global::ET.NumericType.Speed) ?? 0f;
+            float speed = attributeComponent?.GetValue(global::ET.NumericType.Speed) ?? 0f;
             if (speed <= 0f)
             {
                 self.StopKeyboardMove(unit);

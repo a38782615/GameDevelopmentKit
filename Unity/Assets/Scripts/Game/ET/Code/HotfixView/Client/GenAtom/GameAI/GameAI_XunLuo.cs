@@ -36,7 +36,7 @@ namespace ET.Client
                 return;
             }
 
-            float speed = attributeComponent.GetCurrentValue(NumericType.Speed);
+            float speed = attributeComponent.GetValue(NumericType.Speed);
             if (speed <= 0f)
             {
                 return;

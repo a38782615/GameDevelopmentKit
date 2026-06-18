@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Unity.Mathematics;
+
 namespace ET.Client
 {
     /// <summary>
@@ -7,15 +10,18 @@ namespace ET.Client
     [EntitySystemOf(typeof(AttributeComponent))]
     [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
     [FriendOfAttribute(typeof(global::ET.NumericComponent))]
+    [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
+
     public static partial class AttributeComponentSystem
     {
         [EntitySystem]
-        private static void Awake(this global::ET.AttributeComponent self,int configId, int level, int subLevel)
+        private static void Awake(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
         {
             self.AllModifiers = XList<DataModifier>.Create();
             self.ConfigId = configId;
             self.Level = level;
             self.SubLevel = subLevel;
+            self.Init(self.ConfigId, self.Level, self.SubLevel);
         }
 
         [EntitySystem]
@@ -25,7 +31,7 @@ namespace ET.Client
             self.AllModifiers?.Dispose();
         }
 
-        public static void Init(this global::ET.AttributeComponent self, int configId, int level , int subLevel)
+        public static void Init(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
         {
             NumericComponent numericComponent = self.NumericComponent;
             if (numericComponent == null)
@@ -34,22 +40,22 @@ namespace ET.Client
             }
 
             var unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
-            if (unitBaseConfig!=null)
+            if (unitBaseConfig != null)
             {
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.ModeMax, ToNumericLong(unitBaseConfig.Mode));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Mp, ToNumericLong(unitBaseConfig.MP));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxMp, ToNumericLong(unitBaseConfig.MP));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Attack, ToNumericLong(unitBaseConfig.Attack));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Speed, unitBaseConfig.MoveSpeed);
-                TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.AttackSpeed, ToNumericLong(unitBaseConfig.AttackSpeed));
+                numericComponent.SetNoEvent(NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
+                numericComponent.SetNoEvent(NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
+                numericComponent.SetNoEvent(NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
+                numericComponent.SetNoEvent(NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));
+                numericComponent.SetNoEvent(NumericType.ModeMax, ToNumericLong(unitBaseConfig.Mode));
+                numericComponent.SetNoEvent(NumericType.Mp, ToNumericLong(unitBaseConfig.MP));
+                numericComponent.SetNoEvent(NumericType.MaxMp, ToNumericLong(unitBaseConfig.MP));
+                numericComponent.SetNoEvent(NumericType.Attack, ToNumericLong(unitBaseConfig.Attack));
+                numericComponent.SetNoEvent(NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
+                numericComponent.SetNoEvent(NumericType.Speed, unitBaseConfig.MoveSpeed);
+                numericComponent.SetNoEvent(NumericType.AttackSpeed, ToNumericLong(unitBaseConfig.AttackSpeed));
             }
 
-            self.RefreshRuntimeAttributesFromNumeric(true);
+            self.RefreshRuntimeAttributesFromNumeric();
         }
 
         public static AttrCmp AddAttribute(this global::ET.AttributeComponent self, int numericType, float defaultValue = 0f)
@@ -62,19 +68,19 @@ namespace ET.Client
 
             // 子实体 Id 直接使用 NumericType，便于快速定位。
             AttrCmp attribute = self.AddChildWithId<AttrCmp, int>(numericType, numericType);
-            attribute.Initialize(self.NumericComponent?.GetAsFloat(numericType) ?? defaultValue);
             return attribute;
         }
 
-        public static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self, bool overwriteExisting)
+        public static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self)
         {
             // 统一从 NumericComponent 拉取客户端关心的属性，构建或刷新 AttrCmp。
             foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
             {
-                RefreshRuntimeAttributeFromNumeric(self, numericType, overwriteExisting);
+                RefreshRuntimeAttributeFromNumeric(self, numericType);
             }
         }
 
+        //添加额外属性
         public static DataModifier AddModifier(this global::ET.AttributeComponent self, int type, float value)
         {
             DataModifier modify = DataModifier.Create(self.DataId++, type, value);
@@ -83,6 +89,7 @@ namespace ET.Client
             return modify;
         }
 
+        //移除额外属性
         public static void RemoveModifer(this global::ET.AttributeComponent self, DataModifier modify)
         {
             if (modify == null)
@@ -95,45 +102,16 @@ namespace ET.Client
             modify.Dispose();
         }
 
-        private static void RefreshRuntimeAttributeFromNumeric(global::ET.AttributeComponent self, int numericType, bool overwriteExisting)
+        private static void RefreshRuntimeAttributeFromNumeric(global::ET.AttributeComponent self, int numericType)
         {
             float value = self.NumericComponent?.GetAsFloat(numericType) ?? 0f;
             AttrCmp attribute = self.GetAttrCmp(numericType);
             if (attribute == null)
             {
                 self.AddAttribute(numericType, value);
-                return;
-            }
-
-            if (overwriteExisting)
-            {
-                attribute.Initialize(value);
             }
         }
 
-        private static void TryApplyNumericFromConfig(NumericComponent numericComponent, int numericType, long value)
-        {
-            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-            if (baseNumericType != global::ET.NumericType.None)
-            {
-                if (!numericComponent.NumericDic.ContainsKey(baseNumericType))
-                {
-                    numericComponent.SetNoEvent(baseNumericType, value);
-                }
-
-                if (!numericComponent.NumericDic.ContainsKey(numericType))
-                {
-                    numericComponent.Update(baseNumericType, false);
-                }
-
-                return;
-            }
-
-            if (!numericComponent.NumericDic.ContainsKey(numericType))
-            {
-                numericComponent.SetNoEvent(numericType, value);
-            }
-        }
 
         private static long ToNumericLong(float value)
         {

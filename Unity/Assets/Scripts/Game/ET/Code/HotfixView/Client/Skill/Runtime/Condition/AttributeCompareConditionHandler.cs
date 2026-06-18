@@ -19,7 +19,7 @@ namespace ET.Client
                 return false;
             }
 
-            float? attrValue = target.Attributes.GetCurrentValue(nodeData.compareAttrType);
+            float? attrValue = target.Attributes.GetValue(nodeData.compareAttrType);
             if (!attrValue.HasValue)
             {
                 return false;
@@ -28,7 +28,7 @@ namespace ET.Client
             float compareValue = FormulaEvaluator.EvaluateSimple(nodeData.compareValue, 0f);
             if (nodeData.compareValueType == AttributeValueType.Percentage)
             {
-                float? baseValue = target.Attributes.GetCurrentValue(nodeData.percentageBaseAttrType);
+                float? baseValue = target.Attributes.GetValue(nodeData.percentageBaseAttrType);
                 if (baseValue.HasValue)
                 {
                     compareValue = baseValue.Value * (compareValue / 100f);

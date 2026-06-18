@@ -42,8 +42,8 @@ namespace ET.Client
                 SkillHudManager.GetOrCreate().UpdateUnitHealth(
                     self.InstanceId,
                     ownerObject,
-                    self.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
-                    self.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
+                    self.Attributes?.GetValue(global::ET.NumericType.Hp) ?? 0f,
+                    self.Attributes?.GetValue(global::ET.NumericType.MaxHp) ?? 0f);
             }
 
             if (numericType != global::ET.NumericType.Hp)
@@ -234,7 +234,7 @@ namespace ET.Client
                 return false;
             }
 
-            float health = self.Attributes.GetCurrentValue(global::ET.NumericType.Hp);
+            float health = self.Attributes.GetValue(global::ET.NumericType.Hp);
             return health > 0f;
         }
 

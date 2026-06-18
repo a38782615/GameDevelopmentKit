@@ -22,7 +22,6 @@ namespace ET
         public NumericComponent NumericComponent => this.GetParent<Unit>().GetComponent<NumericComponent>();
         public XList<DataModifier> AllModifiers;
         public int DataId;
-
         // public EquipComponent EquipComponent => this.GetParent<Unit>().GetComponent<EquipComponent>();
     }
 }

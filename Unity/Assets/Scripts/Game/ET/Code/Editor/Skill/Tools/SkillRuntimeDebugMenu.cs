@@ -85,7 +85,7 @@ namespace ET.Client.Editor
             moveCastWaitDuration = waitDuration;
             moveCastStartPosition = GetUnitWorldPosition(playerUnit);
             moveCastTargetPosition = CalculateCastPosition(playerUnit, monsterUnit, 1.5f);
-            moveCastHealthBefore = monsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
+            moveCastHealthBefore = monsterAsc.Attributes?.GetValue(global::ET.NumericType.Hp) ?? -1f;
 
             float speed = playerUnit.GetComponent<NumericComponent>()?.GetAsFloat(NumericType.Speed) ?? 0f;
             if (speed <= 0.01f)
@@ -168,7 +168,7 @@ namespace ET.Client.Editor
                         return;
                     }
 
-                    float healthAfter = moveCastMonsterAsc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? -1f;
+                    float healthAfter = moveCastMonsterAsc.Attributes?.GetValue(global::ET.NumericType.Hp) ?? -1f;
                     float damage = moveCastHealthBefore >= 0f && healthAfter >= 0f ? moveCastHealthBefore - healthAfter : 0f;
                     Debug.LogWarning($"[SkillRuntimeDebug] move-and-cast skillId={moveCastSkillId} success={moveCastSkillTriggered} wait={moveCastWaitDuration:0.0}s hpBefore={moveCastHealthBefore:0.##} hpAfter={healthAfter:0.##} damage={damage:0.##}");
                     CleanupMoveCastState();

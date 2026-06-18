@@ -220,7 +220,7 @@ namespace ET.Client
             {
                 var modifier = AttributeModifier.FromData(modData);
                 float costValue = UnityEngine.Mathf.Abs(modifier.CalculateMagnitude(null));
-                float? currentValue = asc.Attributes.GetCurrentValue(modifier.TargetAttrType);
+                float? currentValue = asc.Attributes.GetValue(modifier.TargetAttrType);
                 if (!currentValue.HasValue) continue;
                 if (currentValue.Value < costValue) return false;
             }

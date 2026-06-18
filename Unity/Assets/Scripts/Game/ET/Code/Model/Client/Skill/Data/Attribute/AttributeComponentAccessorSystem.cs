@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 namespace ET.Client
 {
     [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
+    [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
     public static class AttributeComponentAccessorSystem
     {
+
         public static AttrCmp GetAttrCmp(this global::ET.AttributeComponent self, int numericType)
         {
             return self?.GetChild<AttrCmp>(numericType);
@@ -28,29 +31,13 @@ namespace ET.Client
             return true;
         }
 
-        public static bool HasAttribute(this global::ET.AttributeComponent self, int numericType)
-        {
-            return self.GetAttrCmp(numericType) != null;
-        }
-
-        public static float GetBaseValue(this global::ET.AttributeComponent self, int numericType)
-        {
-            return self.GetAttrCmp(numericType)?.BaseValue ?? 0f;
-        }
-
-        public static float GetCurrentValue(this global::ET.AttributeComponent self, int numericType)
+        public static float GetValue(this global::ET.AttributeComponent self, int numericType)
         {
             AttrCmp attribute = self.GetAttrCmp(numericType);
-            if (attribute != null)
-            {
-                return attribute.CurrentValue;
-            }
-
-            NumericComponent numericComponent = self?.NumericComponent;
-            return numericComponent == null ? 0f : numericComponent.GetAsFloat(numericType);
+            return attribute.ValueFloat;
         }
 
-        public static bool SetBaseValue(this global::ET.AttributeComponent self, int numericType, float value)
+        public static bool SetValue(this global::ET.AttributeComponent self, int numericType, float value)
         {
             AttrCmp attribute = self.GetAttrCmp(numericType);
             if (attribute == null)
@@ -59,60 +46,26 @@ namespace ET.Client
             }
 
             var max = self.GetMax(numericType);
+            var maxV = value;
             if (max > -1)
             {
-                attribute.SetClamp(0, self.GetAttrCmp(max).CurrentValue);
+                maxV = self.GetAttrCmp(max).ValueFloat;
             }
-            attribute.BaseValue = value;
+            var v = math.clamp(value, 0, maxV);
+            attribute.SetBaseValue(v);
             return true;
         }
 
         private static int GetMax(this global::ET.AttributeComponent self, int numericType)
         {
-            if (numericType == NumericType.Hp)
+            if (numericType == NumericType.Hp || numericType == NumericType.Mp || numericType == NumericType.Mode || numericType == NumericType.Level)
             {
-                return NumericType.MaxHp;
-            }
-            else if (numericType == NumericType.Mp)
-            {
-                return NumericType.MaxMp;
-            }
-            else if (numericType == NumericType.Mode)
-            {
-                return NumericType.ModeMax;
-            }
-            else if (numericType == NumericType.Level)
-            {
-                return NumericType.MaxLevel;
+                return numericType + 1;
             }
             else
             {
                 return -1;
             }
-        }
-
-        public static bool SetCurrentValue(this global::ET.AttributeComponent self, int numericType, float value)
-        {
-            AttrCmp attribute = self.GetAttrCmp(numericType);
-            if (attribute == null)
-            {
-                return false;
-            }
-
-            attribute.CurrentValue = value;
-            return true;
-        }
-
-        public static bool InitializeAttribute(this global::ET.AttributeComponent self, int numericType, float value)
-        {
-            AttrCmp attribute = self.GetAttrCmp(numericType);
-            if (attribute == null)
-            {
-                return false;
-            }
-
-            attribute.Initialize(value);
-            return true;
         }
 
         public static void InitializeFromConfig(this global::ET.AttributeComponent self, List<int[]> configData)
@@ -152,7 +105,7 @@ namespace ET.Client
             Dictionary<int, float> snapshot = new Dictionary<int, float>();
             foreach (AttrCmp attribute in self.GetAllAttributes())
             {
-                snapshot[attribute.NumericType] = attribute.CurrentValue;
+                snapshot[attribute.NumericType] = attribute.ValueFloat;
             }
 
             return snapshot;
@@ -195,11 +148,12 @@ namespace ET.Client
 
         private static void SetOrAddAttribute(this global::ET.AttributeComponent self, int numericType, float value)
         {
-            if (!self.InitializeAttribute(numericType, value) && !self.HasAttribute(numericType))
+            AttrCmp attribute = self.GetAttrCmp(numericType);
+            if (attribute == null)
             {
-                AttrCmp attribute = self.AddChildWithId<AttrCmp, int>((long)numericType, numericType);
-                attribute.Initialize(value);
+                attribute = self.AddChildWithId<AttrCmp, int>((long)numericType, numericType);
             }
+            attribute.SetBaseValue(value);
         }
     }
 }

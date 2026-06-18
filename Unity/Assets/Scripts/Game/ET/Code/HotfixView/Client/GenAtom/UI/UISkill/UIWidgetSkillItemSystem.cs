@@ -123,7 +123,7 @@ namespace ET.Client
 
             SkillCooldownInfo cooldownInfo = spec.GetCooldownInfo();
             self.RefreshCooldownVisual(cooldownInfo);
-            float currentMp = asc.Attributes?.GetCurrentValue(global::ET.NumericType.Mp) ?? 0f;
+            float currentMp = asc.Attributes?.GetValue(global::ET.NumericType.Mp) ?? 0f;
             float resolvedCostMp = spec.GetResolvedCostMp();
             bool canCast = !spec.IsActive &&
                 !cooldownInfo.IsOnCooldown &&

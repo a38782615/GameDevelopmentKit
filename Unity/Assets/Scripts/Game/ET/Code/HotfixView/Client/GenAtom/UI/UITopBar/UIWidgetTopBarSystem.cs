@@ -40,8 +40,8 @@ namespace ET.Client
 
             var maxAge = Tables.Instance.DTUnitAttribute.Get(playerData.ConfigId, playerData.Level, playerData.SubLevel).MaxAge;
 
-            self.View.AgeUXTextMeshPro.text = $"{playerData.Age.ToString()}/ {maxAge}";
-            
+            self.View.AgeUXTextMeshPro.text = $"{playerData.Age.ToString()}/{maxAge}";
+
             self.View.LevelUXTextMeshPro.text = LocalizationHelper.GetString($"Level_{playerData.Level}_{playerData.SubLevel}");
             
             self.View.StoneCountUXTextMeshPro.text = playerData.Diamond.ToString();

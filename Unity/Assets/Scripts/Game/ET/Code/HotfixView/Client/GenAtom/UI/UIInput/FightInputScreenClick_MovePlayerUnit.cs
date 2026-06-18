@@ -31,7 +31,7 @@ namespace ET.Client
                 return;
             }
 
-            float speed = a.GetAttrCmp((int)NumericType.Speed).CurrentValue;
+            float speed = a.GetAttrCmp((int)NumericType.Speed).ValueFloat;
             if (speed <= 0f)
             {
                 await UniTask.CompletedTask;

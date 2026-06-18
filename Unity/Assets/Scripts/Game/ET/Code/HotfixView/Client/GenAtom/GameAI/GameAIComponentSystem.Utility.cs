@@ -32,18 +32,8 @@ namespace ET.Client
         public static int GetAttackIntervalMs(this GameAIComponent self, int defaultValue = 500)
         {
             AbilitySystemComponent asc = self.GetOwnerASC();
-            float attackSpeed = asc?.Attributes?.GetCurrentValue(global::ET.NumericType.AttackSpeed) ?? 0f;
-            if (attackSpeed > 0f)
-            {
-                return Mathf.Max(1, Mathf.RoundToInt(attackSpeed));
-            }
-
-            Unit unit = self.GetOwnerUnit();
-            var attr = unit?.GetComponent<global::ET.AttributeComponent>();
-            AttrCmp attack = attr?.GetAttribute(NumericType.AttackSpeed);
-            return attack != null
-                ? Mathf.Max(1, attack.CurrentValueInt)
-                : defaultValue;
+            float attackSpeed = asc?.Attributes?.GetValue(global::ET.NumericType.AttackSpeed) ?? 0f;
+            return Mathf.Max(1, Mathf.RoundToInt(attackSpeed));
         }
 
         public static void MarkPatrolIdle(this GameAIComponent self, DRGameAI aiConfig)

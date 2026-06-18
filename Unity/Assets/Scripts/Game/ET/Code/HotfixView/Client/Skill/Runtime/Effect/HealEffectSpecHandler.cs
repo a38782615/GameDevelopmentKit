@@ -2,6 +2,8 @@ namespace ET.Client
 {
     [FriendOfAttribute(typeof(ET.Client.AbilitySystemComponent))]
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
+    [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
+
     public partial class HealEffectSpecHandler : AEffectHandler
     {
         public HealEffectSpec SelfSpec()
@@ -64,8 +66,8 @@ namespace ET.Client
                 return;
             }
 
-            float currentHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.Hp);
-            float maxHealth = target.Attributes.GetCurrentValue(global::ET.NumericType.MaxHp);
+            float currentHealth = target.Attributes.GetValue(global::ET.NumericType.Hp);
+            float maxHealth = target.Attributes.GetValue(global::ET.NumericType.MaxHp);
             if (maxHealth > 0f && currentHealth >= maxHealth - 0.001f)
             {
                 return;
@@ -90,7 +92,7 @@ namespace ET.Client
                 return;
             }
 
-            float oldHealth = healthAttr.BaseValue;
+            float oldHealth = healthAttr.ValueFloat;
             float newHealth = oldHealth + baseHeal;
             if (maxHealth > 0f)
             {
@@ -103,7 +105,7 @@ namespace ET.Client
                 return;
             }
 
-            target.Attributes.SetBaseValue(healthAttr.NumericType, newHealth);
+            target.Attributes.SetValue(healthAttr.NumericType, newHealth);
 
             SpecExecutionContext executionContext = GetExecutionContext();
             executionContext.SetCustomData("Heal", actualHeal);
@@ -160,7 +162,7 @@ namespace ET.Client
                     }
                     else
                     {
-                        attrValue = target?.Attributes?.GetCurrentValue(nodeData.healMMCCaptureAttribute);
+                        attrValue = target?.Attributes?.GetValue(nodeData.healMMCCaptureAttribute);
                     }
                 }
 

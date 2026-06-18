@@ -114,7 +114,7 @@ namespace ET.Client
         {
             var modifier = new AttributeModifier
             {
-                targetAttrType = global::ET.NumericType.NormalizeLegacyAttributeType(data.attrType),
+                targetAttrType = data.attrType,
                 operation = data.operation,
             };
 
@@ -129,7 +129,7 @@ namespace ET.Client
                 case ModifierMagnitudeSourceType.ModifierMagnitudeCalculation:
                     modifier.useMMC = true;
                     modifier.mmcType = data.mmcType;
-                    modifier.mmcCaptureAttribute = global::ET.NumericType.NormalizeLegacyAttributeType(data.mmcCaptureAttribute);
+                    modifier.mmcCaptureAttribute = data.mmcCaptureAttribute;
                     modifier.mmcAttributeSource = data.mmcAttributeSource;
                     modifier.mmcCoefficient = data.mmcCoefficient;
                     modifier.mmcUseSnapshot = data.mmcUseSnapshot;
@@ -241,12 +241,12 @@ namespace ET.Client
                 return overrideValue;
             }
 
-            return SourceAttributes?.GetCurrentValue(attrType);
+            return GetValue(SourceAttributes, attrType);
         }
 
         public float? GetTargetAttribute(int attrType)
         {
-            return TargetAttributes?.GetCurrentValue(attrType);
+            return GetValue(TargetAttributes, attrType);
         }
 
         public float? GetSnapshotValue(int attrType)
@@ -273,6 +273,17 @@ namespace ET.Client
             }
 
             return defaultValue;
+        }
+
+        public AttrCmp GetAttrCmp(AttributeComponent self, int numericType)
+        {
+            return self?.GetChild<AttrCmp>(numericType);
+        }
+        
+        public float GetValue(AttributeComponent self, int numericType)
+        {
+            AttrCmp attribute = GetAttrCmp(self, numericType);
+            return attribute.ValueFloat;
         }
     }
 }

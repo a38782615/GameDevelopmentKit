@@ -11,7 +11,7 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectContainerComponent))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
     [FriendOfAttribute(typeof(ET.Client.DamageEffectSpec))]
-
+    [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
     public static partial class GameplayEffectSpecSystem
     {
         [EntitySystem]
@@ -79,7 +79,7 @@ namespace ET.Client
                 foreach (var modData in effectData.attributeModifiers)
                 {
                     var data = AttributeModifier.FromData(modData);
-                    
+
                     self.Modifiers.Add(data);
                 }
             }
@@ -239,7 +239,7 @@ namespace ET.Client
                     {
                         var attribute = targetAttr.GetAttribute(modifier.TargetAttrType);
                         if (attribute == null) continue;
-                        float v = attribute.BaseValue;
+                        float v = attribute.ValueFloat;
                         float magnitude = modifier.CalculateMagnitude(calcContext);
                         switch (modifier.Operation)
                         {
@@ -256,7 +256,7 @@ namespace ET.Client
                                 v = magnitude;
                                 break;
                         }
-                        targetAttr.SetBaseValue(attribute.NumericType, v);
+                        targetAttr.SetValue(attribute.NumericType, v);
                     }
                 }
 

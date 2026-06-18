@@ -11,8 +11,7 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this AttrCmp self, int numericType)
         {
-            self.SetNumericType(numericType);
-            self.Initialize(self.CurrentValue);
+            self.NumericType = numericType;
         }
 
         [EntitySystem]

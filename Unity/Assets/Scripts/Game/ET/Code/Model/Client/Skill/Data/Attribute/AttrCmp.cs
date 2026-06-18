@@ -10,153 +10,29 @@ namespace ET.Client
     {
         private const float Epsilon = 0.0001f;
 
-        private int numericType;
-        private bool isMeta;
-        private bool hasMinValue;
-        private float minValue;
-        private bool hasMaxValue;
-        private float maxValue;
-
         [NonSerialized]
-        private List<ActiveModifier> activeModifiers;
-
-        [NonSerialized]
-        private AggregatorMode aggregatorMode = AggregatorMode.Default;
+        private List<ActiveModifier> activeModifiers = new List<ActiveModifier>();
 
         [NonSerialized]
         private bool isDirty;
+        public int NumericType;
+        public int ModifierCount => activeModifiers.Count;
 
-        public int NumericType => numericType;
-        public bool IsMeta => isMeta;
-        public bool HasMinValue => hasMinValue;
-        public float MinValue => minValue;
-        public bool HasMaxValue => hasMaxValue;
-        public float MaxValue => maxValue;
-        public int ModifierCount => activeModifiers?.Count ?? 0;
-
-        public AggregatorMode AggregatorMode
+        public void SetBaseValue(float value)
         {
-            get => aggregatorMode;
-            set => aggregatorMode = value;
+            GetNumericComponent().Set(NumericType * 10 + 1, value);
         }
 
-        public float BaseValue
+        public float ValueFloat
         {
             get
             {
-                NumericComponent numericComponent = GetNumericComponent();
-                if (numericComponent == null)
-                {
-                    return 0f;
-                }
-
-                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-                return baseNumericType == global::ET.NumericType.None
-                    ? numericComponent.GetAsFloat(numericType)
-                    : numericComponent.GetAsFloat(baseNumericType);
+                return GetNumericComponent().GetAsFloat(NumericType);
             }
-            set
-            {
-                float newValue = ClampSilent(value);
-                WriteBaseValue(newValue, true);
-                MarkDirty();
-                Recalculate();
-            }
-        }
-
-        public int BaseValueInt
-        {
-            get
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                if (numericComponent == null)
-                {
-                    return 0;
-                }
-
-                int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-                return baseNumericType == global::ET.NumericType.None
-                    ? numericComponent.GetAsInt(numericType)
-                    : numericComponent.GetAsInt(baseNumericType);
-            }
-            set
-            {
-                WriteBaseValue(value, true);
-                MarkDirty();
-                Recalculate();
-            }
-        }
-
-        public float CurrentValue
-        {
-            get
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                return numericComponent == null ? 0f : numericComponent.GetAsFloat(numericType);
-            }
-            set
-            {
-                float newValue = ClampSilent(value);
-                WriteCurrentValue(newValue, true);
-                ClampDependentAttributes();
-            }
-        }
-
-        public int CurrentValueInt
-        {
-            get
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                return numericComponent == null ? 0 : numericComponent.GetAsInt(numericType);
-            }
-            set
-            {
-                WriteCurrentValue(value, true);
-                ClampDependentAttributes();
-            }
-        }
-
-        public void Initialize(float value)
-        {
-            float newValue = ClampSilent(value);
-            WriteBaseValue(newValue, false);
-            WriteCurrentValue(newValue, false);
-            ClampDependentAttributes();
-        }
-
-        public void SetNumericType(int value)
-        {
-            numericType = value;
-        }
-
-        public void SetClamp(float? min, float? max)
-        {
-            hasMinValue = min.HasValue;
-            if (min.HasValue)
-            {
-                minValue = min.Value;
-            }
-
-            hasMaxValue = max.HasValue;
-            if (max.HasValue)
-            {
-                maxValue = max.Value;
-            }
-        }
-
-        public void SetAsMeta(bool value = true)
-        {
-            isMeta = value;
-        }
-
-        public void ResetCurrentToBase()
-        {
-            CurrentValue = BaseValue;
         }
 
         public void AddModifier(AttributeModifier modifier, object source = null, int stackCount = 1)
         {
-            activeModifiers ??= new List<ActiveModifier>();
             activeModifiers.Add(new ActiveModifier
             {
                 Modifier = modifier,
@@ -243,33 +119,27 @@ namespace ET.Client
             }
 
             float newValue = CalculateNewValue(context);
-            CurrentValue = newValue;
+            SetBaseValue(newValue);
             isDirty = false;
-        }
-
-        public IEnumerable<ActiveModifier> GetActiveModifiers()
-        {
-            return activeModifiers ?? (IEnumerable<ActiveModifier>)Array.Empty<ActiveModifier>();
         }
 
         public override string ToString()
         {
-            return $"{ET.NumericType.GetAttributeName(numericType)}: Base={BaseValue}, Current={CurrentValue}";
+            return $"{ET.NumericType.GetAttributeName(NumericType)}: Value={ValueFloat}";
         }
 
         private float CalculateNewValue(ModifierCalculationContext context)
         {
             if (activeModifiers == null || activeModifiers.Count == 0)
             {
-                return BaseValue;
+                return ValueFloat;
             }
 
-            List<ActiveModifier> filteredModifiers = FilterModifiers(activeModifiers);
             float additive = 0f;
             float multiplicative = 1f;
             float? overrideValue = null;
 
-            foreach (ActiveModifier activeModifier in filteredModifiers)
+            foreach (ActiveModifier activeModifier in activeModifiers)
             {
                 AttributeModifier modifier = activeModifier.Modifier;
                 float magnitude = modifier.CalculateMagnitude(context);
@@ -300,263 +170,12 @@ namespace ET.Client
                 return overrideValue.Value;
             }
 
-            return (BaseValue + additive) * multiplicative;
-        }
-
-        private List<ActiveModifier> FilterModifiers(List<ActiveModifier> modifiers)
-        {
-            return aggregatorMode switch
-            {
-                AggregatorMode.MostNegativeModifier => FilterMostNegative(modifiers),
-                AggregatorMode.MostPositiveModifier => FilterMostPositive(modifiers),
-                AggregatorMode.MostNegativeWithAllPositive => FilterMostNegativeWithAllPositive(modifiers),
-                _ => modifiers,
-            };
-        }
-
-        private List<ActiveModifier> FilterMostNegative(List<ActiveModifier> modifiers)
-        {
-            List<ActiveModifier> result = new List<ActiveModifier>();
-            ActiveModifier? mostNegative = null;
-            float mostNegativeValue = 0f;
-
-            foreach (ActiveModifier modifier in modifiers)
-            {
-                if (modifier.Modifier.Operation != ModifierOperation.Add)
-                {
-                    result.Add(modifier);
-                    continue;
-                }
-
-                float magnitude = modifier.Modifier.CalculateMagnitude(null);
-                if (magnitude < 0f && magnitude < mostNegativeValue)
-                {
-                    mostNegative = modifier;
-                    mostNegativeValue = magnitude;
-                }
-            }
-
-            if (mostNegative.HasValue)
-            {
-                result.Add(mostNegative.Value);
-            }
-
-            return result;
-        }
-
-        private List<ActiveModifier> FilterMostPositive(List<ActiveModifier> modifiers)
-        {
-            List<ActiveModifier> result = new List<ActiveModifier>();
-            ActiveModifier? mostPositive = null;
-            float mostPositiveValue = 0f;
-
-            foreach (ActiveModifier modifier in modifiers)
-            {
-                if (modifier.Modifier.Operation != ModifierOperation.Add)
-                {
-                    result.Add(modifier);
-                    continue;
-                }
-
-                float magnitude = modifier.Modifier.CalculateMagnitude(null);
-                if (magnitude > 0f && magnitude > mostPositiveValue)
-                {
-                    mostPositive = modifier;
-                    mostPositiveValue = magnitude;
-                }
-            }
-
-            if (mostPositive.HasValue)
-            {
-                result.Add(mostPositive.Value);
-            }
-
-            return result;
-        }
-
-        private List<ActiveModifier> FilterMostNegativeWithAllPositive(List<ActiveModifier> modifiers)
-        {
-            List<ActiveModifier> result = new List<ActiveModifier>();
-            ActiveModifier? mostNegative = null;
-            float mostNegativeValue = 0f;
-
-            foreach (ActiveModifier modifier in modifiers)
-            {
-                if (modifier.Modifier.Operation != ModifierOperation.Add)
-                {
-                    result.Add(modifier);
-                    continue;
-                }
-
-                float magnitude = modifier.Modifier.CalculateMagnitude(null);
-                if (magnitude >= 0f)
-                {
-                    result.Add(modifier);
-                }
-                else if (magnitude < mostNegativeValue)
-                {
-                    mostNegative = modifier;
-                    mostNegativeValue = magnitude;
-                }
-            }
-
-            if (mostNegative.HasValue)
-            {
-                result.Add(mostNegative.Value);
-            }
-
-            return result;
-        }
-
-        private float ClampSilent(float value)
-        {
-            float result = value;
-            if (numericType == global::ET.NumericType.Hp)
-            {
-                NumericComponent numericComponent = GetNumericComponent();
-                float maxHealth = numericComponent?.GetAsFloat(global::ET.NumericType.MaxHp) ?? 0f;
-                if (maxHealth > 0f)
-                {
-                    result = math.min(result, maxHealth);
-                }
-            }
-
-            if (hasMinValue)
-            {
-                result = math.max(result, minValue);
-            }
-
-            if (hasMaxValue)
-            {
-                result = math.min(result, maxValue);
-            }
-
-            return result;
-        }
-
-        private void ClampDependentAttributes()
-        {
-            if (numericType != global::ET.NumericType.MaxHp)
-            {
-                return;
-            }
-
-            global::ET.AttributeComponent attributeComponent = GetParent<global::ET.AttributeComponent>();
-            AttrCmp healthAttribute = attributeComponent?.GetAttrCmp(global::ET.NumericType.Hp);
-            if (healthAttribute == null)
-            {
-                return;
-            }
-
-            float maxHealth = maxValue;
-            if (maxHealth <= 0f)
-            {
-                return;
-            }
-
-            if (healthAttribute.BaseValue > maxHealth + Epsilon)
-            {
-                healthAttribute.BaseValue = maxHealth;
-                return;
-            }
-
-            if (healthAttribute.CurrentValue > maxHealth + Epsilon)
-            {
-                healthAttribute.CurrentValue = maxHealth;
-            }
-        }
-
-        private void WriteBaseValue(float value, bool publishEvent)
-        {
-            NumericComponent numericComponent = GetNumericComponent();
-            if (numericComponent == null)
-            {
-                return;
-            }
-
-            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-            if (baseNumericType == global::ET.NumericType.None)
-            {
-                WriteCurrentValue(value, publishEvent);
-                return;
-            }
-
-            if (publishEvent)
-            {
-                numericComponent.Set(baseNumericType, value);
-            }
-            else
-            {
-                numericComponent.SetNoEvent(baseNumericType, (long)(value * 10000));
-                numericComponent.Update(baseNumericType, false);
-            }
-        }
-
-        private void WriteBaseValue(int value, bool publishEvent)
-        {
-            NumericComponent numericComponent = GetNumericComponent();
-            if (numericComponent == null)
-            {
-                return;
-            }
-
-            int baseNumericType = global::ET.NumericType.GetBaseNumericType(numericType);
-            if (baseNumericType == global::ET.NumericType.None)
-            {
-                WriteCurrentValue(value, publishEvent);
-                return;
-            }
-
-            if (publishEvent)
-            {
-                numericComponent.Set(baseNumericType, value);
-            }
-            else
-            {
-                numericComponent.SetNoEvent(baseNumericType, value);
-                numericComponent.Update(baseNumericType, false);
-            }
-        }
-
-        private void WriteCurrentValue(float value, bool publishEvent)
-        {
-            NumericComponent numericComponent = GetNumericComponent();
-            if (numericComponent == null)
-            {
-                return;
-            }
-
-            if (publishEvent)
-            {
-                numericComponent.Set(numericType, value);
-            }
-            else
-            {
-                numericComponent.SetNoEvent(numericType, (long)(value * 10000));
-            }
-        }
-
-        private void WriteCurrentValue(int value, bool publishEvent)
-        {
-            NumericComponent numericComponent = GetNumericComponent();
-            if (numericComponent == null)
-            {
-                return;
-            }
-
-            if (publishEvent)
-            {
-                numericComponent.Set(numericType, value);
-            }
-            else
-            {
-                numericComponent.SetNoEvent(numericType, value);
-            }
+            return (ValueFloat + additive) * multiplicative;
         }
 
         private NumericComponent GetNumericComponent()
         {
-            return GetParent<global::ET.AttributeComponent>()?.NumericComponent;
+            return GetParent<global::ET.AttributeComponent>().NumericComponent;
         }
 
     }

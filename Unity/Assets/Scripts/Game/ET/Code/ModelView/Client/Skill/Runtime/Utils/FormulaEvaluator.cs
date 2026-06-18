@@ -61,12 +61,12 @@ namespace ET.Client
                         }
                         else
                         {
-                            value = context.CasterAttributes.GetCurrentValue(numericType);
+                            value = context.CasterAttributes.GetValue(numericType);
                         }
                     }
                     else if (source == "Target" && context.TargetAttributes != null)
                     {
-                        value = context.TargetAttributes.GetCurrentValue(numericType);
+                        value = context.TargetAttributes.GetValue(numericType);
                     }
 
                     return (value ?? 0f).ToString(System.Globalization.CultureInfo.InvariantCulture);

@@ -245,7 +245,7 @@ namespace ET.Client
                     continue;
                 }
 
-                float health = asc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f;
+                float health = asc.Attributes?.GetValue(global::ET.NumericType.Hp) ?? 0f;
                 if (health <= 0f)
                 {
                     continue;
@@ -324,39 +324,30 @@ namespace ET.Client
             switch (attrType)
             {
                 case global::ET.NumericType.Hp:
-                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(global::ET.NumericType.MaxHp))}";
+                    valueText = $"{FormatIntegral(attribute.ValueFloat)}/{FormatIntegral(asc.Attributes.GetValue(global::ET.NumericType.MaxHp))}";
                     break;
                 case global::ET.NumericType.Mp:
-                    valueText = $"{FormatIntegral(attribute.CurrentValue)}/{FormatIntegral(asc.Attributes.GetCurrentValue(global::ET.NumericType.MaxMp))}";
+                    valueText = $"{FormatIntegral(attribute.ValueFloat)}/{FormatIntegral(asc.Attributes.GetValue(global::ET.NumericType.MaxMp))}";
                     break;
                 case global::ET.NumericType.CriticalProbability:
                 case global::ET.NumericType.SkillCD:
-                    valueText = $"{attribute.CurrentValue * 100f:F1}%";
+                    valueText = $"{attribute.ValueFloat * 100f:F1}%";
                     break;
                 case global::ET.NumericType.CriticalStrikeHarm:
-                    valueText = $"{attribute.CurrentValue * 100f:F0}%";
+                    valueText = $"{attribute.ValueFloat * 100f:F0}%";
                     break;
                 case global::ET.NumericType.Level:
                 case global::ET.NumericType.Experience:
                 case global::ET.NumericType.MaxHp:
                 case global::ET.NumericType.MaxMp:
-                    valueText = FormatIntegral(attribute.CurrentValue);
+                    valueText = FormatIntegral(attribute.ValueFloat);
                     break;
                 default:
-                    valueText = $"{attribute.CurrentValue:F1}";
+                    valueText = $"{attribute.ValueFloat:F1}";
                     break;
             }
 
-            float diff = attribute.CurrentValue - attribute.BaseValue;
-            if (math.abs(diff) <= 0.01f)
-            {
-                return valueText;
-            }
-
-            string diffText = diff > 0f
-                ? $"+{diff:F1}"
-                : $"{diff:F1}";
-            return $"{valueText} ({diffText})";
+            return valueText;
         }
 
         private static string FormatIntegral(float value)

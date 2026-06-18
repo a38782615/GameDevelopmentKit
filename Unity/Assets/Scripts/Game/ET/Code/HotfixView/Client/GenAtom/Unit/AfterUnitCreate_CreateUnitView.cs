@@ -34,8 +34,8 @@ namespace ET.Client
                     asc.InstanceId,
                     viewGameObject,
                     (UnitType)unit.Config().Type,
-                    asc.Attributes?.GetCurrentValue(global::ET.NumericType.Hp) ?? 0f,
-                    asc.Attributes?.GetCurrentValue(global::ET.NumericType.MaxHp) ?? 0f);
+                    asc.Attributes?.GetValue(global::ET.NumericType.Hp) ?? 0f,
+                    asc.Attributes?.GetValue(global::ET.NumericType.MaxHp) ?? 0f);
                     
                 AnimationManagerComponent animationManagerComponent = unit.GetOrAddComponent<AnimationManagerComponent>();
                 animationManagerComponent.Bind();

@@ -9,16 +9,15 @@ namespace ET
 		public const int Max = 10000;
 
 		public const int Speed = 1000;
-		public const int SpeedBase = Speed * 10 + 1;
-		public const int SpeedAdd = Speed * 10 + 2;
-		public const int SpeedPct = Speed * 10 + 3;
-		public const int SpeedFinalAdd = Speed * 10 + 4;
-		public const int SpeedFinalPct = Speed * 10 + 5;
+		public const int SpeedBase = Speed * 10 + 1; 
+	    public const int SpeedAdd = Speed* 10 + 2; 
+	    public const int SpeedPct = Speed* 10 + 3; 
+	    public const int SpeedFinalAdd = Speed* 10 + 4; 
+	    public const int SpeedFinalPct = Speed* 10 + 5; 
 
 		// 生命值
 		public const int Hp = 1001;
 		public const int HpBase = Hp * 10 + 1;
-		public const int HpAdd = Hp * 10 + 2;
 
 		// 最大生命值
 		public const int MaxHp = 1002;
@@ -47,63 +46,50 @@ namespace ET
 		// 攻击力
 		public const int Attack = 1006;
 		public const int AttackBase = Attack * 10 + 1;
-		public const int AttackAdd = Attack * 10 + 2;
 
 		// 法强
 		public const int MagicStrength = 1007;
 		public const int MagicStrengthBase = MagicStrength * 10 + 1;
-		public const int MagicStrengthAdd = MagicStrength * 10 + 2;
 
 		// 护甲
 		public const int Armor = 1008;
 		public const int ArmorBase = Armor * 10 + 1;
-		public const int ArmorAdd = Armor * 10 + 2;
 
 		// 魔抗
 		public const int MagicResistance = 1009;
 		public const int MagicResistanceBase = MagicResistance * 10 + 1;
-		public const int MagicResistanceAdd = MagicResistance * 10 + 2;
 
 		// 护甲穿透
 		public const int ArmorPenetration = 1010;
 		public const int ArmorPenetrationBase = ArmorPenetration * 10 + 1;
-		public const int ArmorPenetrationAdd = ArmorPenetration * 10 + 2;
 
 		// 法术穿透
 		public const int MagicPenetration = 1011;
 		public const int MagicPenetrationBase = MagicPenetration * 10 + 1;
-		public const int MagicPenetrationAdd = MagicPenetration * 10 + 2;
 
 		// 暴击率
 		public const int CriticalProbability = 1012;
 		public const int CriticalProbabilityBase = CriticalProbability * 10 + 1;
-		public const int CriticalProbabilityAdd = CriticalProbability * 10 + 2;
 
 		// 技能冷却缩减
 		public const int SkillCD = 1013;
 		public const int SkillCDBase = SkillCD * 10 + 1;
-		public const int SkillCDAdd = SkillCD * 10 + 2;
 
 		// 生命恢复
 		public const int HPRec = 1014;
 		public const int HPRecBase = HPRec * 10 + 1;
-		public const int HPRecAdd = HPRec * 10 + 2;
 
 		// 魔法恢复
 		public const int MPRec = 1015;
 		public const int MPRecBase = MPRec * 10 + 1;
-		public const int MPRecAdd = MPRec * 10 + 2;
 
 		// 攻击速度
 		public const int AttackSpeed = 1016;
 		public const int AttackSpeedBase = AttackSpeed * 10 + 1;
-		public const int AttackSpeedAdd = AttackSpeed * 10 + 2;
 
 		// 攻速收益
 		public const int AttackSpeedIncome = 1017;
 		public const int AttackSpeedIncomeBase = AttackSpeedIncome * 10 + 1;
-		public const int AttackSpeedIncomeAdd = AttackSpeedIncome * 10 + 2;
-
 		// 等级
 		public const int Level = 1018;
 		public const int LevelBase = Level * 10 + 1;
@@ -133,19 +119,23 @@ namespace ET
 
 		public const int Damage = 1024;
 		public const int DamageBase = Damage * 10 + 1;
-		public const int DamageAdd = Damage * 10 + 2;
-		public const int DamagePct = Damage * 10 + 3;
 
 		public const int Experience = 1025;
 		public const int ExperienceBase = Experience * 10 + 1;
 
-		public const int IncomingDamage = 1026;
+		public const int MaxExperience = 1026;
+		public const int MaxExperienceBase = MaxExperience * 10 + 1;
+
+		public const int IncomingDamage = 1027;
 		public const int IncomingDamageBase = IncomingDamage * 10 + 1;
 
-		public const int IncomingHeal = 1027;
+		public const int IncomingHeal = 1028;
 		public const int IncomingHealBase = IncomingHeal * 10 + 1;
 
-		public const int MaxAge = 1028;
+		public const int Age = 1029;
+		public const int AgeBase = Age * 10 + 1;
+
+		public const int MaxAge = 1030;
 		public const int MaxAgeBase = MaxAge * 10 + 1;
 
 		public const int AOI = 3003;
@@ -180,61 +170,6 @@ namespace ET
 				IncomingHeal,
 				MaxAge,
 			};
-		}
-
-		public static int GetBaseNumericType(int numericType)
-		{
-			switch (numericType)
-			{
-				case Speed:
-					return SpeedBase;
-				case Hp:
-					return HpBase;
-				case MaxHp:
-					return MaxHpBase;
-				case Mp:
-					return MpBase;
-				case MaxMp:
-					return MaxMpBase;
-				case Attack:
-					return AttackBase;
-				case MagicStrength:
-					return MagicStrengthBase;
-				case Armor:
-					return ArmorBase;
-				case MagicResistance:
-					return MagicResistanceBase;
-				case CriticalProbability:
-					return CriticalProbabilityBase;
-				case SkillCD:
-					return SkillCDBase;
-				case HPRec:
-					return HPRecBase;
-				case MPRec:
-					return MPRecBase;
-				case AttackSpeed:
-					return AttackSpeedBase;
-				case Level:
-					return LevelBase;
-				case CriticalStrikeHarm:
-					return CriticalStrikeHarmBase;
-				case Mode:
-					return ModeBase;
-				case ModeMax:
-					return ModeMaxBase;
-				case Damage:
-					return DamageBase;
-				case Experience:
-					return ExperienceBase;
-				case IncomingDamage:
-					return IncomingDamageBase;
-				case IncomingHeal:
-					return IncomingHealBase;
-				case MaxAge:
-					return MaxAgeBase;
-				default:
-					return None;
-			}
 		}
 
 		public static string GetAttributeName(int numericType)
@@ -356,21 +291,6 @@ namespace ET
 				default:
 					numericType = None;
 					return false;
-			}
-		}
-
-		public static int NormalizeLegacyAttributeType(int numericType)
-		{
-			switch (numericType)
-			{
-				case 100:
-					return Mode;
-				case 200:
-					return Attack;
-				case 300:
-					return Speed;
-				default:
-					return numericType;
 			}
 		}
 	}

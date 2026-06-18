@@ -7,6 +7,8 @@ namespace ET.Client
     [FriendOfAttribute(typeof(ET.Client.GameplayEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.DamageEffectSpec))]
     [FriendOfAttribute(typeof(ET.Client.SpecExecutionContext))]
+    [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
+
     public partial class DamageEffectSpecHandler : AEffectHandler
     {
         public DamageEffectSpec SelfSpec()
@@ -56,7 +58,7 @@ namespace ET.Client
                 && target.Attributes != null)
             {
                 int defenseType = nodeData.damageType == DamageType.Physical ? global::ET.NumericType.Armor : global::ET.NumericType.MagicResistance;
-                float? defense = target.Attributes.GetCurrentValue(defenseType);
+                float? defense = target.Attributes.GetValue(defenseType);
                 if (defense.HasValue && defense.Value > 0)
                 {
                     baseDamage *= 100f / (100f + defense.Value);
@@ -70,12 +72,12 @@ namespace ET.Client
                 AttrCmp healthAttr = target.Attributes.GetAttribute(global::ET.NumericType.Hp);
                 if (healthAttr != null)
                 {
-                    float hpBefore = healthAttr.CurrentValue;
-                    target.Attributes.SetBaseValue(healthAttr.NumericType, healthAttr.CurrentValue - baseDamage);
-                    SkillDiagFileLogger.Log($"[DamageEffect] Apply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hpBefore={hpBefore:F3} hpAfter={healthAttr.CurrentValue:F3}");
+                    float hpBefore = healthAttr.ValueFloat;
+                    target.Attributes.SetValue(healthAttr.NumericType, healthAttr.ValueFloat - baseDamage);
+                    SkillDiagFileLogger.Log($"[DamageEffect] Apply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hpBefore={hpBefore:F3} hpAfter={healthAttr.ValueFloat:F3}");
                     AbilitySystemComponent casterAsc = context?.GetCaster();
                     Unit casterUnit = casterAsc?.GetParent<SkillUnit>()?.Unit.As();
-                    SkillDiagFileLogger.LogDamageApplied(Spec.SkillId, casterUnit?.Id ?? 0, casterAsc?.InstanceId ?? 0, target.InstanceId, Spec.NodeGuid, baseDamage, hpBefore, healthAttr.CurrentValue);
+                    SkillDiagFileLogger.LogDamageApplied(Spec.SkillId, casterUnit?.Id ?? 0, casterAsc?.InstanceId ?? 0, target.InstanceId, Spec.NodeGuid, baseDamage, hpBefore, healthAttr.ValueFloat);
                 }
                 else
                 {
@@ -167,7 +169,7 @@ namespace ET.Client
                     }
                     else
                     {
-                        attrValue = target?.Attributes?.GetCurrentValue(nodeData.damageMMCCaptureAttribute);
+                        attrValue = target?.Attributes?.GetValue(nodeData.damageMMCCaptureAttribute);
                     }
                 }
 
