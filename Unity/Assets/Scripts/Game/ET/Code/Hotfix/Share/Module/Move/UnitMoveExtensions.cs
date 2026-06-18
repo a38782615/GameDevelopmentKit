@@ -8,30 +8,16 @@ namespace ET
     {
         public static void AddMoveComponentByMode(this Unit unit)
         {
-            if (unit.GetComponent<MoveRestrictionComponent>() == null)
-            {
-                unit.AddComponent<MoveRestrictionComponent>();
-            }
+            unit.GetOrAddComponent<MoveRestrictionComponent>();
 
             if (global::ET.ModeDefine.Is2D)
             {
-                unit.RemoveComponent<MoveComponent>();
-                if (unit.GetComponent<Move2DComponent>() != null)
-                {
-                    return;
-                }
-
-                unit.AddComponent<Move2DComponent>();
-                return;
+                unit.GetOrAddComponent<Move2DComponent>();
             }
-
-            unit.RemoveComponent<Move2DComponent>();
-            if (unit.GetComponent<MoveComponent>() != null)
+            else
             {
-                return;
+                unit.GetOrAddComponent<MoveComponent>();
             }
-
-            unit.AddComponent<MoveComponent>();
         }
 
         public static bool IsMoveAllowed(this Unit unit)

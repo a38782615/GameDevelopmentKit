@@ -59,12 +59,43 @@ namespace ET
             return ret;
         }
 
-        public static T GetOrAddComponent<T, A, B, C>(this Entity entity, A a, B b,C c, bool isFromPool = false) where T : Entity, IAwake<A, B, C>, new()
+        public static T GetOrAddComponent<T, A, B, C>(this Entity entity, A a, B b, C c, bool isFromPool = false) where T : Entity, IAwake<A, B, C>, new()
         {
             var ret = entity.GetComponent<T>();
             if (ret == null)
             {
                 ret = entity.AddComponent<T, A, B, C>(a, b, c, isFromPool);
+            }
+            return ret;
+        }
+
+
+        public static T GetOrAddChild<T, A>(this Entity entity,long id, A a, bool isFromPool = false) where T : Entity, IAwake<A>, new()
+        {
+            var ret = entity.GetChild<T>(id);
+            if (ret == null)
+            {
+                ret = entity.AddChildWithId<T, A>(id, a, isFromPool);
+            }
+            return ret;
+        }
+
+        public static T GetOrAddChild<T, A, B>(this Entity entity, long id, A a, B b, bool isFromPool = false) where T : Entity, IAwake<A, B>, new()
+        {
+            var ret = entity.GetChild<T>(id);
+            if (ret == null)
+            {
+                ret = entity.AddChildWithId<T, A, B>(id, a, b, isFromPool);
+            }
+            return ret;
+        }
+
+        public static T GetOrAddChild<T, A, B, C>(this Entity entity, long id, A a, B b, C c, bool isFromPool = false) where T : Entity, IAwake<A, B, C>, new()
+        {
+            var ret = entity.GetChild<T>(id);
+            if (ret == null)
+            {
+                ret = entity.AddChildWithId<T, A, B, C>(id, a, b, c, isFromPool);
             }
             return ret;
         }

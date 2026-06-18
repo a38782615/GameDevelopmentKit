@@ -34,10 +34,10 @@ namespace ET.Client
             switch (unitType)
             {
                 case UnitType.Player:
-                    self.InitPlayerFromTable(asc, unit.ConfigId);
+                    self.InitPlayerFromTable(asc, unit.Id);
                     return;
                 case UnitType.Monster:
-                    self.InitMonsterFromTable(asc, unit.ConfigId);
+                    self.InitMonsterFromTable(asc, unit.Id);
                     return;
                 default:
                     Log.Warning($"[SkillUnit] Unsupported unit type: {(byte)unitType}, UnitConfigId: {unit.ConfigId}");
@@ -45,7 +45,7 @@ namespace ET.Client
             }
         }
 
-        public static DRHero GetHeroData(this SkillUnit self, int id)
+        public static DRHero GetHeroData(this SkillUnit self, long id)
         {
             var heroTable = Tables.Instance.DTHero;
             if (heroTable?.DataList == null)
@@ -56,7 +56,7 @@ namespace ET.Client
             return heroTable.Get(id);
         }
 
-        public static DRMonster GetMonsterData(this SkillUnit self, int id)
+        public static DRMonster GetMonsterData(this SkillUnit self, long id)
         {
             var monsterTable = Tables.Instance.DTMonster;
             if (monsterTable?.DataList == null)
@@ -67,12 +67,12 @@ namespace ET.Client
             return monsterTable.Get(id);
         }
 
-        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, int unitConfigId)
+        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, long id)
         {
-            DRHero heroData = self.GetHeroData(unitConfigId);
+            DRHero heroData = self.GetHeroData(id);
             if (heroData == null)
             {
-                Log.Warning($"[SkillUnit] Missing hero config, UnitConfigId: {unitConfigId}");
+                Log.Warning($"[SkillUnit] Missing hero config, id: {id}");
                 return;
             }
 
@@ -80,12 +80,12 @@ namespace ET.Client
             self.GrantSkills(asc, heroData.PassiveSkill, true);
         }
 
-        private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, int unitConfigId)
+        private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, long id)
         {
-            DRMonster monsterData = self.GetMonsterData(unitConfigId);
+            DRMonster monsterData = self.GetMonsterData(id);
             if (monsterData == null)
             {
-                Log.Warning($"[SkillUnit] Missing monster config, UnitConfigId: {unitConfigId}");
+                Log.Warning($"[SkillUnit] Missing monster config, id: {id}");
                 return;
             }
 

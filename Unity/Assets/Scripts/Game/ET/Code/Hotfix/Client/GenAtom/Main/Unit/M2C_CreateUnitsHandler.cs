@@ -18,7 +18,7 @@ namespace ET.Client
 					continue;
 				}
 
-				Unit unit = UnitFactory.Create(currentScene, unitInfo);
+				Unit unit = UnitFactory.CreateData(currentScene, unitInfo);
 				afterCreateTasks.Add(EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit }));
 			}
 

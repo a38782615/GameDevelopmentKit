@@ -60,6 +60,8 @@ message UnitInfo
 	map<int32, int64> KV = 6;
 	MoveInfo MoveInfo = 7;
 	int32 PosIdx = 8;
+	int32 Level = 9;
+	int32 SubLevel = 10;
 }
 
 message M2C_CreateUnits // IMessage

@@ -18,7 +18,6 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
         Id = _buf.ReadInt();
         EntityId = _buf.ReadInt();
         Type = _buf.ReadInt();
-        HeadIcon = _buf.ReadString();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
         Position = _buf.ReadInt();
@@ -43,7 +42,6 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
     /// Type
     /// </summary>
     public readonly int Type;
-    public readonly string HeadIcon;
     /// <summary>
     /// 名字
     /// </summary>
@@ -86,7 +84,6 @@ public sealed partial class DRUnitConfig : Luban.BeanBase
         + "Id:" + Id + ","
         + "EntityId:" + EntityId + ","
         + "Type:" + Type + ","
-        + "HeadIcon:" + HeadIcon + ","
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","
         + "Position:" + Position + ","

@@ -18,13 +18,14 @@ namespace ET.Client
             GFEntityHeadItem headEntity =  unit.AddComponent<GFEntityHeadItem>();
             var config = unit.Config();
             await headEntity.ShowEntityAsync(config.EntityId);
-            await headEntity.SetHeadIconAsync(unit);
 
             GameObject viewGameObject = headEntity.CachedTransform.gameObject;
             var gameObjectComponent = unit.GetOrAddComponent<GameObjectComponent>();
             gameObjectComponent.GameObject = viewGameObject;
             gameObjectComponent.Transform.position = unit.Position;
             ChangeRotation_SyncGameObjectRotation.SyncTransform(unit, gameObjectComponent.Transform);
+            
+            await headEntity.SetHeadIconAsync(unit);
 
             AbilitySystemComponent asc = skillUnit?.ASC.As();
             if (asc != null)

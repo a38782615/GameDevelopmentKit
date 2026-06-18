@@ -17,6 +17,7 @@ namespace ET
         public float Attack => NumericComponent.GetAsFloat(NumericType.Attack);
         public float Armor => NumericComponent.GetAsFloat(NumericType.Armor);
         public float CriticalProbability => NumericComponent.GetAsFloat(NumericType.CriticalProbability);
+        public int Age => NumericComponent.GetAsInt(NumericType.Age);
         public int MaxAge => NumericComponent.GetAsInt(NumericType.MaxAge);
 
         public NumericComponent NumericComponent => this.GetParent<Unit>().GetComponent<NumericComponent>();

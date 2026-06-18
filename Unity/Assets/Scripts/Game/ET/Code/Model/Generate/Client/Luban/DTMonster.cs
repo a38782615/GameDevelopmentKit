@@ -13,7 +13,7 @@ namespace ET
 {
 public partial class DTMonster : IDataTable
 {
-    private System.Collections.Generic.Dictionary<int, DRMonster> _dataMap;
+    private System.Collections.Generic.Dictionary<long, DRMonster> _dataMap;
     private System.Collections.Generic.List<DRMonster> _dataList;
     private readonly System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> _loadFunc;
 
@@ -28,7 +28,7 @@ public partial class DTMonster : IDataTable
         int n = _buf.ReadSize();
         if(_dataMap == null)
         {
-            _dataMap = new System.Collections.Generic.Dictionary<int, DRMonster>(n);
+            _dataMap = new System.Collections.Generic.Dictionary<long, DRMonster>(n);
             _dataList = new System.Collections.Generic.List<DRMonster>(n);
         }
         else
@@ -46,11 +46,11 @@ public partial class DTMonster : IDataTable
         PostInit();
     }
 
-    public System.Collections.Generic.IReadOnlyDictionary<int, DRMonster> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyDictionary<long, DRMonster> DataMap => _dataMap;
     public System.Collections.Generic.IReadOnlyList<DRMonster> DataList => _dataList;
-    public DRMonster GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
-    public DRMonster Get(int key) => _dataMap[key];
-    public DRMonster this[int key] => _dataMap[key];
+    public DRMonster GetOrDefault(long key) => _dataMap.TryGetValue(key, out var v) ? v : default;
+    public DRMonster Get(long key) => _dataMap[key];
+    public DRMonster this[long key] => _dataMap[key];
 
     public void ResolveRef(Tables tables)
     {

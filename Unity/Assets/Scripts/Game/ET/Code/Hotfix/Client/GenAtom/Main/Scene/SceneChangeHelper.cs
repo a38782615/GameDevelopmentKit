@@ -25,8 +25,7 @@ namespace ET.Client
 
             var unitComponent = currentScene.GetComponent<UnitComponent>();
 
-            Unit unit = UnitFactory.Create(currentScene, m2CCreateMyUnit.Unit);
-            unitComponent.Add(unit);
+            Unit unit = UnitFactory.CreateData(currentScene, m2CCreateMyUnit.Unit);
             await EventSystem.Instance.PublishAsync(currentScene, new AfterUnitCreate() { Unit = unit });
 
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish()

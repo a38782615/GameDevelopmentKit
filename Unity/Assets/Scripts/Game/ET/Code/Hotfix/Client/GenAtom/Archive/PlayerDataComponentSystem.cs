@@ -6,7 +6,7 @@ namespace ET.Client
     [FriendOf(typeof(PlayerDataComponent))]
     public static partial class PlayerDataComponentSystem
     {
-        private const int PlayerDataId = 1;
+        private const int PlayerDataId = 10001;
         private const string LegacyPlayerDataDocumentId = nameof(PlayerData);
 
         [EntitySystem]
@@ -38,7 +38,7 @@ namespace ET.Client
 
             if (playerData == null)
             {
-                playerData = CreateDefaultPlayerData();
+                playerData = CreateDefaultPlayerData(PlayerDataId);
                 needSave = true;
             }
 
@@ -78,12 +78,13 @@ namespace ET.Client
             self.PlayerData = playerData;
         }
 
-        private static PlayerData CreateDefaultPlayerData()
+        private static PlayerData CreateDefaultPlayerData(long id)
         {
+            var heroConfig = Tables.Instance.DTHero.Get(id);
             return new PlayerData
             {
-                Id = PlayerDataId,
-                ConfigId = 1001,
+                Id = id,
+                ConfigId = heroConfig.UnitConfigId,
                 Age = 16,
                 Exp = 0,
                 Level = 0,

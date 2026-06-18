@@ -15,10 +15,13 @@ public sealed partial class DRMonster : Luban.BeanBase
 {
     public DRMonster(ByteBuf _buf) 
     {
-        Id = _buf.ReadInt();
+        Id = _buf.ReadLong();
         UnitConfigId = _buf.ReadInt();
         UnitConfigId_Ref = null;
+        Level = _buf.ReadInt();
+        SubLevel = _buf.ReadInt();
         Name = _buf.ReadString();
+        HeadIcon = _buf.ReadString();
         {int __n0 = _buf.ReadSize(); ActiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); ActiveSkill[__index0] = __e0;}}
         {int __n0 = _buf.ReadSize(); PassiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); PassiveSkill[__index0] = __e0;}}
         PostInit();
@@ -29,10 +32,13 @@ public sealed partial class DRMonster : Luban.BeanBase
         return new DRMonster(_buf);
     }
 
-    public readonly int Id;
+    public readonly long Id;
     public readonly int UnitConfigId;
     public DRUnitConfig UnitConfigId_Ref { private set; get; }
+    public readonly int Level;
+    public readonly int SubLevel;
     public readonly string Name;
+    public readonly string HeadIcon;
     /// <summary>
     /// ActiveSkillIds
     /// </summary>
@@ -55,7 +61,10 @@ public sealed partial class DRMonster : Luban.BeanBase
         return "{ "
         + "Id:" + Id + ","
         + "UnitConfigId:" + UnitConfigId + ","
+        + "Level:" + Level + ","
+        + "SubLevel:" + SubLevel + ","
         + "Name:" + Name + ","
+        + "HeadIcon:" + HeadIcon + ","
         + "ActiveSkill:" + Luban.StringUtil.CollectionToString(ActiveSkill) + ","
         + "PassiveSkill:" + Luban.StringUtil.CollectionToString(PassiveSkill) + ","
         + "}";

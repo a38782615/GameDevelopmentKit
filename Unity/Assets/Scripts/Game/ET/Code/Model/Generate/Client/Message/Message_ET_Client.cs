@@ -576,6 +576,10 @@ namespace ET
         public MoveInfo MoveInfo { get; set; }
         [MemoryPackOrder(7)]
         public int PosIdx { get; set; }
+        [MemoryPackOrder(8)]
+        public int Level { get; set; }
+        [MemoryPackOrder(9)]
+        public int SubLevel { get; set; }
         public override void Dispose() 
         {
             if (!this.IsFromPool) { return; }
@@ -587,11 +591,13 @@ namespace ET
             this.KV.Clear();
             this.MoveInfo = default;
             this.PosIdx = default;
+            this.Level = default;
+            this.SubLevel = default;
             ObjectPool.Instance.Recycle(this); 
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:65)
+    // proto file : ET-Client/OuterMessage.proto (line:67)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_CreateUnits)]
     public partial class M2C_CreateUnits: MessageObject, IMessage
@@ -611,7 +617,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:70)
+    // proto file : ET-Client/OuterMessage.proto (line:72)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_CreateMyUnit)]
     public partial class M2C_CreateMyUnit: MessageObject, IMessage
@@ -631,7 +637,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:75)
+    // proto file : ET-Client/OuterMessage.proto (line:77)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_StartSceneChange)]
     public partial class M2C_StartSceneChange: MessageObject, IMessage
@@ -654,7 +660,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:81)
+    // proto file : ET-Client/OuterMessage.proto (line:83)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_RemoveUnits)]
     public partial class M2C_RemoveUnits: MessageObject, IMessage
@@ -674,7 +680,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:86)
+    // proto file : ET-Client/OuterMessage.proto (line:88)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_PathfindingResult)]
     public partial class C2M_PathfindingResult: MessageObject, ILocationMessage
@@ -697,7 +703,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:92)
+    // proto file : ET-Client/OuterMessage.proto (line:94)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_Stop)]
     public partial class C2M_Stop: MessageObject, ILocationMessage
@@ -717,7 +723,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:97)
+    // proto file : ET-Client/OuterMessage.proto (line:99)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_PathfindingResult)]
     public partial class M2C_PathfindingResult: MessageObject, IMessage
@@ -743,7 +749,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:104)
+    // proto file : ET-Client/OuterMessage.proto (line:106)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_Stop)]
     public partial class M2C_Stop: MessageObject, IMessage
@@ -772,7 +778,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:113)
+    // proto file : ET-Client/OuterMessage.proto (line:115)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_Ping)]
     [ResponseType(nameof(G2C_Ping))]
@@ -793,7 +799,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:118)
+    // proto file : ET-Client/OuterMessage.proto (line:120)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Ping)]
     public partial class G2C_Ping: MessageObject, ISessionResponse
@@ -822,7 +828,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:127)
+    // proto file : ET-Client/OuterMessage.proto (line:129)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Test)]
     public partial class G2C_Test: MessageObject, ISessionMessage
@@ -839,7 +845,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:132)
+    // proto file : ET-Client/OuterMessage.proto (line:134)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_Reload)]
     [ResponseType(nameof(M2C_Reload))]
@@ -866,7 +872,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:139)
+    // proto file : ET-Client/OuterMessage.proto (line:141)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_Reload)]
     public partial class M2C_Reload: MessageObject, ISessionResponse
@@ -892,7 +898,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:147)
+    // proto file : ET-Client/OuterMessage.proto (line:149)
     [MemoryPackable]
     [Message(Message_ET_Client.C2R_Login)]
     [ResponseType(nameof(R2C_Login))]
@@ -925,7 +931,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:154)
+    // proto file : ET-Client/OuterMessage.proto (line:156)
     [MemoryPackable]
     [Message(Message_ET_Client.R2C_Login)]
     public partial class R2C_Login: MessageObject, ISessionResponse
@@ -960,7 +966,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:165)
+    // proto file : ET-Client/OuterMessage.proto (line:167)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_LoginGate)]
     [ResponseType(nameof(G2C_LoginGate))]
@@ -990,7 +996,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:172)
+    // proto file : ET-Client/OuterMessage.proto (line:174)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_LoginGate)]
     public partial class G2C_LoginGate: MessageObject, ISessionResponse
@@ -1019,7 +1025,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:180)
+    // proto file : ET-Client/OuterMessage.proto (line:182)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_TestHotfixMessage)]
     public partial class G2C_TestHotfixMessage: MessageObject, ISessionMessage
@@ -1039,7 +1045,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:186)
+    // proto file : ET-Client/OuterMessage.proto (line:188)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TestRobotCase)]
     [ResponseType(nameof(M2C_TestRobotCase))]
@@ -1063,7 +1069,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:192)
+    // proto file : ET-Client/OuterMessage.proto (line:194)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TestRobotCase)]
     public partial class M2C_TestRobotCase: MessageObject, ILocationResponse
@@ -1092,7 +1098,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:200)
+    // proto file : ET-Client/OuterMessage.proto (line:202)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TestRobotCase2)]
     public partial class C2M_TestRobotCase2: MessageObject, ILocationMessage
@@ -1115,7 +1121,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:206)
+    // proto file : ET-Client/OuterMessage.proto (line:208)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TestRobotCase2)]
     public partial class M2C_TestRobotCase2: MessageObject, ILocationMessage
@@ -1138,7 +1144,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:213)
+    // proto file : ET-Client/OuterMessage.proto (line:215)
     [MemoryPackable]
     [Message(Message_ET_Client.C2M_TransferMap)]
     [ResponseType(nameof(M2C_TransferMap))]
@@ -1159,7 +1165,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:218)
+    // proto file : ET-Client/OuterMessage.proto (line:220)
     [MemoryPackable]
     [Message(Message_ET_Client.M2C_TransferMap)]
     public partial class M2C_TransferMap: MessageObject, ILocationResponse
@@ -1185,7 +1191,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:226)
+    // proto file : ET-Client/OuterMessage.proto (line:228)
     [MemoryPackable]
     [Message(Message_ET_Client.C2G_Benchmark)]
     [ResponseType(nameof(G2C_Benchmark))]
@@ -1206,7 +1212,7 @@ namespace ET
         }
     }
 
-    // proto file : ET-Client/OuterMessage.proto (line:231)
+    // proto file : ET-Client/OuterMessage.proto (line:233)
     [MemoryPackable]
     [Message(Message_ET_Client.G2C_Benchmark)]
     public partial class G2C_Benchmark: MessageObject, ISessionResponse

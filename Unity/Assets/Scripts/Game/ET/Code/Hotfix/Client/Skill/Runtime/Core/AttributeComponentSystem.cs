@@ -31,7 +31,7 @@ namespace ET.Client
             self.AllModifiers?.Dispose();
         }
 
-        public static void Init(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
+        static void Init(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
         {
             NumericComponent numericComponent = self.NumericComponent;
             if (numericComponent == null)
@@ -42,41 +42,38 @@ namespace ET.Client
             var unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
             if (unitBaseConfig != null)
             {
-                numericComponent.SetNoEvent(NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
                 numericComponent.SetNoEvent(NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
+                numericComponent.SetNoEvent(NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
+
                 numericComponent.SetNoEvent(NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
+
                 numericComponent.SetNoEvent(NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));
                 numericComponent.SetNoEvent(NumericType.ModeMax, ToNumericLong(unitBaseConfig.Mode));
+
                 numericComponent.SetNoEvent(NumericType.Mp, ToNumericLong(unitBaseConfig.MP));
                 numericComponent.SetNoEvent(NumericType.MaxMp, ToNumericLong(unitBaseConfig.MP));
+
                 numericComponent.SetNoEvent(NumericType.Attack, ToNumericLong(unitBaseConfig.Attack));
+
                 numericComponent.SetNoEvent(NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
+
                 numericComponent.SetNoEvent(NumericType.Speed, unitBaseConfig.MoveSpeed);
-                numericComponent.SetNoEvent(NumericType.AttackSpeed, ToNumericLong(unitBaseConfig.AttackSpeed));
+
+                numericComponent.SetNoEvent(NumericType.AttackSpeed, unitBaseConfig.AttackSpeed);
+                
+                numericComponent.SetNoEvent(NumericType.MaxAge,  unitBaseConfig.MaxAge);
             }
 
             self.RefreshRuntimeAttributesFromNumeric();
         }
-
-        public static AttrCmp AddAttribute(this global::ET.AttributeComponent self, int numericType, float defaultValue = 0f)
-        {
-            AttrCmp existing = self.GetAttrCmp(numericType);
-            if (existing != null)
-            {
-                return existing;
-            }
-
-            // 子实体 Id 直接使用 NumericType，便于快速定位。
-            AttrCmp attribute = self.AddChildWithId<AttrCmp, int>(numericType, numericType);
-            return attribute;
-        }
-
-        public static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self)
+ 
+        static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self)
         {
             // 统一从 NumericComponent 拉取客户端关心的属性，构建或刷新 AttrCmp。
             foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
             {
-                RefreshRuntimeAttributeFromNumeric(self, numericType);
+                // 子实体 Id 直接使用 NumericType，便于快速定位。
+                self.GetOrAddChild<AttrCmp, int>(numericType, numericType);
             }
         }
 
@@ -101,17 +98,7 @@ namespace ET.Client
             CountAttr(self, modify.Attribute);
             modify.Dispose();
         }
-
-        private static void RefreshRuntimeAttributeFromNumeric(global::ET.AttributeComponent self, int numericType)
-        {
-            float value = self.NumericComponent?.GetAsFloat(numericType) ?? 0f;
-            AttrCmp attribute = self.GetAttrCmp(numericType);
-            if (attribute == null)
-            {
-                self.AddAttribute(numericType, value);
-            }
-        }
-
+ 
 
         private static long ToNumericLong(float value)
         {

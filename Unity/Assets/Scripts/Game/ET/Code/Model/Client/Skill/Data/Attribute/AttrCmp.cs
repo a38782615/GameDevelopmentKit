@@ -31,6 +31,14 @@ namespace ET.Client
             }
         }
 
+        public float ValueInt
+        {
+            get
+            {
+                return GetNumericComponent().GetAsInt(NumericType);
+            }
+        }
+
         public void AddModifier(AttributeModifier modifier, object source = null, int stackCount = 1)
         {
             activeModifiers.Add(new ActiveModifier

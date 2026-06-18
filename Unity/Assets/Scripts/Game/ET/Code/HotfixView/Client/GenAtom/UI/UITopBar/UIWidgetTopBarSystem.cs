@@ -9,7 +9,8 @@ namespace ET.Client
         [EntitySystem]
         private static void Awake(this UIWidgetTopBar self)
         {
-            
+            var unitInfo = UnitFactory.CreateHeroUniInfo(self.Root());
+            var unit = UnitFactory.CreateData(self.Root().CurrentScene(), unitInfo);
         }
 
         [EntitySystem]
@@ -32,18 +33,17 @@ namespace ET.Client
 
         private static void RefreshView(this UIWidgetTopBar self)
         {
-            PlayerData playerData = self.Root()?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
-            if (playerData == null)
-            {
-                return;
-            }
+            PlayerData playerData = self.Root().GetComponent<GameDataMgrComponent>().GetPlayerDataComponent()?.PlayerData;
 
-            var maxAge = Tables.Instance.DTUnitAttribute.Get(playerData.ConfigId, playerData.Level, playerData.SubLevel).MaxAge;
+            UnitComponent unitComponent = self.Root().CurrentScene().GetComponent<UnitComponent>();
+            var unit = unitComponent.Get(playerData.Id);
 
+            var attribute = unit.GetComponent<AttributeComponent>();
+            var maxAge = attribute.MaxAge;
             self.View.AgeUXTextMeshPro.text = $"{playerData.Age.ToString()}/{maxAge}";
 
             self.View.LevelUXTextMeshPro.text = LocalizationHelper.GetString($"Level_{playerData.Level}_{playerData.SubLevel}");
-            
+
             self.View.StoneCountUXTextMeshPro.text = playerData.Diamond.ToString();
         }
     }

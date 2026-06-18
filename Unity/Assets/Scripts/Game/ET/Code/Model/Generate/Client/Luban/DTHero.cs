@@ -13,7 +13,7 @@ namespace ET
 {
 public partial class DTHero : IDataTable
 {
-    private System.Collections.Generic.Dictionary<int, DRHero> _dataMap;
+    private System.Collections.Generic.Dictionary<long, DRHero> _dataMap;
     private System.Collections.Generic.List<DRHero> _dataList;
     private readonly System.Func<Cysharp.Threading.Tasks.UniTask<ByteBuf>> _loadFunc;
 
@@ -28,7 +28,7 @@ public partial class DTHero : IDataTable
         int n = _buf.ReadSize();
         if(_dataMap == null)
         {
-            _dataMap = new System.Collections.Generic.Dictionary<int, DRHero>(n);
+            _dataMap = new System.Collections.Generic.Dictionary<long, DRHero>(n);
             _dataList = new System.Collections.Generic.List<DRHero>(n);
         }
         else
@@ -46,11 +46,11 @@ public partial class DTHero : IDataTable
         PostInit();
     }
 
-    public System.Collections.Generic.IReadOnlyDictionary<int, DRHero> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyDictionary<long, DRHero> DataMap => _dataMap;
     public System.Collections.Generic.IReadOnlyList<DRHero> DataList => _dataList;
-    public DRHero GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
-    public DRHero Get(int key) => _dataMap[key];
-    public DRHero this[int key] => _dataMap[key];
+    public DRHero GetOrDefault(long key) => _dataMap.TryGetValue(key, out var v) ? v : default;
+    public DRHero Get(long key) => _dataMap[key];
+    public DRHero this[long key] => _dataMap[key];
 
     public void ResolveRef(Tables tables)
     {

@@ -43,7 +43,7 @@ namespace ET.Client
                 return;
             }
 
-            string headIcon = unit.Config()?.HeadIcon;
+            string headIcon = unit.Icon();
             if (string.IsNullOrEmpty(headIcon))
             {
                 headRenderer.sprite = null;
