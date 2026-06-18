@@ -9,6 +9,8 @@ namespace ET
     public partial class Unit : Entity, IAwake<int>
     {
         public int ConfigId { get; set; } //配置表id
+        public int Level { get; set; }
+        public int SubLevel { get; set; }
         public int PosIdx  { get; set;} 
         [BsonElement]
         private float3 position; //坐标

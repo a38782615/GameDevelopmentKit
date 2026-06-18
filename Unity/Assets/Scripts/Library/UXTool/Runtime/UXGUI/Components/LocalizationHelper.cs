@@ -121,6 +121,11 @@ public class LocalizationHelper
         SetLanguage((LanguageType)type);
     }
 
+    public static string GetString(string key, string defaultString = "")
+    {
+        return GetString(GetLanguage(), key, defaultString);
+    }
+    
     public static string GetString(LanguageType languageType, string key, string defaultString)
     {
 #if UNITY_EDITOR

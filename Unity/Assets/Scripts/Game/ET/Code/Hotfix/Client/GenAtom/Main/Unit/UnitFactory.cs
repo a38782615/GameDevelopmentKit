@@ -20,7 +20,7 @@ namespace ET.Client
             {
                 numericComponent.Set(kv.Key, kv.Value);
             }
-            unit.GetOrAddComponent<global::ET.AttributeComponent>();
+            unit.GetOrAddComponent<global::ET.AttributeComponent, int, int, int>(unit.ConfigId, unit.Level, unit.SubLevel);
             unit.GetOrAddComponent<MovementAgent>();
             if (unitInfo.MoveInfo != null)
             {

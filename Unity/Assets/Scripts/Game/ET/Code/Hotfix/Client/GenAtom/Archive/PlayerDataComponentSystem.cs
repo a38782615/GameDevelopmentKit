@@ -83,9 +83,10 @@ namespace ET.Client
             return new PlayerData
             {
                 Id = PlayerDataId,
+                ConfigId = 1001,
                 Age = 16,
                 Exp = 0,
-                Level = 1,
+                Level = 0,
                 NickName = string.Empty,
                 Diamond = 0,
                 XRoot = default,

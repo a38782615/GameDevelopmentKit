@@ -5,8 +5,11 @@ namespace ET
     /// 战斗属性数值组件，在这里管理角色所有战斗属性数值的存储、变更、刷新等
     /// </summary>
     [ComponentOf(typeof(Unit))]
-    public partial class AttributeComponent : Entity, IAwake, IDestroy
+    public partial class AttributeComponent : Entity, IAwake<int,int,int>, IDestroy
     {
+        public int ConfigId;
+        public int Level;
+        public int SubLevel;
         public float Hp => NumericComponent.GetAsFloat(NumericType.Hp);
         public float MaxHp => NumericComponent.GetAsFloat(NumericType.MaxHp);
         public float Mode => NumericComponent.GetAsFloat(NumericType.Mode);
@@ -14,6 +17,7 @@ namespace ET
         public float Attack => NumericComponent.GetAsFloat(NumericType.Attack);
         public float Armor => NumericComponent.GetAsFloat(NumericType.Armor);
         public float CriticalProbability => NumericComponent.GetAsFloat(NumericType.CriticalProbability);
+        public int MaxAge => NumericComponent.GetAsInt(NumericType.MaxAge);
 
         public NumericComponent NumericComponent => this.GetParent<Unit>().GetComponent<NumericComponent>();
         public XList<DataModifier> AllModifiers;

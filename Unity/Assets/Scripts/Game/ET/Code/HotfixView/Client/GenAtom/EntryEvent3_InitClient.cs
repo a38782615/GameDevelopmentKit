@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ET.Client
 {
@@ -9,21 +10,28 @@ namespace ET.Client
         {
             //Test
             root.AddComponent<TestComponent>();
-            
+
+            InitData();
+
             World.Instance.AddSingleton<UGFComponent>();
             World.Instance.AddSingleton<UGFSystemSingleton>();
-            
+
             GlobalComponent globalComponent = root.AddComponent<GlobalComponent>();
             root.AddComponent<UIComponent>();
             root.AddComponent<PlayerComponent>();
             root.AddComponent<CurrentScenesComponent>();
             await SkillDataCenter.Instance.EnsureLoadedAndPreloadAsync();
-            
+
             // 根据配置修改掉Main Fiber的SceneType
             SceneType sceneType = EnumHelper.FromString<SceneType>(globalComponent.AppType.ToString());
             root.SceneType = sceneType;
-            
+
             await EventSystem.Instance.PublishAsync(root, new AppStartInitFinish());
+        }
+        
+        private void InitData()
+        {
+            GameConst.DataPath = Application.persistentDataPath;
         }
     }
 }

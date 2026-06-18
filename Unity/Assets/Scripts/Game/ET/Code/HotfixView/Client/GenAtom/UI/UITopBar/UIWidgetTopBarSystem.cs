@@ -1,3 +1,5 @@
+using Sirenix.OdinInspector;
+
 namespace ET.Client
 {
     [FriendOf(typeof(UIWidgetTopBar))]
@@ -36,8 +38,12 @@ namespace ET.Client
                 return;
             }
 
-            self.View.AgeUXTextMeshPro.text = playerData.Age.ToString();
-            self.View.LevelUXTextMeshPro.text = playerData.Level.ToString();
+            var maxAge = Tables.Instance.DTUnitAttribute.Get(playerData.ConfigId, playerData.Level, playerData.SubLevel).MaxAge;
+
+            self.View.AgeUXTextMeshPro.text = $"{playerData.Age.ToString()}/ {maxAge}";
+            
+            self.View.LevelUXTextMeshPro.text = LocalizationHelper.GetString($"Level_{playerData.Level}_{playerData.SubLevel}");
+            
             self.View.StoneCountUXTextMeshPro.text = playerData.Diamond.ToString();
         }
     }

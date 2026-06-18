@@ -10,9 +10,12 @@ namespace ET.Client
     public static partial class AttributeComponentSystem
     {
         [EntitySystem]
-        private static void Awake(this global::ET.AttributeComponent self)
+        private static void Awake(this global::ET.AttributeComponent self,int configId, int level, int subLevel)
         {
             self.AllModifiers = XList<DataModifier>.Create();
+            self.ConfigId = configId;
+            self.Level = level;
+            self.SubLevel = subLevel;
         }
 
         [EntitySystem]
@@ -22,7 +25,7 @@ namespace ET.Client
             self.AllModifiers?.Dispose();
         }
 
-        public static void Init(this global::ET.AttributeComponent self)
+        public static void Init(this global::ET.AttributeComponent self, int configId, int level , int subLevel)
         {
             NumericComponent numericComponent = self.NumericComponent;
             if (numericComponent == null)
@@ -30,7 +33,8 @@ namespace ET.Client
                 return;
             }
 
-            if (TryGetUnitBaseConfig(self, out Unit unit, out DRUnitAttribute unitBaseConfig))
+            var unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
+            if (unitBaseConfig!=null)
             {
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
                 TryApplyNumericFromConfig(numericComponent, global::ET.NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
@@ -105,22 +109,6 @@ namespace ET.Client
             {
                 attribute.Initialize(value);
             }
-        }
-        private static bool TryGetUnitBaseConfig(
-            global::ET.AttributeComponent self,
-            out Unit unit,
-            out DRUnitAttribute unitBaseConfig)
-        {
-            unit = self.GetParent<Unit>();
-            unitBaseConfig = null;
-            if (unit == null)
-            {
-                return false;
-            }
-
-            PlayerData playerData = self.Root()?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
-            unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(unit.ConfigId, playerData.Level, playerData.SubLevel);
-            return unitBaseConfig != null;
         }
 
         private static void TryApplyNumericFromConfig(NumericComponent numericComponent, int numericType, long value)

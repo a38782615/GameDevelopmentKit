@@ -30,13 +30,6 @@ namespace ET.Client
                 return;
             }
 
-            global::ET.AttributeComponent attributeComponent = unit.GetComponent<global::ET.AttributeComponent>();
-            if (attributeComponent == null)
-            {
-                attributeComponent = unit.AddComponent<global::ET.AttributeComponent>();
-            }
-
-            attributeComponent.Init();
             self.IsInitialized = true;
         }
 

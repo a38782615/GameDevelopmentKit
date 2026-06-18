@@ -7,16 +7,8 @@ namespace ET.Client
     {
         protected override async UniTask Run(Scene scene, LoginFinish args)
         {
-            if (scene.GetComponent<ArchiveMgrComponent>() == null)
-            {
-                scene.AddComponent<ArchiveMgrComponent>();
-            }
-
-            GameDataMgrComponent gameDataMgrComponent = scene.GetComponent<GameDataMgrComponent>();
-            if (gameDataMgrComponent == null)
-            {
-                gameDataMgrComponent = scene.AddComponent<GameDataMgrComponent>();
-            }
+            scene.GetOrAddComponent<ArchiveMgrComponent>();
+            GameDataMgrComponent gameDataMgrComponent = scene.GetOrAddComponent<GameDataMgrComponent>();
 
             await gameDataMgrComponent.LoadAllData();
         }

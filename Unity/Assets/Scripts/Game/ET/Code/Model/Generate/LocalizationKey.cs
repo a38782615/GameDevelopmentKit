@@ -124,6 +124,66 @@ namespace ET
         public const string Key_Game_Website = "Game.Website";
 
         /// <summary>
+        /// 练气初期
+        /// </summary>
+        public const string Key_Level_0_0 = "Level_0_0";
+
+        /// <summary>
+        /// 练气中期
+        /// </summary>
+        public const string Key_Level_0_1 = "Level_0_1";
+
+        /// <summary>
+        /// 练气巅峰
+        /// </summary>
+        public const string Key_Level_0_2 = "Level_0_2";
+
+        /// <summary>
+        /// 筑基初期
+        /// </summary>
+        public const string Key_Level_1_0 = "Level_1_0";
+
+        /// <summary>
+        /// 筑基中期
+        /// </summary>
+        public const string Key_Level_1_1 = "Level_1_1";
+
+        /// <summary>
+        /// 筑基巅峰
+        /// </summary>
+        public const string Key_Level_1_2 = "Level_1_2";
+
+        /// <summary>
+        /// 金丹初期
+        /// </summary>
+        public const string Key_Level_2_0 = "Level_2_0";
+
+        /// <summary>
+        /// 金丹中期
+        /// </summary>
+        public const string Key_Level_2_1 = "Level_2_1";
+
+        /// <summary>
+        /// 金丹巅峰
+        /// </summary>
+        public const string Key_Level_2_2 = "Level_2_2";
+
+        /// <summary>
+        /// 元婴初期
+        /// </summary>
+        public const string Key_Level_3_0 = "Level_3_0";
+
+        /// <summary>
+        /// 元婴中期
+        /// </summary>
+        public const string Key_Level_3_1 = "Level_3_1";
+
+        /// <summary>
+        /// 元婴巅峰
+        /// </summary>
+        public const string Key_Level_3_2 = "Level_3_2";
+
+        /// <summary>
         /// 关于
         /// </summary>
         public const string Key_Menu_AboutButton = "Menu.AboutButton";
@@ -182,6 +242,50 @@ namespace ET
         /// 测试2
         /// </summary>
         public const string Key_test2 = "test2";
+
+        public static string Get_Level_0_(int order)
+        {
+            switch (order)
+            {
+                case 0: return Key_Level_0_0;
+                case 1: return Key_Level_0_1;
+                case 2: return Key_Level_0_2;
+                default: return string.Empty;
+            }
+        }
+
+        public static string Get_Level_1_(int order)
+        {
+            switch (order)
+            {
+                case 0: return Key_Level_1_0;
+                case 1: return Key_Level_1_1;
+                case 2: return Key_Level_1_2;
+                default: return string.Empty;
+            }
+        }
+
+        public static string Get_Level_2_(int order)
+        {
+            switch (order)
+            {
+                case 0: return Key_Level_2_0;
+                case 1: return Key_Level_2_1;
+                case 2: return Key_Level_2_2;
+                default: return string.Empty;
+            }
+        }
+
+        public static string Get_Level_3_(int order)
+        {
+            switch (order)
+            {
+                case 0: return Key_Level_3_0;
+                case 1: return Key_Level_3_1;
+                case 2: return Key_Level_3_2;
+                default: return string.Empty;
+            }
+        }
 
         public static string Get_test(int order)
         {

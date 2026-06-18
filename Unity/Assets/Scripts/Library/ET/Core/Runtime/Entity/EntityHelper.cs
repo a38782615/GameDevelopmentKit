@@ -28,13 +28,43 @@ namespace ET
         {
             return entity.IScene.Fiber;
         }
-        
+
         public static T GetOrAddComponent<T>(this Entity entity, bool isFromPool = false) where T : Entity, IAwake, new()
         {
             var ret = entity.GetComponent<T>();
-            if(ret==null)
+            if (ret == null)
             {
                 ret = entity.AddComponent<T>(isFromPool);
+            }
+            return ret;
+        }
+
+        public static T GetOrAddComponent<T,A>(this Entity entity, A a,bool isFromPool = false) where T : Entity, IAwake<A>, new()
+        {
+            var ret = entity.GetComponent<T>();
+            if (ret == null)
+            {
+                ret = entity.AddComponent<T,A>(a, isFromPool);
+            }
+            return ret;
+        }
+
+        public static T GetOrAddComponent<T, A, B>(this Entity entity, A a, B b,bool isFromPool = false) where T : Entity, IAwake<A,B>, new()
+        {
+            var ret = entity.GetComponent<T>();
+            if (ret == null)
+            {
+                ret = entity.AddComponent<T, A, B>(a,b, isFromPool);
+            }
+            return ret;
+        }
+
+        public static T GetOrAddComponent<T, A, B, C>(this Entity entity, A a, B b,C c, bool isFromPool = false) where T : Entity, IAwake<A, B, C>, new()
+        {
+            var ret = entity.GetComponent<T>();
+            if (ret == null)
+            {
+                ret = entity.AddComponent<T, A, B, C>(a, b, c, isFromPool);
             }
             return ret;
         }
