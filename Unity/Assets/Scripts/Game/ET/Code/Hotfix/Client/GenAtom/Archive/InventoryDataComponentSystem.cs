@@ -31,6 +31,7 @@ namespace ET.Client
 
             EnsureInventoryData(inventoryData);
             self.InventoryData = inventoryData;
+            self.RefreshUnitEquipAttributes();
         }
 
         public static async UniTask SaveInventoryData(this InventoryDataComponent self, ArchiveComponent archiveComponent)
@@ -89,6 +90,7 @@ namespace ET.Client
                 if (itemData.IsEquipped)
                 {
                     inventoryData.EquipData.SlotToItemId.Remove(itemData.EquipSlot);
+                    self.RefreshUnitEquipAttributes();
                 }
             }
 
@@ -128,6 +130,7 @@ namespace ET.Client
             itemData.IsEquipped = true;
             itemData.EquipSlot = slot;
             inventoryData.EquipData.SlotToItemId[slot] = itemId;
+            self.RefreshUnitEquipAttributes();
             return true;
         }
 
@@ -146,6 +149,7 @@ namespace ET.Client
             }
 
             inventoryData.EquipData.SlotToItemId.Remove(slot);
+            self.RefreshUnitEquipAttributes();
             return true;
         }
 
@@ -191,6 +195,21 @@ namespace ET.Client
         private static bool IsValidEquipSlot(int slot)
         {
             return slot >= 0;
+        }
+
+        private static void RefreshUnitEquipAttributes(this InventoryDataComponent self)
+        {
+            Unit unit = UnitHelper.GetMyUnitFromCurrentScene(self.Root().CurrentScene());
+            if (unit == null)
+            {
+                return;
+            }
+
+            EquipComponent equipComponent = unit.GetComponent<EquipComponent>();
+            if (equipComponent != null)
+            {
+                equipComponent.RefreshFromItems(self.InventoryData);
+            }
         }
     }
 }

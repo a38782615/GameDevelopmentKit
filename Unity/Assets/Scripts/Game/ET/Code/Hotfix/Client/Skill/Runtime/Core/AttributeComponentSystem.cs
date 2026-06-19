@@ -1,23 +1,18 @@
-using System.Collections.Generic;
-using Unity.Mathematics;
-
 namespace ET.Client
 {
     /// <summary>
     /// AttributeComponent 的运行时逻辑。
-    /// 负责按 NumericComponent 初始化/同步 AttrCmp 子实体，并派发属性变化事件。
+    /// 负责按配置初始化基础属性与 AttrCmp 子实体。
     /// </summary>
     [EntitySystemOf(typeof(AttributeComponent))]
     [FriendOfAttribute(typeof(AttributeComponent))]
     [FriendOfAttribute(typeof(NumericComponent))]
     [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
-
     public static partial class AttributeComponentSystem
     {
         [EntitySystem]
         private static void Awake(this AttributeComponent self, int configId, int level, int subLevel)
         {
-            self.AllModifiers = XList<DataModifier>.Create();
             self.ConfigId = configId;
             self.Level = level;
             self.SubLevel = subLevel;
@@ -28,7 +23,6 @@ namespace ET.Client
         private static void Destroy(this AttributeComponent self)
         {
             self.Clear();
-            self.AllModifiers?.Dispose();
         }
 
         static void Init(this AttributeComponent self, int configId, int level, int subLevel)
@@ -39,89 +33,37 @@ namespace ET.Client
                 return;
             }
 
-            var unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
+            DRUnitAttribute unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
             if (unitBaseConfig != null)
             {
                 numericComponent.SetNoEvent(NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
                 numericComponent.SetNoEvent(NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
-
                 numericComponent.SetNoEvent(NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
-
                 numericComponent.SetNoEvent(NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));
                 numericComponent.SetNoEvent(NumericType.ModeMax, ToNumericLong(unitBaseConfig.Mode));
-
                 numericComponent.SetNoEvent(NumericType.Mp, ToNumericLong(unitBaseConfig.MP));
                 numericComponent.SetNoEvent(NumericType.MaxMp, ToNumericLong(unitBaseConfig.MP));
-
                 numericComponent.SetNoEvent(NumericType.Attack, ToNumericLong(unitBaseConfig.Attack));
-
                 numericComponent.SetNoEvent(NumericType.Armor, ToNumericLong(unitBaseConfig.Armor));
-
                 numericComponent.SetNoEvent(NumericType.Speed, unitBaseConfig.MoveSpeed);
-
                 numericComponent.SetNoEvent(NumericType.AttackSpeed, unitBaseConfig.AttackSpeed);
-                
-                numericComponent.SetNoEvent(NumericType.MaxAge,  unitBaseConfig.MaxAge);
+                numericComponent.SetNoEvent(NumericType.MaxAge, unitBaseConfig.MaxAge);
             }
 
             self.AddAttrCmps();
         }
- 
+
         static void AddAttrCmps(this AttributeComponent self)
         {
-            // 统一从 NumericComponent 拉取客户端关心的属性，构建或刷新 AttrCmp。
             foreach (int numericType in NumericType.GetClientAttributeTypes())
             {
-                // 子实体 Id 直接使用 NumericType，便于快速定位。
                 self.GetOrAddChild<AttrCmp, int>(numericType, numericType);
             }
         }
 
-        //添加额外属性
-        public static DataModifier AddModifier(this AttributeComponent self, int type, float value)
-        {
-            DataModifier modify = DataModifier.Create(self.DataId++, type, value);
-            self.AllModifiers.Add(modify);
-            CountAttr(self, modify.Attribute);
-            return modify;
-        }
-
-        //移除额外属性
-        public static void RemoveModifer(this AttributeComponent self, DataModifier modify)
-        {
-            if (modify == null)
-            {
-                return;
-            }
-
-            self.AllModifiers.Remove(modify);
-            CountAttr(self, modify.Attribute);
-            modify.Dispose();
-        }
- 
-
         private static long ToNumericLong(float value)
         {
             return (long)(value * 10000);
-        }
-
-        private static void CountAttr(AttributeComponent self, int attributeType)
-        {
-            if (self.NumericComponent == null)
-            {
-                return;
-            }
-
-            float value = 0f;
-            foreach (DataModifier modifier in self.AllModifiers)
-            {
-                if (modifier.Attribute == attributeType)
-                {
-                    value += modifier.Value;
-                }
-            }
-
-            self.NumericComponent.Set(attributeType, value);
         }
     }
 }

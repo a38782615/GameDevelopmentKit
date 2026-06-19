@@ -57,6 +57,12 @@ namespace ET.Client
                 numericComponent.Set(kv.Key, kv.Value);
             }
             unit.GetOrAddComponent<global::ET.AttributeComponent, int, int, int>(unit.ConfigId, unit.Level, unit.SubLevel);
+            EquipComponent equipComponent = unit.GetOrAddComponent<EquipComponent>();
+            InventoryData inventoryData = currentScene.GetComponent<GameDataMgrComponent>()?.GetInventoryDataComponent()?.InventoryData;
+            if (inventoryData != null)
+            {
+                equipComponent.RefreshFromItems(inventoryData);
+            }
             return unit;
         }
 
