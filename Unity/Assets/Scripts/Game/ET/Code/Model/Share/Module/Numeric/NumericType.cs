@@ -46,6 +46,10 @@ namespace ET
 		// 攻击力
 		public const int Attack = 1006;
 		public const int AttackBase = Attack * 10 + 1;
+		public const int AttackAdd = Attack * 10 + 2;
+		public const int AttackPct = Attack * 10 + 3;
+		public const int AttackFinalAdd = Attack * 10 + 4;
+		public const int AttackFinalPct = Attack * 10 + 5;
 
 		// 法强
 		public const int MagicStrength = 1007;

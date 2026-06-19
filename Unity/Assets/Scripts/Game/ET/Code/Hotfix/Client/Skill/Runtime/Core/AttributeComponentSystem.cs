@@ -8,14 +8,14 @@ namespace ET.Client
     /// 负责按 NumericComponent 初始化/同步 AttrCmp 子实体，并派发属性变化事件。
     /// </summary>
     [EntitySystemOf(typeof(AttributeComponent))]
-    [FriendOfAttribute(typeof(global::ET.AttributeComponent))]
-    [FriendOfAttribute(typeof(global::ET.NumericComponent))]
+    [FriendOfAttribute(typeof(AttributeComponent))]
+    [FriendOfAttribute(typeof(NumericComponent))]
     [FriendOfAttribute(typeof(ET.Client.AttrCmp))]
 
     public static partial class AttributeComponentSystem
     {
         [EntitySystem]
-        private static void Awake(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
+        private static void Awake(this AttributeComponent self, int configId, int level, int subLevel)
         {
             self.AllModifiers = XList<DataModifier>.Create();
             self.ConfigId = configId;
@@ -25,13 +25,13 @@ namespace ET.Client
         }
 
         [EntitySystem]
-        private static void Destroy(this global::ET.AttributeComponent self)
+        private static void Destroy(this AttributeComponent self)
         {
             self.Clear();
             self.AllModifiers?.Dispose();
         }
 
-        static void Init(this global::ET.AttributeComponent self, int configId, int level, int subLevel)
+        static void Init(this AttributeComponent self, int configId, int level, int subLevel)
         {
             NumericComponent numericComponent = self.NumericComponent;
             if (numericComponent == null)
@@ -64,13 +64,13 @@ namespace ET.Client
                 numericComponent.SetNoEvent(NumericType.MaxAge,  unitBaseConfig.MaxAge);
             }
 
-            self.RefreshRuntimeAttributesFromNumeric();
+            self.AddAttrCmps();
         }
  
-        static void RefreshRuntimeAttributesFromNumeric(this global::ET.AttributeComponent self)
+        static void AddAttrCmps(this AttributeComponent self)
         {
             // 统一从 NumericComponent 拉取客户端关心的属性，构建或刷新 AttrCmp。
-            foreach (int numericType in global::ET.NumericType.GetClientAttributeTypes())
+            foreach (int numericType in NumericType.GetClientAttributeTypes())
             {
                 // 子实体 Id 直接使用 NumericType，便于快速定位。
                 self.GetOrAddChild<AttrCmp, int>(numericType, numericType);
@@ -78,7 +78,7 @@ namespace ET.Client
         }
 
         //添加额外属性
-        public static DataModifier AddModifier(this global::ET.AttributeComponent self, int type, float value)
+        public static DataModifier AddModifier(this AttributeComponent self, int type, float value)
         {
             DataModifier modify = DataModifier.Create(self.DataId++, type, value);
             self.AllModifiers.Add(modify);
@@ -87,7 +87,7 @@ namespace ET.Client
         }
 
         //移除额外属性
-        public static void RemoveModifer(this global::ET.AttributeComponent self, DataModifier modify)
+        public static void RemoveModifer(this AttributeComponent self, DataModifier modify)
         {
             if (modify == null)
             {
@@ -105,7 +105,7 @@ namespace ET.Client
             return (long)(value * 10000);
         }
 
-        private static void CountAttr(global::ET.AttributeComponent self, int attributeType)
+        private static void CountAttr(AttributeComponent self, int attributeType)
         {
             if (self.NumericComponent == null)
             {

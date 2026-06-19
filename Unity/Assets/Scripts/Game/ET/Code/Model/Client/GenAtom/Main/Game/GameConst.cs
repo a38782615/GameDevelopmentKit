@@ -17,5 +17,8 @@ namespace ET
         public const int FormationPositionCount = 4;
 
         public const string AttackDamage = "AttackDamage";
+
+        public const int Herb = 1;
+        public const int Weapon = 2;
     }
 }
