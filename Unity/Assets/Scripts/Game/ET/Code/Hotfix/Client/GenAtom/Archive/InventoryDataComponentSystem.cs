@@ -199,7 +199,13 @@ namespace ET.Client
 
         private static void RefreshUnitEquipAttributes(this InventoryDataComponent self)
         {
-            Unit unit = UnitHelper.GetMyUnitFromCurrentScene(self.Root().CurrentScene());
+            Scene currentScene = self.Root()?.CurrentScene();
+            if (currentScene == null || currentScene.IsDisposed)
+            {
+                return;
+            }
+
+            Unit unit = UnitHelper.GetMyUnitFromCurrentScene(currentScene);
             if (unit == null)
             {
                 return;
