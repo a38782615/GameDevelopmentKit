@@ -5,5 +5,6 @@ namespace ET.Client
     {
         public EntityRef<PlayerDataComponent> PlayerDataComponent;
         public EntityRef<TaskDataComponent> TaskDataComponent;
+        public EntityRef<InventoryDataComponent> InventoryDataComponent;
     }
 }

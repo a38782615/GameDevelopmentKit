@@ -1,0 +1,8 @@
+namespace ET
+{
+    public enum ItemType
+    {
+        Herb = 1,
+        Weapon = 2,
+    }
+}
