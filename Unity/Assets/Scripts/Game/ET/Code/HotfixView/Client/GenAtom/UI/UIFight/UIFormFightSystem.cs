@@ -8,6 +8,8 @@ namespace ET.Client
     [EntitySystemOf(typeof(UIFormFight))]
     public static partial class UIFormFightSystem
     {
+        private const int InitialLevel = 0;
+        private const int InitialSubLevel = 0;
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormFight self)
@@ -39,12 +41,25 @@ namespace ET.Client
                 await UniTask.WhenAll(unis1);
             }
 
-            var configs = Tables.Instance.DTMonster;
-            var unis = new UniTask[configs.DataList.Count];
-            for (int i = 0; i < configs.DataList.Count; i++)
+            DRStages stageConfig = GetCurrentStageConfig(root);
+            if (stageConfig == null || stageConfig.Monsters == null || stageConfig.Monsters.Length == 0)
             {
-                var config = configs.DataList[i];
-                UnitInfo unitInfo = UnitFactory.CreateUnitInfo(config,i);
+                SkillDiagFileLogger.MarkBattleLoadComplete("LocalFightUnits");
+                current.TriggerGameAIChecks();
+                return;
+            }
+
+            var unis = new UniTask[stageConfig.Monsters.Length];
+            for (int i = 0; i < stageConfig.Monsters.Length; i++)
+            {
+                DRMonster config = Tables.Instance.DTMonster.GetOrDefault(stageConfig.Monsters[i]);
+                if (config == null)
+                {
+                    unis[i] = UniTask.CompletedTask;
+                    continue;
+                }
+
+                UnitInfo unitInfo = UnitFactory.CreateUnitInfo(config, i);
                 unitInfo.Position = GetLocalUnitPosition((UnitType)unitInfo.Type, i);
                 unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
                 Unit unit = UnitFactory.CreateFight(current, unitInfo);
@@ -58,6 +73,32 @@ namespace ET.Client
             current.TriggerGameAIChecks();
         }
 
+        private static DRStages GetCurrentStageConfig(Scene root)
+        {
+            int level = InitialLevel;
+            int subLevel = InitialSubLevel;
+            PlayerData playerData = root.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
+            if (playerData != null)
+            {
+                level = playerData.Level;
+                subLevel = playerData.SubLevel;
+            }
+
+            return GetStageConfig(level, subLevel);
+        }
+
+        private static DRStages GetStageConfig(int level, int subLevel)
+        {
+            foreach (DRStages stageConfig in Tables.Instance.DTStages.DataList)
+            {
+                if (stageConfig.Level == level && stageConfig.SubLevel == subLevel)
+                {
+                    return stageConfig;
+                }
+            }
+
+            return null;
+        }
 
         private static float3 GetLocalUnitPosition(UnitType unitType, int index)
         {
