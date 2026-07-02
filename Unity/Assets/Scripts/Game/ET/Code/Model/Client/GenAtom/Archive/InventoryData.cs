@@ -4,7 +4,6 @@ namespace ET.Client
 {
     public partial class InventoryData : Object
     {
-        public long NextItemId = 1;
         public InventoryBagData BagData = new InventoryBagData();
         public InventoryEquipData EquipData = new InventoryEquipData();
     }

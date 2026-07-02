@@ -7,7 +7,7 @@ namespace ET.Client
     [FriendOf(typeof(InventoryDataComponent))]
     public static partial class InventoryDataComponentSystem
     {
-        private const string InventoryDataDocumentId = nameof(InventoryData);
+        private const string LegacyInventoryDataDocumentId = nameof(InventoryData);
 
         [EntitySystem]
         private static void Awake(this InventoryDataComponent self)
@@ -22,16 +22,31 @@ namespace ET.Client
 
         public static async UniTask LoadInventoryData(this InventoryDataComponent self, ArchiveComponent archiveComponent)
         {
-            InventoryData inventoryData = await archiveComponent.QueryById<InventoryData>(InventoryDataDocumentId);
-            if (inventoryData == null)
+            List<InventoryItemData> itemDatas = await archiveComponent.QueryAll<InventoryItemData>();
+            InventoryData legacyInventoryData = await archiveComponent.QueryById<InventoryData>(LegacyInventoryDataDocumentId);
+            bool needSaveMigratedItems = false;
+            if ((itemDatas == null || itemDatas.Count == 0) && legacyInventoryData != null)
             {
-                inventoryData = CreateDefaultInventoryData();
-                await archiveComponent.Save(InventoryDataDocumentId, inventoryData);
+                EnsureInventoryData(legacyInventoryData);
+                itemDatas = new List<InventoryItemData>(legacyInventoryData.BagData.Items.Values);
+                needSaveMigratedItems = itemDatas.Count > 0;
             }
 
+            InventoryData inventoryData = CreateDefaultInventoryData();
+            RebuildInventoryDataCache(inventoryData, itemDatas);
             EnsureInventoryData(inventoryData);
             self.InventoryData = inventoryData;
             self.RefreshUnitEquipAttributes();
+
+            if (needSaveMigratedItems)
+            {
+                await self.SaveInventoryItems(archiveComponent);
+            }
+
+            if (legacyInventoryData != null)
+            {
+                await archiveComponent.Remove<InventoryData>(LegacyInventoryDataDocumentId);
+            }
         }
 
         public static async UniTask SaveInventoryData(this InventoryDataComponent self, ArchiveComponent archiveComponent)
@@ -42,7 +57,9 @@ namespace ET.Client
             }
 
             EnsureInventoryData(self.InventoryData);
-            await archiveComponent.Save(InventoryDataDocumentId, self.InventoryData);
+            await self.SaveInventoryItems(archiveComponent);
+            await self.RemoveStaleInventoryItems(archiveComponent);
+            await archiveComponent.Remove<InventoryData>(LegacyInventoryDataDocumentId);
         }
 
         public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count)
@@ -60,7 +77,7 @@ namespace ET.Client
 
             InventoryItemData itemData = new InventoryItemData
             {
-                Id = inventoryData.NextItemId++,
+                Id = IdGenerater.Instance.GenerateId(),
                 ConfigId = configId,
                 Count = count,
                 IsEquipped = false,
@@ -114,6 +131,11 @@ namespace ET.Client
             if (itemConfig == null || itemConfig.ItemType != 2)
             {
                 return false;
+            }
+
+            if (itemData.IsEquipped)
+            {
+                inventoryData.EquipData.SlotToItemId.Remove(itemData.EquipSlot);
             }
 
             if (inventoryData.EquipData.SlotToItemId.TryGetValue(slot, out long oldItemId))
@@ -180,15 +202,128 @@ namespace ET.Client
             return new InventoryData();
         }
 
+        private static void RebuildInventoryDataCache(InventoryData inventoryData, List<InventoryItemData> itemDatas)
+        {
+            EnsureInventoryData(inventoryData);
+            inventoryData.BagData.Items.Clear();
+            inventoryData.EquipData.SlotToItemId.Clear();
+            if (itemDatas == null)
+            {
+                return;
+            }
+
+            foreach (InventoryItemData itemData in itemDatas)
+            {
+                if (itemData == null || itemData.Id <= 0)
+                {
+                    continue;
+                }
+
+                inventoryData.BagData.Items[itemData.Id] = itemData;
+                if (itemData.IsEquipped && IsValidEquipSlot(itemData.EquipSlot))
+                {
+                    inventoryData.EquipData.SlotToItemId[itemData.EquipSlot] = itemData.Id;
+                }
+            }
+        }
+
         private static void EnsureInventoryData(InventoryData inventoryData)
         {
             inventoryData.BagData ??= new InventoryBagData();
             inventoryData.BagData.Items ??= new Dictionary<long, InventoryItemData>();
             inventoryData.EquipData ??= new InventoryEquipData();
             inventoryData.EquipData.SlotToItemId ??= new Dictionary<int, long>();
-            if (inventoryData.NextItemId <= 0)
+            NormalizeInventoryItemIds(inventoryData);
+            RebuildEquipSlotCache(inventoryData);
+        }
+
+        private static async UniTask SaveInventoryItems(this InventoryDataComponent self, ArchiveComponent archiveComponent)
+        {
+            List<InventoryItemData> itemDatas = new List<InventoryItemData>(self.InventoryData.BagData.Items.Values);
+            foreach (InventoryItemData itemData in itemDatas)
             {
-                inventoryData.NextItemId = 1;
+                if (itemData == null)
+                {
+                    continue;
+                }
+
+                await archiveComponent.Save(itemData.Id, itemData);
+            }
+        }
+
+        private static async UniTask RemoveStaleInventoryItems(this InventoryDataComponent self, ArchiveComponent archiveComponent)
+        {
+            List<InventoryItemData> persistedItems = await archiveComponent.QueryAll<InventoryItemData>();
+            if (persistedItems == null || persistedItems.Count == 0)
+            {
+                return;
+            }
+
+            foreach (InventoryItemData itemData in persistedItems)
+            {
+                if (itemData != null && !self.InventoryData.BagData.Items.ContainsKey(itemData.Id))
+                {
+                    await archiveComponent.Remove<InventoryItemData>(itemData.Id);
+                }
+            }
+        }
+
+        private static void NormalizeInventoryItemIds(InventoryData inventoryData)
+        {
+            List<long> removeItemIds = null;
+            List<InventoryItemData> addItemDatas = null;
+            foreach (KeyValuePair<long, InventoryItemData> kv in inventoryData.BagData.Items)
+            {
+                InventoryItemData itemData = kv.Value;
+                if (itemData == null)
+                {
+                    removeItemIds ??= new List<long>();
+                    removeItemIds.Add(kv.Key);
+                    continue;
+                }
+
+                if (itemData.Id <= 0)
+                {
+                    itemData.Id = IdGenerater.Instance.GenerateId();
+                }
+
+                if (itemData.Id != kv.Key)
+                {
+                    removeItemIds ??= new List<long>();
+                    addItemDatas ??= new List<InventoryItemData>();
+                    removeItemIds.Add(kv.Key);
+                    addItemDatas.Add(itemData);
+                }
+            }
+
+            if (removeItemIds != null)
+            {
+                foreach (long itemId in removeItemIds)
+                {
+                    inventoryData.BagData.Items.Remove(itemId);
+                }
+            }
+
+            if (addItemDatas != null)
+            {
+                foreach (InventoryItemData itemData in addItemDatas)
+                {
+                    inventoryData.BagData.Items[itemData.Id] = itemData;
+                }
+            }
+        }
+
+        private static void RebuildEquipSlotCache(InventoryData inventoryData)
+        {
+            inventoryData.EquipData.SlotToItemId.Clear();
+            foreach (InventoryItemData itemData in inventoryData.BagData.Items.Values)
+            {
+                if (itemData == null || !itemData.IsEquipped || !IsValidEquipSlot(itemData.EquipSlot))
+                {
+                    continue;
+                }
+
+                inventoryData.EquipData.SlotToItemId[itemData.EquipSlot] = itemData.Id;
             }
         }
 
