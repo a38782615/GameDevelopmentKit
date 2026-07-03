@@ -4,11 +4,9 @@ using Unity.Mathematics;
 namespace ET.Client
 {
     [EntitySystemOf(typeof(FightComponent))]
+    [FriendOf(typeof(FightComponent))]
     public static partial class FightComponentSystem
     {
-        private const int InitialLevel = 0;
-        private const int InitialSubLevel = 0;
-
         [EntitySystem]
         private static void Awake(this FightComponent self)
         {
@@ -19,10 +17,27 @@ namespace ET.Client
         {
         }
 
+        public static DRStages GetStageConfig(this FightComponent self, int subLevel)
+        {
+            return GetStageConfig(self.CurrentMap, subLevel);
+        }
+
+        public static async UniTask LoadBattleAsync(this FightComponent self, int subLevel)
+        {
+            if (self.GetStageConfig(subLevel) == null)
+            {
+                return;
+            }
+
+            self.CurrentLevel = subLevel;
+            await self.CreateLocalUnitsFromTables();
+        }
+
         public static async UniTask CreateLocalUnitsFromTables(this FightComponent self)
         {
             Scene root = self.Root();
             Scene current = self.GetParent<Scene>();
+            ClearLocalFightUnits(current);
             var unis1 = new UniTask[1];
 
             var hidx = 0;
@@ -37,7 +52,7 @@ namespace ET.Client
                 await UniTask.WhenAll(unis1);
             }
 
-            DRStages stageConfig = GetCurrentStageConfig(root);
+            DRStages stageConfig = GetCurrentStageConfig(self);
             if (stageConfig == null || stageConfig.Monsters == null || stageConfig.Monsters.Length == 0)
             {
                 SkillDiagFileLogger.MarkBattleLoadComplete("LocalFightUnits");
@@ -69,18 +84,32 @@ namespace ET.Client
             current.TriggerGameAIChecks();
         }
 
-        private static DRStages GetCurrentStageConfig(Scene root)
+        private static void ClearLocalFightUnits(Scene current)
         {
-            int level = InitialLevel;
-            int subLevel = InitialSubLevel;
-            PlayerData playerData = root.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
-            if (playerData != null)
+            UnitComponent unitComponent = current?.GetComponent<UnitComponent>();
+            if (unitComponent?.Children == null)
             {
-                level = playerData.Level;
-                subLevel = playerData.SubLevel;
+                return;
             }
 
-            return GetStageConfig(level, subLevel);
+            using ListComponent<long> unitIds = ListComponent<long>.Create();
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is Unit unit)
+                {
+                    unitIds.Add(unit.Id);
+                }
+            }
+
+            foreach (long unitId in unitIds)
+            {
+                unitComponent.Remove(unitId);
+            }
+        }
+
+        private static DRStages GetCurrentStageConfig(FightComponent self)
+        {
+            return GetStageConfig(self.CurrentMap, self.CurrentLevel);
         }
 
         private static DRStages GetStageConfig(int level, int subLevel)
