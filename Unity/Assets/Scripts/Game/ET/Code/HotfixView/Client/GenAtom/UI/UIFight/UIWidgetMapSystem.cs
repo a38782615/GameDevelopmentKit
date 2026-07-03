@@ -1,15 +1,23 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ET.Client
 {
+    [FriendOf(typeof(UIWidgetMap))]
     [EntitySystemOf(typeof(UIWidgetMap))]
     public static partial class UIWidgetMapSystem
     {
         private const string MapNodeName = "Map";
         private const char StagePointPrefix = 'P';
+
+        [EntitySystem]
+        private static void Destroy(this UIWidgetMap self)
+        {
+            self.StageButtons = null;
+            self.StageSubLevels = null;
+        }
 
         [UGFUIWidgetSystem]
         private static void UGFUIWidgetOnOpen(this UIWidgetMap self)
@@ -25,26 +33,22 @@ namespace ET.Client
 
         private static void BindStageButtons(this UIWidgetMap self)
         {
+            self.EnsureStageButtonsCached();
             FightComponent fightComponent = self.Scene()?.GetComponent<FightComponent>();
-            Transform mapRoot = self.GetMapRoot();
-            if (mapRoot == null)
+            if (self.StageButtons == null || self.StageSubLevels == null)
             {
                 return;
             }
 
-            foreach (Transform point in mapRoot)
+            for (int i = 0; i < self.StageButtons.Length; i++)
             {
-                if (!TryParseSubLevel(point.name, out int subLevel))
-                {
-                    continue;
-                }
-
-                Button button = point.GetComponent<Button>();
+                ExButton button = self.StageButtons[i];
                 if (button == null)
                 {
                     continue;
                 }
 
+                int subLevel = self.StageSubLevels[i];
                 bool hasStage = fightComponent != null && fightComponent.GetStageConfig(subLevel) != null;
                 button.gameObject.SetActive(hasStage);
                 button.onClick.RemoveAllListeners();
@@ -60,15 +64,13 @@ namespace ET.Client
 
         private static void UnbindStageButtons(this UIWidgetMap self)
         {
-            Transform mapRoot = self.GetMapRoot();
-            if (mapRoot == null)
+            if (self.StageButtons == null)
             {
                 return;
             }
 
-            foreach (Transform point in mapRoot)
+            foreach (ExButton button in self.StageButtons)
             {
-                Button button = point.GetComponent<Button>();
                 button?.onClick.RemoveAllListeners();
             }
         }
@@ -82,6 +84,46 @@ namespace ET.Client
             }
 
             await fightComponent.LoadBattleAsync(subLevel);
+        }
+
+        private static void EnsureStageButtonsCached(this UIWidgetMap self)
+        {
+            if (self.StageButtons != null &&
+                self.StageSubLevels != null &&
+                self.StageButtons.Length == self.StageSubLevels.Length)
+            {
+                return;
+            }
+
+            Transform mapRoot = self.GetMapRoot();
+            if (mapRoot == null)
+            {
+                self.StageButtons = null;
+                self.StageSubLevels = null;
+                return;
+            }
+
+            List<ExButton> buttons = new List<ExButton>();
+            List<int> subLevels = new List<int>();
+            foreach (Transform point in mapRoot)
+            {
+                if (!TryParseSubLevel(point.name, out int subLevel))
+                {
+                    continue;
+                }
+
+                ExButton button = point.GetComponent<ExButton>();
+                if (button == null)
+                {
+                    continue;
+                }
+
+                buttons.Add(button);
+                subLevels.Add(subLevel);
+            }
+
+            self.StageButtons = buttons.ToArray();
+            self.StageSubLevels = subLevels.ToArray();
         }
 
         private static Transform GetMapRoot(this UIWidgetMap self)
