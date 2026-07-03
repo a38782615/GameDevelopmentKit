@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4990237903586255676}
-  - component: {fileID: 425672600609562308}
+  - component: {fileID: 172661703615170939}
   m_Layer: 5
   m_Name: Map0
   m_TagString: Untagged
@@ -38,7 +38,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &425672600609562308
+--- !u!114 &172661703615170939
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,6 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c20c6ea745817874aab048830246614c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.ET.Code.ModelView::ET.Client.MonoUIWidgetMap
+  m_BtmBarBtmBar: {fileID: 0}
+  m_CenterRectTransform: {fileID: 0}
+  m_NextExButton: {fileID: 0}
+  m_PreExButton: {fileID: 0}
 --- !u!1001 &1705359997840989719
 PrefabInstance:
   m_ObjectHideFlags: 0

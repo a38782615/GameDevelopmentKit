@@ -23,6 +23,7 @@
       <Resource Name="Res/Scene/MapFight" LoadType="0" Packed="False" />
       <Resource Name="Res/Scene/Menu" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormFight" LoadType="0" Packed="False" />
+      <Resource Name="Res/UI/UIForm/GenAtom/UIFormMap" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormSkills" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIHelp" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILobby" LoadType="0" Packed="False" />
@@ -211,6 +212,7 @@
       <Asset Guid="6cbc2c323b77f804fb958fa4eca33998" ResourceName="Res/UI/UISprite/Common" />
       <Asset Guid="6ce5e7b8b74a6c64f85e795063073c8e" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="6d51a7bff799de24eaf771981bc6127d" ResourceName="UI.UXTool" />
+      <Asset Guid="6d68456ef5a20a24d82f46a29b9e75e8" ResourceName="Res/UI/UIForm/GenAtom/UIFormMap" />
       <Asset Guid="6eca472c5c60d144fbf7e4fcb0c21398" ResourceName="Entity" />
       <Asset Guid="6f3f41802d43d424ca3971da98240a6e" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="6f4f01fb0f74a674196c817368818daf" ResourceName="ET.ClientServer" />

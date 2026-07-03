@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -17,7 +18,7 @@ namespace ET.Client
             Log.Info("UIWidget测试OnOpen");
         }
 
-        private static async UniTask OnClickTestReopenButton(this UIWidgetTest self)
+        private static async UniTask OnClickTestReopenButton(this UIWidgetTest self, Button button)
         {
             Log.Info("点击了测试按钮");
             var scene = self.Root();

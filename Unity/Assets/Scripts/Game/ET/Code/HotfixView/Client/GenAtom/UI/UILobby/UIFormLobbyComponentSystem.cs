@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -13,7 +14,7 @@ namespace ET.Client
             self.View.EnterMapButton.SetAsync(self.EnterMap);
         }
 
-        private static async UniTask EnterMap(this UIFormLobbyComponent self)
+        private static async UniTask EnterMap(this UIFormLobbyComponent self, Button button)
         {
             Scene root = self.Root();
             await EnterMapHelper.EnterMapAsync(root);

@@ -15,9 +15,9 @@ namespace ET.Client
         private static void UGFUIFormOnOpen(this UIFormMain self)
         {
             self.OpenAllUIWidgets();
-            self.BindButton(self.View?.GMapExButton, GMapActionName);
-            self.BindButton(self.View?.SMapExButton, SMapActionName);
-            self.BindButton(self.View?.ShopExButton, ShopActionName);
+            self.BindButton(self.View?.GMapExButton);
+            self.BindButton(self.View?.SMapExButton);
+            self.BindButton(self.View?.ShopExButton);
         }
 
         [UGFUIFormSystem]
@@ -28,14 +28,14 @@ namespace ET.Client
             self.UnbindButton(self.View?.ShopExButton);
         }
 
-        private static void BindButton(this UIFormMain self, UnityEngine.UI.Button button, string actionName)
+        private static void BindButton(this UIFormMain self, UnityEngine.UI.Button button)
         {
             if (button == null)
             {
                 return;
             }
 
-            button.SetAsync(async () => await self.OnMainButtonClickAsync(actionName));
+            button.SetAsync(self.OnMainButtonClickAsync);
         }
 
         private static void UnbindButton(this UIFormMain self, UnityEngine.UI.Button button)
@@ -43,18 +43,28 @@ namespace ET.Client
             button?.onClick.RemoveAllListeners();
         }
 
-        private static async UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
+        private static async UniTask OnMainButtonClickAsync(this UIFormMain self, UnityEngine.UI.Button button)
         {
-            Log.Info($"[UIMain] Click {actionName}");
+            Log.Info($"[UIMain] Click {button.name}");
 
             Scene root = self.Root();
-            if (actionName == SMapActionName)
+            if (button.name.StartsWith(SMapActionName))
             {
-                await EventSystem.Instance.PublishAsync(root, new GoScene()
-                {
-                    SceneId = Tables.Instance.DTGameConfig.SceneMapFight
-                });
+                self.OpenMap().Forget();
+                // await EventSystem.Instance.PublishAsync(root, new GoScene()
+                // {
+                //     SceneId = Tables.Instance.DTGameConfig.SceneMapFight
+                // });
             }
+        }
+
+        private static async UniTask OpenMap(this UIFormMain self)
+        {
+            var scene = self.Root().CurrentScene();
+            UIComponent uiComponent = scene.GetComponent<UIComponent>();
+            await uiComponent.AddUIFormComponentAsync<UIFormMap>(UGFUIFormId.UIFormMap);
+
+            self.Dispose();
         }
     }
 }

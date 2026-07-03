@@ -12,7 +12,8 @@ namespace ET.Client
 			await UniTask.DelayFrame(2);
 			await EventSystem.Instance.PublishAsync(scene, new GoScene()
 			{
-				SceneId = Tables.Instance.DTGameConfig.SceneMain
+				SceneId = Tables.Instance.DTGameConfig.SceneMain,
+				UI = UGFUIFormId.UIMain
 			});
 		}
 	}

@@ -6,10 +6,16 @@ namespace ET.Client
     {
         public static UnitInfo CreateHeroUniInfo(Scene root)
         {
-            PlayerData playerData = root?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
+            PlayerData playerData = root?.GetPlayerData();
             var heroConfig = Tables.Instance.DTHero.Get(playerData.Id);
             UnitInfo unitInfo = UnitFactory.CreateUnitInfo(heroConfig, playerData.Level, playerData.SubLevel, playerData.PosIdx);
             return unitInfo;
+        }
+
+        public static PlayerData GetPlayerData(this Scene root)
+        {
+            PlayerData playerData = root?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
+            return playerData;
         }
 
         public static Unit CreateFight(Scene currentScene, UnitInfo unitInfo, bool needMove = false)

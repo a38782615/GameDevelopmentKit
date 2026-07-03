@@ -17,24 +17,27 @@ namespace ET.Client
         {
         }
 
-        public static DRStages GetStageConfig(this FightComponent self, int subLevel)
+        public static int GetMap0(this FightComponent self)
         {
-            return GetStageConfig(self.CurrentMap, subLevel);
+            return self.Root().GetPlayerData().Map0;
         }
 
-        public static int GetCurrentStageLevel(this FightComponent self)
+        public static int GetMap1(this FightComponent self)
         {
-            return self.CurrentMap;
+            return self.Root().GetPlayerData().Map1;
         }
 
-        public static async UniTask LoadBattleAsync(this FightComponent self, int subLevel)
+        public static DRStages GetStageConfig(this FightComponent self)
         {
-            if (self.GetStageConfig(subLevel) == null)
+            return GetStageConfig(self.GetMap0(), self.GetMap1());
+        }
+
+        public static async UniTask LoadBattleAsync(this FightComponent self)
+        {
+            if (self.GetStageConfig() == null)
             {
                 return;
             }
-
-            self.CurrentLevel = subLevel;
             await self.CreateLocalUnitsFromTables();
         }
 
@@ -114,7 +117,7 @@ namespace ET.Client
 
         private static DRStages GetCurrentStageConfig(FightComponent self)
         {
-            return GetStageConfig(self.CurrentMap, self.CurrentLevel);
+            return GetStageConfig(self.GetMap0(), self.GetMap1());
         }
 
         private static DRStages GetStageConfig(int level, int subLevel)

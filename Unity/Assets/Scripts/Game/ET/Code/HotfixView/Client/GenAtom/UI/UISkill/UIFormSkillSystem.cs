@@ -122,7 +122,7 @@ namespace ET.Client
             self.RefreshSkillItems();
         }
 
-        private static async UniTask ReloadCurrentSceneAsync(this UIFormSkill self)
+        private static async UniTask ReloadCurrentSceneAsync(this UIFormSkill self, Button button)
         {
             Scene currentScene = self.Scene();
             if (currentScene == null || currentScene.IsDisposed)
@@ -136,10 +136,13 @@ namespace ET.Client
                 return;
             }
 
-            await SceneChangeHelper.SceneChangeTo2(root, currentScene.Name, currentScene.Id);
+            await SceneChangeHelper.SceneChangeTo2(root, currentScene.Name, new GoScene(){
+                SceneId = (int)currentScene.Id,
+                UI = UGFUIFormId.UISkill
+            });
         }
 
-        private static async UniTask RerenderMapAsync(this UIFormSkill self)
+        private static async UniTask RerenderMapAsync(this UIFormSkill self, Button button)
         {
             if (self.IsRerenderingMap)
             {

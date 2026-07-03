@@ -8,6 +8,7 @@ namespace ET.Client
 
     public struct SceneChangeFinish
     {
+        public int UI;
     }
 
     public struct SceneChangeBeforeLoadUnit
@@ -41,7 +42,8 @@ namespace ET.Client
 
     public struct GoScene
     {
-        public int SceneId;
+        public long SceneId;
+        public int UI;
     }
 
     public struct FightInputScreenClick

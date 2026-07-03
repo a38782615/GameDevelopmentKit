@@ -64,7 +64,7 @@ namespace Game
             unityEvent.Set(OnClick);
         }
 
-        public static void SetAsync(this Button button, Func<UniTask> action)
+        public static void SetAsync(this Button button, Func<Button, UniTask> action)
         {
             async UniTaskVoid OnClickAsync()
             {
@@ -76,7 +76,7 @@ namespace Game
                         button.interactable = false;
                     }
 
-                    await action();
+                    await action(button);
                 }
                 catch (Exception e)
                 {

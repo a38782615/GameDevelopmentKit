@@ -1,6 +1,7 @@
 using System.IO;
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -15,7 +16,7 @@ namespace ET.Client
             self.View.ReplayButton.Set(self.Replay);
         }
 
-        public static async UniTask EnterMap(this UIFormLSLobbyComponent self)
+        public static async UniTask EnterMap(this UIFormLSLobbyComponent self ,Button button)
         {
             await EnterMapHelper.Match(self.Fiber());
         }

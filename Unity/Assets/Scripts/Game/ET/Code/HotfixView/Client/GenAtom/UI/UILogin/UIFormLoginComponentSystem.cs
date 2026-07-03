@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -27,7 +28,7 @@ namespace ET.Client
             self.CancelWaitAllTestWidgetsLoaded();
         }
 
-        public static UniTask OnLogin(this UIFormLoginComponent self)
+        public static UniTask OnLogin(this UIFormLoginComponent self, Button button)
         {
             return LoginHelper.Login(
                 self.Root(),

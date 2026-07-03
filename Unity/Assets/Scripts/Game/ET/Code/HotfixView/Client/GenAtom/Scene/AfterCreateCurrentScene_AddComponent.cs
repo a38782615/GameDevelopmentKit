@@ -10,11 +10,11 @@ namespace ET.Client
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
             scene.AddComponent<UnitComponent>();
+            scene.AddComponent<FightComponent>();
             if (SceneChangeHelper.IsSceneName(scene.Name, Tables.Instance.DTGameConfig.SceneMapFight))
             {
                 scene.AddComponent<BodyCheckComponent>();
                 scene.AddComponent<BattleTurnComponent>();
-                scene.AddComponent<FightComponent>();
                 // RVO
                 // scene.AddComponent<MovementSimulationComponent>();
                 

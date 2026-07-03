@@ -2,16 +2,22 @@
 
 namespace ET.Client
 {
-    public partial class MonoUIFormFight
+    public partial class MonoUIFormMap
     {
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_CenterRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_ReturnExButton;
+        private Game.ExButton m_NextExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_PreExButton;
 
 
+        public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
         public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
-        public Game.ExButton ReturnExButton => m_ReturnExButton;
+        public Game.ExButton NextExButton => m_NextExButton;
+        public Game.ExButton PreExButton => m_PreExButton;
 
 
 #if UNITY_EDITOR
@@ -22,8 +28,10 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
+            if (this.m_BtmBarBtmBar == null) return true;
             if (this.m_CenterRectTransform == null) return true;
-            if (this.m_ReturnExButton == null) return true;
+            if (this.m_NextExButton == null) return true;
+            if (this.m_PreExButton == null) return true;
             return false;
         }
 #endif

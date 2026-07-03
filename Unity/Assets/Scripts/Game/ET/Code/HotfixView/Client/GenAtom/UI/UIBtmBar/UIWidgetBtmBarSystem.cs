@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -21,12 +22,12 @@ namespace ET.Client
         [UGFUIWidgetSystem]
         private static void UGFUIWidgetOnOpen(this UIWidgetBtmBar self)
         {
-            self.BindButton(self.View?.MapExButton, GameConst.Btm_Map);
-            self.BindButton(self.View?.BagExButton, GameConst.Btm_Bag);
-            self.BindButton(self.View?.HomeExButton, GameConst.Btm_Home);
-            self.BindButton(self.View?.SkillExButton, GameConst.Btm_Skill);
-            self.BindButton(self.View?.DoExButton, GameConst.Btm_Do);
-            self.BindButton(self.View?.FacExButton, GameConst.Btm_Fac);
+            self.BindButton(self.View?.MapExButton);
+            self.BindButton(self.View?.BagExButton);
+            self.BindButton(self.View?.HomeExButton);
+            self.BindButton(self.View?.SkillExButton);
+            self.BindButton(self.View?.DoExButton);
+            self.BindButton(self.View?.FacExButton);
         }
 
         [UGFUIWidgetSystem]
@@ -40,14 +41,14 @@ namespace ET.Client
             self.UnbindButton(self.View?.FacExButton);
         }
 
-        private static void BindButton(this UIWidgetBtmBar self, UnityEngine.UI.Button button, string actionName)
+        private static void BindButton(this UIWidgetBtmBar self, UnityEngine.UI.Button button)
         {
             if (button == null)
             {
                 return;
             }
 
-            button.SetAsync(async () => await self.OnBtmBarButtonClickAsync(actionName));
+            button.SetAsync(self.OnBtmBarButtonClickAsync);
         }
 
         private static void UnbindButton(this UIWidgetBtmBar self, UnityEngine.UI.Button button)
@@ -55,9 +56,9 @@ namespace ET.Client
             button?.onClick.RemoveAllListeners();
         }
 
-        private static async UniTask OnBtmBarButtonClickAsync(this UIWidgetBtmBar self, string actionName)
+        private static async UniTask OnBtmBarButtonClickAsync(this UIWidgetBtmBar self, Button button)
         {
-            Log.Info($"[UIMain] Click {actionName}");
+            Log.Info($"[UIMain] Click {button.name}");
 
             UGFUIForm owner = self.GetParent<UGFUIForm>();
             if (owner == null)
@@ -73,18 +74,20 @@ namespace ET.Client
             Scene root = owner.Root();
             await UniTask.DelayFrame(2);
 
-            if (actionName == GameConst.Btm_Bag)
+            if (button.name.StartsWith( GameConst.Btm_Bag))
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
                 {
-                    SceneId = Tables.Instance.DTGameConfig.SceneMain
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                    UI = UGFUIFormId.UIMain
                 });
             }
             else
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
                 {
-                    SceneId = Tables.Instance.DTGameConfig.SceneMain
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                    UI = UGFUIFormId.UIMain
                 });
             }
 

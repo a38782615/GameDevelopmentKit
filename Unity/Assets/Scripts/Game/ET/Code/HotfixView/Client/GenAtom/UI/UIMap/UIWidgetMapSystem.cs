@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game;
+using ThunderFireUnityEx;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
     [FriendOf(typeof(UIWidgetMap))]
     [EntitySystemOf(typeof(UIWidgetMap))]
+    [FriendOfAttribute(typeof(ET.Client.FightComponent))]
+
     public static partial class UIWidgetMapSystem
     {
         private const string MapNodeName = "Map";
@@ -45,17 +49,17 @@ namespace ET.Client
             self.HideAllStageButtons();
             for (int i = 0; i < self.StageSubLevels.Length; i++)
             {
-                ExButton button = self.StageButtons[i];
+                var button = self.StageButtons[i];
                 if (button == null)
                 {
                     continue;
                 }
 
-                int capturedSubLevel = self.StageSubLevels[i];
                 button.gameObject.SetActive(true);
-                button.SetAsync(async () => await self.LoadBattleAsync(capturedSubLevel));
+                button.SetAsync(self.LoadBattleAsync);
             }
         }
+
 
         private static void UnbindStageButtons(this UIWidgetMap self)
         {
@@ -69,16 +73,20 @@ namespace ET.Client
                 button?.onClick.RemoveAllListeners();
             }
         }
+         
 
-        private static async UniTask LoadBattleAsync(this UIWidgetMap self, int subLevel)
+        private static async UniTask LoadBattleAsync(this UIWidgetMap self, Button button)
         {
-            FightComponent fightComponent = self.Scene()?.GetComponent<FightComponent>();
-            if (fightComponent == null)
+            var i = self.StageButtons.IndexOf(button);
+            var subLevel = self.StageSubLevels[i];
+            var playerData = self.Root().GetPlayerData();
+            playerData.Map1 = subLevel;
+            var root = self.Root();
+            await EventSystem.Instance.PublishAsync(root, new GoScene()
             {
-                return;
-            }
-
-            await fightComponent.LoadBattleAsync(subLevel);
+                SceneId = Tables.Instance.DTGameConfig.SceneMapFight,
+                UI = UGFUIFormId.UIFormFight
+            });
         }
 
         private static void HideAllStageButtons(this UIWidgetMap self)
@@ -142,7 +150,7 @@ namespace ET.Client
                 return;
             }
 
-            int currentLevel = fightComponent.GetCurrentStageLevel();
+            int currentLevel = fightComponent.GetMap0();
             if (self.StageSubLevels != null && self.StageSubLevelsLevel == currentLevel)
             {
                 return;

@@ -19,5 +19,7 @@ namespace ET.Client
         public int DivineSense; // 神识
         public int Fortune; // 福缘
         public int PosIdx; //位置
+        public int Map0;
+        public int Map1;
     }
 }

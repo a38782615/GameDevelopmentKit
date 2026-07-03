@@ -4,17 +4,32 @@ using Game;
 namespace ET.Client
 {
     [Event(SceneType.Current)]
-    public class SceneChangeFinish_CreateUIMain : AEvent<Scene, SceneChangeFinish>
+    public class SceneChangeFinish_SceneChangeFinish : AEvent<Scene, SceneChangeFinish>
     {
         protected override async UniTask Run(Scene scene, SceneChangeFinish args)
         {
             if (SceneChangeHelper.IsSceneName(scene.Name, Tables.Instance.DTGameConfig.SceneMain))
             {
                 UIComponent uiComponent = scene.GetComponent<UIComponent>();
-                uiComponent.RemoveComponent<UIFormSkill>();
-                uiComponent.RemoveComponent<UIFormMain>();
+                if (args.UI == UGFUIFormId.UIMain)
+                {
+                    await uiComponent.AddUIFormComponentAsync<UIFormMain>(args.UI);
+                }
+                else if( args.UI == UGFUIFormId.UIFormMap)
+                {
+                    await uiComponent.AddUIFormComponentAsync<UIFormMap>(args.UI);
+                }
+                else if (args.UI == UGFUIFormId.UIFormFight)
+                {
+                    await uiComponent.AddUIFormComponentAsync<UIFormFight>(args.UI);
+                }
+            }
 
-                await uiComponent.AddUIFormComponentAsync<UIFormMain>(UGFUIFormId.UIMain);
+
+            if (SceneChangeHelper.IsSceneName(scene.Name, Tables.Instance.DTGameConfig.SceneMapFight))
+            {
+                UIComponent uiComponent = scene.GetComponent<UIComponent>();
+                await uiComponent.AddUIFormComponentAsync<UIFormFight>(UGFUIFormId.UIFormFight);
             }
         }
     }

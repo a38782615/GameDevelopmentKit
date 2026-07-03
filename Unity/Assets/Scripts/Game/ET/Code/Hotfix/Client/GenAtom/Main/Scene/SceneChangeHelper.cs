@@ -35,12 +35,12 @@ namespace ET.Client
             root.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());
         }
 
-        public static async UniTask SceneChangeTo2(Scene root, string sceneName, long sceneInstanceId)
+        public static async UniTask SceneChangeTo2(Scene root, string sceneName, GoScene goScene)
         {
             CurrentScenesComponent currentScenesComponent = root.GetComponent<CurrentScenesComponent>();
             currentScenesComponent.Scene?.Dispose(); // 删除之前的CurrentScene，创建新的
 
-            Scene currentScene = CurrentSceneFactory.Create(sceneInstanceId, sceneName, currentScenesComponent);
+            Scene currentScene = CurrentSceneFactory.Create(goScene.SceneId, sceneName, currentScenesComponent);
 
             await EventSystem.Instance.PublishAsync(currentScene, new AfterCreateCurrentScene());
 
@@ -54,19 +54,20 @@ namespace ET.Client
             //加载个ui
             EventSystem.Instance.Publish(currentScene, new SceneChangeFinish()
             {
+                UI = goScene.UI
             });
             // 通知等待场景切换的协程
             root.GetComponent<ObjectWait>().Notify(new Wait_SceneChangeFinish());
         }
 
 
-        public static string GetSceneName(int sceneId)
+        public static string GetSceneName(long sceneId)
         {
-            var ret = Tables.Instance.DTScene.GetOrDefault(sceneId).CSName;
+            var ret = Tables.Instance.DTScene.GetOrDefault((int)sceneId).CSName;
             return ret;
         }
 
-        public static bool IsSceneName(string sceneName, int sceneId)
+        public static bool IsSceneName(string sceneName, long sceneId)
         {
             return sceneName == GetSceneName(sceneId);
         }
