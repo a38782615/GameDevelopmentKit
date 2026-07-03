@@ -10,7 +10,7 @@ namespace ET.Client
     public static partial class UIWidgetMapSystem
     {
         private const string MapNodeName = "Map";
-        private const char StagePointPrefix = 'P';
+        private const string StagePointNameFormat = "P{0}";
 
         [EntitySystem]
         private static void Destroy(this UIWidgetMap self)
@@ -34,24 +34,24 @@ namespace ET.Client
 
         private static void BindStageButtons(this UIWidgetMap self)
         {
-            self.EnsureStageButtonsCached();
             FightComponent fightComponent = self.Scene()?.GetComponent<FightComponent>();
             self.RefreshStageSubLevels(fightComponent);
+            self.EnsureStageButtonsCached();
             if (self.StageButtons == null || self.StageSubLevels == null)
             {
                 return;
             }
 
             self.HideAllStageButtons();
-            foreach (int subLevel in self.StageSubLevels)
+            for (int i = 0; i < self.StageSubLevels.Length; i++)
             {
-                ExButton button = self.FindStageButton(subLevel);
+                ExButton button = self.StageButtons[i];
                 if (button == null)
                 {
                     continue;
                 }
 
-                int capturedSubLevel = subLevel;
+                int capturedSubLevel = self.StageSubLevels[i];
                 button.gameObject.SetActive(true);
                 button.SetAsync(async () => await self.LoadBattleAsync(capturedSubLevel));
             }
@@ -83,6 +83,11 @@ namespace ET.Client
 
         private static void HideAllStageButtons(this UIWidgetMap self)
         {
+            if (self.StageButtons == null)
+            {
+                return;
+            }
+
             foreach (ExButton button in self.StageButtons)
             {
                 if (button == null)
@@ -95,22 +100,15 @@ namespace ET.Client
             }
         }
 
-        private static ExButton FindStageButton(this UIWidgetMap self, int subLevel)
-        {
-            foreach (ExButton button in self.StageButtons)
-            {
-                if (button != null && TryParseSubLevel(button.name, out int buttonSubLevel) && buttonSubLevel == subLevel)
-                {
-                    return button;
-                }
-            }
-
-            return null;
-        }
-
         private static void EnsureStageButtonsCached(this UIWidgetMap self)
         {
-            if (self.StageButtons != null)
+            if (self.StageSubLevels == null)
+            {
+                self.StageButtons = null;
+                return;
+            }
+
+            if (self.StageButtons != null && self.StageButtons.Length == self.StageSubLevels.Length)
             {
                 return;
             }
@@ -119,35 +117,26 @@ namespace ET.Client
             if (mapRoot == null)
             {
                 self.StageButtons = null;
-                self.StageSubLevels = null;
-                self.StageSubLevelsLevel = -1;
                 return;
             }
 
-            List<ExButton> buttons = new List<ExButton>();
-            foreach (Transform point in mapRoot)
+            ExButton[] buttons = new ExButton[self.StageSubLevels.Length];
+            for (int i = 0; i < self.StageSubLevels.Length; i++)
             {
-                if (!TryParseSubLevel(point.name, out _))
-                {
-                    continue;
-                }
-
-                ExButton button = point.GetComponent<ExButton>();
-                if (button == null)
-                {
-                    continue;
-                }
-
-                buttons.Add(button);
+                string stagePointName = StagePointNameFormat.Fmt(self.StageSubLevels[i]);
+                Transform stagePoint = mapRoot.Find(stagePointName);
+                buttons[i] = stagePoint == null ? null : stagePoint.GetComponent<ExButton>();
             }
 
-            self.StageButtons = buttons.ToArray();
+            self.StageButtons = buttons;
         }
 
         private static void RefreshStageSubLevels(this UIWidgetMap self, FightComponent fightComponent)
         {
             if (fightComponent == null)
             {
+                self.HideAllStageButtons();
+                self.StageButtons = null;
                 self.StageSubLevels = null;
                 self.StageSubLevelsLevel = -1;
                 return;
@@ -158,6 +147,9 @@ namespace ET.Client
             {
                 return;
             }
+
+            self.HideAllStageButtons();
+            self.StageButtons = null;
 
             List<int> subLevels = new List<int>();
             foreach (DRStages stageConfig in Tables.Instance.DTStages.DataList)
@@ -181,26 +173,8 @@ namespace ET.Client
                 return null;
             }
 
-            foreach (Transform child in root)
-            {
-                if (child.name == MapNodeName)
-                {
-                    return child;
-                }
-            }
-
-            return root;
-        }
-
-        private static bool TryParseSubLevel(string nodeName, out int subLevel)
-        {
-            subLevel = 0;
-            if (string.IsNullOrEmpty(nodeName) || nodeName[0] != StagePointPrefix || nodeName.Length <= 1)
-            {
-                return false;
-            }
-
-            return int.TryParse(nodeName.Substring(1), out subLevel);
+            Transform map = root.Find(MapNodeName);
+            return map != null ? map : root;
         }
 
     }
