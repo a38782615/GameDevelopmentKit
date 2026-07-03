@@ -8,10 +8,16 @@ namespace ET.Client
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_CenterRectTransform;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_NextExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_PreExButton;
 
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
         public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
+        public Game.ExButton NextExButton => m_NextExButton;
+        public Game.ExButton PreExButton => m_PreExButton;
 
 
 #if UNITY_EDITOR
@@ -24,6 +30,8 @@ namespace ET.Client
         {
             if (this.m_BtmBarBtmBar == null) return true;
             if (this.m_CenterRectTransform == null) return true;
+            if (this.m_NextExButton == null) return true;
+            if (this.m_PreExButton == null) return true;
             return false;
         }
 #endif

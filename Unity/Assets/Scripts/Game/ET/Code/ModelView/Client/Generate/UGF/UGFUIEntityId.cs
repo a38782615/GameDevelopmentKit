@@ -23,5 +23,10 @@ namespace ET.Client
         /// 
         /// </summary>
         public const int Map1 = 3;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int Map2 = 4;
     }
 }

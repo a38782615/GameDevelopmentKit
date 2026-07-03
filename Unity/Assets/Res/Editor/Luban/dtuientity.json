@@ -22,5 +22,13 @@
     "AssetName": "Map1",
     "EntityGroupName": "UI",
     "Priority": 0
+  },
+  {
+    "Id": 4,
+    "CSName": "Map2",
+    "Desc": "",
+    "AssetName": "Map2",
+    "EntityGroupName": "UI",
+    "Priority": 0
   }
 ]
