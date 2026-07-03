@@ -22,6 +22,11 @@ namespace ET.Client
             return GetStageConfig(self.CurrentMap, subLevel);
         }
 
+        public static int GetCurrentStageLevel(this FightComponent self)
+        {
+            return self.CurrentMap;
+        }
+
         public static async UniTask LoadBattleAsync(this FightComponent self, int subLevel)
         {
             if (self.GetStageConfig(subLevel) == null)

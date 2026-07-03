@@ -16,7 +16,9 @@ namespace ET.Client
         private static void Destroy(this UIWidgetMap self)
         {
             self.StageButtons = null;
+            self.StageButtonSubLevels = null;
             self.StageSubLevels = null;
+            self.StageSubLevelsLevel = -1;
         }
 
         [UGFUIWidgetSystem]
@@ -35,7 +37,8 @@ namespace ET.Client
         {
             self.EnsureStageButtonsCached();
             FightComponent fightComponent = self.Scene()?.GetComponent<FightComponent>();
-            if (self.StageButtons == null || self.StageSubLevels == null)
+            self.RefreshStageSubLevels(fightComponent);
+            if (self.StageButtons == null || self.StageButtonSubLevels == null || self.StageSubLevels == null)
             {
                 return;
             }
@@ -48,8 +51,8 @@ namespace ET.Client
                     continue;
                 }
 
-                int subLevel = self.StageSubLevels[i];
-                bool hasStage = fightComponent != null && fightComponent.GetStageConfig(subLevel) != null;
+                int subLevel = self.StageButtonSubLevels[i];
+                bool hasStage = self.ContainsStageSubLevel(subLevel);
                 button.gameObject.SetActive(hasStage);
                 button.onClick.RemoveAllListeners();
                 if (!hasStage)
@@ -89,8 +92,8 @@ namespace ET.Client
         private static void EnsureStageButtonsCached(this UIWidgetMap self)
         {
             if (self.StageButtons != null &&
-                self.StageSubLevels != null &&
-                self.StageButtons.Length == self.StageSubLevels.Length)
+                self.StageButtonSubLevels != null &&
+                self.StageButtons.Length == self.StageButtonSubLevels.Length)
             {
                 return;
             }
@@ -99,12 +102,14 @@ namespace ET.Client
             if (mapRoot == null)
             {
                 self.StageButtons = null;
+                self.StageButtonSubLevels = null;
                 self.StageSubLevels = null;
+                self.StageSubLevelsLevel = -1;
                 return;
             }
 
             List<ExButton> buttons = new List<ExButton>();
-            List<int> subLevels = new List<int>();
+            List<int> buttonSubLevels = new List<int>();
             foreach (Transform point in mapRoot)
             {
                 if (!TryParseSubLevel(point.name, out int subLevel))
@@ -119,11 +124,58 @@ namespace ET.Client
                 }
 
                 buttons.Add(button);
-                subLevels.Add(subLevel);
+                buttonSubLevels.Add(subLevel);
             }
 
             self.StageButtons = buttons.ToArray();
+            self.StageButtonSubLevels = buttonSubLevels.ToArray();
+        }
+
+        private static void RefreshStageSubLevels(this UIWidgetMap self, FightComponent fightComponent)
+        {
+            if (fightComponent == null)
+            {
+                self.StageSubLevels = null;
+                self.StageSubLevelsLevel = -1;
+                return;
+            }
+
+            int currentLevel = fightComponent.GetCurrentStageLevel();
+            if (self.StageSubLevels != null && self.StageSubLevelsLevel == currentLevel)
+            {
+                return;
+            }
+
+            List<int> subLevels = new List<int>();
+            foreach (DRStages stageConfig in Tables.Instance.DTStages.DataList)
+            {
+                if (stageConfig.Level == currentLevel)
+                {
+                    subLevels.Add(stageConfig.SubLevel);
+                }
+            }
+
+            subLevels.Sort();
             self.StageSubLevels = subLevels.ToArray();
+            self.StageSubLevelsLevel = currentLevel;
+        }
+
+        private static bool ContainsStageSubLevel(this UIWidgetMap self, int subLevel)
+        {
+            if (self.StageSubLevels == null)
+            {
+                return false;
+            }
+
+            foreach (int stageSubLevel in self.StageSubLevels)
+            {
+                if (stageSubLevel == subLevel)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static Transform GetMapRoot(this UIWidgetMap self)
