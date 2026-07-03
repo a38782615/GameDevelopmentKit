@@ -124,6 +124,11 @@ namespace Game.Hot
         public const string Key_Game_Website = "Game.Website";
 
         /// <summary>
+        /// 密林
+        /// </summary>
+        public const string Key_GMap = "GMap";
+
+        /// <summary>
         /// 练气初期
         /// </summary>
         public const string Key_Level_0_0 = "Level_0_0";
@@ -232,6 +237,16 @@ namespace Game.Hot
         /// 界面音效
         /// </summary>
         public const string Key_Setting_UISound = "Setting.UISound";
+
+        /// <summary>
+        /// 坊市
+        /// </summary>
+        public const string Key_Shop = "Shop";
+
+        /// <summary>
+        /// 洞穴
+        /// </summary>
+        public const string Key_SMap = "SMap";
 
         /// <summary>
         /// 测试1

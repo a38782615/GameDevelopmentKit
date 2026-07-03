@@ -58,10 +58,10 @@ namespace ET.Client
             }
             unit.GetOrAddComponent<global::ET.AttributeComponent, int, int, int>(unit.ConfigId, unit.Level, unit.SubLevel);
             EquipComponent equipComponent = unit.GetOrAddComponent<EquipComponent>();
-            InventoryData inventoryData = currentScene.GetComponent<GameDataMgrComponent>()?.GetInventoryDataComponent()?.InventoryData;
-            if (inventoryData != null)
+            InventoryDataComponent inventoryDataComponent = currentScene.GetComponent<GameDataMgrComponent>()?.GetInventoryDataComponent();
+            if (inventoryDataComponent != null)
             {
-                equipComponent.RefreshFromItems(inventoryData);
+                equipComponent.RefreshFromItems(inventoryDataComponent.GetItemMap(), inventoryDataComponent.GetEquippedSlotToItemIds());
             }
             return unit;
         }

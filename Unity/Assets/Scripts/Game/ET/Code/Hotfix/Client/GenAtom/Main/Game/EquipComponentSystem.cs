@@ -82,7 +82,10 @@ namespace ET.Client
             self.EquipModifiers?.Clear();
         }
 
-        public static void RefreshFromItems(this EquipComponent self, InventoryData inventoryData)
+        public static void RefreshFromItems(
+            this EquipComponent self,
+            IReadOnlyDictionary<long, InventoryItemData> items,
+            IReadOnlyDictionary<int, long> slotToItemId)
         {
             HashSet<int> affectedTypes = new HashSet<int>();
             if (self.All != null)
@@ -95,7 +98,7 @@ namespace ET.Client
 
             self.ClearAllModifiers();
 
-            if (inventoryData == null || inventoryData.EquipData?.SlotToItemId == null)
+            if (items == null || slotToItemId == null)
             {
                 foreach (int attributeType in affectedTypes)
                 {
@@ -104,9 +107,9 @@ namespace ET.Client
                 return;
             }
 
-            foreach (KeyValuePair<int, long> kv in inventoryData.EquipData.SlotToItemId)
+            foreach (KeyValuePair<int, long> kv in slotToItemId)
             {
-                if (!inventoryData.BagData.Items.TryGetValue(kv.Value, out InventoryItemData itemData))
+                if (!items.TryGetValue(kv.Value, out InventoryItemData itemData))
                 {
                     continue;
                 }

@@ -77,7 +77,7 @@ namespace ET.Client
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
                 {
-                    SceneId = Tables.Instance.DTGameConfig.SceneMapFight
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain
                 });
             }
             else

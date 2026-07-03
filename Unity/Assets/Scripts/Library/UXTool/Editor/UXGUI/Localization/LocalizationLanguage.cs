@@ -28,6 +28,6 @@ public class LocalizationLanguage
     }
     public static string GetLanguage(int index)
     {
-        return EditorLocalization.GetLocalization(m_languages[index]);
+        return EditorLocalization.GetLocalization(m_languages[0]);
     }
 }

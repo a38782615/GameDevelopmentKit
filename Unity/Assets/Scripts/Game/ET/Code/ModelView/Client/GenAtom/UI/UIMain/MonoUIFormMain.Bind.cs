@@ -7,10 +7,19 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_GMapExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_SMapExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ShopExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetTopBar m_TopBarTopBar;
 
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
+        public Game.ExButton GMapExButton => m_GMapExButton;
+        public Game.ExButton SMapExButton => m_SMapExButton;
+        public Game.ExButton ShopExButton => m_ShopExButton;
         public ET.Client.MonoUIWidgetTopBar TopBarTopBar => m_TopBarTopBar;
 
 
@@ -23,6 +32,9 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_BtmBarBtmBar == null) return true;
+            if (this.m_GMapExButton == null) return true;
+            if (this.m_SMapExButton == null) return true;
+            if (this.m_ShopExButton == null) return true;
             if (this.m_TopBarTopBar == null) return true;
             return false;
         }

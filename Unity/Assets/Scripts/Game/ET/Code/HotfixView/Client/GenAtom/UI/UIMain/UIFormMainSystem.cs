@@ -43,10 +43,18 @@ namespace ET.Client
             button?.onClick.RemoveAllListeners();
         }
 
-        private static UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
+        private static async UniTask OnMainButtonClickAsync(this UIFormMain self, string actionName)
         {
             Log.Info($"[UIMain] Click {actionName}");
-            return UniTask.CompletedTask;
+
+            Scene root = self.Root();
+            if (actionName == SMapActionName)
+            {
+                await EventSystem.Instance.PublishAsync(root, new GoScene()
+                {
+                    SceneId = Tables.Instance.DTGameConfig.SceneMapFight
+                });
+            }
         }
     }
 }

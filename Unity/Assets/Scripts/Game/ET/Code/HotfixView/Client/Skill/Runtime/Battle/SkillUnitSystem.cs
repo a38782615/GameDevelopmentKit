@@ -67,12 +67,12 @@ namespace ET.Client
             return monsterTable.Get(id);
         }
 
-        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, long id)
+        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, long configId)
         {
-            DRHero heroData = self.GetHeroData(id);
+            DRHero heroData = self.GetHeroData(configId);
             if (heroData == null)
             {
-                Log.Warning($"[SkillUnit] Missing hero config, id: {id}");
+                Log.Warning($"[SkillUnit] Missing hero config, id: {configId}");
                 return;
             }
 
