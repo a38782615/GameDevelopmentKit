@@ -13,5 +13,15 @@ namespace Game.Hot
         /// 
         /// </summary>
         public const int WidgetTest = 1;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int Map0 = 2;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int Map1 = 3;
     }
 }

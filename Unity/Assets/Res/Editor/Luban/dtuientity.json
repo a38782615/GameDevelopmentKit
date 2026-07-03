@@ -6,5 +6,21 @@
     "AssetName": "WidgetTest",
     "EntityGroupName": "UI",
     "Priority": 0
+  },
+  {
+    "Id": 2,
+    "CSName": "Map0",
+    "Desc": "",
+    "AssetName": "Map0",
+    "EntityGroupName": "UI",
+    "Priority": 0
+  },
+  {
+    "Id": 3,
+    "CSName": "Map1",
+    "Desc": "",
+    "AssetName": "Map1",
+    "EntityGroupName": "UI",
+    "Priority": 0
   }
 ]

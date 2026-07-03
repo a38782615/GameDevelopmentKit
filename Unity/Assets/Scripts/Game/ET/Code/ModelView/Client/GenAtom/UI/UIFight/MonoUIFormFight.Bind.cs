@@ -6,9 +6,12 @@ namespace ET.Client
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.RectTransform m_CenterRectTransform;
 
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
+        public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
 
 
 #if UNITY_EDITOR
@@ -20,6 +23,7 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_BtmBarBtmBar == null) return true;
+            if (this.m_CenterRectTransform == null) return true;
             return false;
         }
 #endif
