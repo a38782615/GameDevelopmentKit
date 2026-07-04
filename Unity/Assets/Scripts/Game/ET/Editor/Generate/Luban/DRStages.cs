@@ -19,6 +19,7 @@ public sealed class DRStages :  Luban.EditorBeanBase
     public DRStages()
     {
             Monsters = System.Array.Empty<int>();
+            DropIds = System.Array.Empty<int[]>();
     }
 
     public override void LoadJson(SimpleJSON.JSONObject _json)
@@ -55,6 +56,14 @@ public sealed class DRStages :  Luban.EditorBeanBase
             }
         }
         
+        { 
+            var _fieldJson = _json["DropIds"];
+            if (_fieldJson != null)
+            {
+                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; DropIds = new int[_n0][]; int _index0=0; foreach(SimpleJSON.JSONNode __e0 in _fieldJson.Children) { int[] __v0;  if(!__e0.IsArray) { throw new SerializationException(); } int _n1 = __e0.Count; __v0 = new int[_n1]; int _index1=0; foreach(SimpleJSON.JSONNode __e1 in __e0.Children) { int __v1;  if(!__e1.IsNumber) { throw new SerializationException(); }  __v1 = __e1;  __v0[_index1++] = __v1; }    DropIds[_index0++] = __v0; }  
+            }
+        }
+        
     }
 
     public override void SaveJson(SimpleJSON.JSONObject _json)
@@ -72,6 +81,11 @@ public sealed class DRStages :  Luban.EditorBeanBase
 
             if (Monsters == null) { throw new System.ArgumentNullException(); }
             { var __cjson0 = new JSONArray(); _json["Monsters"] = __cjson0; foreach(var _e0 in Monsters) { JSONNode __v0; __v0 = new JSONNumber(_e0); __cjson0.Add(__v0); } }
+        }
+        {
+
+            if (DropIds == null) { throw new System.ArgumentNullException(); }
+            { var __cjson0 = new JSONArray(); _json["DropIds"] = __cjson0; foreach(var _e0 in DropIds) { JSONNode __v0; { var __cjson1 = new JSONArray(); __v0 = __cjson1; foreach(var _e1 in _e0) { JSONNode __v1; __v1 = new JSONNumber(_e1); __cjson1.Add(__v1); } } __cjson0.Add(__v0); } }
         }
     }
 
@@ -103,6 +117,11 @@ public sealed class DRStages :  Luban.EditorBeanBase
     /// 怪物
     /// </summary>
     public int[] Monsters;
+
+    /// <summary>
+    /// 掉落 
+    /// </summary>
+    public int[][] DropIds;
 
 }
 }

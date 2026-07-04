@@ -32,6 +32,7 @@ public partial class Tables
     public DTGameConfig DTGameConfig { private set; get; }
     public DTItems DTItems { private set; get; }
     public DTStages DTStages { private set; get; }
+    public DTDrops DTDrops { private set; get; }
     private System.Collections.Generic.Dictionary<string, IDataTable> _tables;
     public System.Collections.Generic.IEnumerable<IDataTable> DataTables => _tables.Values;
     public IDataTable GetDataTable(string tableName) => _tables.TryGetValue(tableName, out var v) ? v : null;
@@ -100,6 +101,9 @@ public partial class Tables
         DTStages = new DTStages(() => loader("dtstages"));
         loadTasks.Add(DTStages.LoadAsync());
         _tables.Add("DTStages", DTStages);
+        DTDrops = new DTDrops(() => loader("dtdrops"));
+        loadTasks.Add(DTDrops.LoadAsync());
+        _tables.Add("DTDrops", DTDrops);
 
         await Cysharp.Threading.Tasks.UniTask.WhenAll(loadTasks);
 
@@ -129,6 +133,7 @@ public partial class Tables
         DTGameConfig.ResolveRef(this);
         DTItems.ResolveRef(this);
         DTStages.ResolveRef(this);
+        DTDrops.ResolveRef(this);
         PostResolveRef();
     }
 

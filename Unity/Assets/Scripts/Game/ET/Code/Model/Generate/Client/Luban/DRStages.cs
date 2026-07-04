@@ -19,6 +19,7 @@ public sealed partial class DRStages : Luban.BeanBase
         Level = _buf.ReadInt();
         SubLevel = _buf.ReadInt();
         {int __n0 = _buf.ReadSize(); Monsters = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); Monsters[__index0] = __e0;}}
+        {int __n0 = _buf.ReadSize(); DropIds = new int[__n0][];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int[] __e0;{int __n1 = _buf.ReadSize(); __e0 = new int[__n1];for(var __index1 = 0 ; __index1 < __n1 ; __index1++) { int __e1;__e1 = _buf.ReadInt(); __e0[__index1] = __e1;}} DropIds[__index0] = __e0;}}
         PostInit();
     }
 
@@ -40,6 +41,10 @@ public sealed partial class DRStages : Luban.BeanBase
     /// 怪物
     /// </summary>
     public readonly int[] Monsters;
+    /// <summary>
+    /// 掉落 
+    /// </summary>
+    public readonly int[][] DropIds;
     public const int __ID__ = 499216227;
     public override int GetTypeId() => __ID__;
 
@@ -55,6 +60,7 @@ public sealed partial class DRStages : Luban.BeanBase
         + "Level:" + Level + ","
         + "SubLevel:" + SubLevel + ","
         + "Monsters:" + Luban.StringUtil.CollectionToString(Monsters) + ","
+        + "DropIds:" + Luban.StringUtil.CollectionToString(DropIds) + ","
         + "}";
     }
 
