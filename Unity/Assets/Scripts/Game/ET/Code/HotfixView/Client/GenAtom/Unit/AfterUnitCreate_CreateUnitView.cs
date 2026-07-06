@@ -15,7 +15,7 @@ namespace ET.Client
 
             var skillUnit = unit.AddComponent<SkillUnit>();
             
-            GFEntityHeadItem headEntity =  unit.AddComponent<GFEntityHeadItem>();
+            GFEntityHeadItem headEntity = unit.AddComponent<GFEntityHeadItem>();
             var config = unit.Config();
             await headEntity.ShowEntityAsync(config.EntityId);
 

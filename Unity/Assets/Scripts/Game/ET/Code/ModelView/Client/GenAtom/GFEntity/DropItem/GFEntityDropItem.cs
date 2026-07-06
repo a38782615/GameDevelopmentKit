@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace ET.Client
 {
-    //[ComponentOf(typeof(XXX))]
-    public class GFEntityDropItem : UGFEntity<MonoGFEntityDropItem>, IAwake, IDestroy, IUGFEntityOnShow, IUGFEntityOnHide
+    [ChildOf(typeof(GFEntityComponent))]
+    public class GFEntityDropItem : UGFEntity<MonoGFEntityDropItem>, IAwake<Vector3>, IDestroy, IUGFEntityOnShow, IUGFEntityOnHide
     {
-        
+        public Vector3 Position;
     }
 }

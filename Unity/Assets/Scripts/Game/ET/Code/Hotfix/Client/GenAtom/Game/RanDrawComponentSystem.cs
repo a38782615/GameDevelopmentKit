@@ -61,7 +61,7 @@ namespace ET.Client
             return -1;
         }
 
-        public static int GetItem(this RanDrawComponent self, int[][] ints)
+        public static int GetDropItem(this RanDrawComponent self, int[][] ints)
         {
             var idx = self.GetIdx(ints);
             if (idx < 0)

@@ -12,4 +12,9 @@ namespace ET
     {
         public Unit Unit;
     }
+
+    public struct UnitDeath
+    {
+        public Unit Unit;
+    }
 }
