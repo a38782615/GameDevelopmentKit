@@ -9,7 +9,7 @@ namespace ET.Client
 {
     [FriendOf(typeof(UIWidgetMap))]
     [EntitySystemOf(typeof(UIWidgetMap))]
-    [FriendOfAttribute(typeof(ET.Client.FightComponent))]
+    [FriendOfAttribute(typeof(ET.Client.MapGenComponent))]
 
     public static partial class UIWidgetMapSystem
     {
@@ -38,7 +38,7 @@ namespace ET.Client
 
         private static void BindStageButtons(this UIWidgetMap self)
         {
-            FightComponent fightComponent = self.Scene()?.GetComponent<FightComponent>();
+            MapGenComponent fightComponent = self.Scene()?.GetComponent<MapGenComponent>();
             self.RefreshStageSubLevels(fightComponent);
             self.EnsureStageButtonsCached();
             if (self.StageButtons == null || self.StageSubLevels == null)
@@ -139,7 +139,7 @@ namespace ET.Client
             self.StageButtons = buttons;
         }
 
-        private static void RefreshStageSubLevels(this UIWidgetMap self, FightComponent fightComponent)
+        private static void RefreshStageSubLevels(this UIWidgetMap self, MapGenComponent fightComponent)
         {
             if (fightComponent == null)
             {

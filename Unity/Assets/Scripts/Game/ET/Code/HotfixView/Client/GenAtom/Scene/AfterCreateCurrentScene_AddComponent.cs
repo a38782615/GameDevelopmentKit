@@ -10,7 +10,7 @@ namespace ET.Client
             scene.AddComponent<UIComponent>();
             scene.AddComponent<GFEntityComponent>();
             scene.AddComponent<UnitComponent>();
-            scene.AddComponent<FightComponent>();
+            scene.AddComponent<MapGenComponent>();
             if (SceneChangeHelper.IsSceneName(scene.Name, Tables.Instance.DTGameConfig.SceneMapFight))
             {
                 scene.AddComponent<BodyCheckComponent>();

@@ -20,6 +20,7 @@ namespace ET.Client
             root.AddComponent<UIComponent>();
             root.AddComponent<PlayerComponent>();
             root.AddComponent<CurrentScenesComponent>();
+            root.AddComponent<RanDrawComponent>();
             await SkillDataCenter.Instance.EnsureLoadedAndPreloadAsync();
 
             // 根据配置修改掉Main Fiber的SceneType

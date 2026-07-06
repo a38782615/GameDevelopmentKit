@@ -20,6 +20,11 @@ namespace ET.Client
         public const int HeadItemMonster = 2000001;
 
         /// <summary>
+        /// 储物袋
+        /// </summary>
+        public const int Item10001 = 10001;
+
+        /// <summary>
         /// 
         /// </summary>
         public const int ef_fashi_gandian_buff = 50001;

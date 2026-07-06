@@ -7,7 +7,7 @@ namespace ET.Client
 {
     [FriendOf(typeof(UIFormMap))]
     [EntitySystemOf(typeof(UIFormMap))]
-    [FriendOfAttribute(typeof(ET.Client.FightComponent))]
+    [FriendOfAttribute(typeof(ET.Client.MapGenComponent))]
     public static partial class UIFormMapSystem
     {
         [UGFUIFormSystem]
@@ -15,7 +15,7 @@ namespace ET.Client
         {
             self.OpenAllUIWidgets();
             self.BindMapSwitchButtons();
-            FightComponent fightComponent = self.Root().CurrentScene()?.GetComponent<FightComponent>();
+            MapGenComponent fightComponent = self.Root().CurrentScene()?.GetComponent<MapGenComponent>();
             self.RefreshMapSwitchButtons(fightComponent);
             if (fightComponent == null)
             {
@@ -53,7 +53,7 @@ namespace ET.Client
             }
             var delta = button == self.View.PreExButton ? - 1 : 1; 
 
-            FightComponent fightComponent = self.Root().CurrentScene()?.GetComponent<FightComponent>();
+            MapGenComponent fightComponent = self.Root().CurrentScene()?.GetComponent<MapGenComponent>();
             if (fightComponent == null || self.Maps == null || self.Maps.Length == 0)
             {
                 self.RefreshMapSwitchButtons(fightComponent);
@@ -83,7 +83,7 @@ namespace ET.Client
             }
         }
 
-        private static void RefreshMapSwitchButtons(this UIFormMap self, FightComponent fightComponent)
+        private static void RefreshMapSwitchButtons(this UIFormMap self, MapGenComponent fightComponent)
         {
             int mapCount = self.Maps?.Length ?? 0;
             int currentMap = fightComponent?.GetMap0() ?? 0;
@@ -93,7 +93,7 @@ namespace ET.Client
             self.View?.NextExButton?.gameObject.SetActive(hasMultipleMaps && currentMap < mapCount - 1);
         }
 
-        private static async UniTask LoadWidgetMapAsync(this UIFormMap self, FightComponent fightComponent, RectTransform parentRectTransform)
+        private static async UniTask LoadWidgetMapAsync(this UIFormMap self, MapGenComponent fightComponent, RectTransform parentRectTransform)
         {
             var map0 = fightComponent.GetMap0();
             if (self.Maps == null || map0 < 0 || map0 >= self.Maps.Length)

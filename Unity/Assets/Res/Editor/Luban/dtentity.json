@@ -16,6 +16,14 @@
     "Priority": 90
   },
   {
+    "Id": 10001,
+    "CSName": "Item10001",
+    "Desc": "储物袋",
+    "AssetName": "Item/Item10001",
+    "EntityGroupName": "Item",
+    "Priority": 90
+  },
+  {
     "Id": 50001,
     "CSName": "ef_fashi_gandian_buff",
     "Desc": "",

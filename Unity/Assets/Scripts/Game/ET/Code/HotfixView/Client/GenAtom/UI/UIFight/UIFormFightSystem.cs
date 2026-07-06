@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace ET.Client
 {
     [FriendOf(typeof(UIFormFight))]
-    [FriendOf(typeof(FightComponent))]
+    [FriendOf(typeof(MapGenComponent))]
     [EntitySystemOf(typeof(UIFormFight))]
     public static partial class UIFormFightSystem
     {
@@ -15,7 +15,7 @@ namespace ET.Client
         {
             self.OpenAllUIWidgets();
             self.BindMapSwitchButtons();
-            FightComponent fightComponent = self.Root().CurrentScene()?.GetComponent<FightComponent>();
+            MapGenComponent fightComponent = self.Root().CurrentScene()?.GetComponent<MapGenComponent>();
             if (fightComponent == null)
             {
                 return;

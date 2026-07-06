@@ -10,14 +10,6 @@ namespace ET
         public int ConfigId;
         public int Level;
         public int SubLevel;
-        public float Hp => NumericComponent.GetAsFloat(NumericType.Hp);
-        public float MaxHp => NumericComponent.GetAsFloat(NumericType.MaxHp);
-        public float Mode => NumericComponent.GetAsFloat(NumericType.Mode);
-        public float ModeMax => NumericComponent.GetAsFloat(NumericType.ModeMax);
-        public float Attack => NumericComponent.GetAsFloat(NumericType.Attack);
-        public float Armor => NumericComponent.GetAsFloat(NumericType.Armor);
-        public float CriticalProbability => NumericComponent.GetAsFloat(NumericType.CriticalProbability);
-        public int Age => NumericComponent.GetAsInt(NumericType.Age);
         public int MaxAge => NumericComponent.GetAsInt(NumericType.MaxAge);
 
         public NumericComponent NumericComponent => this.GetParent<Unit>().GetComponent<NumericComponent>();

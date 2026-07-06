@@ -3,36 +3,36 @@ using Unity.Mathematics;
 
 namespace ET.Client
 {
-    [EntitySystemOf(typeof(FightComponent))]
-    [FriendOf(typeof(FightComponent))]
-    public static partial class FightComponentSystem
+    [EntitySystemOf(typeof(MapGenComponent))]
+    [FriendOf(typeof(MapGenComponent))]
+    public static partial class MapGenComponentSystem
     {
         [EntitySystem]
-        private static void Awake(this FightComponent self)
+        private static void Awake(this MapGenComponent self)
         {
         }
 
         [EntitySystem]
-        private static void Destroy(this FightComponent self)
+        private static void Destroy(this MapGenComponent self)
         {
         }
 
-        public static int GetMap0(this FightComponent self)
+        public static int GetMap0(this MapGenComponent self)
         {
             return self.Root().GetPlayerData().Map0;
         }
 
-        public static int GetMap1(this FightComponent self)
+        public static int GetMap1(this MapGenComponent self)
         {
             return self.Root().GetPlayerData().Map1;
         }
 
-        public static DRStages GetStageConfig(this FightComponent self)
+        public static DRStages GetStageConfig(this MapGenComponent self)
         {
             return GetStageConfig(self.GetMap0(), self.GetMap1());
         }
 
-        public static async UniTask LoadBattleAsync(this FightComponent self)
+        public static async UniTask LoadBattleAsync(this MapGenComponent self)
         {
             if (self.GetStageConfig() == null)
             {
@@ -41,7 +41,7 @@ namespace ET.Client
             await self.CreateLocalUnitsFromTables();
         }
 
-        public static async UniTask CreateLocalUnitsFromTables(this FightComponent self)
+        public static async UniTask CreateLocalUnitsFromTables(this MapGenComponent self)
         {
             Scene root = self.Root();
             Scene current = self.GetParent<Scene>();
@@ -63,7 +63,6 @@ namespace ET.Client
             DRStages stageConfig = GetCurrentStageConfig(self);
             if (stageConfig == null || stageConfig.Monsters == null || stageConfig.Monsters.Length == 0)
             {
-                SkillDiagFileLogger.MarkBattleLoadComplete("LocalFightUnits");
                 current.TriggerGameAIChecks();
                 return;
             }
@@ -88,7 +87,6 @@ namespace ET.Client
             }
 
             await UniTask.WhenAll(unis);
-            SkillDiagFileLogger.MarkBattleLoadComplete("LocalFightUnits");
             current.TriggerGameAIChecks();
         }
 
@@ -115,7 +113,7 @@ namespace ET.Client
             }
         }
 
-        private static DRStages GetCurrentStageConfig(FightComponent self)
+        private static DRStages GetCurrentStageConfig(MapGenComponent self)
         {
             return GetStageConfig(self.GetMap0(), self.GetMap1());
         }

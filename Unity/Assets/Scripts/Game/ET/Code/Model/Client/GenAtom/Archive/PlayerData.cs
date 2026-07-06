@@ -11,6 +11,7 @@ namespace ET.Client
         public int Level; //等级
         public int Age; //年龄
         public int Exp; //经验
+        public int Hp; //当前血
         public int Diamond; //灵石
         public ET.XRoot XRoot; // 灵根
         public int ElixirPoison; // 丹毒

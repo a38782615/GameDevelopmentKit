@@ -262,8 +262,10 @@
       <Asset Guid="876bc2ad5530efd4881e54e3550d1f48" ResourceName="Entity" />
       <Asset Guid="8777d02fab43d2b418a28320b701d898" ResourceName="UI.UXTool" />
       <Asset Guid="87b3fdf9966895447b3265fc1b965db4" ResourceName="Res/UI/UISprite/Main" />
+      <Asset Guid="87bc7b8db3f44c74db221d05d0370710" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="87f611bd7a3dfe94c8bd69dafa1b22ec" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="898434180c547784f9b4d4965949e86a" ResourceName="Res/UI/UISprite/SkillIcon" />
+      <Asset Guid="89a6c856a3c5f1b44833046966d24dc0" ResourceName="Entity" />
       <Asset Guid="89b759ea560b1b94e8f83122b8b44130" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="8a93490fcc960d3448b484c619fd55ac" ResourceName="UI.UXTool" />
       <Asset Guid="8ac1752f58036db47bc3d4dca583ed60" ResourceName="Res/UI/UISprite/Main" />
@@ -309,6 +311,7 @@
       <Asset Guid="a2c075c5003a2324a847c72a399cf8e7" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="a33ba90cbded0544c8df5d285016b4c9" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="a411b2bbc7f485548977fb67086209e3" ResourceName="Res/UI/UISprite/SkillIcon" />
+      <Asset Guid="a4ab13c51aab34249a061f7f5b0b0625" ResourceName="Res/UI/UIPrefab/Button" />
       <Asset Guid="a4be330e6df5c0f40911e591d567fb87" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="a51728ee4e21fb442a3d24b312ebd6be" ResourceName="Entity" />
       <Asset Guid="a5294483f20f40d449699101bb428cda" ResourceName="Res/Scene/Map1" />
@@ -322,6 +325,7 @@
       <Asset Guid="a77314322cf5d214f8f11d034a0e5dfa" ResourceName="UI.UXTool" />
       <Asset Guid="a84ea0710b923de4da480057bb57cd72" ResourceName="UI.UXTool" />
       <Asset Guid="a8c07bbe04fdaf04b80e27f651a8edd6" ResourceName="Res/UI/UISprite/Common" />
+      <Asset Guid="a9314d1efbed4ed4b8631a8ee6dc0fcc" ResourceName="Res/UI/UISprite/Main" />
       <Asset Guid="ab0e7d449081c5840b6ecbc53b9a60e4" ResourceName="ET.ClientServer" />
       <Asset Guid="ab45c3f613f388d43bbf43ec05eb92e2" ResourceName="Res/UI/UISprite/Common" />
       <Asset Guid="ab512018dcd9ae84aa96a516edefabd0" ResourceName="Res/UI/UISprite/SkillIcon" />
@@ -416,6 +420,7 @@
       <Asset Guid="d8f4bf1fcba31e242a3e35991ef53ed0" ResourceName="UI.UXTool" />
       <Asset Guid="d9047950373daf844917f7aeb81dd86f" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="d9548529e4fff6c4ebd2150fdedcc237" ResourceName="UI.UXTool" />
+      <Asset Guid="da611e0c8b1cf2149bfad3aa1157a044" ResourceName="Res/UI/UIPrefab/Button" />
       <Asset Guid="db13fe05227274b42bf676a443cd4c24" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="db58965402f12ed47b4dad61a9e48c9d" ResourceName="Res/UI/UISprite/Icon" />
       <Asset Guid="db6a8939e1d5dcf4aa4a2d21385d7274" ResourceName="Res/UI/UISprite/SkillIcon" />
