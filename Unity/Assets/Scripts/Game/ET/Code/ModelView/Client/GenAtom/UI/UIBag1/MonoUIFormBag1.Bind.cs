@@ -2,19 +2,22 @@
 
 namespace ET.Client
 {
-    public partial class MonoUIFormMap
+    public partial class MonoUIFormBag1
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_CenterRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_NextExButton;
+        private Game.CommonLoopScrollRect m_Grid0CommonLoopScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_PreExButton;
+        private Game.CommonLoopScrollRect m_Grid1CommonLoopScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_RetunExButton;
 
 
         public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
-        public Game.ExButton NextExButton => m_NextExButton;
-        public Game.ExButton PreExButton => m_PreExButton;
+        public Game.CommonLoopScrollRect Grid0CommonLoopScrollRect => m_Grid0CommonLoopScrollRect;
+        public Game.CommonLoopScrollRect Grid1CommonLoopScrollRect => m_Grid1CommonLoopScrollRect;
+        public Game.ExButton RetunExButton => m_RetunExButton;
 
 
 #if UNITY_EDITOR
@@ -26,8 +29,9 @@ namespace ET.Client
         private bool CheckBindDataExitEmpty()
         {
             if (this.m_CenterRectTransform == null) return true;
-            if (this.m_NextExButton == null) return true;
-            if (this.m_PreExButton == null) return true;
+            if (this.m_Grid0CommonLoopScrollRect == null) return true;
+            if (this.m_Grid1CommonLoopScrollRect == null) return true;
+            if (this.m_RetunExButton == null) return true;
             return false;
         }
 #endif

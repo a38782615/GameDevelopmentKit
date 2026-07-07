@@ -83,5 +83,10 @@ namespace ET.Client
         /// 
         /// </summary>
         public const int UIFormMap = 808;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int UIFormBag1 = 809;
     }
 }

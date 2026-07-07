@@ -9,7 +9,6 @@ using UnityGameFramework.Runtime;
 namespace Game
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(LoopScrollRect))]
     [CodeBindName("CommonLoopScrollRect")]
     public sealed class CommonLoopScrollRect : MonoBehaviour, LoopScrollPrefabSource, LoopScrollDataSource
     {

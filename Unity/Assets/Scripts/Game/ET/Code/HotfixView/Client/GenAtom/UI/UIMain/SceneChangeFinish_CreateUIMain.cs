@@ -15,6 +15,10 @@ namespace ET.Client
                 {
                     await uiComponent.AddUIFormComponentAsync<UIFormMain>(args.UI);
                 }
+                else if (args.UI == UGFUIFormId.UIFormBag1)
+                {
+                    await uiComponent.AddUIFormComponentAsync<UIFormBag1>(args.UI);
+                }
                 else if( args.UI == UGFUIFormId.UIFormMap)
                 {
                     await uiComponent.AddUIFormComponentAsync<UIFormMap>(args.UI);

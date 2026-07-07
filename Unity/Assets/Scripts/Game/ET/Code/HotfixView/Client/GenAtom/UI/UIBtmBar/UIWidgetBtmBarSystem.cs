@@ -74,12 +74,12 @@ namespace ET.Client
             Scene root = owner.Root();
             await UniTask.DelayFrame(2);
 
-            if (button.name.StartsWith( GameConst.Btm_Bag))
+            if (button.name.StartsWith(GameConst.Btm_Bag))
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
                 {
                     SceneId = Tables.Instance.DTGameConfig.SceneMain,
-                    UI = UGFUIFormId.UIMain
+                    UI = UGFUIFormId.UIFormBag1
                 });
             }
             else
