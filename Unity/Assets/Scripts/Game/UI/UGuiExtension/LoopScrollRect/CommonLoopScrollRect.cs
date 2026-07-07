@@ -84,17 +84,6 @@ namespace Game
                 return;
             }
 
-            if (m_ItemTemplate == null && m_LoopScrollRect.content != null && m_LoopScrollRect.content.childCount > 0)
-            {
-                m_ItemTemplate = m_LoopScrollRect.content.GetChild(0).gameObject;
-            }
-
-            if (m_ItemTemplate == null)
-            {
-                Log.Error($"Item template is missing on '{this.name}'.");
-                return;
-            }
-
             m_LoopScrollRect.prefabSource = this;
             m_LoopScrollRect.dataSource = this;
             m_ItemPool.Push(m_ItemTemplate.transform);
@@ -110,11 +99,6 @@ namespace Game
         [IgnoreLogMethod]
         private void OnItemTemplateChanged()
         {
-            if (m_ItemTemplate != null && m_ItemTemplate.transform.parent != m_LoopScrollRect.content)
-            {
-                Debug.LogError($"Item template must be a child of LoopScrollRect '{this.name}' content.");
-                m_ItemTemplate = null;
-            }
         }
 #endif
     }
