@@ -37,14 +37,25 @@ namespace ET.Client
         {
             self.View.PreExButton.SetAsync( self.SwitchMapAsync);
             self.View.NextExButton.SetAsync(self.SwitchMapAsync);
+            self.View.ReturnExButton.SetAsync(self.Return);
         }
 
         private static void UnbindMapSwitchButtons(this UIFormMap self)
         {
             self.View?.PreExButton?.onClick.RemoveAllListeners();
             self.View?.NextExButton?.onClick.RemoveAllListeners();
+            self.View.ReturnExButton.onClick.RemoveAllListeners();
         }
 
+        private static async UniTask Return(this UIFormMap self, Button button)
+        {
+            EventSystem.Instance.Publish(self.Root(), new GoScene()
+            {
+                SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                UI = UGFUIFormId.UIMain
+            });
+            self.Dispose();
+        }
         private static async UniTask SwitchMapAsync(this UIFormMap self, Button button)
         {
             if (self.IsSwitchingMap)

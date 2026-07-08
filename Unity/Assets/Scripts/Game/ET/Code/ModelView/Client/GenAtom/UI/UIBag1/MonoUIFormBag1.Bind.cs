@@ -11,12 +11,18 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.CommonLoopScrollRect m_Grid1CommonLoopScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ItemTempExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_ItemTempImage;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_RetunExButton;
 
 
         public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
         public Game.CommonLoopScrollRect Grid0CommonLoopScrollRect => m_Grid0CommonLoopScrollRect;
         public Game.CommonLoopScrollRect Grid1CommonLoopScrollRect => m_Grid1CommonLoopScrollRect;
+        public Game.ExButton ItemTempExButton => m_ItemTempExButton;
+        public UnityEngine.UI.Image ItemTempImage => m_ItemTempImage;
         public Game.ExButton RetunExButton => m_RetunExButton;
 
 
@@ -31,6 +37,8 @@ namespace ET.Client
             if (this.m_CenterRectTransform == null) return true;
             if (this.m_Grid0CommonLoopScrollRect == null) return true;
             if (this.m_Grid1CommonLoopScrollRect == null) return true;
+            if (this.m_ItemTempExButton == null) return true;
+            if (this.m_ItemTempImage == null) return true;
             if (this.m_RetunExButton == null) return true;
             return false;
         }

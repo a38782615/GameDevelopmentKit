@@ -10,11 +10,14 @@ namespace ET.Client
         private Game.ExButton m_NextExButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_PreExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ReturnExButton;
 
 
         public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
         public Game.ExButton NextExButton => m_NextExButton;
         public Game.ExButton PreExButton => m_PreExButton;
+        public Game.ExButton ReturnExButton => m_ReturnExButton;
 
 
 #if UNITY_EDITOR
@@ -28,6 +31,7 @@ namespace ET.Client
             if (this.m_CenterRectTransform == null) return true;
             if (this.m_NextExButton == null) return true;
             if (this.m_PreExButton == null) return true;
+            if (this.m_ReturnExButton == null) return true;
             return false;
         }
 #endif
