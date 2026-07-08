@@ -2,6 +2,8 @@
 
 namespace ET.Client
 {
+    [FriendOfAttribute(typeof(ET.Client.GameDataMgrComponent))]
+
     public static partial class UnitFactory
     {
         public static UnitInfo CreateHeroUniInfo(Scene root)
@@ -16,6 +18,12 @@ namespace ET.Client
         {
             PlayerData playerData = root?.GetComponent<GameDataMgrComponent>()?.GetPlayerDataComponent()?.PlayerData;
             return playerData;
+        }
+
+        public static InventoryDataComponent GetInventoryDataComponent(this Scene root)
+        {
+            var ret = root.GetComponent<GameDataMgrComponent>().InventoryDataComponent.As();
+            return ret;
         }
 
         public static Unit CreateFight(Scene currentScene, UnitInfo unitInfo, bool needMove = false)

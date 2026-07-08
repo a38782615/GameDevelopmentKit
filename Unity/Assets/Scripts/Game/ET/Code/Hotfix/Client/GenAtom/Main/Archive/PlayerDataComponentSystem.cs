@@ -44,7 +44,7 @@ namespace ET.Client
             var heroConfig = Tables.Instance.DTHero.Get(PlayerDataId);
             var unitAttribute = Tables.Instance.DTUnitAttribute.Get(heroConfig.UnitConfigId, playerData.Level,playerData.SubLevel);
 
-            if (playerData.Hp == 0)
+           // if (playerData.Hp == 0)
             {
                 playerData.Hp = (long)(unitAttribute.HP*10000);
             }

@@ -1,11 +1,14 @@
 using Cysharp.Threading.Tasks;
 using Game;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace ET.Client
 {
     [FriendOf(typeof(UIFormBag1))]
     [EntitySystemOf(typeof(UIFormBag1))]
+    [FriendOfAttribute(typeof(ET.Client.GameDataMgrComponent))]
+    [FriendOfAttribute(typeof(ET.Client.InventoryDataComponent))]
     public static partial class UIFormBag1System
     {
         [UGFUIFormSystem]
@@ -43,8 +46,21 @@ namespace ET.Client
 
         private static void LoadGrid(this UIFormBag1 self)
         {
-            self.View.Grid0CommonLoopScrollRect.numItems = 8;
-            self.View.Grid1CommonLoopScrollRect.numItems = 8;
+            self.View.Grid0CommonLoopScrollRect.itemRenderer = self.DropItemRender;
+            self.View.Grid0CommonLoopScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
+
+            self.View.Grid1CommonLoopScrollRect.itemRenderer = self.BagItemRender;
+            self.View.Grid1CommonLoopScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
+        }
+
+        private static void DropItemRender(this UIFormBag1 self, int idx, Transform transform)
+        {
+            
+        }
+
+        private static void BagItemRender(this UIFormBag1 self, int idx, Transform transform)
+        {
+
         }
     }
 }

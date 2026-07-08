@@ -35,7 +35,7 @@ namespace ET.Client
             await self.SaveInventoryItems(archiveComponent);
         }
 
-        public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count)
+        public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count=1)
         {
             self.EnsureInventoryItemCache();
             if (count <= 0)
@@ -47,19 +47,24 @@ namespace ET.Client
             {
                 return null;
             }
-
-            InventoryItemData itemData = new InventoryItemData
+            if (self.Items.TryGetValue(configId, out var itemData))
             {
-                Id = IdGenerater.Instance.GenerateId(),
-                ConfigId = configId,
-                Count = count,
-                IsEquipped = false,
-                EquipSlot = 0,
-            };
-            self.Items[itemData.Id] = itemData;
+                itemData.Count += count;
+            }
+            else
+            {
+                var data = new InventoryItemData()
+                {
+                    Id = configId,
+                    ConfigId = configId,
+                    Count = count
+                };
+                self.Items[configId] = data;
+            }
             return itemData;
         }
 
+ 
         public static bool RemoveItem(this InventoryDataComponent self, long itemId, int count)
         {
             self.EnsureInventoryItemCache();
@@ -74,7 +79,7 @@ namespace ET.Client
             }
 
             itemData.Count -= count;
-            if (itemData.Count == 0)
+            if (itemData.Count <= 0)
             {
                 self.Items.Remove(itemId);
                 if (itemData.IsEquipped)
@@ -233,7 +238,7 @@ namespace ET.Client
 
                 if (itemData.Id <= 0)
                 {
-                    itemData.Id = IdGenerater.Instance.GenerateId();
+                    itemData.Id = itemData.ConfigId;
                 }
 
                 if (itemData.Id != kv.Key)
@@ -299,6 +304,38 @@ namespace ET.Client
             if (equipComponent != null)
             {
                 equipComponent.RefreshFromItems(self.Items, self.SlotToItemId);
+            }
+        }
+ 
+        public static void DropToBag(this InventoryDataComponent self, int id, int count = 1)
+        {
+            var drops = self.Drops;
+            self.AddItem(id, count);
+            drops?.Remove(id);
+        }
+
+        public static void BagToDrop(this InventoryDataComponent self, int id, int count = 1)
+        {
+            self.RemoveItem(id, count);
+            self.AddDrop(id, count);
+        }
+        
+        public static void AddDrop(this InventoryDataComponent self, int id, int count=1)
+        {
+            var drops = self.Drops;
+            if (drops.TryGetValue(id, out var d))
+            {
+                d.Count += count;
+            }
+            else
+            {
+                var di = new InventoryItemData()
+                {
+                    Id = id,
+                    ConfigId = id,
+                    Count = count
+                };
+                drops[id] = di;
             }
         }
     }

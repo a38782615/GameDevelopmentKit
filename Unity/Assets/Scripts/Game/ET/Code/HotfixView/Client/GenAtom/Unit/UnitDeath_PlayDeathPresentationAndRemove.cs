@@ -98,6 +98,9 @@ namespace ET.Client
             try
             {
                 await gfEntityComponent.AddGFEntityChildAsync<GFEntityDropItem, Vector3>(UGFEntityId.Item10001, position);
+
+                var inventoryC = scene.Root().GetInventoryDataComponent();
+                inventoryC.AddDrop(UGFEntityId.Item10001);
             }
             catch (System.Exception e)
             {

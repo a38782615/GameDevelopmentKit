@@ -7,5 +7,6 @@ namespace ET.Client
         public int Count;
         public bool IsEquipped;
         public int EquipSlot;
+
     }
 }
