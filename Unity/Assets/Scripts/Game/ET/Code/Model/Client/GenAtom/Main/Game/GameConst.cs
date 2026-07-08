@@ -20,5 +20,6 @@ namespace ET
 
         public const int Herb = 1;
         public const int Weapon = 2;
+        public const int PlayerDataId = 10001;
     }
 }

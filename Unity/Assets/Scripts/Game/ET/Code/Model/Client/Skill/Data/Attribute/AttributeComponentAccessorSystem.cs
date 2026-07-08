@@ -37,6 +37,11 @@ namespace ET.Client
             return attribute.ValueFloat;
         }
 
+        public static bool SetValue(this global::ET.AttributeComponent self, int numericType, long value)
+        {
+            return self.SetValue(numericType, value / 10000f);
+        }
+
         public static bool SetValue(this global::ET.AttributeComponent self, int numericType, float value)
         {
             AttrCmp attribute = self.GetAttrCmp(numericType);

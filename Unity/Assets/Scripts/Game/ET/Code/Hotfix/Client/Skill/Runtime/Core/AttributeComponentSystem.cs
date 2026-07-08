@@ -36,7 +36,8 @@ namespace ET.Client
             DRUnitAttribute unitBaseConfig = Tables.Instance.DTUnitAttribute.Get(configId, level, subLevel);
             if (unitBaseConfig != null)
             {
-                numericComponent.SetNoEvent(NumericType.Hp, ToNumericLong(unitBaseConfig.HP));
+                long hp = ToNumericLong(unitBaseConfig.HP);
+                numericComponent.SetNoEvent(NumericType.Hp, hp);
                 numericComponent.SetNoEvent(NumericType.MaxHp, ToNumericLong(unitBaseConfig.HP));
                 numericComponent.SetNoEvent(NumericType.CriticalProbability, ToNumericLong(unitBaseConfig.CriticalProbability));
                 numericComponent.SetNoEvent(NumericType.Mode, ToNumericLong(unitBaseConfig.Mode));

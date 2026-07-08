@@ -31,11 +31,11 @@ namespace ET.Client
             }
         }
 
-        public float ValueInt
+        public long ValueLong
         {
             get
             {
-                return GetNumericComponent().GetAsInt(NumericType);
+                return GetNumericComponent().GetAsLong(NumericType);
             }
         }
 

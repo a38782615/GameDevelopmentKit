@@ -6,7 +6,6 @@ namespace ET.Client
     [FriendOf(typeof(PlayerDataComponent))]
     public static partial class PlayerDataComponentSystem
     {
-        private const int PlayerDataId = 10001;
         private const string LegacyPlayerDataDocumentId = nameof(PlayerData);
 
         [EntitySystem]
@@ -22,6 +21,7 @@ namespace ET.Client
 
         public static async UniTask LoadPlayerData(this PlayerDataComponent self, ArchiveComponent archiveComponent)
         {
+            var PlayerDataId = GameConst.PlayerDataId;
             PlayerData playerData = await archiveComponent.QueryById<PlayerData>(PlayerDataId);
             bool needSave = false;
             bool needRemoveLegacyData = false;
@@ -40,6 +40,13 @@ namespace ET.Client
             {
                 playerData = CreateDefaultPlayerData(PlayerDataId);
                 needSave = true;
+            }
+            var heroConfig = Tables.Instance.DTHero.Get(PlayerDataId);
+            var unitAttribute = Tables.Instance.DTUnitAttribute.Get(heroConfig.UnitConfigId, playerData.Level,playerData.SubLevel);
+
+            if (playerData.Hp == 0)
+            {
+                playerData.Hp = (long)(unitAttribute.HP*10000);
             }
 
             if (playerData.Age == 0)
@@ -69,13 +76,9 @@ namespace ET.Client
                 return;
             }
 
+            var PlayerDataId = GameConst.PlayerDataId;
             self.PlayerData.Id = PlayerDataId;
             await archiveComponent.Save(self.PlayerData);
-        }
-
-        public static void SetPlayerData(this PlayerDataComponent self, PlayerData playerData)
-        {
-            self.PlayerData = playerData;
         }
 
         private static PlayerData CreateDefaultPlayerData(long id)
@@ -88,6 +91,7 @@ namespace ET.Client
                 Age = 16,
                 Exp = 0,
                 Level = 0,
+                SubLevel = 0,
                 NickName = string.Empty,
                 Diamond = 0,
                 XRoot = default,

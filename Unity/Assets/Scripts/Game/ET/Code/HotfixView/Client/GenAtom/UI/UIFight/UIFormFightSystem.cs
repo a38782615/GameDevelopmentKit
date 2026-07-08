@@ -42,11 +42,25 @@ namespace ET.Client
         private static async UniTask ReturnMap(this UIFormFight self, Button button)
         {
             var root = self.Root();
+
+            var unit = root.CurrentScene().GetComponent<UnitComponent>().Get(GameConst.PlayerDataId);
+            if (unit != null)
+            {
+                var attr = unit.GetComponent<AttributeComponent>().GetAttrCmp(NumericType.Hp);
+
+                var playerData = root.GetPlayerData();
+                playerData.Hp = attr.ValueLong;
+            }
+
+            var mgr = root.GetComponent<GameDataMgrComponent>();
+            mgr.SavePlayerData().Forget();
+
             EventSystem.Instance.Publish(root, new GoScene()
             {
                 SceneId = Tables.Instance.DTGameConfig.SceneMain,
                 UI = UGFUIFormId.UIFormMap
             });
+
             self.Dispose();
         }
     }

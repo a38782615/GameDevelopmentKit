@@ -55,6 +55,10 @@ namespace ET.Client
                 unitInfo.Forward = GetLocalUnitForward((UnitType)unitInfo.Type);
                 Unit unit = UnitFactory.CreateFight(current, unitInfo);
 
+                var playerData = root.GetPlayerData();
+                var attr = unit.GetComponent<AttributeComponent>();
+                attr.SetValue(NumericType.Hp, playerData.Hp);
+
                 var t = EventSystem.Instance.PublishAsync(current, new AfterUnitCreate() { Unit = unit });
                 unis1[hidx] = t;
                 await UniTask.WhenAll(unis1);
