@@ -84,8 +84,8 @@ namespace ET.Client
 
         public static void RefreshFromItems(
             this EquipComponent self,
-            IReadOnlyDictionary<long, InventoryItemData> items,
-            IReadOnlyDictionary<int, long> slotToItemId)
+            XDictionary<long, InventoryItemData> items,
+            XDictionary<int, long> slotToItemId)
         {
             HashSet<int> affectedTypes = new HashSet<int>();
             if (self.All != null)

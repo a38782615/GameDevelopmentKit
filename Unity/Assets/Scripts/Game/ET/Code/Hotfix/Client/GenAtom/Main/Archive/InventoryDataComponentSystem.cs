@@ -5,6 +5,8 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(InventoryDataComponent))]
     [FriendOf(typeof(InventoryDataComponent))]
+    [FriendOfAttribute(typeof(ET.Client.ArchiveMgrComponent))]
+
     public static partial class InventoryDataComponentSystem
     {
         [EntitySystem]
@@ -35,7 +37,7 @@ namespace ET.Client
             await self.SaveInventoryItems(archiveComponent);
         }
 
-        public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count=1)
+        public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count = 1)
         {
             self.EnsureInventoryItemCache();
             if (count <= 0)
@@ -64,7 +66,8 @@ namespace ET.Client
             return itemData;
         }
 
- 
+
+
         public static bool RemoveItem(this InventoryDataComponent self, long itemId, int count)
         {
             self.EnsureInventoryItemCache();
@@ -159,19 +162,19 @@ namespace ET.Client
             return self.Items.TryGetValue(itemId, out InventoryItemData itemData) ? itemData : null;
         }
 
-        public static IReadOnlyCollection<InventoryItemData> GetAllItems(this InventoryDataComponent self)
+        public static XList<KeyValuePair<long, InventoryItemData>> GetAllItems(this InventoryDataComponent self)
         {
             self.EnsureInventoryItemCache();
-            return self.Items.Values;
+            return self.Items.GetList();
         }
 
-        public static IReadOnlyDictionary<long, InventoryItemData> GetItemMap(this InventoryDataComponent self)
+        public static XDictionary<long, InventoryItemData> GetItemMap(this InventoryDataComponent self)
         {
             self.EnsureInventoryItemCache();
             return self.Items;
         }
 
-        public static IReadOnlyDictionary<int, long> GetEquippedSlotToItemIds(this InventoryDataComponent self)
+        public static XDictionary<int, long> GetEquippedSlotToItemIds(this InventoryDataComponent self)
         {
             self.EnsureInventoryItemCache();
             return self.SlotToItemId;
@@ -202,24 +205,24 @@ namespace ET.Client
 
         private static void EnsureInventoryItemCache(this InventoryDataComponent self)
         {
-            self.Items ??= new Dictionary<long, InventoryItemData>();
-            self.SlotToItemId ??= new Dictionary<int, long>();
             self.NormalizeInventoryItemIds();
             self.RebuildEquipSlotCache();
         }
 
         private static async UniTask SaveInventoryItems(this InventoryDataComponent self, ArchiveComponent archiveComponent)
         {
-            List<InventoryItemData> itemDatas = new List<InventoryItemData>(self.Items.Values);
-            foreach (InventoryItemData itemData in itemDatas)
+            XList<InventoryItemData> l = XList<InventoryItemData>.Create();
+            foreach (var kv in self.Items.GetList())
             {
+                var itemData = kv.Value;
                 if (itemData == null)
                 {
                     continue;
                 }
-
-                await archiveComponent.Save(itemData.Id, itemData);
+                l.Add(kv.Value);
             }
+            await archiveComponent.SaveBatch(l);
+            l.Dispose();
         }
 
         private static void NormalizeInventoryItemIds(this InventoryDataComponent self)
@@ -270,8 +273,9 @@ namespace ET.Client
         private static void RebuildEquipSlotCache(this InventoryDataComponent self)
         {
             self.SlotToItemId.Clear();
-            foreach (InventoryItemData itemData in self.Items.Values)
+            foreach (var k in self.Items.GetList())
             {
+                var itemData = k.Value;
                 if (itemData == null || !itemData.IsEquipped || !IsValidEquipSlot(itemData.EquipSlot))
                 {
                     continue;
@@ -306,12 +310,15 @@ namespace ET.Client
                 equipComponent.RefreshFromItems(self.Items, self.SlotToItemId);
             }
         }
- 
-        public static void DropToBag(this InventoryDataComponent self, int id, int count = 1)
+
+
+        public static void DropToBag(this InventoryDataComponent self, int configId, int count = 1)
         {
             var drops = self.Drops;
-            self.AddItem(id, count);
-            drops?.Remove(id);
+            self.AddItem(configId, count);
+            drops?.Remove(configId);
+            var archiveComponent = self.Root().GetComponent<ArchiveMgrComponent>().CurrentArchive.As();
+            self.SaveInventoryData(archiveComponent).Forget();
         }
 
         public static void BagToDrop(this InventoryDataComponent self, int id, int count = 1)
@@ -319,11 +326,12 @@ namespace ET.Client
             self.RemoveItem(id, count);
             self.AddDrop(id, count);
         }
-        
-        public static void AddDrop(this InventoryDataComponent self, int id, int count=1)
+
+
+        public static void AddDrop(this InventoryDataComponent self, int configId, int count = 1)
         {
             var drops = self.Drops;
-            if (drops.TryGetValue(id, out var d))
+            if (drops.TryGetValue(configId, out var d))
             {
                 d.Count += count;
             }
@@ -331,11 +339,11 @@ namespace ET.Client
             {
                 var di = new InventoryItemData()
                 {
-                    Id = id,
-                    ConfigId = id,
+                    Id = configId,
+                    ConfigId = configId,
                     Count = count
                 };
-                drops[id] = di;
+                drops[configId] = di;
             }
         }
     }

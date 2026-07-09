@@ -44,7 +44,7 @@ namespace ET.Client
                 Log.Error($"archive insert entity is null: {typeof(T).FullName}");
                 return BsonValue.Null;
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -59,7 +59,7 @@ namespace ET.Client
                 Log.Error($"archive insert entity is null: {typeof(T).FullName}");
                 return;
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -75,7 +75,7 @@ namespace ET.Client
                 return 0;
             }
 
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Insert(entities);
@@ -89,7 +89,7 @@ namespace ET.Client
                 Log.Error($"archive update entity is null: {typeof(T).FullName}");
                 return false;
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -105,7 +105,7 @@ namespace ET.Client
                 return false;
             }
 
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Update(id, entity);
@@ -120,7 +120,7 @@ namespace ET.Client
                 return 0;
             }
 
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Update(entities);
@@ -150,7 +150,7 @@ namespace ET.Client
                 return false;
             }
 
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -165,7 +165,7 @@ namespace ET.Client
                 Log.Error($"archive upsert entity is null: {typeof(T).FullName}");
                 return false;
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -181,7 +181,7 @@ namespace ET.Client
                 return 0;
             }
 
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Upsert(entities);
@@ -195,16 +195,16 @@ namespace ET.Client
 
         public static async UniTask<T> QueryById<T>(this ArchiveComponent self, BsonValue id)
         {
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
-                var collection = nameof(T);
                 return self.GetCollection<T>(collection).FindById(id);
             }
         }
 
         public static async UniTask<T> QueryOne<T>(this ArchiveComponent self, Query query)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).FindOne(GetAllQuery(query));
@@ -213,7 +213,7 @@ namespace ET.Client
 
         public static async UniTask<List<T>> Query<T>(this ArchiveComponent self, Query query, int skip = 0, int limit = int.MaxValue)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Find(GetAllQuery(query), skip, limit).ToList();
@@ -222,7 +222,7 @@ namespace ET.Client
 
         public static async UniTask<List<T>> QueryAll<T>(this ArchiveComponent self)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).FindAll().ToList();
@@ -231,7 +231,7 @@ namespace ET.Client
 
         public static async UniTask<bool> Exists<T>(this ArchiveComponent self, Query query)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Exists(GetAllQuery(query));
@@ -240,7 +240,7 @@ namespace ET.Client
 
         public static async UniTask<int> Count<T>(this ArchiveComponent self)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Count();
@@ -249,7 +249,7 @@ namespace ET.Client
 
         public static async UniTask<int> Count<T>(this ArchiveComponent self, Query query)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Count(GetAllQuery(query));
@@ -258,7 +258,7 @@ namespace ET.Client
 
         public static async UniTask<long> LongCount<T>(this ArchiveComponent self)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).LongCount();
@@ -267,7 +267,7 @@ namespace ET.Client
 
         public static async UniTask<long> LongCount<T>(this ArchiveComponent self, Query query)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).LongCount(GetAllQuery(query));
@@ -276,7 +276,7 @@ namespace ET.Client
 
         public static async UniTask<bool> Remove<T>(this ArchiveComponent self, BsonValue id)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.GetCollection<T>(collection).Delete(id);
@@ -285,7 +285,7 @@ namespace ET.Client
 
         public static async UniTask<int> Remove<T>(this ArchiveComponent self, Query query)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 ILiteCollection<T> liteCollection = self.GetCollection<T>(collection);
@@ -300,7 +300,7 @@ namespace ET.Client
             {
                 throw new ArgumentException("archive index field is null or empty", nameof(field));
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -314,7 +314,7 @@ namespace ET.Client
             {
                 throw new ArgumentException("archive index field is null or empty", nameof(field));
             }
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
 
             using (await self.WaitArchiveLock())
             {
@@ -324,7 +324,7 @@ namespace ET.Client
 
         public static async UniTask<bool> CollectionExists<T>(this ArchiveComponent self)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.Database.CollectionExists(collection);
@@ -341,7 +341,7 @@ namespace ET.Client
 
         public static async UniTask<bool> DropCollection<T>(this ArchiveComponent self)
         {
-            var collection = nameof(T);
+            var collection = typeof(T).Name;
             using (await self.WaitArchiveLock())
             {
                 return self.Database.DropCollection(collection);

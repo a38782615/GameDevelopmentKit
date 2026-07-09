@@ -3,7 +3,7 @@
 namespace ET.Client
 {
     [FriendOfAttribute(typeof(ET.Client.GameDataMgrComponent))]
-
+    [FriendOfAttribute(typeof(ET.Client.ArchiveMgrComponent))]
     public static partial class UnitFactory
     {
         public static UnitInfo CreateHeroUniInfo(Scene root)
