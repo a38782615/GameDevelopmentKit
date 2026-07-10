@@ -84,7 +84,7 @@ namespace ET.Client
 
         public static void RefreshFromItems(
             this EquipComponent self,
-            XDictionary<long, InventoryItemData> items,
+            XList<InventoryItemData> items,
             XDictionary<int, long> slotToItemId)
         {
             HashSet<int> affectedTypes = new HashSet<int>();
@@ -109,7 +109,8 @@ namespace ET.Client
 
             foreach (KeyValuePair<int, long> kv in slotToItemId)
             {
-                if (!items.TryGetValue(kv.Value, out InventoryItemData itemData))
+                var itemData = items.Find(x => x.Id == kv.Value);
+                if (itemData == null)
                 {
                     continue;
                 }

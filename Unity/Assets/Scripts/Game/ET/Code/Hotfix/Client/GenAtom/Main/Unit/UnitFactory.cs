@@ -75,7 +75,7 @@ namespace ET.Client
             InventoryDataComponent inventoryDataComponent = currentScene.GetComponent<GameDataMgrComponent>()?.GetInventoryDataComponent();
             if (inventoryDataComponent != null)
             {
-                equipComponent.RefreshFromItems(inventoryDataComponent.GetItemMap(), inventoryDataComponent.GetEquippedSlotToItemIds());
+                equipComponent.RefreshFromItems(inventoryDataComponent.GetItems(), inventoryDataComponent.GetEquippedSlotToItemIds());
             }
             return unit;
         }

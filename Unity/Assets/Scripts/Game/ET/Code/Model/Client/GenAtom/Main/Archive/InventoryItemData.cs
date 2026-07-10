@@ -7,6 +7,7 @@ namespace ET.Client
         public int Count;
         public bool IsEquipped;
         public int EquipSlot;
+        public int Type1;// 0 储物袋 1 仓库
 
     }
 }

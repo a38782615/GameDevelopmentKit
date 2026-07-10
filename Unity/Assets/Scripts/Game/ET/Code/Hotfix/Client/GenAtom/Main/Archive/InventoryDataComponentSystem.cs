@@ -31,10 +31,17 @@ namespace ET.Client
             self.RefreshUnitEquipAttributes();
         }
 
-        public static async UniTask SaveInventoryData(this InventoryDataComponent self, ArchiveComponent archiveComponent)
+        public static async UniTask SaveInventoryData(this InventoryDataComponent self)
         {
             self.EnsureInventoryItemCache();
+            var archiveComponent = self.Root().GetComponent<ArchiveMgrComponent>().CurrentArchive.As();
             await self.SaveInventoryItems(archiveComponent);
+        }
+
+        private static bool CanStack(this InventoryDataComponent self, int configId)
+        {
+            var itemConfig = Tables.Instance.DTItems.GetOrDefault(configId);
+            return itemConfig.ItemType == 1;
         }
 
         public static InventoryItemData AddItem(this InventoryDataComponent self, int configId, int count = 1)
@@ -44,61 +51,43 @@ namespace ET.Client
             {
                 return null;
             }
-
-            if (Tables.Instance.DTItems.GetOrDefault(configId) == null)
-            {
-                return null;
-            }
-            if (self.Items.TryGetValue(configId, out var itemData))
+            var itemData = self.Items.Find(x => x.ConfigId == configId);
+            if (self.CanStack(configId) && itemData!=null)
             {
                 itemData.Count += count;
             }
             else
             {
-                var data = new InventoryItemData()
+                itemData = new InventoryItemData()
                 {
-                    Id = configId,
+                    Id = IdGenerater.Instance.GenerateId(),
                     ConfigId = configId,
-                    Count = count
+                    Count = count,
                 };
-                self.Items[configId] = data;
+                self.Items.Add(itemData);
             }
             return itemData;
         }
 
-
-
-        public static bool RemoveItem(this InventoryDataComponent self, long itemId, int count)
+        public static bool RemoveItem(this InventoryDataComponent self, InventoryItemData itemData)
         {
-            self.EnsureInventoryItemCache();
-            if (!self.Items.TryGetValue(itemId, out InventoryItemData itemData))
+            self.EnsureInventoryItemCache(); 
+            self.Items.Remove(itemData);
+            if (itemData.IsEquipped)
             {
-                return false;
+                self.SlotToItemId.Remove(itemData.EquipSlot);
+                self.RefreshUnitEquipAttributes();
             }
-
-            if (count <= 0 || itemData.Count < count)
-            {
-                return false;
-            }
-
-            itemData.Count -= count;
-            if (itemData.Count <= 0)
-            {
-                self.Items.Remove(itemId);
-                if (itemData.IsEquipped)
-                {
-                    self.SlotToItemId.Remove(itemData.EquipSlot);
-                    self.RefreshUnitEquipAttributes();
-                }
-            }
-
+            var archiveComponent = self.Root().GetComponent<ArchiveMgrComponent>().CurrentArchive.As();
+            archiveComponent.Remove<InventoryItemData>(itemData.Id).Forget();
             return true;
         }
 
-        public static bool EquipItem(this InventoryDataComponent self, long itemId, int slot)
+        public static bool EquipItem(this InventoryDataComponent self, long configId, int slot)
         {
             self.EnsureInventoryItemCache();
-            if (!self.Items.TryGetValue(itemId, out InventoryItemData itemData))
+            var itemData = self.Items.Find(x => x.ConfigId == configId);
+            if (itemData == null)
             {
                 return false;
             }
@@ -121,7 +110,8 @@ namespace ET.Client
 
             if (self.SlotToItemId.TryGetValue(slot, out long oldItemId))
             {
-                if (self.Items.TryGetValue(oldItemId, out InventoryItemData oldItemData))
+                var oldItemData = self.Items.Find(x => x.ConfigId == oldItemId);
+                if (oldItemData!=null)
                 {
                     oldItemData.IsEquipped = false;
                     oldItemData.EquipSlot = 0;
@@ -132,7 +122,7 @@ namespace ET.Client
 
             itemData.IsEquipped = true;
             itemData.EquipSlot = slot;
-            self.SlotToItemId[slot] = itemId;
+            self.SlotToItemId[slot] = configId;
             self.RefreshUnitEquipAttributes();
             return true;
         }
@@ -140,12 +130,13 @@ namespace ET.Client
         public static bool UnequipItem(this InventoryDataComponent self, int slot)
         {
             self.EnsureInventoryItemCache();
-            if (!self.SlotToItemId.TryGetValue(slot, out long itemId))
+            if (!self.SlotToItemId.TryGetValue(slot, out long configId))
             {
                 return false;
             }
 
-            if (self.Items.TryGetValue(itemId, out InventoryItemData itemData))
+            var itemData = self.Items.Find(x => x.ConfigId == configId);
+            if (itemData!=null)
             {
                 itemData.IsEquipped = false;
                 itemData.EquipSlot = 0;
@@ -155,20 +146,7 @@ namespace ET.Client
             self.RefreshUnitEquipAttributes();
             return true;
         }
-
-        public static InventoryItemData GetItem(this InventoryDataComponent self, long itemId)
-        {
-            self.EnsureInventoryItemCache();
-            return self.Items.TryGetValue(itemId, out InventoryItemData itemData) ? itemData : null;
-        }
-
-        public static XList<KeyValuePair<long, InventoryItemData>> GetAllItems(this InventoryDataComponent self)
-        {
-            self.EnsureInventoryItemCache();
-            return self.Items.GetList();
-        }
-
-        public static XDictionary<long, InventoryItemData> GetItemMap(this InventoryDataComponent self)
+        public static XList<InventoryItemData> GetItems(this InventoryDataComponent self)
         {
             self.EnsureInventoryItemCache();
             return self.Items;
@@ -197,7 +175,14 @@ namespace ET.Client
                     continue;
                 }
 
-                self.Items[itemData.Id] = itemData;
+                if (itemData.Type1 == 0)
+                {
+                    self.Items.Add(itemData);
+                }
+                else if (itemData.Type1 == 0)
+                {
+                    self.BagItems.Add(itemData);
+                }
             }
 
             self.RebuildEquipSlotCache();
@@ -205,77 +190,21 @@ namespace ET.Client
 
         private static void EnsureInventoryItemCache(this InventoryDataComponent self)
         {
-            self.NormalizeInventoryItemIds();
             self.RebuildEquipSlotCache();
         }
 
         private static async UniTask SaveInventoryItems(this InventoryDataComponent self, ArchiveComponent archiveComponent)
         {
-            XList<InventoryItemData> l = XList<InventoryItemData>.Create();
-            foreach (var kv in self.Items.GetList())
-            {
-                var itemData = kv.Value;
-                if (itemData == null)
-                {
-                    continue;
-                }
-                l.Add(kv.Value);
-            }
-            await archiveComponent.SaveBatch(l);
-            l.Dispose();
+            await archiveComponent.SaveBatch(self.Items);
+            await archiveComponent.SaveBatch(self.BagItems);
         }
-
-        private static void NormalizeInventoryItemIds(this InventoryDataComponent self)
-        {
-            List<long> removeItemIds = null;
-            List<InventoryItemData> addItemDatas = null;
-            foreach (KeyValuePair<long, InventoryItemData> kv in self.Items)
-            {
-                InventoryItemData itemData = kv.Value;
-                if (itemData == null)
-                {
-                    removeItemIds ??= new List<long>();
-                    removeItemIds.Add(kv.Key);
-                    continue;
-                }
-
-                if (itemData.Id <= 0)
-                {
-                    itemData.Id = itemData.ConfigId;
-                }
-
-                if (itemData.Id != kv.Key)
-                {
-                    removeItemIds ??= new List<long>();
-                    addItemDatas ??= new List<InventoryItemData>();
-                    removeItemIds.Add(kv.Key);
-                    addItemDatas.Add(itemData);
-                }
-            }
-
-            if (removeItemIds != null)
-            {
-                foreach (long itemId in removeItemIds)
-                {
-                    self.Items.Remove(itemId);
-                }
-            }
-
-            if (addItemDatas != null)
-            {
-                foreach (InventoryItemData itemData in addItemDatas)
-                {
-                    self.Items[itemData.Id] = itemData;
-                }
-            }
-        }
-
+  
         private static void RebuildEquipSlotCache(this InventoryDataComponent self)
         {
             self.SlotToItemId.Clear();
-            foreach (var k in self.Items.GetList())
+            foreach (var k in self.Items)
             {
-                var itemData = k.Value;
+                var itemData = k;
                 if (itemData == null || !itemData.IsEquipped || !IsValidEquipSlot(itemData.EquipSlot))
                 {
                     continue;
@@ -311,27 +240,26 @@ namespace ET.Client
             }
         }
 
-
-        public static void DropToBag(this InventoryDataComponent self, int configId, int count = 1)
+        public static void DropToBag(this InventoryDataComponent self, InventoryItemData data)
         {
+            self.AddItem(data.ConfigId, data.Count);
             var drops = self.Drops;
-            self.AddItem(configId, count);
-            drops?.Remove(configId);
-            var archiveComponent = self.Root().GetComponent<ArchiveMgrComponent>().CurrentArchive.As();
-            self.SaveInventoryData(archiveComponent).Forget();
+            drops?.Remove(data);
+            self.SaveInventoryData().Forget();
         }
 
-        public static void BagToDrop(this InventoryDataComponent self, int id, int count = 1)
+        public static void BagToDrop(this InventoryDataComponent self, InventoryItemData data)
         {
-            self.RemoveItem(id, count);
-            self.AddDrop(id, count);
+            self.RemoveItem(data);
+            self.AddDrop(data.ConfigId, data.Count);
+            self.SaveInventoryData().Forget();
         }
-
 
         public static void AddDrop(this InventoryDataComponent self, int configId, int count = 1)
         {
             var drops = self.Drops;
-            if (drops.TryGetValue(configId, out var d))
+            var d = drops.Find(x => x.ConfigId == configId);
+            if (d!=null && self.CanStack(configId))
             {
                 d.Count += count;
             }
@@ -339,11 +267,12 @@ namespace ET.Client
             {
                 var di = new InventoryItemData()
                 {
-                    Id = configId,
+                    Id = IdGenerater.Instance.GenerateId(),
                     ConfigId = configId,
-                    Count = count
+                    Count = count,
+                    Type1 = -1
                 };
-                drops[configId] = di;
+                drops.Add(di);
             }
         }
     }

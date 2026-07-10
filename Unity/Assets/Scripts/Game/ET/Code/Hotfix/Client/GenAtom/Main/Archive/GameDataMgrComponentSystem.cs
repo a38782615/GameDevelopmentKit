@@ -45,7 +45,7 @@ namespace ET.Client
             self.EnsureDataComponents();
             await self.GetPlayerDataComponent().SavePlayerData(archiveComponent);
             await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
-            await self.GetInventoryDataComponent().SaveInventoryData(archiveComponent);
+            await self.GetInventoryDataComponent().SaveInventoryData();
         }
 
         public static PlayerDataComponent GetPlayerDataComponent(this GameDataMgrComponent self)
@@ -104,17 +104,6 @@ namespace ET.Client
             }
 
             await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
-        }
-
-        public static async UniTask SaveInventoryData(this GameDataMgrComponent self)
-        {
-            ArchiveComponent archiveComponent = self.GetArchiveComponent();
-            if (archiveComponent == null)
-            {
-                return;
-            }
-
-            await self.GetInventoryDataComponent().SaveInventoryData(archiveComponent);
         }
 
         private static void EnsureDataComponents(this GameDataMgrComponent self)

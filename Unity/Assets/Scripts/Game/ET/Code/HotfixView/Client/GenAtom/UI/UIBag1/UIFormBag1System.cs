@@ -65,10 +65,9 @@ namespace ET.Client
             var item = new ItemTempLogic(); 
             item.transform = transform;
             item.Bag1 = self;
-            item.Type1 = 0;
 
-            var v1 = self.Root().GetInventoryDataComponent().Drops.GetList()[idx];
-            item.Data = v1.Value;
+            var v1 = self.Root().GetInventoryDataComponent().Drops[idx];
+            item.Data = v1;
 
             item.ItemRender();
         }
@@ -78,10 +77,9 @@ namespace ET.Client
             var item = new ItemTempLogic();
             item.transform = transform;
             item.Bag1 = self;
-            item.Type1 = 1;
 
-            var v1 = self.Root().GetInventoryDataComponent().Items.GetList()[idx];
-            item.Data = v1.Value;
+            var v1 = self.Root().GetInventoryDataComponent().Items[idx];
+            item.Data = v1;
 
             item.ItemRender();
         }
@@ -98,13 +96,13 @@ namespace ET.Client
 
         private static async UniTask ItemClick(this ItemTempLogic self, Button button)
         {
-            if(self.Type1==0)
+            if(self.Data.Type1==-1)
             {
-                self.Bag1.Root().GetInventoryDataComponent().DropToBag(self.Data.ConfigId, self.Data.Count);
+                self.Bag1.Root().GetInventoryDataComponent().DropToBag(self.Data);
             }
             else
             {
-                self.Bag1.Root().GetInventoryDataComponent().BagToDrop(self.Data.ConfigId, self.Data.Count);
+                self.Bag1.Root().GetInventoryDataComponent().BagToDrop(self.Data);
             }
 
             self.Bag1?.Refresh();
