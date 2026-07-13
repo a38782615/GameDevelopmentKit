@@ -70,6 +70,7 @@ namespace ET.Client
             item.Data = v1;
 
             item.ItemRender();
+            item.InitializeDrag(true);
         }
 
         private static void BagItemRender(this UIFormBag1 self, int idx, Transform transform)
@@ -82,6 +83,7 @@ namespace ET.Client
             item.Data = v1;
 
             item.ItemRender();
+            item.InitializeDrag(false);
         }
 
         private static void ItemRender(this ItemTempLogic self)
@@ -92,6 +94,38 @@ namespace ET.Client
 
             var btn = transform.GetComponent<ExButton>();
             btn.SetAsync(self.ItemClick);
+        }
+
+        private static void InitializeDrag(this ItemTempLogic self, bool isDropItem)
+        {
+            BagItemDragHandler dragHandler = self.transform.GetComponent<BagItemDragHandler>();
+            dragHandler.Initialize(
+                isDropItem,
+                self.Bag1.View.Grid0CommonLoopScrollRect.transform as RectTransform,
+                self.Bag1.View.Grid1CommonLoopScrollRect.transform as RectTransform,
+                self,
+                OnItemDropped);
+        }
+
+        private static void OnItemDropped(BagItemDragHandler dragHandler, bool targetIsDrop)
+        {
+            ItemTempLogic item = dragHandler.UserData as ItemTempLogic;
+            if (item == null || item.Bag1 == null || item.Bag1.IsDisposed)
+            {
+                return;
+            }
+
+            InventoryDataComponent inventory = item.Bag1.Root().GetInventoryDataComponent();
+            if (targetIsDrop)
+            {
+                inventory.BagToDrop(item.Data);
+            }
+            else
+            {
+                inventory.DropToBag(item.Data);
+            }
+
+            item.Bag1.Refresh();
         }
 
         private static async UniTask ItemClick(this ItemTempLogic self, Button button)
