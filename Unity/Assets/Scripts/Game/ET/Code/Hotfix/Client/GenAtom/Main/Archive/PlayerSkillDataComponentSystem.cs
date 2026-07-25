@@ -37,9 +37,9 @@ namespace ET.Client
             long playerId = self.GetPlayerId();
             self.LearnedSkills.Clear();
             self.SkillDataByConfigId.Clear();
-            if (playerSkills == null)
+            if (playerSkills == null || playerSkills.Count == 0)
             {
-                self.RebuildSkillCaches();
+                await self.InitializePlayerSkillsFromHero(archiveComponent, playerId);
                 return;
             }
 
@@ -63,6 +63,30 @@ namespace ET.Client
             }
 
             self.RebuildSkillCaches();
+        }
+
+        private static async UniTask InitializePlayerSkillsFromHero(
+            this PlayerSkillDataComponent self,
+            ArchiveComponent archiveComponent,
+            long playerId)
+        {
+            DRHero heroConfig = Tables.Instance?.DTHero?.GetOrDefault(playerId);
+            if (heroConfig?.Skill == null)
+            {
+                self.RebuildSkillCaches();
+                Log.Warning($"Player skill initialization failed: hero config or skill list is missing, PlayerId={playerId}.");
+                return;
+            }
+
+            foreach (int configId in heroConfig.Skill)
+            {
+                if (self.LearnSkill(configId, 0, true) == null)
+                {
+                    Log.Warning($"Player skill initialization skipped invalid skill, PlayerId={playerId}, ConfigId={configId}.");
+                }
+            }
+
+            await self.SavePlayerSkillData(archiveComponent);
         }
 
         public static async UniTask SavePlayerSkillData(this PlayerSkillDataComponent self, ArchiveComponent archiveComponent)

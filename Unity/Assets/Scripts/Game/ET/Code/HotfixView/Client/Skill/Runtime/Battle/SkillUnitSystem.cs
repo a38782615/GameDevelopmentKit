@@ -76,8 +76,7 @@ namespace ET.Client
                 return;
             }
 
-            self.GrantSkills(asc, heroData.ActiveSkill);
-            self.GrantSkills(asc, heroData.PassiveSkill, true);
+            self.GrantPlayerSkills(asc, heroData.Skill);
         }
 
         private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, long id)
@@ -158,6 +157,37 @@ namespace ET.Client
                     Log.Warning($"[SkillUnit] Passive skill auto activation failed, SkillId: {spec?.GetSkillNumericId() ?? 0}, UnitConfigId: {self.Unit.As()?.ConfigId ?? 0}");
                 }
             }
+        }
+
+        private static void GrantPlayerSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds)
+        {
+            if (skillIds == null)
+            {
+                return;
+            }
+
+            List<int> activeSkillIds = new List<int>();
+            List<int> passiveSkillIds = new List<int>();
+            foreach (int skillId in skillIds)
+            {
+                DRSkill skillConfig = Tables.Instance.DTSkill.GetOrDefault(skillId);
+                if (skillConfig == null)
+                {
+                    continue;
+                }
+
+                if (skillConfig.IsAct == 0)
+                {
+                    passiveSkillIds.Add(skillId);
+                }
+                else
+                {
+                    activeSkillIds.Add(skillId);
+                }
+            }
+
+            self.GrantSkills(asc, activeSkillIds.ToArray());
+            self.GrantSkills(asc, passiveSkillIds.ToArray(), true);
         }
     }
 }

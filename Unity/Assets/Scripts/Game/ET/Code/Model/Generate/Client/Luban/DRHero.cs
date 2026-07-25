@@ -20,8 +20,7 @@ public sealed partial class DRHero : Luban.BeanBase
         UnitConfigId_Ref = null;
         Name = _buf.ReadString();
         HeadIcon = _buf.ReadString();
-        {int __n0 = _buf.ReadSize(); ActiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); ActiveSkill[__index0] = __e0;}}
-        {int __n0 = _buf.ReadSize(); PassiveSkill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); PassiveSkill[__index0] = __e0;}}
+        {int __n0 = _buf.ReadSize(); Skill = new int[__n0];for(var __index0 = 0 ; __index0 < __n0 ; __index0++) { int __e0;__e0 = _buf.ReadInt(); Skill[__index0] = __e0;}}
         BattleCardConfigId = _buf.ReadInt();
         BattleCardConfigId_Ref = null;
         PostInit();
@@ -40,11 +39,7 @@ public sealed partial class DRHero : Luban.BeanBase
     /// <summary>
     /// ActiveSkillIds
     /// </summary>
-    public readonly int[] ActiveSkill;
-    /// <summary>
-    /// PassiveSkillIds
-    /// </summary>
-    public readonly int[] PassiveSkill;
+    public readonly int[] Skill;
     /// <summary>
     /// BattleCardConfigId
     /// </summary>
@@ -67,8 +62,7 @@ public sealed partial class DRHero : Luban.BeanBase
         + "UnitConfigId:" + UnitConfigId + ","
         + "Name:" + Name + ","
         + "HeadIcon:" + HeadIcon + ","
-        + "ActiveSkill:" + Luban.StringUtil.CollectionToString(ActiveSkill) + ","
-        + "PassiveSkill:" + Luban.StringUtil.CollectionToString(PassiveSkill) + ","
+        + "Skill:" + Luban.StringUtil.CollectionToString(Skill) + ","
         + "BattleCardConfigId:" + BattleCardConfigId + ","
         + "}";
     }
