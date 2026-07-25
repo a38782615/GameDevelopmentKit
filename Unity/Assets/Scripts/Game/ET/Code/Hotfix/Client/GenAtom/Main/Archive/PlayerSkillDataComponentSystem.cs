@@ -21,13 +21,11 @@ namespace ET.Client
             self.EquippedSkills?.Dispose();
             self.EquippedActiveSkills?.Dispose();
             self.EquippedPassiveSkills?.Dispose();
-            self.UpgradeableSkills?.Dispose();
             self.LearnedSkills = null;
             self.SkillDataById = null;
             self.EquippedSkills = null;
             self.EquippedActiveSkills = null;
             self.EquippedPassiveSkills = null;
-            self.UpgradeableSkills = null;
         }
 
         public static async UniTask LoadPlayerSkillData(this PlayerSkillDataComponent self, ArchiveComponent archiveComponent)
@@ -120,7 +118,6 @@ namespace ET.Client
             }
 
             ++playerSkill.Level;
-            self.RebuildSkillCaches();
             return true;
         }
 
@@ -148,10 +145,19 @@ namespace ET.Client
             return self.EquippedPassiveSkills;
         }
 
-        public static XList<PlayerSkillData> GetUpgradeableSkills(this PlayerSkillDataComponent self)
+        public static List<PlayerSkillData> GetUpgradeableSkills(this PlayerSkillDataComponent self)
         {
             self.EnsureSkillCaches();
-            return self.UpgradeableSkills;
+            List<PlayerSkillData> upgradeableSkills = new List<PlayerSkillData>();
+            foreach (PlayerSkillData playerSkill in self.LearnedSkills)
+            {
+                if (self.CanUpgrade(playerSkill))
+                {
+                    upgradeableSkills.Add(playerSkill);
+                }
+            }
+
+            return upgradeableSkills;
         }
 
         private static void RebuildSkillCaches(this PlayerSkillDataComponent self)
@@ -159,15 +165,9 @@ namespace ET.Client
             self.EquippedSkills.Clear();
             self.EquippedActiveSkills.Clear();
             self.EquippedPassiveSkills.Clear();
-            self.UpgradeableSkills.Clear();
 
             foreach (PlayerSkillData playerSkill in self.LearnedSkills)
             {
-                if (self.CanUpgrade(playerSkill))
-                {
-                    self.UpgradeableSkills.Add(playerSkill);
-                }
-
                 if (!playerSkill.IsEquipped)
                 {
                     continue;
@@ -203,7 +203,6 @@ namespace ET.Client
             self.EquippedSkills ??= XList<PlayerSkillData>.Create();
             self.EquippedActiveSkills ??= XList<PlayerSkillData>.Create();
             self.EquippedPassiveSkills ??= XList<PlayerSkillData>.Create();
-            self.UpgradeableSkills ??= XList<PlayerSkillData>.Create();
         }
     }
 }

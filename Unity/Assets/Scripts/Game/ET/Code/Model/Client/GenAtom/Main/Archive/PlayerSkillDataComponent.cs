@@ -8,6 +8,5 @@ namespace ET.Client
         public XList<PlayerSkillData> EquippedSkills;
         public XList<PlayerSkillData> EquippedActiveSkills;
         public XList<PlayerSkillData> EquippedPassiveSkills;
-        public XList<PlayerSkillData> UpgradeableSkills;
     }
 }
