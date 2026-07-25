@@ -1,10 +1,13 @@
-using System.Collections.Generic;
-
 namespace ET.Client
 {
     [ComponentOf(typeof(GameDataMgrComponent))]
     public class PlayerSkillDataComponent : Entity, IAwake, IDestroy
     {
-        public List<PlayerSkillData> LearnedSkills = new List<PlayerSkillData>();
+        public XList<PlayerSkillData> LearnedSkills;
+        public XDictionary<int, PlayerSkillData> SkillDataById;
+        public XList<PlayerSkillData> EquippedSkills;
+        public XList<PlayerSkillData> EquippedActiveSkills;
+        public XList<PlayerSkillData> EquippedPassiveSkills;
+        public XList<PlayerSkillData> UpgradeableSkills;
     }
 }
