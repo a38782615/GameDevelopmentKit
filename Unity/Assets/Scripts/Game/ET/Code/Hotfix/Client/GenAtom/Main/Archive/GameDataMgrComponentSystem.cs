@@ -16,6 +16,7 @@ namespace ET.Client
         private static void Destroy(this GameDataMgrComponent self)
         {
             self.PlayerDataComponent = null;
+            self.PlayerSkillDataComponent = null;
             self.TaskDataComponent = null;
             self.InventoryDataComponent = null;
         }
@@ -30,6 +31,7 @@ namespace ET.Client
 
             self.EnsureDataComponents();
             await self.GetPlayerDataComponent().LoadPlayerData(archiveComponent);
+            await self.GetPlayerSkillDataComponent().LoadPlayerSkillData(archiveComponent);
             await self.GetTaskDataComponent().LoadTaskData(archiveComponent);
             await self.GetInventoryDataComponent().LoadInventoryData(archiveComponent);
         }
@@ -44,6 +46,7 @@ namespace ET.Client
 
             self.EnsureDataComponents();
             await self.GetPlayerDataComponent().SavePlayerData(archiveComponent);
+            await self.GetPlayerSkillDataComponent().SavePlayerSkillData(archiveComponent);
             await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
             await self.GetInventoryDataComponent().SaveInventoryData();
         }
@@ -70,6 +73,18 @@ namespace ET.Client
             }
 
             return taskDataComponent;
+        }
+
+        public static PlayerSkillDataComponent GetPlayerSkillDataComponent(this GameDataMgrComponent self)
+        {
+            PlayerSkillDataComponent playerSkillDataComponent = self.PlayerSkillDataComponent;
+            if (playerSkillDataComponent == null)
+            {
+                playerSkillDataComponent = self.GetOrAddComponent<PlayerSkillDataComponent>();
+                self.PlayerSkillDataComponent = playerSkillDataComponent;
+            }
+
+            return playerSkillDataComponent;
         }
 
         public static InventoryDataComponent GetInventoryDataComponent(this GameDataMgrComponent self)
@@ -106,9 +121,21 @@ namespace ET.Client
             await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
         }
 
+        public static async UniTask SavePlayerSkillData(this GameDataMgrComponent self)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            await self.GetPlayerSkillDataComponent().SavePlayerSkillData(archiveComponent);
+        }
+
         private static void EnsureDataComponents(this GameDataMgrComponent self)
         {
             self.GetPlayerDataComponent();
+            self.GetPlayerSkillDataComponent();
             self.GetTaskDataComponent();
             self.GetInventoryDataComponent();
         }
