@@ -22,5 +22,6 @@ namespace ET.Client
         public int PosIdx; //位置
         public int Map0;
         public int Map1;
+        public int SkillExp;
     }
 }

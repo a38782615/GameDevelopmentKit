@@ -5,6 +5,8 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(PlayerSkillDataComponent))]
     [FriendOf(typeof(PlayerSkillDataComponent))]
+    [FriendOf(typeof(GameDataMgrComponent))]
+    [FriendOf(typeof(PlayerDataComponent))]
     public static partial class PlayerSkillDataComponentSystem
     {
         [EntitySystem]
@@ -17,12 +19,12 @@ namespace ET.Client
         private static void Destroy(this PlayerSkillDataComponent self)
         {
             self.LearnedSkills?.Dispose();
-            self.SkillDataById?.Dispose();
+            self.SkillDataByConfigId?.Dispose();
             self.EquippedSkills?.Dispose();
             self.EquippedActiveSkills?.Dispose();
             self.EquippedPassiveSkills?.Dispose();
             self.LearnedSkills = null;
-            self.SkillDataById = null;
+            self.SkillDataByConfigId = null;
             self.EquippedSkills = null;
             self.EquippedActiveSkills = null;
             self.EquippedPassiveSkills = null;
@@ -32,8 +34,9 @@ namespace ET.Client
         {
             self.EnsureSkillCaches();
             List<PlayerSkillData> playerSkills = await archiveComponent.QueryAll<PlayerSkillData>();
+            long playerId = self.GetPlayerId();
             self.LearnedSkills.Clear();
-            self.SkillDataById.Clear();
+            self.SkillDataByConfigId.Clear();
             if (playerSkills == null)
             {
                 self.RebuildSkillCaches();
@@ -42,13 +45,21 @@ namespace ET.Client
 
             foreach (PlayerSkillData playerSkill in playerSkills)
             {
-                if (playerSkill == null || playerSkill.Id <= 0 || self.SkillDataById.ContainsKey(playerSkill.Id))
+                if (playerSkill == null)
+                {
+                    continue;
+                }
+
+                // Migrate records created before PlayerId and ConfigId were introduced.
+                playerSkill.ConfigId = playerSkill.ConfigId > 0 ? playerSkill.ConfigId : (int)playerSkill.Id;
+                playerSkill.PlayerId = playerSkill.PlayerId > 0 ? playerSkill.PlayerId : playerId;
+                if (playerSkill.PlayerId != playerId || playerSkill.ConfigId <= 0 || self.SkillDataByConfigId.ContainsKey(playerSkill.ConfigId))
                 {
                     continue;
                 }
 
                 self.LearnedSkills.Add(playerSkill);
-                self.SkillDataById.Add(playerSkill.Id, playerSkill);
+                self.SkillDataByConfigId.Add(playerSkill.ConfigId, playerSkill);
             }
 
             self.RebuildSkillCaches();
@@ -60,25 +71,25 @@ namespace ET.Client
             await archiveComponent.SaveBatch(self.LearnedSkills);
         }
 
-        public static PlayerSkillData GetPlayerSkill(this PlayerSkillDataComponent self, int skillId)
+        public static PlayerSkillData GetPlayerSkill(this PlayerSkillDataComponent self, int configId)
         {
             self.EnsureSkillCaches();
-            return self.SkillDataById.TryGetValue(skillId, out PlayerSkillData playerSkill) ? playerSkill : null;
+            return self.SkillDataByConfigId.TryGetValue(configId, out PlayerSkillData playerSkill) ? playerSkill : null;
         }
 
-        public static DRSkill GetSkillConfig(this PlayerSkillDataComponent self, int skillId)
+        public static DRSkill GetSkillConfig(this PlayerSkillDataComponent self, int configId)
         {
-            return Tables.Instance?.DTSkill?.GetOrDefault(skillId);
+            return Tables.Instance?.DTSkill?.GetOrDefault(configId);
         }
 
-        public static PlayerSkillData LearnSkill(this PlayerSkillDataComponent self, int skillId, int level = 0, bool isEquipped = false)
+        public static PlayerSkillData LearnSkill(this PlayerSkillDataComponent self, int configId, int level = 0, bool isEquipped = false)
         {
-            if (skillId <= 0 || self.GetSkillConfig(skillId) == null)
+            if (configId <= 0 || self.GetSkillConfig(configId) == null)
             {
                 return null;
             }
 
-            PlayerSkillData playerSkill = self.GetPlayerSkill(skillId);
+            PlayerSkillData playerSkill = self.GetPlayerSkill(configId);
             if (playerSkill != null)
             {
                 return playerSkill;
@@ -86,19 +97,21 @@ namespace ET.Client
 
             playerSkill = new PlayerSkillData
             {
-                Id = skillId,
+                Id = IdGenerater.Instance.GenerateId(),
+                PlayerId = self.GetPlayerId(),
+                ConfigId = configId,
                 Level = level,
                 IsEquipped = isEquipped,
             };
             self.LearnedSkills.Add(playerSkill);
-            self.SkillDataById.Add(skillId, playerSkill);
+            self.SkillDataByConfigId.Add(configId, playerSkill);
             self.RebuildSkillCaches();
             return playerSkill;
         }
 
-        public static bool SetSkillEquipped(this PlayerSkillDataComponent self, int skillId, bool isEquipped)
+        public static bool SetSkillEquipped(this PlayerSkillDataComponent self, int configId, bool isEquipped)
         {
-            PlayerSkillData playerSkill = self.GetPlayerSkill(skillId);
+            PlayerSkillData playerSkill = self.GetPlayerSkill(configId);
             if (playerSkill == null)
             {
                 return false;
@@ -109,9 +122,9 @@ namespace ET.Client
             return true;
         }
 
-        public static bool UpgradeSkill(this PlayerSkillDataComponent self, int skillId)
+        public static bool UpgradeSkill(this PlayerSkillDataComponent self, int configId)
         {
-            PlayerSkillData playerSkill = self.GetPlayerSkill(skillId);
+            PlayerSkillData playerSkill = self.GetPlayerSkill(configId);
             if (playerSkill == null || !self.CanUpgrade(playerSkill))
             {
                 return false;
@@ -174,7 +187,7 @@ namespace ET.Client
                 }
 
                 self.EquippedSkills.Add(playerSkill);
-                DRSkill skillConfig = self.GetSkillConfig(playerSkill.Id);
+                DRSkill skillConfig = self.GetSkillConfig(playerSkill.ConfigId);
                 if (skillConfig == null)
                 {
                     continue;
@@ -193,13 +206,21 @@ namespace ET.Client
 
         private static bool CanUpgrade(this PlayerSkillDataComponent self, PlayerSkillData playerSkill)
         {
-            return playerSkill != null && Tables.Instance?.DTSkillAttribute?.Get(playerSkill.Id, playerSkill.Level + 1) != null;
+            return playerSkill != null && Tables.Instance?.DTSkillAttribute?.Get(playerSkill.ConfigId, playerSkill.Level + 1) != null;
+        }
+
+        private static long GetPlayerId(this PlayerSkillDataComponent self)
+        {
+            GameDataMgrComponent gameDataMgrComponent = self.GetParent<GameDataMgrComponent>();
+            PlayerDataComponent playerDataComponent = gameDataMgrComponent?.PlayerDataComponent;
+            PlayerData playerData = playerDataComponent?.PlayerData;
+            return playerData?.Id ?? GameConst.PlayerDataId;
         }
 
         private static void EnsureSkillCaches(this PlayerSkillDataComponent self)
         {
             self.LearnedSkills ??= XList<PlayerSkillData>.Create();
-            self.SkillDataById ??= XDictionary<int, PlayerSkillData>.Create();
+            self.SkillDataByConfigId ??= XDictionary<int, PlayerSkillData>.Create();
             self.EquippedSkills ??= XList<PlayerSkillData>.Create();
             self.EquippedActiveSkills ??= XList<PlayerSkillData>.Create();
             self.EquippedPassiveSkills ??= XList<PlayerSkillData>.Create();
