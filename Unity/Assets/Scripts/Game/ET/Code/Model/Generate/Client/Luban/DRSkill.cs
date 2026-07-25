@@ -16,6 +16,7 @@ public sealed partial class DRSkill : Luban.BeanBase
     public DRSkill(ByteBuf _buf) 
     {
         Id = _buf.ReadInt();
+        Quality = _buf.ReadInt();
         IsAct = _buf.ReadInt();
         Name = _buf.ReadString();
         Desc = _buf.ReadString();
@@ -32,6 +33,7 @@ public sealed partial class DRSkill : Luban.BeanBase
     }
 
     public readonly int Id;
+    public readonly int Quality;
     public readonly int IsAct;
     public readonly string Name;
     public readonly string Desc;
@@ -63,6 +65,7 @@ public sealed partial class DRSkill : Luban.BeanBase
     {
         return "{ "
         + "Id:" + Id + ","
+        + "Quality:" + Quality + ","
         + "IsAct:" + IsAct + ","
         + "Name:" + Name + ","
         + "Desc:" + Desc + ","
