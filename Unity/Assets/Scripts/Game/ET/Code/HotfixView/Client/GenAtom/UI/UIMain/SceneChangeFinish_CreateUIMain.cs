@@ -23,6 +23,10 @@ namespace ET.Client
                 {
                     await uiComponent.AddUIFormComponentAsync<UIFormMap>(args.UI);
                 }
+                else if (args.UI == UGFUIFormId.UIFormSkills)
+                {
+                    await uiComponent.AddUIFormComponentAsync<UIFormSkills>(args.UI);
+                }
                 else if (args.UI == UGFUIFormId.UIFormFight)
                 {
                     await uiComponent.AddUIFormComponentAsync<UIFormFight>(args.UI);

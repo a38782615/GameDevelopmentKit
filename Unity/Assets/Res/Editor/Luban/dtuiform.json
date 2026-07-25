@@ -142,5 +142,14 @@
     "UIGroupName": "Default",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false
+  },
+  {
+    "Id": 810,
+    "CSName": "UIFormSkills",
+    "Desc": "",
+    "AssetName": "GenAtom/UIFormSkills",
+    "UIGroupName": "Default",
+    "AllowMultiInstance": false,
+    "PauseCoveredUIForm": false
   }
 ]

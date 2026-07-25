@@ -82,6 +82,14 @@ namespace ET.Client
                     UI = UGFUIFormId.UIFormBag1
                 });
             }
+            else if (button.name.StartsWith(GameConst.Btm_Skill))
+            {
+                await EventSystem.Instance.PublishAsync(root, new GoScene()
+                {
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                    UI = UGFUIFormId.UIFormSkills
+                });
+            }
             else
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()

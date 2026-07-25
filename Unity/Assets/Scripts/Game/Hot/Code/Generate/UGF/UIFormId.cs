@@ -88,5 +88,10 @@ namespace Game.Hot
         /// 
         /// </summary>
         public const int UIFormBag1 = 809;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int UIFormSkills = 810;
     }
 }
