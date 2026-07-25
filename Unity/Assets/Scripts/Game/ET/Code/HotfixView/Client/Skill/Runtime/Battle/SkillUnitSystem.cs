@@ -45,17 +45,6 @@ namespace ET.Client
             }
         }
 
-        public static DRHero GetHeroData(this SkillUnit self, long id)
-        {
-            var heroTable = Tables.Instance.DTHero;
-            if (heroTable?.DataList == null)
-            {
-                return null;
-            }
-
-            return heroTable.Get(id);
-        }
-
         public static DRMonster GetMonsterData(this SkillUnit self, long id)
         {
             var monsterTable = Tables.Instance.DTMonster;
@@ -67,16 +56,18 @@ namespace ET.Client
             return monsterTable.Get(id);
         }
 
-        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, long configId)
+        private static void InitPlayerFromTable(this SkillUnit self, AbilitySystemComponent asc, long playerId)
         {
-            DRHero heroData = self.GetHeroData(configId);
-            if (heroData == null)
+            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+            PlayerSkillDataComponent playerSkillDataComponent = gameDataMgrComponent?.GetPlayerSkillDataComponent();
+            if (playerSkillDataComponent == null)
             {
-                Log.Warning($"[SkillUnit] Missing hero config, id: {configId}");
+                Log.Warning($"[SkillUnit] Missing PlayerSkillDataComponent, PlayerId: {playerId}");
                 return;
             }
 
-            self.GrantPlayerSkills(asc, heroData.Skill);
+            self.GrantPlayerSkills(asc, playerSkillDataComponent.GetEquippedActiveSkills());
+            self.GrantPlayerSkills(asc, playerSkillDataComponent.GetEquippedPassiveSkills(), true);
         }
 
         private static void InitMonsterFromTable(this SkillUnit self, AbilitySystemComponent asc, long id)
@@ -159,35 +150,24 @@ namespace ET.Client
             }
         }
 
-        private static void GrantPlayerSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds)
+        private static void GrantPlayerSkills(
+            this SkillUnit self,
+            AbilitySystemComponent asc,
+            XList<PlayerSkillData> playerSkills,
+            bool autoActivate = false)
         {
-            if (skillIds == null)
+            if (playerSkills == null || playerSkills.Count == 0)
             {
                 return;
             }
 
-            List<int> activeSkillIds = new List<int>();
-            List<int> passiveSkillIds = new List<int>();
-            foreach (int skillId in skillIds)
+            int[] configIds = new int[playerSkills.Count];
+            for (int i = 0; i < playerSkills.Count; ++i)
             {
-                DRSkill skillConfig = Tables.Instance.DTSkill.GetOrDefault(skillId);
-                if (skillConfig == null)
-                {
-                    continue;
-                }
-
-                if (skillConfig.IsAct == 0)
-                {
-                    passiveSkillIds.Add(skillId);
-                }
-                else
-                {
-                    activeSkillIds.Add(skillId);
-                }
+                configIds[i] = playerSkills[i].ConfigId;
             }
 
-            self.GrantSkills(asc, activeSkillIds.ToArray());
-            self.GrantSkills(asc, passiveSkillIds.ToArray(), true);
+            self.GrantSkills(asc, configIds, autoActivate);
         }
     }
 }
