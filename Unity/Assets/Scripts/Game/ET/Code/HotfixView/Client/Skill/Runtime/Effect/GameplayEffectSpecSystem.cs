@@ -814,6 +814,7 @@ namespace ET.Client
             self.SetByCallerValues?.Clear();
             self.SnapshotValues?.Clear();
             self.TriggeredCueIds?.Clear();
+            self.Level = 0;
         }
 
 

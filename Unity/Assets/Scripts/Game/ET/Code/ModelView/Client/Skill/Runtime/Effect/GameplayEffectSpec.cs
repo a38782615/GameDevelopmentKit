@@ -11,7 +11,7 @@ namespace ET.Client
         public EntityRef<SpecExecutionContext> Context;
         public EntityRef<AbilitySystemComponent> Source;
         public EntityRef<AbilitySystemComponent> Target;
-        public int Level = 1;
+        public int Level = 0;
         public int StackCount = 1;
         public bool IsRunning;
         public bool IsCancelled;

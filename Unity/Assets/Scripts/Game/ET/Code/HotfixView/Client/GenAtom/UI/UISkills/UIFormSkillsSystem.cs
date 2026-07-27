@@ -167,6 +167,7 @@ namespace ET.Client
 
             ExButton button = transform.GetComponent<ExButton>();
             button.SetAsync(self.ItemClick);
+            button.interactable = true;
         }
 
         private static async UniTask ItemClick(this SkillTempLogic self, Button button)

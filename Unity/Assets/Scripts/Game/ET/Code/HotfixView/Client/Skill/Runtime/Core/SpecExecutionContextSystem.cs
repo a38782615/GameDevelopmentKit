@@ -25,7 +25,7 @@ namespace ET.Client
             self.MainTarget = default;
             self.ParentInputTarget = default;
             self.Targets.Clear();
-            self.AbilityLevel = 1;
+            self.AbilityLevel = 0;
             self.StackCount = 1;
             self.CasterAttributeOverrides.Clear();
             self.CustomData.Clear();
@@ -100,7 +100,7 @@ namespace ET.Client
 
         public static int GetAbilityLevel(this SpecExecutionContext self)
         {
-            return self?.AbilityLevel ?? 1;
+            return self?.AbilityLevel ?? 0;
         }
 
         public static int GetStackCount(this SpecExecutionContext self)

@@ -136,7 +136,9 @@ namespace ET.Client
                 return;
             }
 
-            global::ET.DRSkillAttribute skillAttribute = Tables.Instance?.DTSkillAttribute?.Get(skillId, 0);
+            var level = Spec.Level;
+
+            global::ET.DRSkillAttribute skillAttribute = Tables.Instance?.DTSkillAttribute?.Get(skillId, level);
             if (skillAttribute == null)
             {
                 SkillDiagFileLogger.Log($"[DamageEffect] MissingSkillAttribute skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} fallbackDamage={nodeData.damageFixedValue:F3}");

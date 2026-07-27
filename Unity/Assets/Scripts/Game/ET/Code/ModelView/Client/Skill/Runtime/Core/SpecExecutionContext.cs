@@ -13,7 +13,7 @@ namespace ET.Client
         public List<EntityRef<AbilitySystemComponent>> Targets = new List<EntityRef<AbilitySystemComponent>>();
         public EntityRef<AbilitySystemComponent> MainTarget;
         public EntityRef<AbilitySystemComponent> ParentInputTarget;
-        public int AbilityLevel = 1;
+        public int AbilityLevel = 0;
         public int StackCount = 1;
         public Dictionary<int, float> CasterAttributeOverrides = new Dictionary<int, float>();
         public Dictionary<string, object> CustomData = new Dictionary<string, object>();
