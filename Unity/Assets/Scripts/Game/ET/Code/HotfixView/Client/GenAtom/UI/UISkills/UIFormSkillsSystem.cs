@@ -2,6 +2,7 @@ using System.IO;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -25,27 +26,33 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkills self)
         {
-            self.BindSkillLists();
-            self.RefreshSkillDisplay();
+            self.BindMapSwitchButtons();
+            self.LoadGrid();
         }
         
         [UGFUIFormSystem]
         private static void UGFUIFormOnClose(this UIFormSkills self, bool isShutdown)
         {
+            self.UnbindMapSwitchButtons();
             self.UnbindSkillLists();
         }
 
-        private static void BindSkillLists(this UIFormSkills self)
+        private static void BindMapSwitchButtons(this UIFormSkills self)
         {
-            MonoUIFormSkills view = self.View;
-            if (object.ReferenceEquals(view, null))
-            {
-                return;
-            }
+            self.View.ReturnExButton.SetAsync(self.ReturnMap);
+        }
 
-            view.SkillsCommonLoopScrollRect.itemRenderer = self.RenderLearnedSkill;
-            view.Skill0CommonLoopScrollRect.itemRenderer = self.RenderEquippedPassiveSkill;
-            view.Skill1CommonLoopScrollRect.itemRenderer = self.RenderEquippedActiveSkill;
+        private static void UnbindMapSwitchButtons(this UIFormSkills self)
+        {
+            self.View?.ReturnExButton?.onClick.RemoveAllListeners();
+        }
+
+        private static void LoadGrid(this UIFormSkills self)
+        {
+            self.View.SkillsCommonLoopScrollRect.itemRenderer = self.LearnedSkillRender;
+            self.View.Skill0CommonLoopScrollRect.itemRenderer = self.EquippedPassiveSkillRender;
+            self.View.Skill1CommonLoopScrollRect.itemRenderer = self.EquippedActiveSkillRender;
+            self.Refresh();
         }
 
         private static void UnbindSkillLists(this UIFormSkills self)
@@ -61,26 +68,25 @@ namespace ET.Client
             view.Skill1CommonLoopScrollRect.itemRenderer = null;
         }
 
-        private static void RefreshSkillDisplay(this UIFormSkills self)
+        private static void Refresh(this UIFormSkills self)
         {
-            MonoUIFormSkills view = self.View;
             PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
-            if (object.ReferenceEquals(view, null) || skillDataComponent == null)
+            if (skillDataComponent == null)
             {
                 return;
             }
 
-            view.SkillsCommonLoopScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
-            view.Skill0CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
-            view.Skill1CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
+            self.View.SkillsCommonLoopScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
+            self.View.Skill0CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
+            self.View.Skill1CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
 
             PlayerData playerData = self.Root().GetPlayerData();
             float normalizedSkillExp = playerData == null ? 0f : Mathf.Clamp01(playerData.SkillExp / 100f);
-            view.SkillExpSlider.SetValueWithoutNotify(normalizedSkillExp);
-            view.SkillExpSlider.interactable = false;
+            self.View.SkillExpSlider.SetValueWithoutNotify(normalizedSkillExp);
+            self.View.SkillExpSlider.interactable = false;
         }
 
-        private static void RenderLearnedSkill(this UIFormSkills self, int index, Transform itemTransform)
+        private static void LearnedSkillRender(this UIFormSkills self, int index, Transform transform)
         {
             PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
             if (skillDataComponent == null || index < 0 || index >= skillDataComponent.GetLearnedSkills().Count)
@@ -88,10 +94,17 @@ namespace ET.Client
                 return;
             }
 
-            self.RenderSkill(itemTransform, skillDataComponent.GetLearnedSkills()[index], true);
+            var item = new SkillTempLogic
+            {
+                transform = transform,
+                Skills = self,
+                Data = skillDataComponent.GetLearnedSkills()[index],
+                ToggleEquipped = true,
+            };
+            item.ItemRender();
         }
 
-        private static void RenderEquippedPassiveSkill(this UIFormSkills self, int index, Transform itemTransform)
+        private static void EquippedPassiveSkillRender(this UIFormSkills self, int index, Transform transform)
         {
             PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
             if (skillDataComponent == null || index < 0 || index >= skillDataComponent.GetEquippedPassiveSkills().Count)
@@ -99,10 +112,17 @@ namespace ET.Client
                 return;
             }
 
-            self.RenderSkill(itemTransform, skillDataComponent.GetEquippedPassiveSkills()[index], false);
+            var item = new SkillTempLogic
+            {
+                transform = transform,
+                Skills = self,
+                Data = skillDataComponent.GetEquippedPassiveSkills()[index],
+                ToggleEquipped = false,
+            };
+            item.ItemRender();
         }
 
-        private static void RenderEquippedActiveSkill(this UIFormSkills self, int index, Transform itemTransform)
+        private static void EquippedActiveSkillRender(this UIFormSkills self, int index, Transform transform)
         {
             PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
             if (skillDataComponent == null || index < 0 || index >= skillDataComponent.GetEquippedActiveSkills().Count)
@@ -110,59 +130,70 @@ namespace ET.Client
                 return;
             }
 
-            self.RenderSkill(itemTransform, skillDataComponent.GetEquippedActiveSkills()[index], false);
+            var item = new SkillTempLogic
+            {
+                transform = transform,
+                Skills = self,
+                Data = skillDataComponent.GetEquippedActiveSkills()[index],
+                ToggleEquipped = false,
+            };
+            item.ItemRender();
         }
 
-        private static void RenderSkill(
-            this UIFormSkills self,
-            Transform itemTransform,
-            PlayerSkillData playerSkill,
-            bool toggleEquipped)
+        private static void ItemRender(this SkillTempLogic self)
         {
-            MonoUISkillsItem item = itemTransform.GetComponent<MonoUISkillsItem>();
-            DRSkill skillConfig = playerSkill == null ? null : Tables.Instance.DTSkill.GetOrDefault(playerSkill.ConfigId);
-            if (item == null || playerSkill == null || skillConfig == null)
+            DRSkill skillConfig = self.Data == null ? null : Tables.Instance.DTSkill.GetOrDefault(self.Data.ConfigId);
+            if (skillConfig == null)
             {
-                Log.Warning("UIFormSkills render skipped because item binding or skill data is missing.");
+                Log.Warning("UIFormSkills render skipped because skill data is missing.");
                 return;
             }
 
-            item.NameTextMeshProUGUI.text = skillConfig.Name;
-            item.LevelTextMeshProUGUI.text = $"Lv.{playerSkill.Level}";
-            item.EquippedImage.enabled = playerSkill.IsEquipped;
+            Transform transform = self.transform;
+            UXTextMeshPro level = transform.Find("Count").GetComponent<UXTextMeshPro>();
+            level.text = self.Data.Level.ToString();
+            // Image icon = transform.GetComponent<Image>();
+            // icon.color = self.Data.IsEquipped ? Color.white : new Color(1f, 1f, 1f, 0.65f);
 
-            if (string.IsNullOrEmpty(skillConfig.IconPath))
-            {
-                item.IconImage.enabled = false;
-            }
-            else
-            {
-                item.IconImage.enabled = true;
-                item.IconImage.SetSprite(GetSkillIconSpritePath(skillConfig.IconPath));
-            }
+            // if (string.IsNullOrEmpty(skillConfig.IconPath))
+            // {
+            //     icon.enabled = false;
+            // }
+            // else
+            // {
+            //     icon.enabled = true;
+            //     icon.SetSprite(GetSkillIconSpritePath(skillConfig.IconPath));
+            // }
 
-            int configId = playerSkill.ConfigId;
-            item.ClickExButton.Set(() => self.OnSkillClick(configId, toggleEquipped));
+            ExButton button = transform.GetComponent<ExButton>();
+            button.SetAsync(self.ItemClick);
         }
 
-        private static void OnSkillClick(this UIFormSkills self, int configId, bool toggleEquipped)
+        private static async UniTask ItemClick(this SkillTempLogic self, Button button)
         {
-            PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
-            PlayerSkillData playerSkill = skillDataComponent?.GetPlayerSkill(configId);
-            if (playerSkill == null)
+            UIFormSkills skills = self.Skills;
+            if (skills == null || skills.IsDisposed || self.Data == null)
             {
                 return;
             }
 
-            bool targetEquipped = toggleEquipped && !playerSkill.IsEquipped;
-            if (!skillDataComponent.SetSkillEquipped(configId, targetEquipped))
+            PlayerSkillDataComponent skillDataComponent = skills.GetSkillDataComponent();
+            bool targetEquipped = self.ToggleEquipped && !self.Data.IsEquipped;
+            if (skillDataComponent == null || !skillDataComponent.SetSkillEquipped(self.Data.ConfigId, targetEquipped))
             {
                 return;
             }
 
-            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
-            gameDataMgrComponent?.SavePlayerSkillData().Forget();
-            self.RefreshSkillDisplay();
+            GameDataMgrComponent gameDataMgrComponent = skills.Root().GetComponent<GameDataMgrComponent>();
+            if (gameDataMgrComponent != null)
+            {
+                await gameDataMgrComponent.SavePlayerSkillData();
+            }
+
+            if (!skills.IsDisposed)
+            {
+                skills.Refresh();
+            }
         }
 
         private static PlayerSkillDataComponent GetSkillDataComponent(this UIFormSkills self)
@@ -187,6 +218,15 @@ namespace ET.Client
 
             string iconName = Path.GetFileNameWithoutExtension(normalizedPath);
             return AssetUtility.GetUISpriteAsset($"SkillIcon/{iconName}");
+        }
+        private static async UniTask ReturnMap(this UIFormSkills self, Button button)
+        {
+            Scene root = self.Root();
+            await EventSystem.Instance.PublishAsync(root, new GoScene
+            {
+                SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                UI = UGFUIFormId.UIFormMap,
+            });
         }
     }
 }

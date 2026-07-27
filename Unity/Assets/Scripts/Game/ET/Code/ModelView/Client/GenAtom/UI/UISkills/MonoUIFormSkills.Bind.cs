@@ -5,6 +5,8 @@ namespace ET.Client
     public partial class MonoUIFormSkills
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ReturnExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.CommonLoopScrollRect m_Skill0CommonLoopScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.CommonLoopScrollRect m_Skill1CommonLoopScrollRect;
@@ -18,6 +20,7 @@ namespace ET.Client
         private Game.CommonLoopScrollRect m_SkillsCommonLoopScrollRect;
 
 
+        public Game.ExButton ReturnExButton => m_ReturnExButton;
         public Game.CommonLoopScrollRect Skill0CommonLoopScrollRect => m_Skill0CommonLoopScrollRect;
         public Game.CommonLoopScrollRect Skill1CommonLoopScrollRect => m_Skill1CommonLoopScrollRect;
         public UnityEngine.UI.Slider SkillExpSlider => m_SkillExpSlider;
@@ -34,6 +37,7 @@ namespace ET.Client
 
         private bool CheckBindDataExitEmpty()
         {
+            if (this.m_ReturnExButton == null) return true;
             if (this.m_Skill0CommonLoopScrollRect == null) return true;
             if (this.m_Skill1CommonLoopScrollRect == null) return true;
             if (this.m_SkillExpSlider == null) return true;
