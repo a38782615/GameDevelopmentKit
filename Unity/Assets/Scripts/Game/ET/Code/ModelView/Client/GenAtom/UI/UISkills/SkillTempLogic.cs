@@ -8,6 +8,5 @@ namespace ET.Client
         public Transform transform;
         public PlayerSkillData Data;
         public UIFormSkills Skills;
-        public bool ToggleEquipped;
     }
 }

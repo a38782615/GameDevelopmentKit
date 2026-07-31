@@ -99,7 +99,6 @@ namespace ET.Client
                 transform = transform,
                 Skills = self,
                 Data = skillDataComponent.GetLearnedSkills()[index],
-                ToggleEquipped = true,
             };
             item.ItemRender();
         }
@@ -117,7 +116,6 @@ namespace ET.Client
                 transform = transform,
                 Skills = self,
                 Data = skillDataComponent.GetEquippedPassiveSkills()[index],
-                ToggleEquipped = false,
             };
             item.ItemRender();
         }
@@ -135,7 +133,6 @@ namespace ET.Client
                 transform = transform,
                 Skills = self,
                 Data = skillDataComponent.GetEquippedActiveSkills()[index],
-                ToggleEquipped = false,
             };
             item.ItemRender();
         }
@@ -179,7 +176,7 @@ namespace ET.Client
             }
 
             PlayerSkillDataComponent skillDataComponent = skills.GetSkillDataComponent();
-            bool targetEquipped = self.ToggleEquipped && !self.Data.IsEquipped;
+            bool targetEquipped = !self.Data.IsEquipped;
             if (skillDataComponent == null || !skillDataComponent.SetSkillEquipped(self.Data.ConfigId, targetEquipped))
             {
                 return;
