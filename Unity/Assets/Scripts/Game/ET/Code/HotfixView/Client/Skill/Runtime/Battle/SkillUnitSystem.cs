@@ -5,6 +5,7 @@ namespace ET.Client
     [EntitySystemOf(typeof(SkillUnit))]
     [FriendOf(typeof(SkillUnit))]
     [FriendOf(typeof(AbilitySystemComponent))]
+    [FriendOf(typeof(GameplayAbilitySpec))]
     public static partial class SkillUnitSystem
     {
         [EntitySystem]
@@ -96,7 +97,12 @@ namespace ET.Client
             }
         }
 
-        private static void GrantSkills(this SkillUnit self, AbilitySystemComponent asc, int[] skillIds, bool autoActivate = false)
+        private static void GrantSkills(
+            this SkillUnit self,
+            AbilitySystemComponent asc,
+            int[] skillIds,
+            bool autoActivate = false,
+            int[] skillLevels = null)
         {
             if (skillIds == null)
             {
@@ -112,8 +118,9 @@ namespace ET.Client
             }
 
             List<GameplayAbilitySpec> pendingActivationSpecs = autoActivate ? new List<GameplayAbilitySpec>() : null;
-            foreach (int skillId in skillIds)
+            for (int i = 0; i < skillIds.Length; ++i)
             {
+                int skillId = skillIds[i];
                 DRSkill skillData = tbSkill.GetOrDefault(skillId);
                 if (skillData == null)
                 {
@@ -129,6 +136,11 @@ namespace ET.Client
                 }
 
                 GameplayAbilitySpec spec = asc.GrantAbility(graphData);
+                if (spec != null && skillLevels != null && i < skillLevels.Length)
+                {
+                    spec.Level = skillLevels[i];
+                }
+
                 if (autoActivate && spec != null)
                 {
                     pendingActivationSpecs.Add(spec);
@@ -162,12 +174,14 @@ namespace ET.Client
             }
 
             int[] configIds = new int[playerSkills.Count];
+            int[] levels = new int[playerSkills.Count];
             for (int i = 0; i < playerSkills.Count; ++i)
             {
                 configIds[i] = playerSkills[i].ConfigId;
+                levels[i] = playerSkills[i].Level;
             }
 
-            self.GrantSkills(asc, configIds, autoActivate);
+            self.GrantSkills(asc, configIds, autoActivate, levels);
         }
     }
 }
