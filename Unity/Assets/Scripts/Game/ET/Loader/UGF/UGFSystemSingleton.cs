@@ -50,10 +50,28 @@ namespace ET
                 }
             }
             
+            foreach (Type type in CodeTypes.Instance.GetTypes(typeof (UGFEntitySystemAttribute)))
+            {
+                SystemObject obj = (SystemObject)Activator.CreateInstance(type);
+
+                if (obj is not ISystemType iSystemType)
+                {
+                    continue;
+                }
+
+                TypeSystems.OneTypeSystems oneTypeSystems = this.m_TypeSystems.GetOrCreateOneTypeSystems(iSystemType.Type());
+                oneTypeSystems.Map.Add(iSystemType.SystemType(), obj);
+                int index = iSystemType.GetInstanceQueueIndex();
+                if (index > InstanceQueueIndex.None && index < InstanceQueueIndex.Max)
+                {
+                    oneTypeSystems.QueueFlag[index] = true;
+                }
+            }
+
             foreach (var kv in CodeTypes.Instance.GetTypes())
             {
                 Type type = kv.Value;
-                if (typeof(UGFUIForm).IsAssignableFrom(type) || typeof(UGFUIWidget).IsAssignableFrom(type))
+                if (typeof(UGFUIForm).IsAssignableFrom(type) || typeof(UGFUIWidget).IsAssignableFrom(type) || typeof(UGFEntity).IsAssignableFrom(type))
                 {
                     long hash = type.FullName.GetLongHashCode();
                     try
@@ -96,37 +114,6 @@ namespace ET
         public TypeSystems.OneTypeSystems GetOneTypeSystems(Type type)
         {
             return this.m_TypeSystems.GetOneTypeSystems(type);
-        }
-
-        public void UGFUIWidgetOnInit(UGFUIWidget ugfUIWidget)
-        {
-            if (ugfUIWidget is not IUGFUIWidgetOnInit)
-            {
-                return;
-            }
-
-            List<SystemObject> systems = this.m_TypeSystems.GetSystems(ugfUIWidget.GetType(), typeof(IUGFUIWidgetOnInitSystem));
-            if (systems == null)
-            {
-                return;
-            }
-
-            foreach (IUGFUIWidgetOnInitSystem system in systems)
-            {
-                if (system == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    system.Run(ugfUIWidget);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                }
-            }
         }
 
         public void UGFUIWidgetOnOpen(UGFUIWidget ugfUIWidget)
@@ -439,37 +426,6 @@ namespace ET
             }
         }
 
-        public void UGFUIFormOnInit(UGFUIForm ugfUIForm)
-        {
-            if (ugfUIForm is not IUGFUIFormOnInit)
-            {
-                return;
-            }
-
-            List<SystemObject> systems = this.m_TypeSystems.GetSystems(ugfUIForm.GetType(), typeof(IUGFUIFormOnInitSystem));
-            if (systems == null)
-            {
-                return;
-            }
-
-            foreach (IUGFUIFormOnInitSystem system in systems)
-            {
-                if (system == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    system.Run(ugfUIForm);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                }
-            }
-        }
-
         public void UGFUIFormOnOpen(UGFUIForm ugfUIForm)
         {
             if (ugfUIForm is not IUGFUIFormOnOpen)
@@ -772,37 +728,6 @@ namespace ET
                 try
                 {
                     system.Run(ugfUIForm, elapseSeconds, realElapseSeconds);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                }
-            }
-        }
-
-        public void UGFEntityOnInit(UGFEntity ugfEntity)
-        {
-            if (ugfEntity is not IUGFEntityOnInit)
-            {
-                return;
-            }
-
-            List<SystemObject> systems = this.m_TypeSystems.GetSystems(ugfEntity.GetType(), typeof(IUGFEntityOnInitSystem));
-            if (systems == null)
-            {
-                return;
-            }
-
-            foreach (IUGFEntityOnInitSystem system in systems)
-            {
-                if (system == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    system.Run(ugfEntity);
                 }
                 catch (Exception e)
                 {
