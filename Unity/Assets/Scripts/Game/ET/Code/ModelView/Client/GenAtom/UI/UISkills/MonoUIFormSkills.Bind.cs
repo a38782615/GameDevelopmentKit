@@ -13,9 +13,23 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Slider m_SkillExpSlider;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_SkillTempExButton;
+        private UnityEngine.UI.UXTextMeshPro m_SkillExpTxtUXTextMeshPro;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Image m_SkillTempImage;
+        private UnityEngine.UI.UXTextMeshPro m_SkillLevelUXTextMeshPro;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.UXTextMeshPro m_SkillNameUXTextMeshPro;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_SkillTemp1ExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_SkillTemp1Image;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_SkillTemp2ExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_SkillTemp2Image;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_SkillTemp3ExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_SkillTemp3Image;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private Game.CommonLoopScrollRect m_SkillsCommonLoopScrollRect;
 
@@ -24,8 +38,15 @@ namespace ET.Client
         public Game.CommonLoopScrollRect Skill0CommonLoopScrollRect => m_Skill0CommonLoopScrollRect;
         public Game.CommonLoopScrollRect Skill1CommonLoopScrollRect => m_Skill1CommonLoopScrollRect;
         public UnityEngine.UI.Slider SkillExpSlider => m_SkillExpSlider;
-        public Game.ExButton SkillTempExButton => m_SkillTempExButton;
-        public UnityEngine.UI.Image SkillTempImage => m_SkillTempImage;
+        public UnityEngine.UI.UXTextMeshPro SkillExpTxtUXTextMeshPro => m_SkillExpTxtUXTextMeshPro;
+        public UnityEngine.UI.UXTextMeshPro SkillLevelUXTextMeshPro => m_SkillLevelUXTextMeshPro;
+        public UnityEngine.UI.UXTextMeshPro SkillNameUXTextMeshPro => m_SkillNameUXTextMeshPro;
+        public Game.ExButton SkillTemp1ExButton => m_SkillTemp1ExButton;
+        public UnityEngine.UI.Image SkillTemp1Image => m_SkillTemp1Image;
+        public Game.ExButton SkillTemp2ExButton => m_SkillTemp2ExButton;
+        public UnityEngine.UI.Image SkillTemp2Image => m_SkillTemp2Image;
+        public Game.ExButton SkillTemp3ExButton => m_SkillTemp3ExButton;
+        public UnityEngine.UI.Image SkillTemp3Image => m_SkillTemp3Image;
         public Game.CommonLoopScrollRect SkillsCommonLoopScrollRect => m_SkillsCommonLoopScrollRect;
 
 
@@ -41,8 +62,15 @@ namespace ET.Client
             if (this.m_Skill0CommonLoopScrollRect == null) return true;
             if (this.m_Skill1CommonLoopScrollRect == null) return true;
             if (this.m_SkillExpSlider == null) return true;
-            if (this.m_SkillTempExButton == null) return true;
-            if (this.m_SkillTempImage == null) return true;
+            if (this.m_SkillExpTxtUXTextMeshPro == null) return true;
+            if (this.m_SkillLevelUXTextMeshPro == null) return true;
+            if (this.m_SkillNameUXTextMeshPro == null) return true;
+            if (this.m_SkillTemp1ExButton == null) return true;
+            if (this.m_SkillTemp1Image == null) return true;
+            if (this.m_SkillTemp2ExButton == null) return true;
+            if (this.m_SkillTemp2Image == null) return true;
+            if (this.m_SkillTemp3ExButton == null) return true;
+            if (this.m_SkillTemp3Image == null) return true;
             if (this.m_SkillsCommonLoopScrollRect == null) return true;
             return false;
         }
