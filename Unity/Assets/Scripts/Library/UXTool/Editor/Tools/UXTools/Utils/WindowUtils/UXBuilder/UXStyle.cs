@@ -6,11 +6,10 @@ namespace ThunderFireUITool
         
     public class UXStyle : IStyle
         {
-                public void Clear(bool c)
-                {
-                        
-                }
-                public StyleLength width { get; set; }
+        public void Clear(bool clearSourceAssetStyles = true)
+        {
+        }
+        public StyleLength width { get; set; }
         public StyleLength height { get; set; }
         public StyleLength maxWidth { get; set; }
         public StyleLength maxHeight { get; set; }
@@ -109,10 +108,6 @@ namespace ThunderFireUITool
         public StyleList<FilterFunction> filter { get; set; }
         public StyleMaterialDefinition unityMaterial { get; set; }
         public StyleTextAutoSize unityTextAutoSize { get; set; }
-
-        public void Clear(bool clearSourceAssetStyles = true)
-        {
-        }
 #endif
     }
 }
