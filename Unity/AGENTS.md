@@ -20,3 +20,23 @@
 
 Reference: `/Packages/cn.lys.aibridge/Skill~/SKILL.md`
 <!-- AIBRIDGE:END -->
+
+<!-- AIBRIDGE:START {"assistant":"codex","templateId":"unity-project-rules","version":1,"target":"root-rule"} -->
+## AIBridge Rules
+
+Use `AIBridgeCache/CLI/AIBridgeCLI.exe` for Unity Editor automation in this project.
+
+- Prefer `--raw` output for machine-readable responses
+- Use AIBridge for compile checks, console log inspection, scene hierarchy changes, GameObject updates, Transform edits, and asset queries
+- Use screenshot or GIF commands for visual verification when Play Mode is required
+
+**Quick Reference**:
+```bash
+AIBridgeCLI.exe compile unity --raw
+AIBridgeCLI.exe get_logs --logType Error --raw
+AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube --raw
+AIBridgeCLI.exe asset search --mode script --keyword "Player" --raw
+```
+
+Reference: `/.claude/skills/aibridge/SKILL.md`
+<!-- AIBRIDGE:END -->

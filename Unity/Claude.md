@@ -1,21 +1,15 @@
-﻿
-
+﻿<!-- AIBRIDGE:START {"assistant":"claude","templateId":"unity-integration","version":1,"target":"root-rule"} -->
 ## AIBridge Unity Integration
+
+Use `AIBridgeCache/CLI/AIBridgeCLI.exe` to interact with Unity Editor through AIBridge.
 
 **Skill**: `aibridge`
 
-**Activation Keywords**: Unity log, compile Unity, modify asset, query asset, GameObject, Transform, Component, Scene, Prefab, screenshot, GIF
-
-**When to Activate**:
-- Get Unity console logs or compilation errors
-- Compile Unity project and check results
-- Create/modify/delete GameObjects in scene
-- Manipulate Transform (position/rotation/scale)
-- Add/remove/modify Components
-- Load/save scenes, query scene hierarchy
-- Instantiate or modify Prefabs
-- Search assets in AssetDatabase
-- Capture screenshots or record GIFs (Play Mode)
+**When to Use**:
+- Read Unity console errors and warnings
+- Trigger compile checks and inspect results
+- Create or modify GameObjects, Components, Scenes, and Prefabs
+- Search assets and capture screenshots or GIFs from Play Mode
 
 **Quick Reference**:
 ```bash
@@ -23,11 +17,12 @@
 AIBridgeCache/CLI/AIBridgeCLI.exe
 
 # Common Commands
-AIBridgeCLI.exe compile unity --raw          # Compile and get errors
-AIBridgeCLI.exe get_logs --logType Error     # Get error logs
-AIBridgeCLI.exe asset search --mode script --keyword "Player"  # Search scripts
-AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube
-AIBridgeCLI.exe transform set_position --path "Player" --x 0 --y 1 --z 0
+AIBridgeCLI.exe compile unity --raw
+AIBridgeCLI.exe get_logs --logType Error --raw
+AIBridgeCLI.exe asset search --mode script --keyword "Player" --raw
+AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube --raw
+AIBridgeCLI.exe transform set_position --path "Player" --x 0 --y 1 --z 0 --raw
 ```
 
 **Skill Documentation**: [AIBridge Skill](/.claude/skills/aibridge/SKILL.md)
+<!-- AIBRIDGE:END -->
