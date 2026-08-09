@@ -48,7 +48,12 @@ namespace UnityGameFramework.Extension
         [ShowInInspector]
         private float m_CheckCanReleaseTime = 0.0f;
 
+        [ReadOnly]
+        [ShowInInspector]
         private HashSet<NameTypePair> m_LoadingAssets;
+
+        [ReadOnly]
+        [ShowInInspector]
         private List<IAssetSet> m_WaitingAssetSets;
 
         /// <summary>
@@ -125,6 +130,25 @@ namespace UnityGameFramework.Extension
                 current = next;
             }
             m_CheckCanReleaseTime = 0;
+        }
+
+        /// <summary>
+        /// 移除等待列表中与指定对象目标相同的资源设置（assetSet 自身不会被释放）。
+        /// </summary>
+        private void RemoveWaitingAssetSetByTarget(IAssetSet assetSet)
+        {
+            for (int i = m_WaitingAssetSets.Count - 1; i >= 0; i--)
+            {
+                IAssetSet waitingAssetSet = m_WaitingAssetSets[i];
+                if (waitingAssetSet.Target == assetSet.Target)
+                {
+                    m_WaitingAssetSets.RemoveAt(i);
+                    if (!ReferenceEquals(waitingAssetSet, assetSet))
+                    {
+                        ReferencePool.Release(waitingAssetSet);
+                    }
+                }
+            }
         }
 
         public void RemoveLoadingAssetSet(IAssetSet assetSet)

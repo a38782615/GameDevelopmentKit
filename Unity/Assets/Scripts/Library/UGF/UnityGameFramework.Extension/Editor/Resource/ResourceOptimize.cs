@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using GameFramework;
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityGameFramework.Editor.ResourceTools;
@@ -14,32 +15,32 @@ namespace UnityGameFramework.Extension.Editor
 {
     public sealed partial class ResourceOptimize
     {
-        private readonly long MAX_COMBINE_SHARE_AB_ITEM_SIZE = 500 * 1024 * 8; // 500K 文件体积小于这个数量才能合并
-        private readonly long MAX_COMBINE_SHARE_AB_SIZE = 1024 * 1024 * 8; // 1M 最终合并的目标大小
-        private readonly long MIN_NO_NAME_COMBINE_SIZE = 32 * 1024 * 8; // 32K 最终合并的目标大小
+        private const long MAX_COMBINE_SHARE_AB_ITEM_SIZE = 500 * 1024 * 8; // 500K 文件体积小于这个数量才能合并
+        private const long MAX_COMBINE_SHARE_AB_SIZE = 1024 * 1024 * 8; // 1M 最终合并的目标大小
+        private const long MIN_NO_NAME_COMBINE_SIZE = 32 * 1024 * 8; // 32K 最终合并的目标大小
         // public const long MAX_COMBINE_SHARE_NO_NAME = 60 * 1024 * 8; // 60K 没有包名的最大体积 
         // public const int MAX_COMBINE_SHARE_NO_NAME_REFERENCE_COUNT = 7; // 没有包名的最多的引用计数
         //  public const int MIN_COMBINE_AB_SIZE_2 = 100 * 1024 * 8;//  100K 没有包名的最大体积 
-        private readonly int MAX_COMBINE_SHARE_MIN_REFERENCE_COUNT = 3; //最大的引用计数
+        private const int MAX_COMBINE_SHARE_MIN_REFERENCE_COUNT = 3; //最大的引用计数
 
         //有需要改名，修改这里
         public static string GetNewCombineName(List<string> currentCombineBundle)
         {
-            var newCombine = string.Join("@@", currentCombineBundle);
+            string newCombine = string.Join("@@", currentCombineBundle);
             return Utility.Text.Format("Auto/Combine/{0:x8}", Utility.Verifier.GetCrc32(Encoding.UTF8.GetBytes(newCombine)));
         }
 
         private ResourceCollection m_ResourceCollection;
 
-        private readonly Dictionary<string, DependencyData> m_DependencyDatas;
+        private readonly Dictionary<string, DependencyData> m_DependencyDatas = new();
         //key：冗余资源路径，value：引用该资源的主资源
-        private readonly Dictionary<string, List<Asset>> m_ScatteredAssets;
-        private readonly HashSet<Stamp> m_AnalyzedStamps;
-        private readonly Dictionary<string, List<string>> m_CombineBundles;
-        private readonly MethodInfo m_GetStorageMemorySizeLongMethod;
-        private readonly object[] m_ParamCache;
-        private readonly Dictionary<string, string[]> m_DependencyCachePool;
-        private readonly Dictionary<string, long> m_AssetSizeCache;
+        private readonly Dictionary<string, List<Asset>> m_ScatteredAssets = new();
+        private readonly HashSet<Stamp> m_AnalyzedStamps = new();
+        private readonly Dictionary<string, List<string>> m_CombineBundles = new();
+        private readonly MethodInfo m_GetStorageMemorySizeLongMethod = typeof(EditorWindow).Assembly.GetType("UnityEditor.TextureUtil").GetMethod("GetStorageMemorySizeLong", BindingFlags.Static | BindingFlags.Public);
+        private readonly object[] m_ParamCache = new object[1];
+        private readonly Dictionary<string, string[]> m_DependencyCachePool = new();
+        private readonly Dictionary<string, long> m_AssetSizeCache = new();
 
         [MenuItem("Game Framework/Resource Tools/Resource Optimize", false, 52)]
         static void StartOptimize()
@@ -48,18 +49,6 @@ namespace UnityGameFramework.Extension.Editor
             resourceCollection.Load();
             ResourceOptimize optimize = new ResourceOptimize();
             optimize.Optimize(resourceCollection);
-        }
-
-        public ResourceOptimize()
-        {
-            m_DependencyDatas = new Dictionary<string, DependencyData>();
-            m_ScatteredAssets = new Dictionary<string, List<Asset>>();
-            m_AnalyzedStamps = new HashSet<Stamp>();
-            m_CombineBundles = new Dictionary<string, List<string>>();
-            m_GetStorageMemorySizeLongMethod = typeof(EditorWindow).Assembly.GetType("UnityEditor.TextureUtil").GetMethod("GetStorageMemorySizeLong", BindingFlags.Static | BindingFlags.Public);
-            m_ParamCache = new object[1];
-            m_DependencyCachePool = new Dictionary<string, string[]>();
-            m_AssetSizeCache = new Dictionary<string, long>();
         }
 
         public void Optimize(ResourceCollection resourceCollection)
@@ -80,8 +69,8 @@ namespace UnityGameFramework.Extension.Editor
 
         private void RemoveOldCombineResources()
         {
-            var resources = m_ResourceCollection.GetResources();
-            foreach (var resource in resources)
+            Resource[] resources = m_ResourceCollection.GetResources();
+            foreach (Resource resource in resources)
             {
                 if (resource.Name.StartsWith("Auto/Combine/", StringComparison.Ordinal))
                 {
@@ -109,13 +98,13 @@ namespace UnityGameFramework.Extension.Editor
         private void OptimizeLoadType()
         {
 #if UNITY_WEBGL
-            var resources = m_ResourceCollection.GetResources();
+            Resource[] resources = m_ResourceCollection.GetResources();
             int count = resources.Length;
             for (int i = 0; i < count; i++)
             {
                 int cur = i + 1;
                 EditorUtility.DisplayProgressBar("OptimizeLoadType", Utility.Text.Format("{0}/{1} processing...", cur, count), (float)cur / count);
-                var resource = resources[i];
+                Resource resource = resources[i];
                 if(resource.LoadType != LoadType.LoadFromMemory &&
                    resource.LoadType != LoadType.LoadFromMemoryAndDecrypt &&
                    resource.LoadType != LoadType.LoadFromMemoryAndQuickDecrypt)
@@ -135,66 +124,137 @@ namespace UnityGameFramework.Extension.Editor
 
         private void OptimizeSprite()
         {
-            var sprite2Atlas = new Dictionary<string, string>();
-            var searchInFolders = new string[] { "Assets/Res" };
-            var saGuids = AssetDatabase.FindAssets("t:SpriteAtlas", searchInFolders);
-            foreach (string scGuid in saGuids)
+            Dictionary<string, string> sprite2Atlas = new Dictionary<string, string>();
+            string[] searchInFolders = new string[] { "Assets/Res" };
+            List<string> saGuids = AssetDatabase.FindAssets("t:SpriteAtlas", searchInFolders).ToList();
+            for (int i = saGuids.Count - 1; i >= 0; i--)
             {
-                var saPath = AssetDatabase.GUIDToAssetPath(scGuid);
-                var sa = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(saPath);
-                int spriteCount = sa.spriteCount;
-                var sprites = new Sprite[spriteCount];
-                sa.GetSprites(sprites);
-                foreach (Sprite sprite in sprites)
+                string saGuid = saGuids[i];
+                if (m_ResourceCollection.HasAsset(saGuid))
                 {
-                    string spritePath = AssetDatabase.GetAssetPath(sprite);
+                    saGuids.RemoveAt(i);
+                    continue;
+                }
+                string saPath = AssetDatabase.GUIDToAssetPath(saGuid);
+                SpriteAtlas sa = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(saPath);
+                foreach (string spritePath in GetSpriteAssetPaths(sa))
+                {
                     string spriteGuid = AssetDatabase.AssetPathToGUID(spritePath);
-                    if (!sprite2Atlas.TryAdd(spriteGuid, saPath))
+                    if (!sprite2Atlas.TryGetValue(spriteGuid, out string atlasPath))
                     {
-                        throw new GameFrameworkException($"[{spritePath}]被重复添加进不同的SpriteAtlas（[{sprite2Atlas[spriteGuid]}]，[{saPath}]），请检查清理！");
+                        sprite2Atlas.Add(spriteGuid, saPath);
+                    }
+                    else if (atlasPath != saPath)
+                    {
+                        throw new GameFrameworkException($"[{spritePath}]被重复添加进不同的SpriteAtlas（[{atlasPath}]，[{saPath}]），请检查清理！");
                     }
                 }
             }
-            foreach (var asset in m_ResourceCollection.GetAssets())
+            foreach (Asset asset in m_ResourceCollection.GetAssets())
             {
                 if (sprite2Atlas.ContainsKey(asset.Guid) || saGuids.Contains(asset.Guid))
                 {
                     asset.Resource.UnassignAsset(asset);
                 }
             }
-            foreach (var saGuid in saGuids)
+            saGuids.Sort((a, b) => String.Compare(a, b, StringComparison.Ordinal));
+            foreach (string saGuid in saGuids)
             {
-                var saPath = AssetDatabase.GUIDToAssetPath(saGuid);
-                var sa = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(saPath);
-                var assets = new SortedSet<string>(StringComparer.Ordinal) { saPath };
-                int spriteCount = sa.spriteCount;
-                Sprite[] sprites = new Sprite[spriteCount];
-                sa.GetSprites(sprites);
-                foreach (var sprite in sprites)
-                {
-                    string spritePath = AssetDatabase.GetAssetPath(sprite);
-                    assets.Add(spritePath);
-                }
-                var assetList = assets.ToList();
-                var newBundleName = GetNewCombineName(assetList);
+                string saPath = AssetDatabase.GUIDToAssetPath(saGuid);
+                SpriteAtlas sa = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(saPath);
+                SortedSet<string> assets = GetSpriteAssetPaths(sa);
+                assets.Add(saPath);
+                List<string> assetList = assets.ToList();
+                string newBundleName = GetNewCombineName(assetList);
 #if UNITY_WEBGL
                 //WebGL下不能使用LoadFromFile
                 m_ResourceCollection.AddResource(newBundleName, null, null, LoadType.LoadFromMemory, false);
 #else
                 m_ResourceCollection.AddResource(newBundleName, null, null, LoadType.LoadFromFile, false);
 #endif
-                foreach (var asset in assetList)
+                foreach (string asset in assetList)
                 {
                     m_ResourceCollection.AssignAsset(AssetDatabase.AssetPathToGUID(asset), newBundleName, null);
                 }
             }
         }
 
+        private static SortedSet<string> GetSpriteAssetPaths(SpriteAtlas spriteAtlas)
+        {
+            SortedSet<string> spriteAssetPaths = new SortedSet<string>(StringComparer.Ordinal);
+            if (spriteAtlas == null)
+            {
+                return spriteAssetPaths;
+            }
+
+            int spriteCount = spriteAtlas.spriteCount;
+            if (spriteCount > 0)
+            {
+                Sprite[] sprites = new Sprite[spriteCount];
+                spriteAtlas.GetSprites(sprites);
+                foreach (Sprite sprite in sprites)
+                {
+                    if (sprite == null)
+                    {
+                        continue;
+                    }
+
+                    string spritePath = AssetDatabase.GetAssetPath(sprite);
+                    if (!string.IsNullOrEmpty(spritePath))
+                    {
+                        spriteAssetPaths.Add(spritePath);
+                    }
+                }
+            }
+
+            UnityEngine.Object[] packables = SpriteAtlasExtensions.GetPackables(spriteAtlas);
+            foreach (UnityEngine.Object packable in packables)
+            {
+                if (packable == null)
+                {
+                    continue;
+                }
+
+                string packablePath = AssetDatabase.GetAssetPath(packable);
+                if (string.IsNullOrEmpty(packablePath))
+                {
+                    continue;
+                }
+
+                if (AssetDatabase.IsValidFolder(packablePath))
+                {
+                    string[] spriteGuids = AssetDatabase.FindAssets("t:Sprite", new string[] { packablePath });
+                    foreach (string spriteGuid in spriteGuids)
+                    {
+                        string spritePath = AssetDatabase.GUIDToAssetPath(spriteGuid);
+                        if (!string.IsNullOrEmpty(spritePath))
+                        {
+                            spriteAssetPaths.Add(spritePath);
+                        }
+                    }
+                }
+                else
+                {
+                    UnityEngine.Object[] objects = AssetDatabase.LoadAllAssetsAtPath(packablePath);
+                    foreach (UnityEngine.Object obj in objects)
+                    {
+                        if (obj is Sprite)
+                        {
+                            spriteAssetPaths.Add(packablePath);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return spriteAssetPaths;
+        }
+
         private void Save()
         {
             int count = m_CombineBundles.Count;
             int cur = 0;
-            foreach (var kv in m_CombineBundles)
+            foreach (KeyValuePair<string, List<string>> kv in m_CombineBundles)
             {
                 cur++;
                 EditorUtility.DisplayProgressBar("Save", Utility.Text.Format("{0}/{1} processing...", cur, count), (float)cur / count);
@@ -204,7 +264,7 @@ namespace UnityGameFramework.Extension.Editor
 #else
                 m_ResourceCollection.AddResource(kv.Key, null, null, LoadType.LoadFromFile, false);
 #endif
-                foreach (var name in kv.Value)
+                foreach (string name in kv.Value)
                 {
                     m_ResourceCollection.AssignAsset(AssetDatabase.AssetPathToGUID(name), kv.Key, null);
                 }
@@ -225,21 +285,32 @@ namespace UnityGameFramework.Extension.Editor
 
             int count = m_ScatteredAssets.Count;
             int cur = 0;
-            foreach (var kv in m_ScatteredAssets)
+            foreach (KeyValuePair<string, List<Asset>> kv in m_ScatteredAssets)
             {
                 cur++;
                 EditorUtility.DisplayProgressBar("CalculateCombine (1/3)", Utility.Text.Format("{0}/{1} processing...", cur, count), (float)cur / count);
-                var assetPath = kv.Key;
+                string assetPath = kv.Key;
                 allShareCount++;
                 if (!File.Exists(assetPath))
                 {
                     Debug.LogError(Utility.Text.Format("File do not exist :{0}", assetPath));
                     continue;
                 }
+
                 long byteSize = GetAssetSize(assetPath);
                 if (byteSize < MAX_COMBINE_SHARE_AB_ITEM_SIZE)
                 {
-                    allCombines.Add(assetPath, new ABInfo(assetPath, byteSize, kv.Value.Count));
+                    SortedSet<string> referencingBundleNames = new SortedSet<string>(StringComparer.Ordinal);
+                    foreach (Asset asset in kv.Value)
+                    {
+                        if (asset.Resource != null)
+                        {
+                            referencingBundleNames.Add(asset.Resource.FullName);
+                        }
+                    }
+                    string[] names = new string[referencingBundleNames.Count];
+                    referencingBundleNames.CopyTo(names);
+                    allCombines.Add(assetPath, new ABInfo(assetPath, byteSize, kv.Value.Count, names));
                     allShareCanCombine++;
                 }
                 else
@@ -263,7 +334,7 @@ namespace UnityGameFramework.Extension.Editor
             {
                 cur++;
                 EditorUtility.DisplayProgressBar("CalculateCombine (2/3)", Utility.Text.Format("{0}/{1} processing...", cur, count), (float)cur / count);
-                var bundleName = abInfo.Name;
+                string bundleName = abInfo.Name;
                 if (abInfo.Size * abInfo.ReferenceCount < MIN_NO_NAME_COMBINE_SIZE)
                 {
                     allShareRemoveByNoName++;
@@ -278,32 +349,48 @@ namespace UnityGameFramework.Extension.Editor
                     }
                 }
             }
-            foreach (var key in removedKeys)
+            foreach (string key in removedKeys)
             {
                 allCombines.Remove(key);
             }
 
-            List<ABInfo> left =  allCombines.Values.ToList();
-            //优先用名字排序，这样相同目录（往往是相同资源的依赖）的尽可能规划到一起
-            left.Sort((a,b) =>
-            {
-                int c1 = string.Compare(a.Name, b.Name, StringComparison.Ordinal);
-                if(c1 == 0)
-                {
-                    int c2 = a.ReferenceCount.CompareTo(b.ReferenceCount);
-                    if (c2 == 0)
-                    {
-                        return a.Size.CompareTo(b.Size);
-                    }
-                    return c2;
-                }
-                return c1;
-            });
+            List<ABInfo> left = new List<ABInfo>(allCombines.Values);
             allFinalCombine = left.Count;
             List<string> currentCombineBundles = new List<string>();
             long currentCombineBundleSize = 0;
             count = left.Count;
             cur = 0;
+            Dictionary<string, int> referencingBundleCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (ABInfo abInfo in left)
+            {
+                foreach (string name in abInfo.ReferencingBundleNames)
+                {
+                    referencingBundleCounts.TryGetValue(name, out int referenceCount);
+                    referencingBundleCounts[name] = referenceCount + 1;
+                }
+            }
+
+            // 多 AB 引用时归入冗余依赖最多的 AB，优先减少该 AB 加载的共享包数量。
+            foreach (ABInfo abInfo in left)
+            {
+                int maxReferenceCount = -1;
+                foreach (string name in abInfo.ReferencingBundleNames)
+                {
+                    int referenceCount = referencingBundleCounts[name];
+                    if (referenceCount > maxReferenceCount)
+                    {
+                        maxReferenceCount = referenceCount;
+                        abInfo.CombineGroupName = name;
+                    }
+                }
+                abInfo.CombineGroupName ??= string.Empty;
+            }
+            left.Sort((a, b) =>
+            {
+                int result = string.Compare(a.CombineGroupName, b.CombineGroupName, StringComparison.Ordinal);
+                return result != 0 ? result : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+            });
+
             foreach (ABInfo abInfo in left)
             {
                 cur++;

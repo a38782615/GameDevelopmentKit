@@ -6,34 +6,65 @@ using UnityGameFramework.Extension;
 
 namespace ET
 {
-    public class UGFComponent : Singleton<UGFComponent>, ISingletonAwake
+    [EntitySystemOf(typeof(UGFComponent))]
+    [FriendOf(typeof(UGFComponent))]
+    public static partial class UGFComponentSystem
     {
-        public void Awake()
+        [EntitySystem]
+        private static void Awake(this UGFComponent self)
         {
-            
         }
-        
+    }
+
+    [ComponentOf(typeof(Scene))]
+    public sealed class UGFComponent : Entity, IAwake
+    {
         public async UniTask<T> LoadAssetAsync<T>(string assetName) where T : UnityEngine.Object
         {
             T asset = await GameEntry.Resource.LoadAssetAsync<T>(assetName);
             return asset;
         }
-        
+
         public void UnloadAsset(UnityEngine.Object asset)
         {
             GameEntry.Resource.UnloadAsset(asset);
         }
-        
+
         public async UniTask LoadSceneAsync(string sceneAssetName)
         {
-            await GameEntry.Scene.LoadSceneAsync(sceneAssetName, Constant.AssetPriority.SceneAsset);
+            await GameEntry.Scene.LoadSceneAsync(sceneAssetName);
+        }
+
+        public async UniTask LoadSceneAsync(int scentTypeId)
+        {
+            await GameEntry.Scene.LoadSceneAsync(scentTypeId);
+        }
+
+        public bool SceneIsLoaded(string sceneAssetName)
+        {
+            return GameEntry.Scene.SceneIsLoaded(sceneAssetName);
+        }
+
+        public bool SceneIsLoading(string sceneAssetName)
+        {
+            return GameEntry.Scene.SceneIsLoading(sceneAssetName);
+        }
+
+        public bool SceneIsLoaded(int scentTypeId)
+        {
+            return GameEntry.Scene.SceneIsLoaded(scentTypeId);
+        }
+
+        public bool SceneIsLoading(int scentTypeId)
+        {
+            return GameEntry.Scene.SceneIsLoading(scentTypeId);
         }
 
         public async UniTask UnloadSceneAsync(string sceneAssetName)
         {
             await GameEntry.Scene.UnloadSceneAsync(sceneAssetName);
         }
-        
+
         public async UniTask UnloadAllScenesAsync()
         {
             ListComponent<string> loadingSceneAssetNames = ListComponent<string>.Create();
@@ -53,25 +84,25 @@ namespace ET
             await UniTask.WhenAll(unloadTasks);
             unloadTasks.Dispose();
         }
-        
+
         public async UniTask<Transform> ShowEntityAsync(int entityTypeId, CancellationToken cancellationToken = default)
         {
             UnityGameFramework.Runtime.Entity ugfEntity = await GameEntry.Entity.ShowEntityAsync<ETMonoUGFEntity>(entityTypeId, cancellationToken: cancellationToken);
             return ugfEntity.Logic.CachedTransform;
         }
-        
+
         public async UniTask<Transform> ShowEntityAsync(string entityAssetName, string entityGroupName, CancellationToken cancellationToken = default, int priority = 0)
         {
             UnityGameFramework.Runtime.Entity ugfEntity = await GameEntry.Entity.ShowEntityAsync(GameEntry.Entity.GenerateSerialId(), typeof(ETMonoUGFEntity), entityAssetName, entityGroupName, priority, cancellationToken: cancellationToken);
             return ugfEntity.Logic.CachedTransform;
         }
-        
+
         public async UniTask<T> OpenUIFormAsync<T>(UGFUIForm ugfuiForm, int uiFormTypeId, CancellationToken cancellationToken = default) where T : AETMonoUGFUIForm
         {
             UnityGameFramework.Runtime.UIForm ugfUIForm = await GameEntry.UI.OpenUIFormAsync(uiFormTypeId, ETMonoUGFUIFormData.Create(ugfuiForm), cancellationToken);
             return (T)ugfUIForm.Logic;
         }
-        
+
         public async UniTask<T> OpenUIFormAsync<T>(UGFUIForm ugfuiForm, string uiFormAssetName, string uiGroupName, int priority, bool pauseCoveredUIForm, CancellationToken cancellationToken = default) where T : AETMonoUGFUIForm
         {
             UnityGameFramework.Runtime.UIForm ugfUIForm = await GameEntry.UI.OpenUIFormAsync(uiFormAssetName, uiGroupName, priority, pauseCoveredUIForm,  ETMonoUGFUIFormData.Create(ugfuiForm), cancellationToken);

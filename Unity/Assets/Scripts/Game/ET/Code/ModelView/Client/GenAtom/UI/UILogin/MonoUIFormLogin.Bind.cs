@@ -16,24 +16,20 @@ namespace ET.Client
         private UnityEngine.RectTransform m_Test1RectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_Test2RectTransform;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.RectTransform m_Test3RectTransform;
 
-
-        public UnityEngine.UI.InputField AccountInputField => m_AccountInputField;
-        public UnityEngine.UI.Button LoginButton => m_LoginButton;
-        public UnityEngine.UI.InputField PasswordInputField => m_PasswordInputField;
-        public ET.Client.MonoUIWidgetTest TestWidgetTest => m_TestWidgetTest;
-        public UnityEngine.RectTransform Test1RectTransform => m_Test1RectTransform;
-        public UnityEngine.RectTransform Test2RectTransform => m_Test2RectTransform;
-        public UnityEngine.RectTransform Test3RectTransform => m_Test3RectTransform;
-
+        public UnityEngine.UI.InputField AccountInputField => this.m_AccountInputField;
+        public UnityEngine.UI.Button LoginButton => this.m_LoginButton;
+        public UnityEngine.UI.InputField PasswordInputField => this.m_PasswordInputField;
+        public ET.Client.MonoUIWidgetTest TestWidgetTest => this.m_TestWidgetTest;
+        public UnityEngine.RectTransform Test1RectTransform => this.m_Test1RectTransform;
+        public UnityEngine.RectTransform Test2RectTransform => this.m_Test2RectTransform;
 
 #if UNITY_EDITOR
-        [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
-        [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
-        [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
-        private string BindDataExitEmptyWarning => "BindData exit empty, please check.";
+        [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
+        private void DrawBindDataExitEmptyWarning()
+        {
+            Sirenix.Utilities.Editor.SirenixEditorGUI.MessageBox("BindData contains empty reference.", UnityEditor.MessageType.Warning);
+        }
 
         private bool CheckBindDataExitEmpty()
         {
@@ -43,9 +39,9 @@ namespace ET.Client
             if (this.m_TestWidgetTest == null) return true;
             if (this.m_Test1RectTransform == null) return true;
             if (this.m_Test2RectTransform == null) return true;
-            if (this.m_Test3RectTransform == null) return true;
             return false;
         }
 #endif
+
     }
 }

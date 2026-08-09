@@ -80,6 +80,11 @@ namespace UnityGameFramework.Extension
             }
 #endif
 #endif
+            if (!IsValid)
+            {
+                // ReSharper disable once MethodSupportsCancellation
+                return UniTask.FromCanceled<T>();
+            }
             if (cancellationToken.IsCancellationRequested)
             {
                 return UniTask.FromCanceled<T>(cancellationToken);
@@ -107,7 +112,7 @@ namespace UnityGameFramework.Extension
             {
                 if (!IsValid)
                 {
-                    core.TrySetException(new GameFrameworkException("Awaitable is not valid."));
+                    core.TrySetCanceled();
                     return false;
                 }
                 if (!loadAssetInfo.IsFinished)
@@ -148,7 +153,7 @@ namespace UnityGameFramework.Extension
             {
                 ReferencePool.Release(loadAssetInfo);
             }
-            return NewUniTask<T>(MoveNext, cancellationToken, ReturnAction);
+            return NewUniTask<T>(MoveNext, ReturnAction);
         }
 
         private static void LoadAssetSuccessCallback(string _, object asset, float duration, object userData)

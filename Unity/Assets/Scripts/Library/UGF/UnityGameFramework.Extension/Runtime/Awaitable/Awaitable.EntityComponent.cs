@@ -21,6 +21,11 @@ namespace UnityGameFramework.Extension
 #if UNITY_EDITOR
             TipsSubscribeEvent();
 #endif
+            if (!IsValid)
+            {
+                // ReSharper disable once MethodSupportsCancellation
+                return UniTask.FromCanceled<Entity>();
+            }
             if (cancellationToken.IsCancellationRequested)
             {
                 return UniTask.FromCanceled<Entity>(cancellationToken);
@@ -36,15 +41,16 @@ namespace UnityGameFramework.Extension
             {
                 if (!IsValid)
                 {
-                    core.TrySetException(new GameFrameworkException("Awaitable is not valid."));
+                    core.TrySetCanceled();
                     return false;
                 }
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (entityComponent.HasEntity(entityId))
+                    if (entityComponent.HasEntity(entityId) || entityComponent.IsLoadingEntity(entityId))
                     {
                         entityComponent.HideEntity(entityId);
                     }
+                    core.TrySetCanceled(cancellationToken);
                     return false;
                 }
                 if (entityComponent.IsLoadingEntity(entityId))
@@ -68,7 +74,7 @@ namespace UnityGameFramework.Extension
                 s_ShowEntityEventDataDict.Remove(entityId);
                 ReferencePool.Release(eventData);
             }
-            return NewUniTask<Entity>(MoveNext, cancellationToken, ReturnAction);
+            return NewUniTask<Entity>(MoveNext, ReturnAction);
         }
 
         private sealed class ShowEntityEventData : IReference

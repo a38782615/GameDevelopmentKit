@@ -17,6 +17,9 @@ namespace ET
         
         GenAtom,
         LockStep,
+
+        Admin,
+        Agent,
     }
 
     public class Options: Singleton<Options>
