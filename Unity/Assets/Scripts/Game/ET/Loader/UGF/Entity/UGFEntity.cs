@@ -4,7 +4,6 @@ using Cysharp.Threading.Tasks;
 using Game;
 using MongoDB.Bson.Serialization.Attributes;
 using UnityEngine;
-using UnityGameFramework.Extension;
 using GameEntry = Game.GameEntry;
 
 namespace ET
@@ -42,8 +41,6 @@ namespace ET
         [BsonIgnore]
         private CancellationTokenSourcePlus m_Cts;
         [BsonIgnore]
-        private int m_ShowEntityAwaitCount;
-        [BsonIgnore]
         internal virtual ETMonoUGFEntity UGFMono { get; set; }
         [BsonIgnore]
         public Transform CachedTransform { get; internal set; }
@@ -74,17 +71,16 @@ namespace ET
             {
                 if (this.m_Cts != null)
                 {
-                    this.m_Cts.Cancel();
-                    if (this.m_ShowEntityAwaitCount <= 0)
-                    {
-                        ObjectPool.Instance.Recycle(this.m_Cts);
-                        this.m_Cts = null;
-                    }
+                    CancellationTokenSourcePlus cts = this.m_Cts;
+                    this.m_Cts = null;
+                    cts.Cancel();
+                    ObjectPool.Instance.Recycle(cts);
                 }
                 if (this.Available)
                 {
-                    GameEntry.Entity.HideEntity(this.m_UGFEntity);
+                    UnityGameFramework.Runtime.Entity ugfEntity = this.m_UGFEntity;
                     this.m_UGFEntity = null;
+                    GameEntry.Entity.HideEntity(ugfEntity);
                 }
             }
             base.Dispose();
@@ -92,62 +88,34 @@ namespace ET
 
         public async UniTask ShowEntityAsync(int entityTypeId)
         {
-            CancellationTokenSourcePlus cts = this.GetOrCreateCancellationTokenSource();
-            CancellationToken cancellationToken = this.MallocShowEntityToken(cts);
-            try
+            if (this.m_UGFEntity != null)
             {
-                this.m_UGFEntity = await GameEntry.Entity.ShowEntityAsync<ETMonoUGFEntity>(entityTypeId, ETMonoUGFEntityData.Create(this), cancellationToken: cancellationToken);
+                throw new Exception($"UGFEntity ShowEntityAsync failed! entityTypeId:'{entityTypeId}', this entity is already shown.");
             }
-            finally
+            if (this.m_Cts == null)
             {
-                this.FreeShowEntityToken(cts);
+                this.m_Cts = ObjectPool.Instance.Fetch<CancellationTokenSourcePlus>();
             }
-
+            this.m_UGFEntity = await GameEntry.Entity.ShowEntityAsync<ETMonoUGFEntity>(entityTypeId, ETMonoUGFEntityData.Create(this), cancellationToken: this.m_Cts.MallocToken());
+            this.m_Cts.FreeToken();
             if(this.m_UGFEntity == null)
             {
                 throw new Exception($"UGFEntity ShowEntityAsync failed! entityTypeId:'{entityTypeId}'.");
             }
         }
 
-        public async UniTask ShowEntityAsync(string entityAssetName, string entityGroupName, int priority = 0)
-        {
-            CancellationTokenSourcePlus cts = this.GetOrCreateCancellationTokenSource();
-            CancellationToken cancellationToken = this.MallocShowEntityToken(cts);
-            try
-            {
-                this.m_UGFEntity = await GameEntry.Entity.ShowEntityAsync(
-                    GameEntry.Entity.GenerateSerialId(),
-                    typeof(ETMonoUGFEntity),
-                    entityAssetName,
-                    entityGroupName,
-                    priority,
-                    ETMonoUGFEntityData.Create(this),
-                    cancellationToken: cancellationToken);
-            }
-            finally
-            {
-                this.FreeShowEntityToken(cts);
-            }
-
-            if (this.m_UGFEntity == null)
-            {
-                throw new Exception($"UGFEntity ShowEntityAsync failed! entityAssetName:'{entityAssetName}' entityGroupName:'{entityGroupName}'.");
-            }
-        }
-
         public async UniTask ShowUIEntityAsync(int entityTypeId)
         {
-            CancellationTokenSourcePlus cts = this.GetOrCreateCancellationTokenSource();
-            CancellationToken cancellationToken = this.MallocShowEntityToken(cts);
-            try
+            if (this.m_UGFEntity != null)
             {
-                this.m_UGFEntity = await GameEntry.Entity.ShowUIEntityAsync<ETMonoUGFEntity>(entityTypeId, ETMonoUGFEntityData.Create(this), cancellationToken: cancellationToken);
+                throw new Exception($"UGFEntity ShowUIEntityAsync failed! entityTypeId:'{entityTypeId}', this entity is already shown.");
             }
-            finally
+            if (this.m_Cts == null)
             {
-                this.FreeShowEntityToken(cts);
+                this.m_Cts = ObjectPool.Instance.Fetch<CancellationTokenSourcePlus>();
             }
-
+            this.m_UGFEntity = await GameEntry.Entity.ShowUIEntityAsync<ETMonoUGFEntity>(entityTypeId, ETMonoUGFEntityData.Create(this), cancellationToken: this.m_Cts.MallocToken());
+            this.m_Cts.FreeToken();
             if(this.m_UGFEntity == null)
             {
                 throw new Exception($"UGFEntity ShowUIEntityAsync failed! entityTypeId:'{entityTypeId}'.");
@@ -175,33 +143,6 @@ namespace ET
             if (this.m_UGFEntity != null)
             {
                 GameEntry.Entity.DetachEntity(this.m_UGFEntity);
-            }
-        }
-
-        private CancellationTokenSourcePlus GetOrCreateCancellationTokenSource()
-        {
-            if (this.m_Cts == null)
-            {
-                this.m_Cts = ObjectPool.Instance.Fetch<CancellationTokenSourcePlus>();
-            }
-
-            return this.m_Cts;
-        }
-
-        private CancellationToken MallocShowEntityToken(CancellationTokenSourcePlus cts)
-        {
-            this.m_ShowEntityAwaitCount++;
-            return cts.MallocToken();
-        }
-
-        private void FreeShowEntityToken(CancellationTokenSourcePlus cts)
-        {
-            cts.FreeToken();
-            this.m_ShowEntityAwaitCount--;
-            if (this.IsDisposed && this.m_Cts == cts && this.m_ShowEntityAwaitCount <= 0)
-            {
-                ObjectPool.Instance.Recycle(cts);
-                this.m_Cts = null;
             }
         }
     }

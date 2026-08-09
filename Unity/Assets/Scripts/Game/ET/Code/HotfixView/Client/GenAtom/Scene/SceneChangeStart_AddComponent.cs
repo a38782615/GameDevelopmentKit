@@ -4,20 +4,27 @@ using Game;
 
 namespace ET.Client
 {
-    [Event(SceneType.Current)]
-    public class SceneChangeStart_AddComponent : AEvent<Scene, SceneChangeStart>
+    [Event(SceneType.GenAtom)]
+    public class SceneChangeStart_AddComponent: AEvent<Scene, SceneChangeStart>
     {
-        protected override async UniTask Run(Scene currentScene, SceneChangeStart args)
+        protected override async UniTask Run(Scene root, SceneChangeStart args)
         {
             try
             {
-                await UGFComponent.Instance.UnloadAllScenesAsync();
-                await UGFComponent.Instance.LoadSceneAsync(AssetUtility.GetSceneAsset(currentScene.Name));
+                Scene currentScene = root.CurrentScene();
+                UGFComponent ugfComponent = root.GetComponent<UGFComponent>();
+
+                // 切换到map场景
+                await ugfComponent.UnloadAllScenesAsync();
+                await ugfComponent.LoadSceneAsync(AssetUtility.GetSceneAsset(currentScene.Name));
+                
+                currentScene.AddComponent<OperaComponent>();
             }
             catch (Exception e)
             {
                 Log.Error(e);
             }
+
         }
     }
 }

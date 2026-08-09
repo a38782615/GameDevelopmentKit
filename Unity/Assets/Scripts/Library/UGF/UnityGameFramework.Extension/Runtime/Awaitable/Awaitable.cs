@@ -1,4 +1,3 @@
-using System;
 using GameFramework;
 using UnityGameFramework.Runtime;
 
@@ -7,7 +6,7 @@ namespace UnityGameFramework.Extension
     public static partial class Awaitable
     {
         public static bool IsValid { private set; get; }
-        
+
 #if UNITY_EDITOR
         private static bool s_IsSubscribeEvent = false;
 #endif
@@ -65,7 +64,7 @@ namespace UnityGameFramework.Extension
         {
             if (!s_IsSubscribeEvent)
             {
-                throw new Exception("Use await/async extensions must to subscribe event!");
+                throw new GameFrameworkException("Use await/async extensions must to subscribe event!");
             }
         }
 #endif

@@ -1,97 +1,98 @@
-# GameDevelopmentKit的介绍：
-努力提供完善的双端开发工具
+# GameDevelopmentKit
 
-服务端以[ET8.1框架](https://github.com/egametang/ET)为基础
+GameDevelopmentKit（GDK）是一套 [Unity] 游戏开发框架。服务端基于 [ET 8.1]，客户端以 [UnityGameFramework]（GF）为底座，可选择纯 GF（GameHot）或 ET 开发模式。
 
-客户端以[UnityGameFramework框架（GF）](https://github.com/EllanJiang/UnityGameFramework)为基础，将ET框架子模块化入GF，完善ET的客户端功能
+## 核心能力
 
-配置工具使用[Luban](https://github.com/focus-creative-games/luban)
+| 领域 | 能力 |
+| --- | --- |
+| 成熟稳定 | 经商业项目验证，覆盖客户端、服务端、热更新、数据、网络、UI 与构建等完整开发链路 |
+| 双端架构 | [Unity] 客户端与 [ET 8.1] 服务端共享协议、配置和基础设施；客户端支持 [纯 GF（GameHot）][模式选择] 与 ET 模式 |
+| 热更新 | [HybridCLR] 管理热更程序集、AOT 元数据与构建流程 |
+| ET 与 GF 集成 | [ETUI]、[ETEntity] 接入 ET 生命周期，[UniTask] 统一异步模型 |
+| 数据与协议 | [Luban] 导出配置，[Proto2CS] 生成 ET/MemoryPack 与 GF/Protobuf 协议代码 |
+| 数据绑定 | [ReactiveBinding]、[CodeBind] 与 [StateController] 覆盖响应式数据、组件绑定和 UI 状态 |
+| UI 与资源 | [UXTool] 提供 UI 工具，[AssetSet] 管理图片资源，[ResourceOptimize] 优化资源冗余 |
+| 网络 | [UnityWebSocket] 提供 WebSocket 通道 |
+| 编辑器工具 | [代码生成]、[包更新]、[Toolbar] 与 [一键构建] |
 
-使用[HybridCLR](https://github.com/focus-creative-games/hybridclr)热更新
+## 运行模式
 
-***
+| 模式 | 编译符号 | 适用场景 |
+| --- | --- | --- |
+| 纯 GF（GameHot） | `UNITY_GAMEHOT`（必选） | 使用 GF 客户端并加载 GameHot 业务程序集 |
+| ET | `UNITY_ET` | ET 实体系统、客户端与服务端共享业务模型 |
+| HybridCLR | 叠加 `UNITY_HOTFIX` | 将当前业务模块改为 DLL 资源加载 |
 
-## 交流QQ群：949482664
+`UNITY_ET` 与 `UNITY_GAMEHOT` 互斥，`UNITY_HOTFIX` 可叠加。编辑器切换模式时会同步更新 Luban 工程、资源收集规则、`link.xml` 和 HybridCLR 程序集列表。
 
-# 细节
+## 快速开始
 
-1.以GFUI为基础的[ETUI](Unity/Assets/Scripts/Game/ET/Loader/UGF/UIForm)
+1. 安装 [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) 和 [Unity 6000.3.18f1](https://unity.com/releases/editor/whats-new/6000.3.18f1)。
 
-2.以GFEntity为基础的[ETEntity](Unity/Assets/Scripts/Game/ET/Loader/UGF/Entity)
+2. 在仓库根目录编译工具项目：
 
-3.使用极其灵活方便的[代码绑定工具](https://github.com/XuToWei/CodeBind)，解决代码与资源映射的最后一公里，极力推荐！
+   ```powershell
+   dotnet build Kit.sln
+   ```
 
-4.配置灵活易扩展的[状态控制器](https://github.com/XuToWei/StateController)，加上宏"STATE_CONTROLLER_CODE_BIND"即可代码绑定时自动生成状态数据的代码，一行代码就能控制繁琐的UI状态，极力推荐与[代码绑定工具](https://github.com/XuToWei/CodeBind)结合使用！
+   也可通过 [Rider](https://www.jetbrains.com/rider/download/) 编译 `Kit.sln`，或在 Unity 中选择 `Game > Build Tool Editor`。
 
-5.[ReactiveBinding](https://github.com/XuToWei/ReactiveBinding)，编译时响应式绑定，使用Source Generator自动生成变化检测代码，零运行时开销，简单易用
+3. 用 Unity 打开 `Unity/`，加载 `Assets/Launcher.unity`，点击 Play。
 
-6.[模块切换](Book/Project%E7%BB%93%E6%9E%84.md)方便，ET逻辑或GF逻辑，热更或非热更选择随心所欲，当然也可以只用GF，可以按需选用ET或GF分支开发即可
+模式切换和独立服务端启动方式见 [完整快速开始](Book/快速开始.md)。
 
-7.项目全面使用[UniTask](https://github.com/Cysharp/UniTask)异步方案，已替换ETTask，对非ET的部分支持更全面，扩展支持了GF，推荐使用
+## 文档导航
 
-8.[基于Luban优化过后的导表工具](Book/Luban%E9%85%8D%E7%BD%AE.md)，简化Luban使用步骤，可以灵活的修改导出配置，支持多线程导表速度大幅提升
+| 主题 | 文档 |
+| --- | --- |
+| 索引与架构 | [Book 文档索引](Book/README.md)、[项目结构与模式选择](Book/Project结构.md) |
+| 业务开发 | [UI 开发](Book/UI开发.md)、[Entity 开发](Book/Entity开发.md) |
+| 资源与数据 | [AssetSet](Book/AssetSet.md)、[Luban 配置](Book/Luban配置.md) |
+| 协议 | [Proto 生成](Book/Proto生成工具.md) |
+| 热更新与构建 | [HybridCLR 热更新](Book/HybridCLR热更.md)、[一键打包](Book/一键打包.md) |
 
-9.完善的[多语言](Book/%E5%A4%9A%E8%AF%AD%E8%A8%80.md)支持，导表自动生成多语言配置，支持编辑器配置和预览
+## 主要依赖
 
-10.完善的[热更新](Book/HybridCLR%E7%83%AD%E6%9B%B4.md)流程和工具支持，基于HybridCLR
+| 分类 | 依赖 |
+| --- | --- |
+| 核心框架 | [UnityGameFramework]、[UGFExtensions]、[ET 8.1] |
+| 热更新与配置 | [HybridCLR]、[Luban]、[Luban Extension] |
+| 异步、序列化与网络 | [UniTask]、[MemoryPack Extension]、[Protobuf Unity]、[UnityWebSocket] |
+| UI 与绑定 | [UXTool]、[CodeBind]、[StateController]、[ReactiveBinding]、[LoopScrollRect] |
+| 编辑器工具 | [SocoTools]、[FolderTag] |
 
-11.[Proto生成工具](Book/Proto%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7.md)，支持ET和GF两种格式的proto代码生成
+[Unity]: https://unity.com/
+[UnityGameFramework]: https://github.com/EllanJiang/UnityGameFramework
+[UGFExtensions]: https://github.com/FingerCaster/UGFExtensions
+[ET 8.1]: https://github.com/egametang/ET/commit/faa825d22a5b05d727f4878dfe34600628942579
+[HybridCLR]: https://github.com/focus-creative-games/hybridclr
+[Luban]: https://github.com/focus-creative-games/luban
+[Luban Extension]: https://github.com/XuToWei/Luban-Extension
+[UniTask]: https://github.com/Cysharp/UniTask
+[MemoryPack Extension]: https://github.com/XuToWei/MemoryPack-Extension
+[Protobuf Unity]: https://github.com/XuToWei/Protobuf-Unity
+[UnityWebSocket]: https://github.com/psygames/UnityWebSocket
+[CodeBind]: https://github.com/XuToWei/CodeBind
+[StateController]: https://github.com/XuToWei/StateController
+[ReactiveBinding]: https://github.com/XuToWei/ReactiveBinding
+[LoopScrollRect]: https://github.com/qiankanglai/LoopScrollRect
+[UXTool]: https://uxtool.netease.com/
+[SocoTools]: https://github.com/crossous/SocoTools
+[FolderTag]: https://github.com/liyingsong99/FolderTag
+[模式选择]: Book/Project结构.md
+[ETUI]: Book/UI开发.md
+[ETEntity]: Book/Entity开发.md
+[ResourceOptimize]: Unity/Assets/Scripts/Library/UGF/UnityGameFramework.Extension/Editor/Resource/ResourceOptimize.cs
+[Proto2CS]: Book/Proto生成工具.md
+[AssetSet]: Book/AssetSet.md
+[代码生成]: Book/ET代码生成工具.md
+[包更新]: Unity/Assets/Scripts/Game/Editor/Tool/PackageUpdateTool.cs
+[Toolbar]: Book/自定义Toolbar.md
+[一键构建]: Book/一键打包.md
 
-12.[ET代码生成工具](Book/ET%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7.md)，可以很方便的生成ETUI和GFEntity的代码
+## 商业依赖、交流与许可
 
-13.[自定义Toolbar工具](Book/%E8%87%AA%E5%AE%9A%E4%B9%89Toolbar.md)
-
-14.[ET动态事件](Book/ET%E5%8A%A8%E6%80%81%E4%BA%8B%E4%BB%B6.md)
-
-15.[一键打包](Book/%E4%B8%80%E9%94%AE%E6%89%93%E5%8C%85.md)，上传资源服务器，方便开发期间出包测试
-
-# 运行步骤
-
-### Unity Editor
-
-- 1.安装 [.net8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)，服务器功能需要安装[MongoDB](https://www.mongodb.com/)
-
-- 2.打开Unity(6000.3.12f1)项目，等待Unity编译完成
-
-- 3.使用IDE打开Kit.sln编译（导表，资源服务器，代码分析等功能需要用到）
-
-- 4.点击Unity编辑器运行按钮旁的Launcher按钮即可运行ET的Demo
-
-### Windows Build
-
-- 1.[代码热更处理](Book/HybridCLR%E7%83%AD%E6%9B%B4.md)
-
-- 2.[一键打包](Book/%E4%B8%80%E9%94%AE%E6%89%93%E5%8C%85.md)，运行程序即可
-
-***
-
-# TODO && Features
-
-- [X] Demo
-
-***
-
-### 该项目依赖以下收费插件（请自行购买安装）：
-
-- [Odin Inspector](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041)
-
-- [SRDebugger](https://assetstore.unity.com/packages/tools/gui/srdebugger-console-tools-on-device-27688)
-
-***
-
-# 引用库 致谢
-[UnityGameFramework](https://github.com/EllanJiang/UnityGameFramework)
-
-[ET](https://github.com/egametang/ET)（版本：[8.1](https://github.com/egametang/ET/commit/faa825d22a5b05d727f4878dfe34600628942579)）
-
-[Luban](https://github.com/focus-creative-games/luban)
-
-[UniTask](https://github.com/Cysharp/UniTask)
-
-[UGFExtensions](https://github.com/FingerCaster/UGFExtensions)
-
-[SocoTools](https://github.com/crossous/SocoTools)
-
-[FolderTag](https://github.com/liyingsong99/FolderTag)
-
-[LoopScrollRect](https://github.com/qiankanglai/LoopScrollRect)
+- 商业插件：[Odin Inspector](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041)，需自行购买并遵守授权条款。
+- QQ 群：`949482664`
+- 项目代码采用 [MIT License](LICENSE)；第三方资源和插件遵循各自许可。

@@ -18,6 +18,11 @@ namespace UnityGameFramework.Extension
 #if UNITY_EDITOR
             TipsSubscribeEvent();
 #endif
+            if (!IsValid)
+            {
+                // ReSharper disable once MethodSupportsCancellation
+                return UniTask.FromCanceled<DownloadResult>();
+            }
             if (cancellationToken.IsCancellationRequested)
             {
                 return UniTask.FromCanceled<DownloadResult>(cancellationToken);
@@ -36,7 +41,7 @@ namespace UnityGameFramework.Extension
             {
                 if (!IsValid)
                 {
-                    core.TrySetException(new GameFrameworkException("Awaitable is not valid."));
+                    core.TrySetCanceled();
                     return false;
                 }
                 if (cancellationToken.IsCancellationRequested)
@@ -74,7 +79,7 @@ namespace UnityGameFramework.Extension
             {
                 ReferencePool.Release(eventData);
             }
-            return NewUniTask<DownloadResult>(MoveNext, cancellationToken, ReturnAction);
+            return NewUniTask<DownloadResult>(MoveNext, ReturnAction);
         }
         
         private sealed class DownloadEventData : IReference

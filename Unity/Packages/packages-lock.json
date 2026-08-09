@@ -1,27 +1,40 @@
 {
   "dependencies": {
-    "cn.lys.aibridge": {
-      "version": "file:cn.lys.aibridge",
+    "com.annulusgames.lit-motion": {
+      "version": "https://github.com/AnnulusGames/LitMotion.git?path=src/LitMotion/Assets/LitMotion",
       "depth": 0,
-      "source": "embedded",
+      "source": "git",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.2.1"
-      }
+        "com.unity.burst": "1.6.0",
+        "com.unity.collections": "1.5.1",
+        "com.unity.mathematics": "1.0.1"
+      },
+      "hash": "ab6e92bfe78ff911def2fd3c4e9c79bb5a186946"
     },
-    "com.boxqkrtm.ide.cursor": {
-      "version": "file:com.unity.ide.cursor",
+    "com.annulusgames.lit-motion.animation": {
+      "version": "https://github.com/AnnulusGames/LitMotion.git?path=src/LitMotion/Assets/LitMotion.Animation",
       "depth": 0,
-      "source": "embedded",
+      "source": "git",
       "dependencies": {
-        "com.unity.test-framework": "1.1.9"
-      }
+        "com.annulusgames.lit-motion": "2.0.0"
+      },
+      "hash": "ab6e92bfe78ff911def2fd3c4e9c79bb5a186946"
     },
     "com.code-philosophy.hybridclr": {
       "version": "https://github.com/focus-creative-games/hybridclr_unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e4def761d69b27b7b51a5de0f6d272861416a2d6"
+      "hash": "ca7f87b6a72f3739f99a5ad0c957c7aae0cbd922"
+    },
+    "com.coffee.softmask-for-ugui": {
+      "version": "https://github.com/mob-sakai/SoftMaskForUGUI.git?path=Packages/src",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "2f4016c3864f66353c97953a35010959534e9a35"
     },
     "com.coffee.ui-effect": {
       "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
@@ -30,7 +43,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "4e30651290ab5c914237f2af4e3bdbef661feb93"
+      "hash": "1f4427c3d5d249534dba69d8c53acafb5d5fbd7f"
     },
     "com.coffee.ui-particle": {
       "version": "https://github.com/mob-sakai/ParticleEffectForUGUI.git",
@@ -40,7 +53,7 @@
         "com.unity.ugui": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0"
       },
-      "hash": "c54f63cb18a22382215b142b63e232f0f86fff58"
+      "hash": "5a305705f84549e50223d897bb95495edd78bf1a"
     },
     "com.coffee.unmask": {
       "version": "https://github.com/mob-sakai/UnmaskForUGUI.git",
@@ -68,7 +81,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "419759ee3b6bb17a65cba1348c084d41680184ea"
+      "hash": "604dc1eb5ada260a7be546d3d647482dc5bd0578"
     },
     "com.psygames.unitywebsocket": {
       "version": "https://github.com/psygames/UnityWebSocket.git#upm",
@@ -113,13 +126,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.editoriterationprofiler": {
-      "version": "https://github.com/Unity-Technologies/com.unity.editoriterationprofiler.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "02a50237af74cc628b971f02987eba048076b902"
-    },
     "com.unity.ext.nunit": {
       "version": "2.0.5",
       "depth": 1,
@@ -135,17 +141,8 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.ide.visualstudio": {
-      "version": "2.0.27",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.1.33"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.inputsystem": {
-      "version": "1.19.0",
+      "version": "1.20.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -172,14 +169,6 @@
         "com.unity.editorcoroutines": "1.0.0"
       },
       "url": "https://packages.unity.com"
-    },
-    "com.unity.multiplayer.center": {
-      "version": "1.0.1",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.uielements": "1.0.0"
-      }
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.6",
@@ -234,8 +223,18 @@
         "com.unity.render-pipelines.core": "17.0.3"
       }
     },
+    "com.unity.scriptablebuildpipeline": {
+      "version": "4.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.4.5",
+        "com.unity.modules.assetbundle": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.searcher": {
-      "version": "4.9.4",
+      "version": "4.9.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -300,56 +299,58 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "64ead283b59e1337a25553378aa70c6e200150c9"
+      "hash": "cb18906158c4ddcef902e23fe84e0c275cd6da04"
     },
     "me.xw.codebind": {
       "version": "https://github.com/XuToWei/CodeBind.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "fb636d1db98d7cc7c9690ce01b64c3bcdd732b1a"
+      "hash": "de6877110432a7aaf0417febd02100e46ff590be"
     },
     "me.xw.protobufunity": {
       "version": "https://github.com/XuToWei/Protobuf-Unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "749522159547e3aa80110e3ea747f294f0e2caf3"
+      "hash": "37802570b75ba2c53dc2748f2f118eeaf163b892"
     },
     "me.xw.reactivebinding": {
-      "version": "https://github.com/XuToWei/ReactiveBinding.git",
+      "version": "https://github.com/XuToWei/ReactiveBinding.git?path=Unity",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3ba3d7fbecb191c5a471deb8bad38cfdfaee155b"
+      "hash": "4a72141b66f1b40b66ab12115d171242b425b846"
     },
     "me.xw.statecontroller": {
       "version": "https://github.com/XuToWei/StateController.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "70eee1ee18304328efb281a716fac722dcdf11cb"
+      "hash": "a29581bd88aaf345d68c5604f876bf467f40ae8c"
     },
     "me.xw.toolbarextension": {
       "version": "https://github.com/XuToWei/ToolbarExtension.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "9cb25fae3db67e463f4969a613557929d777cb27"
+      "hash": "ecb4645d33e69f481cf70ceb2eec385ff89c5287"
+    },
+    "me.xw.unityagentbridge": {
+      "version": "https://github.com/XuToWei/UnityAgentBridge.git?path=Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.test-framework": "1.1.33"
+      },
+      "hash": "33a5dc50db654ab2ed0b99e9d9dca66095064a28"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
-    },
-    "com.unity.modules.adaptiveperformance": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.subsystems": "1.0.0"
-      }
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
@@ -446,14 +447,6 @@
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.imageconversion": "1.0.0"
-      }
-    },
-    "com.unity.modules.subsystems": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.jsonserialize": "1.0.0"
       }
     },
     "com.unity.modules.terrain": {
@@ -556,16 +549,6 @@
         "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.imageconversion": "1.0.0"
-      }
-    },
-    "com.unity.modules.vectorgraphics": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.uielements": "1.0.0",
-        "com.unity.modules.imageconversion": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "com.unity.modules.vehicles": {

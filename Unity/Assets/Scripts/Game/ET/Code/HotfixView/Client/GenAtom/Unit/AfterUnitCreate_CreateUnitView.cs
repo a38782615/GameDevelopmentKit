@@ -12,6 +12,9 @@ namespace ET.Client
         {
             Unit unit = args.Unit;
             unit.GetOrAddComponent<EntityBody>();
+            // Unit View层
+            // 这里资源需要卸载，Demo就不搞了
+            //GameObject unitGo = await scene.Root().GetComponent<UGFComponent>().LoadAssetAsync<GameObject>(AssetUtility.GetPrefabAsset("Skeleton/Skeleton"));
 
             var skillUnit = unit.AddComponent<SkillUnit>();
             

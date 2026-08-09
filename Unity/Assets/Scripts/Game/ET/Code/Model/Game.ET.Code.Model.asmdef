@@ -11,7 +11,8 @@
         "ZString",
         "MemoryPack",
         "UniTask.Extension",
-        "LiteDB"
+        "LiteDB",
+        "ReactiveBinding"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

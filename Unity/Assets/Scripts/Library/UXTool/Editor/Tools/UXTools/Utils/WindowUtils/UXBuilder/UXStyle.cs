@@ -3,12 +3,8 @@ using UnityEngine.UIElements;
 
 namespace ThunderFireUITool
 {
-        
     public class UXStyle : IStyle
         {
-        public void Clear(bool clearSourceAssetStyles = true)
-        {
-        }
         public StyleLength width { get; set; }
         public StyleLength height { get; set; }
         public StyleLength maxWidth { get; set; }
@@ -108,6 +104,12 @@ namespace ThunderFireUITool
         public StyleList<FilterFunction> filter { get; set; }
         public StyleMaterialDefinition unityMaterial { get; set; }
         public StyleTextAutoSize unityTextAutoSize { get; set; }
+#endif
+
+#if UNITY_6000_0_OR_NEWER
+        public void Clear(bool clearInlineStyle)
+        {
+        }
 #endif
     }
 }

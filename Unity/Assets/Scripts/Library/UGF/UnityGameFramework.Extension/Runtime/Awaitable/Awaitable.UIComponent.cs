@@ -21,6 +21,11 @@ namespace UnityGameFramework.Extension
 #if UNITY_EDITOR
             TipsSubscribeEvent();
 #endif
+            if (!IsValid)
+            {
+                // ReSharper disable once MethodSupportsCancellation
+                return UniTask.FromCanceled<UIForm>();
+            }
             if (cancellationToken.IsCancellationRequested)
             {
                 return UniTask.FromCanceled<UIForm>(cancellationToken);
@@ -36,15 +41,16 @@ namespace UnityGameFramework.Extension
             {
                 if (!IsValid)
                 {
-                    core.TrySetException(new GameFrameworkException("Awaitable is not valid."));
+                    core.TrySetCanceled();
                     return false;
                 }
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (uiComponent.HasUIForm(serialId))
+                    if (uiComponent.HasUIForm(serialId) || uiComponent.IsLoadingUIForm(serialId))
                     {
                         uiComponent.CloseUIForm(serialId);
                     }
+                    core.TrySetCanceled(cancellationToken);
                     return false;
                 }
                 if (uiComponent.IsLoadingUIForm(serialId))
@@ -68,7 +74,7 @@ namespace UnityGameFramework.Extension
                 s_OpenUIFormEventDataDict.Remove(serialId);
                 ReferencePool.Release(eventData);
             }
-            return NewUniTask<UIForm>(MoveNext, cancellationToken, ReturnAction);
+            return NewUniTask<UIForm>(MoveNext, ReturnAction);
         }
 
         private sealed class OpenUIFormEventData : IReference
