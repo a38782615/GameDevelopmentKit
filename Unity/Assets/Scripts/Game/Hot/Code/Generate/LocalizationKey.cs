@@ -244,6 +244,21 @@ namespace Game.Hot
         public const string Key_Shop = "Shop";
 
         /// <summary>
+        /// 丹药
+        /// </summary>
+        public const string Key_ShopTab0 = "ShopTab0";
+
+        /// <summary>
+        /// 功法
+        /// </summary>
+        public const string Key_ShopTab1 = "ShopTab1";
+
+        /// <summary>
+        /// 材料
+        /// </summary>
+        public const string Key_ShopTab2 = "ShopTab2";
+
+        /// <summary>
         /// 洞穴
         /// </summary>
         public const string Key_SMap = "SMap";
@@ -298,6 +313,17 @@ namespace Game.Hot
                 case 0: return Key_Level_3_0;
                 case 1: return Key_Level_3_1;
                 case 2: return Key_Level_3_2;
+                default: return string.Empty;
+            }
+        }
+
+        public static string Get_ShopTab(int order)
+        {
+            switch (order)
+            {
+                case 0: return Key_ShopTab0;
+                case 1: return Key_ShopTab1;
+                case 2: return Key_ShopTab2;
                 default: return string.Empty;
             }
         }

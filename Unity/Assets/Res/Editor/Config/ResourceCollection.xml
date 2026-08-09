@@ -24,7 +24,9 @@
       <Resource Name="Res/Scene/Menu" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormBag1" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormFight" LoadType="0" Packed="False" />
+      <Resource Name="Res/UI/UIForm/GenAtom/UIFormImprove" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormMap" LoadType="0" Packed="False" />
+      <Resource Name="Res/UI/UIForm/GenAtom/UIFormShop" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIFormSkills" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UIHelp" LoadType="0" Packed="False" />
       <Resource Name="Res/UI/UIForm/GenAtom/UILobby" LoadType="0" Packed="False" />
@@ -54,6 +56,7 @@
       <Asset Guid="022ca0278bad06c44bdb83acae8ff0bc" ResourceName="UI.UXTool" />
       <Asset Guid="0240f7f08e046d04e9c3086a48e58ecf" ResourceName="UI.UXTool" />
       <Asset Guid="02f7c91eb3902ae40a86fda557478f4d" ResourceName="UI.UXTool" />
+      <Asset Guid="031a9e2f41864c4469bf97903ad32168" ResourceName="Res/UI/UIForm/GenAtom/UIFormImprove" />
       <Asset Guid="03b0038fb3e26ca4fbd5a9ab04f935a2" ResourceName="UI.UXTool" />
       <Asset Guid="03e43d68043525646b6f7f04a8a0880d" ResourceName="Res/Scene/Main" />
       <Asset Guid="047c406e53e7b5948ae4bf585ca68b79" ResourceName="UI.UXTool" />
@@ -72,6 +75,7 @@
       <Asset Guid="0cb2d6b41eb85e6479034b4b4f90d33e" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="0dada01dd47e46544aeaf968d619ff77" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="1009ccebe686bd549829ad70ae054eba" ResourceName="UI.UXTool" />
+      <Asset Guid="10514f56274aa4f4697ad3e7cf12c574" ResourceName="Res/UI/UIPrefab/Button" />
       <Asset Guid="114d57cbe6103c24ba03dd555f31d2bf" ResourceName="UI.UXTool" />
       <Asset Guid="11e27c26ac87b40f0a62ec40d7261989" ResourceName="Entity" />
       <Asset Guid="1253f56e46557bf43ab518af1bc81395" ResourceName="UI.UXTool" />
@@ -164,6 +168,7 @@
       <Asset Guid="4aafe0fbd7be7924b80b007bbbf2b61f" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="4b2b53802b3d4f94d855ab26f2ff22af" ResourceName="GameHot" />
       <Asset Guid="4c3fd952e63fe4f4b8d9117f5fd1eb05" ResourceName="Res/UI/UISprite/SkillIcon" />
+      <Asset Guid="4e0f3215770f2a5438cdc2b8d602a9aa" ResourceName="Res/UI/UIForm/GenAtom/UIFormShop" />
       <Asset Guid="4e2080ec5b2634249afd0ee4e2310eff" ResourceName="UI.UXTool" />
       <Asset Guid="4e90392d5166d204f8a2a6cedf041174" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="4eb028c2d41731848b73b8784a0ec0f1" ResourceName="ET.ClientServer" />
@@ -350,7 +355,6 @@
       <Asset Guid="b29f4a844eeb9c04aa662338f589f2c6" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="b2dfc0e8a8c638d4fbde378e24215db9" ResourceName="UI.UXTool" />
       <Asset Guid="b310c68f53564f6409acf573affcb1f2" ResourceName="Entity" />
-      <Asset Guid="b44b5ab44e24caa4b80290b9fd405077" ResourceName="UI.UXTool" />
       <Asset Guid="b6e70680aa9d35d4bb5993fe787c2930" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="b72699bc57b54324a8b4332251139803" ResourceName="UI.UXTool" />
       <Asset Guid="b74af18e293025440863163d6d52b181" ResourceName="Res/UI/UISprite/SkillIcon" />
@@ -468,6 +472,7 @@
       <Asset Guid="f4ec271e525e14ca9927a07e6a2e153d" ResourceName="Entity" />
       <Asset Guid="f518ec686ffb0e0468ad0287abe0714a" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="f5a85bf9d9006a44e9aae59c2350c247" ResourceName="UI.UXTool" />
+      <Asset Guid="f70e923556671c342bc5e63845a6abfa" ResourceName="Res/UI/UIPrefab/Button" />
       <Asset Guid="f7a0edd8631d02a4482c8ccc87322d35" ResourceName="UI.UXTool" />
       <Asset Guid="f8cc44360daf08d4bb969b815be4bc7a" ResourceName="Res/UI/UISprite/SkillIcon" />
       <Asset Guid="f9a96a7bfdc8a144a8df88c0b55085fd" ResourceName="Res/UI/UISprite/SkillIcon" />

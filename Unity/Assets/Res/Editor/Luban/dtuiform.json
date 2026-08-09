@@ -151,5 +151,14 @@
     "UIGroupName": "Default",
     "AllowMultiInstance": false,
     "PauseCoveredUIForm": false
+  },
+  {
+    "Id": 811,
+    "CSName": "UIFormShop",
+    "Desc": "",
+    "AssetName": "GenAtom/UIFormShop",
+    "UIGroupName": "Default",
+    "AllowMultiInstance": false,
+    "PauseCoveredUIForm": false
   }
 ]

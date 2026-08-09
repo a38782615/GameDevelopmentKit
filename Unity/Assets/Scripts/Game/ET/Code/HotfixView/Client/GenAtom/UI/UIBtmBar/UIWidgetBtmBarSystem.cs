@@ -90,6 +90,14 @@ namespace ET.Client
                     UI = UGFUIFormId.UIFormSkills
                 });
             }
+            else if (button.name.StartsWith(GameConst.Btm_Home))
+            {
+                await EventSystem.Instance.PublishAsync(root, new GoScene()
+                {
+                    SceneId = Tables.Instance.DTGameConfig.SceneMain,
+                    UI = UGFUIFormId.UIFormShop
+                });
+            }
             else
             {
                 await EventSystem.Instance.PublishAsync(root, new GoScene()
