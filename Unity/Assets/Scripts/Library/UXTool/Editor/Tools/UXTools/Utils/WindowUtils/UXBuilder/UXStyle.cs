@@ -5,11 +5,7 @@ namespace ThunderFireUITool
 {
     public class UXStyle : IStyle
         {
-                public void Clear(bool c)
-                {
-                        
-                }
-                public StyleLength width { get; set; }
+        public StyleLength width { get; set; }
         public StyleLength height { get; set; }
         public StyleLength maxWidth { get; set; }
         public StyleLength maxHeight { get; set; }
