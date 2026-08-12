@@ -31,6 +31,7 @@ namespace ET.Client
             }
 
             self.IsInitialized = true;
+            self.DeathHandled = false;
         }
 
         public static void HandleAttributeChanged(this AbilitySystemComponent self, int numericType, float before, float after)
@@ -60,13 +61,21 @@ namespace ET.Client
                 }
             }
 
-            if (before > 0f && after <= 0f)
+            self.TryHandleDeath(before, after);
+        }
+
+        public static void TryHandleDeath(this AbilitySystemComponent self, float before, float after, bool fromDamage = false)
+        {
+            if (self == null || self.DeathHandled || after > 0f || !fromDamage && (before <= 0f || after >= before))
             {
-                SkillDiagFileLogger.Log($"[Death] asc={self.InstanceId} unit={self.GetParent<SkillUnit>()?.Unit.As()?.Id ?? 0} hpBefore={before:F3} hpAfter={after:F3}");
-                self.DispatchGameplayEvent(GameplayEventType.OnDeath);
-                self.Abilities?.CancelAllAbilities();
-                self.PlayDeathPresentationAndRemove();
+                return;
             }
+
+            self.DeathHandled = true;
+            SkillDiagFileLogger.Log($"[Death] asc={self.InstanceId} unit={self.GetParent<SkillUnit>()?.Unit.As()?.Id ?? 0} hpBefore={before:F3} hpAfter={after:F3}");
+            self.DispatchGameplayEvent(GameplayEventType.OnDeath);
+            self.Abilities?.CancelAllAbilities();
+            self.PlayDeathPresentationAndRemove();
         }
 
         public static void DispatchGameplayEvent(this AbilitySystemComponent self, GameplayEventType gameplayEventType)

@@ -74,7 +74,9 @@ namespace ET.Client
                 {
                     float hpBefore = healthAttr.ValueFloat;
                     target.Attributes.SetValue(healthAttr.NumericType, healthAttr.ValueFloat - baseDamage);
+                    float hpAfter = healthAttr.ValueFloat;
                     SkillDiagFileLogger.Log($"[DamageEffect] Apply skillId={Spec.SkillId} nodeGuid={Spec.NodeGuid} target={target.InstanceId} damage={baseDamage:F3} hpBefore={hpBefore:F3} hpAfter={healthAttr.ValueFloat:F3}");
+                    target.TryHandleDeath(hpBefore, hpAfter, true);
                     AbilitySystemComponent casterAsc = context?.GetCaster();
                     Unit casterUnit = casterAsc?.GetParent<SkillUnit>()?.Unit.As();
                     SkillDiagFileLogger.LogDamageApplied(Spec.SkillId, casterUnit?.Id ?? 0, casterAsc?.InstanceId ?? 0, target.InstanceId, Spec.NodeGuid, baseDamage, hpBefore, healthAttr.ValueFloat);

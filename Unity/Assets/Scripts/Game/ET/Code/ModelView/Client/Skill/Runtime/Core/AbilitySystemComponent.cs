@@ -30,6 +30,11 @@ namespace ET.Client
         /// </summary>
         public bool IsInitialized;
 
+        /// <summary>
+        /// 防止同一单位因首击数值事件重复触发死亡流程。
+        /// </summary>
+        public bool DeathHandled;
+
         // ============ 事件 ============
 
         public struct OnAbilityActivated
