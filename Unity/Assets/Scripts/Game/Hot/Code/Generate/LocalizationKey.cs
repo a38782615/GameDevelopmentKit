@@ -284,6 +284,11 @@ namespace Game.Hot
         public const string Key_Skill_God = "Skill_God";
 
         /// <summary>
+        /// 升级
+        /// </summary>
+        public const string Key_Skill_Lvup = "Skill_Lvup";
+
+        /// <summary>
         /// 回血
         /// </summary>
         public const string Key_Skill_RecBlood = "Skill_RecBlood";

@@ -49,7 +49,9 @@ namespace ET.Client
                 var attr = unit.GetComponent<AttributeComponent>().GetAttrCmp(NumericType.Hp);
 
                 var playerData = root.GetPlayerData();
-                playerData.Hp = attr.ValueLong;
+                var heroConfig = Tables.Instance.DTHero.Get(playerData.Id);
+                var unitAttribute = Tables.Instance.DTUnitAttribute.Get(heroConfig.UnitConfigId, playerData.Level, playerData.SubLevel);
+                playerData.Hp = (long)(unitAttribute.HP * 10000);
             }
 
             var mgr = root.GetComponent<GameDataMgrComponent>();

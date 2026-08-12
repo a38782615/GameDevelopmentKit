@@ -57,7 +57,7 @@ namespace ET.Client
                 maxV = self.GetAttrCmp(max).ValueFloat;
             }
             var v = math.clamp(value, 0, maxV);
-            attribute.SetBaseValue(v);
+            attribute.SetValue(v);
             return true;
         }
 
@@ -158,7 +158,7 @@ namespace ET.Client
             {
                 attribute = self.AddChildWithId<AttrCmp, int>((long)numericType, numericType);
             }
-            attribute.SetBaseValue(value);
+            attribute.SetValue(value);
         }
     }
 }

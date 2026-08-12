@@ -187,6 +187,9 @@ namespace ET.Client
             Transform transform = self.transform;
             UXTextMeshPro level = transform.Find("Count").GetComponent<UXTextMeshPro>();
             level.text = self.Data.Level.ToString();
+
+            UXTextMeshPro skillName = transform.Find("Name").GetComponent<UXTextMeshPro>();
+            skillName.text = LocalizationHelper.GetString(skillConfig?.Name, "") ?? string.Empty;
             // Image icon = transform.GetComponent<Image>();
             // icon.color = self.Data.IsEquipped ? Color.white : new Color(1f, 1f, 1f, 0.65f);
 

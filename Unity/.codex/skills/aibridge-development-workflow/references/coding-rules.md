@@ -1,0 +1,34 @@
+## Unity 对象判空
+
+Unity 对象必须显式判空：
+
+```csharp
+if (target != null)
+{
+    target.SetActive(true);
+}
+```
+
+禁止对 Unity 对象使用空条件访问：
+
+```csharp
+target?.SetActive(true);
+```
+
+## 硬编码
+
+- 业务配置、资源路径、命令路径、魔法数字不得散落硬编码
+- `.csx` 顶层脚本例外：按方法体编写，稳定参数用 `const` 或局部变量，不能声明 `static readonly` 字段；详见 `editor-generation.md`
+- UI 文案、日志文本、测试样例可按上下文保留字面量
+- 不要为了消除一个局部字面量而制造过度抽象
+
+## 重复代码
+
+- 同一业务规则或复杂逻辑重复出现时，提取公共方法或工具类
+- 仅形状相似但语义不同的代码，不强行抽象
+- 优先复用项目已有 Helper、Command、Installer、Patch 工具
+
+## 注释
+
+- 复杂逻辑、兼容性处理、Unity 序列化限制处用简体中文添加必要注释
+- 不写解释显而易见赋值或流程的空泛注释

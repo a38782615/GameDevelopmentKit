@@ -18,9 +18,9 @@ namespace ET.Client
         public int NumericType;
         public int ModifierCount => activeModifiers.Count;
 
-        public void SetBaseValue(float value)
+        public void SetValue(float value)
         {
-            GetNumericComponent().Set(NumericType * 10 + 1, value);
+            GetNumericComponent().Set(NumericType, value);
         }
 
         public float ValueFloat
@@ -127,7 +127,7 @@ namespace ET.Client
             }
 
             float newValue = CalculateNewValue(context);
-            SetBaseValue(newValue);
+            SetValue(newValue);
             isDirty = false;
         }
 

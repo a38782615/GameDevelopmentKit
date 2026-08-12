@@ -1,4 +1,4 @@
-\# \*MUST\*使用中文回答用户问题
+﻿\# \*MUST\*使用中文回答用户问题
 
 \---
 
@@ -276,86 +276,39 @@
 
 
 
-﻿<!-- AIBRIDGE:START {"assistant":"codex","templateId":"unity-integration","version":2,"target":"root-rule"} -->
+﻿<!-- AIBRIDGE:START {"assistant":"aibridge","templateId":"unity-integration","version":11,"target":"root-rule"} -->
+## AIBridge Bootstrap
 
-\## AIBridge Rules
+**CLI Alias**: `$CLI = ./.aibridge/cli/AIBridgeCLI.exe`
+- `$CLI` points to the project-local AIBridge CLI. In PowerShell, assign `$CLI = "./.aibridge/cli/AIBridgeCLI.exe"`, then run `& $CLI <command> [action] [options]`
 
-
-
-\*\*Skill\*\*: `aibridge` - Unity CLI automation
-
-
-
-\*\*CLI\*\*: `./AIBridgeCache/CLI/AIBridgeCLI.exe` (JSON output)
-
-
-
-\*\*Priority\*\*:
-
-\- \*\*Compile\*\*: `compile unity` (default), `compile dotnet` (optional)
-
-\- \*\*Asset Search\*\*: `asset search/find --format paths` before filesystem search
-
-\- \*\*Console\*\*: `get\_logs --logType Error`
-
-
-
-\*\*Quick Reference\*\*:
-
+**Common Commands**:
 ```bash
-
-./AIBridgeCache/CLI/AIBridgeCLI.exe compile unity
-
-./AIBridgeCache/CLI/AIBridgeCLI.exe get\_logs --logType Error
-
-./AIBridgeCache/CLI/AIBridgeCLI.exe asset search --mode script --keyword "Player" --format paths
-
-./AIBridgeCache/CLI/AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube
-
+$CLI compile unity
+$CLI get_logs --logType Error
+$CLI editor log --message "Hello" --logType Warning
 ```
 
+**Routing Rules**:
+- Quick tasks: answer or execute directly without loading `aibridge-development-workflow` for pure Q&A, code explanation, simple search/display, or tasks with no code or Unity asset changes and no review, validation, or root-cause verdict
+- Workflow tasks: load `aibridge-development-workflow` first when the task requires code or Unity asset changes, persistent AGENTS/Skill/workflow rule changes, root-cause debugging, Runtime/log evidence, or a risk review/validation verdict
+- After entering the workflow, `aibridge-development-workflow` reads harness-readiness as Preflight gate, chooses the task branch, and decides whether to load additional Skills
 
+**Skill Loading**:
+- Load `aibridge-development-workflow` from `/.codex/skills/aibridge-development-workflow/SKILL.md` before workflow tasks
+- AIBridge Skills are installed under `/.codex/skills/<skill-name>/SKILL.md`; load sibling Skills from that directory when this root rule or the workflow requires them
 
-Reference: `/Packages/cn.lys.aibridge/Skill\~/SKILL.md`
+**Temporary Files**:
+- Store short-lived Agent and script output under `.aibridge/tmp/`; do not write `tmp_*` or `tmp-*` files to `.aibridge/`
 
+**Project Version**:
+- Current Unity version: 6000.3.17f1
+- Current C# language requirement: compatible with C# 9.0; do not use newer syntax
+- Object identity: prefer `--instanceId` on this Unity version; `--entityId` applies only on Unity 6000.4+
 
-
-<!-- AIBRIDGE:START {"assistant":"codex","templateId":"unity-project-rules","version":1,"target":"root-rule"} -->
-
-\## AIBridge Rules
-
-
-
-Use `AIBridgeCache/CLI/AIBridgeCLI.exe` for Unity Editor automation in this project.
-
-
-
-\- Prefer `--raw` output for machine-readable responses
-
-\- Use AIBridge for compile checks, console log inspection, scene hierarchy changes, GameObject updates, Transform edits, and asset queries
-
-\- Use screenshot or GIF commands for visual verification when Play Mode is required
-
-
-
-\*\*Quick Reference\*\*:
-
-```bash
-
-AIBridgeCLI.exe compile unity --raw
-
-AIBridgeCLI.exe get\_logs --logType Error --raw
-
-AIBridgeCLI.exe gameobject create --name "Cube" --primitiveType Cube --raw
-
-AIBridgeCLI.exe asset search --mode script --keyword "Player" --raw
-
-```
-
-
-
-Reference: `/.claude/skills/aibridge/SKILL.md`
-
+**Current Capabilities**:
+- Project-side capabilities are authoritative in this Root Rule and installed workflow rules; do not call `$CLI harness status` for Code Index, Skill, or assistant enablement/freshness preflight. Optional diagnostic snapshot: `.aibridge/harness/capabilities.json`. Selected assistants: codex. Skill root: .codex/skills. Code Index: disabled. External agent/sub-agent capability: unknown to Unity
+- Code Index: disabled. Do not load `aibridge-code-index` or call `code_index`
 <!-- AIBRIDGE:END -->
 
 
@@ -366,7 +319,7 @@ Reference: `/.claude/skills/aibridge/SKILL.md`
 
 
 
-Use `AIBridgeCache/CLI/AIBridgeCLI.exe` for Unity Editor automation in this project.
+Use the project-local `.aibridge/cli/AIBridgeCLI.exe` for Unity Editor automation in this project.
 
 
 
