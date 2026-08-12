@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6208659054906715859}
-  - component: {fileID: 777578167370965257}
-  - component: {fileID: 1546747968372710710}
+  - component: {fileID: 3474081245887324738}
   m_Layer: 5
-  m_Name: Grid0_CommonLoopScrollRect
+  m_Name: Grid0_LoopHorizontalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,7 +37,7 @@ RectTransform:
   m_AnchoredPosition: {x: 54.347, y: 459.14}
   m_SizeDelta: {x: 558.69, y: 329.72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &777578167370965257
+--- !u!114 &3474081245887324738
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,20 +46,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 680654262491598777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: LoopScrollRect.Runtime::UnityEngine.UI.LoopVerticalScrollRect
+  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
   totalCount: 0
   reverseDirection: 0
   m_Content: {fileID: 7008468218276501210}
-  m_Horizontal: 0
-  m_Vertical: 1
+  m_Horizontal: 1
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 1426959700615991039}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0
@@ -72,20 +71,7 @@ MonoBehaviour:
       m_Calls: []
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
---- !u!114 &1546747968372710710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 680654262491598777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef6007be05da84caa4f00603eef79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.CommonLoopScrollRect
   m_ItemTemplate: {fileID: 7478026932317249318}
-  m_LoopScrollRect: {fileID: 777578167370965257}
 --- !u!1 &1715903866863330747
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,8 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb22ad5ff8744b80ad66edb1d7181c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EditorSelectedDataName: 
-  m_ControllerDatas: []
+  m_EditorSelectedGroupName: 
+  m_Groups: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &2453318533849324073
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,10 +144,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 978215301611844895}
-  - component: {fileID: 1765670284930521928}
-  - component: {fileID: 1440109787856245913}
+  - component: {fileID: 1166452984019649022}
   m_Layer: 5
-  m_Name: Grid1_CommonLoopScrollRect
+  m_Name: Grid1_LoopHorizontalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,7 +172,7 @@ RectTransform:
   m_AnchoredPosition: {x: 2.325714, y: -6.5894775}
   m_SizeDelta: {x: 701.0298, y: 557.0507}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1765670284930521928
+--- !u!114 &1166452984019649022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -193,20 +181,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 2453318533849324073}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: LoopScrollRect.Runtime::UnityEngine.UI.LoopHorizontalScrollRect
+  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
   totalCount: 0
   reverseDirection: 0
   m_Content: {fileID: 8301563262024448041}
-  m_Horizontal: 0
+  m_Horizontal: 1
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 3227635028681478068}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0
@@ -218,20 +206,7 @@ MonoBehaviour:
       m_Calls: []
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
---- !u!114 &1440109787856245913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2453318533849324073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef6007be05da84caa4f00603eef79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.CommonLoopScrollRect
   m_ItemTemplate: {fileID: 8498192328121777552}
-  m_LoopScrollRect: {fileID: 1765670284930521928}
 --- !u!1 &3589174566700600100
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,10 +436,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.ET.Code.ModelView::ET.Client.MonoUIFormBag1
   m_CenterRectTransform: {fileID: 3693826156874253253}
-  m_Grid0CommonLoopScrollRect: {fileID: 1546747968372710710}
-  m_Grid1CommonLoopScrollRect: {fileID: 1440109787856245913}
-  m_ItemTempExButton: {fileID: 9100804820092270723}
-  m_ItemTempImage: {fileID: 484926555866361874}
+  m_Grid0LoopHorizontalScrollRect: {fileID: 3474081245887324738}
+  m_Grid1LoopHorizontalScrollRect: {fileID: 1166452984019649022}
+  m_ItemTemp0ExButton: {fileID: 9100804820092270723}
+  m_ItemTemp0Image: {fileID: 484926555866361874}
+  m_ItemTemp1ExButton: {fileID: 7810474299029199413}
+  m_ItemTemp1Image: {fileID: 1482285815217672868}
   m_RetunExButton: {fileID: 8035045602182695260}
 --- !u!1 &5056435292338523341
 GameObject:
@@ -789,7 +766,7 @@ PrefabInstance:
     - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_Name
-      value: ItemTemp_ExButton_Image1
+      value: ItemTemp0_ExButton_Image
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
@@ -943,7 +920,7 @@ PrefabInstance:
     - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_Name
-      value: ItemTemp_ExButton_Image2
+      value: ItemTemp1_ExButton_Image
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
@@ -1056,6 +1033,30 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8953826560876284796}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1482285815217672868 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7552610007143635416, guid: 10514f56274aa4f4697ad3e7cf12c574,
+    type: 3}
+  m_PrefabInstance: {fileID: 8953826560876284796}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8498192328121777552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &7810474299029199413 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1163618855592464713, guid: 10514f56274aa4f4697ad3e7cf12c574,
+    type: 3}
+  m_PrefabInstance: {fileID: 8953826560876284796}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8498192328121777552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394a81abdb59605459ee7158fc9280f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.ExButton
 --- !u!1 &8498192328121777552 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,

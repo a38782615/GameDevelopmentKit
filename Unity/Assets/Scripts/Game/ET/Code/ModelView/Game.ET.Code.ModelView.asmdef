@@ -28,6 +28,7 @@
         "LoopScrollRect.Runtime",
         "Game",
         "UnityGameFramework.Runtime",
+        "UnityGameFramework.Extension",
         "spine-unity",
         "Unity.InputSystem"
     ],

@@ -4,44 +4,52 @@ namespace ET.Client
 {
     public partial class MonoUIFormBag1
     {
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_CenterRectTransform;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_Grid0CommonLoopScrollRect;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_Grid1CommonLoopScrollRect;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_ItemTempExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Image m_ItemTempImage;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_Grid0LoopHorizontalScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_Grid1LoopHorizontalScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ItemTemp0ExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_ItemTemp0Image;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_ItemTemp1ExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private UnityEngine.UI.Image m_ItemTemp1Image;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_RetunExButton;
 
-
-        public UnityEngine.RectTransform CenterRectTransform => m_CenterRectTransform;
-        public Game.CommonLoopScrollRect Grid0CommonLoopScrollRect => m_Grid0CommonLoopScrollRect;
-        public Game.CommonLoopScrollRect Grid1CommonLoopScrollRect => m_Grid1CommonLoopScrollRect;
-        public Game.ExButton ItemTempExButton => m_ItemTempExButton;
-        public UnityEngine.UI.Image ItemTempImage => m_ItemTempImage;
-        public Game.ExButton RetunExButton => m_RetunExButton;
-
+        public UnityEngine.RectTransform CenterRectTransform => this.m_CenterRectTransform;
+        public Game.ExLoopHorizontalScrollRect Grid0LoopHorizontalScrollRect => this.m_Grid0LoopHorizontalScrollRect;
+        public Game.ExLoopHorizontalScrollRect Grid1LoopHorizontalScrollRect => this.m_Grid1LoopHorizontalScrollRect;
+        public Game.ExButton ItemTemp0ExButton => this.m_ItemTemp0ExButton;
+        public UnityEngine.UI.Image ItemTemp0Image => this.m_ItemTemp0Image;
+        public Game.ExButton ItemTemp1ExButton => this.m_ItemTemp1ExButton;
+        public UnityEngine.UI.Image ItemTemp1Image => this.m_ItemTemp1Image;
+        public Game.ExButton RetunExButton => this.m_RetunExButton;
 
 #if UNITY_EDITOR
-        [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
-        [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
-        [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
-        private string BindDataExitEmptyWarning => "BindData contains empty reference, please check.";
+        [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
+        private void DrawMissingTargetsWarning()
+        {
+            Sirenix.Utilities.Editor.SirenixEditorGUI.MessageBox("Binding targets contain missing references.", UnityEditor.MessageType.Warning);
+        }
 
-        private bool CheckBindDataExitEmpty()
+        private bool HasMissingTargets()
         {
             if (this.m_CenterRectTransform == null) return true;
-            if (this.m_Grid0CommonLoopScrollRect == null) return true;
-            if (this.m_Grid1CommonLoopScrollRect == null) return true;
-            if (this.m_ItemTempExButton == null) return true;
-            if (this.m_ItemTempImage == null) return true;
+            if (this.m_Grid0LoopHorizontalScrollRect == null) return true;
+            if (this.m_Grid1LoopHorizontalScrollRect == null) return true;
+            if (this.m_ItemTemp0ExButton == null) return true;
+            if (this.m_ItemTemp0Image == null) return true;
+            if (this.m_ItemTemp1ExButton == null) return true;
+            if (this.m_ItemTemp1Image == null) return true;
             if (this.m_RetunExButton == null) return true;
             return false;
         }
 #endif
+
     }
 }

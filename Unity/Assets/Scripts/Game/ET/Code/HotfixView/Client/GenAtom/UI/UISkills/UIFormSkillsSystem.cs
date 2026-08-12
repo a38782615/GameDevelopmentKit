@@ -49,9 +49,9 @@ namespace ET.Client
 
         private static void LoadGrid(this UIFormSkills self)
         {
-            self.View.SkillsCommonLoopScrollRect.itemRenderer = self.LearnedSkillRender;
-            self.View.Skill0CommonLoopScrollRect.itemRenderer = self.EquippedPassiveSkillRender;
-            self.View.Skill1CommonLoopScrollRect.itemRenderer = self.EquippedActiveSkillRender;
+            self.View.SkillsLoopHorizontalScrollRect.itemRenderer = self.LearnedSkillRender;
+            self.View.Skill0LoopHorizontalScrollRect.itemRenderer = self.EquippedPassiveSkillRender;
+            self.View.Skill1LoopHorizontalScrollRect.itemRenderer = self.EquippedActiveSkillRender;
             self.Refresh();
         }
 
@@ -63,9 +63,9 @@ namespace ET.Client
                 return;
             }
 
-            view.SkillsCommonLoopScrollRect.itemRenderer = null;
-            view.Skill0CommonLoopScrollRect.itemRenderer = null;
-            view.Skill1CommonLoopScrollRect.itemRenderer = null;
+            view.SkillsLoopHorizontalScrollRect.itemRenderer = null;
+            view.Skill0LoopHorizontalScrollRect.itemRenderer = null;
+            view.Skill1LoopHorizontalScrollRect.itemRenderer = null;
         }
 
         private static void Refresh(this UIFormSkills self)
@@ -76,9 +76,9 @@ namespace ET.Client
                 return;
             }
 
-            self.View.SkillsCommonLoopScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
-            self.View.Skill0CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
-            self.View.Skill1CommonLoopScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
+            self.View.SkillsLoopHorizontalScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
+            self.View.Skill0LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
+            self.View.Skill1LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
 
             PlayerData playerData = self.Root().GetPlayerData();
             float normalizedSkillExp = playerData == null ? 0f : Mathf.Clamp01(playerData.SkillExp / 100f);

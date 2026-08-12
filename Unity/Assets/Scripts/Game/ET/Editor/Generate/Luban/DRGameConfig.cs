@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using SimpleJSON;
+using Luban.SimpleJSON;
 using Luban;
 
 namespace ET.Editor
@@ -20,7 +20,7 @@ public sealed class DRGameConfig :  Luban.EditorBeanBase
     {
     }
 
-    public override void LoadJson(SimpleJSON.JSONObject _json)
+    public override void LoadJson(JSONObject _json)
     {
         { 
             var _fieldJson = _json["Scene_Menu"];
@@ -56,7 +56,7 @@ public sealed class DRGameConfig :  Luban.EditorBeanBase
         
     }
 
-    public override void SaveJson(SimpleJSON.JSONObject _json)
+    public override void SaveJson(JSONObject _json)
     {
         {
             _json["Scene_Menu"] = new JSONNumber(SceneMenu);
@@ -72,16 +72,16 @@ public sealed class DRGameConfig :  Luban.EditorBeanBase
         }
     }
 
-    public static DRGameConfig LoadJsonDRGameConfig(SimpleJSON.JSONNode _json)
+    public static DRGameConfig LoadJsonDRGameConfig(JSONNode _json)
     {
         DRGameConfig obj = new DRGameConfig();
-        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        obj.LoadJson((JSONObject)_json);
         return obj;
     }
         
-    public static void SaveJsonDRGameConfig(DRGameConfig _obj, SimpleJSON.JSONNode _json)
+    public static void SaveJsonDRGameConfig(DRGameConfig _obj, JSONNode _json)
     {
-        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+        _obj.SaveJson((JSONObject)_json);
     }
 
     public int SceneMenu;

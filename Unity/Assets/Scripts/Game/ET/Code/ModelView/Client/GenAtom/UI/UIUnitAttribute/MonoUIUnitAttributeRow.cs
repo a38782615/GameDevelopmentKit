@@ -4,8 +4,8 @@ using UnityEngine;
 namespace ET.Client
 {
     [EnableClass]
-    [CodeBindName("AttributeRowTemplate")]
-    [MonoCodeBind]
+    [BindingTargetToken("AttributeRowTemplate")]
+    [MonoBehaviourBinding]
     public partial class MonoUIUnitAttributeRow : MonoBehaviour
     {
     }

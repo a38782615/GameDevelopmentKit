@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using SimpleJSON;
+using Luban.SimpleJSON;
 using Luban;
 
 namespace ET.Editor
@@ -20,7 +20,7 @@ public sealed class Int4 :  Luban.EditorBeanBase
     {
     }
 
-    public override void LoadJson(SimpleJSON.JSONObject _json)
+    public override void LoadJson(JSONObject _json)
     {
         { 
             var _fieldJson = _json["Item1"];
@@ -56,7 +56,7 @@ public sealed class Int4 :  Luban.EditorBeanBase
         
     }
 
-    public override void SaveJson(SimpleJSON.JSONObject _json)
+    public override void SaveJson(JSONObject _json)
     {
         {
             _json["Item1"] = new JSONNumber(Item1);
@@ -72,16 +72,16 @@ public sealed class Int4 :  Luban.EditorBeanBase
         }
     }
 
-    public static Int4 LoadJsonInt4(SimpleJSON.JSONNode _json)
+    public static Int4 LoadJsonInt4(JSONNode _json)
     {
         Int4 obj = new Int4();
-        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        obj.LoadJson((JSONObject)_json);
         return obj;
     }
         
-    public static void SaveJsonInt4(Int4 _obj, SimpleJSON.JSONNode _json)
+    public static void SaveJsonInt4(Int4 _obj, JSONNode _json)
     {
-        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+        _obj.SaveJson((JSONObject)_json);
     }
 
     public int Item1;

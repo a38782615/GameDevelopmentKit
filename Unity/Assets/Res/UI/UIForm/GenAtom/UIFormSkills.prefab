@@ -264,10 +264,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8154490584767323135}
-  - component: {fileID: 7790512879404214567}
-  - component: {fileID: 4575242474349408249}
+  - component: {fileID: 8825296104742619425}
   m_Layer: 5
-  m_Name: Skills_CommonLoopScrollRect
+  m_Name: Skills_LoopHorizontalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,7 +292,7 @@ RectTransform:
   m_AnchoredPosition: {x: 9, y: 37}
   m_SizeDelta: {x: 558.69, y: 329.72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7790512879404214567
+--- !u!114 &8825296104742619425
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,20 +301,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 503817660244238099}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: LoopScrollRect.Runtime::UnityEngine.UI.LoopVerticalScrollRect
+  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
   totalCount: 0
   reverseDirection: 0
   m_Content: {fileID: 203069390299341784}
-  m_Horizontal: 0
-  m_Vertical: 1
+  m_Horizontal: 1
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 654734858998021342}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0
@@ -327,20 +326,7 @@ MonoBehaviour:
       m_Calls: []
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
---- !u!114 &4575242474349408249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 503817660244238099}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef6007be05da84caa4f00603eef79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.CommonLoopScrollRect
   m_ItemTemplate: {fileID: 667199740056590874}
-  m_LoopScrollRect: {fileID: 7790512879404214567}
 --- !u!1 &1626687039071915030
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,10 +551,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8769630454736032926}
-  - component: {fileID: 5451507569353000306}
-  - component: {fileID: 2852284541497106469}
+  - component: {fileID: 3173832134481983651}
   m_Layer: 5
-  m_Name: Skill1_CommonLoopScrollRect
+  m_Name: Skill1_LoopHorizontalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -594,7 +579,7 @@ RectTransform:
   m_AnchoredPosition: {x: 9, y: -553}
   m_SizeDelta: {x: 558.69, y: 142.5977}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5451507569353000306
+--- !u!114 &3173832134481983651
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -603,20 +588,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 4872100588700123121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: LoopScrollRect.Runtime::UnityEngine.UI.LoopVerticalScrollRect
+  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
   totalCount: 0
   reverseDirection: 0
   m_Content: {fileID: 7888106005481521441}
-  m_Horizontal: 0
-  m_Vertical: 1
+  m_Horizontal: 1
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 593949897954934691}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0
@@ -628,20 +613,7 @@ MonoBehaviour:
       m_Calls: []
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
---- !u!114 &2852284541497106469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4872100588700123121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef6007be05da84caa4f00603eef79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.CommonLoopScrollRect
   m_ItemTemplate: {fileID: 8609344341478663907}
-  m_LoopScrollRect: {fileID: 5451507569353000306}
 --- !u!1 &5026465798018422484
 GameObject:
   m_ObjectHideFlags: 0
@@ -1117,8 +1089,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb22ad5ff8744b80ad66edb1d7181c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EditorSelectedDataName: 
-  m_ControllerDatas: []
+  m_EditorSelectedGroupName: 
+  m_Groups: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &7253494550040367380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,10 +1296,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9009082567844421316}
-  - component: {fileID: 1724200726419663047}
-  - component: {fileID: 2593560137271715441}
+  - component: {fileID: 8544410855360851254}
   m_Layer: 5
-  m_Name: Skill0_CommonLoopScrollRect
+  m_Name: Skill0_LoopHorizontalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1350,7 +1324,7 @@ RectTransform:
   m_AnchoredPosition: {x: 9, y: -307}
   m_SizeDelta: {x: 558.69, y: 147.7696}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1724200726419663047
+--- !u!114 &8544410855360851254
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1359,20 +1333,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 8745379202673912348}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: LoopScrollRect.Runtime::UnityEngine.UI.LoopVerticalScrollRect
+  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
   totalCount: 0
   reverseDirection: 0
   m_Content: {fileID: 4961526019012458136}
-  m_Horizontal: 0
-  m_Vertical: 1
+  m_Horizontal: 1
+  m_Vertical: 0
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 7563009869912445990}
+  m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0
@@ -1384,20 +1358,7 @@ MonoBehaviour:
       m_Calls: []
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
---- !u!114 &2593560137271715441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8745379202673912348}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef6007be05da84caa4f00603eef79a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.CommonLoopScrollRect
   m_ItemTemplate: {fileID: 1680174244242404794}
-  m_LoopScrollRect: {fileID: 1724200726419663047}
 --- !u!1 &8968323085960830023
 GameObject:
   m_ObjectHideFlags: 0
@@ -1516,8 +1477,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ReturnExButton: {fileID: 3034717575191504666}
-  m_Skill0CommonLoopScrollRect: {fileID: 2593560137271715441}
-  m_Skill1CommonLoopScrollRect: {fileID: 2852284541497106469}
+  m_Skill0LoopHorizontalScrollRect: {fileID: 8544410855360851254}
+  m_Skill1LoopHorizontalScrollRect: {fileID: 3173832134481983651}
   m_SkillExpSlider: {fileID: 8239432563569871348}
   m_SkillExpTxtUXTextMeshPro: {fileID: 879989715619428035}
   m_SkillLevelUXTextMeshPro: {fileID: 5163585294774004774}
@@ -1528,7 +1489,7 @@ MonoBehaviour:
   m_SkillTemp2Image: {fileID: 8515368391145921166}
   m_SkillTemp3ExButton: {fileID: 7994255525758566726}
   m_SkillTemp3Image: {fileID: 1587253807960115671}
-  m_SkillsCommonLoopScrollRect: {fileID: 4575242474349408249}
+  m_SkillsLoopHorizontalScrollRect: {fileID: 8825296104742619425}
 --- !u!1001 &67443579921280246
 PrefabInstance:
   m_ObjectHideFlags: 0

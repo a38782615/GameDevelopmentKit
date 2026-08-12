@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
+using UnityGameFramework.Extension;
 #if Spine
 using Spine.Unity;
 #endif
@@ -39,9 +40,9 @@ namespace ET.Client
         {
             foreach (UnityEngine.Object asset in LoadedAssets.Values)
             {
-                if (asset != null && UGFComponent.Instance != null)
+                if (asset != null && GameEntry.Resource != null)
                 {
-                    UGFComponent.Instance.UnloadAsset(asset);
+                    GameEntry.Resource.UnloadAsset(asset);
                 }
             }
 
@@ -128,15 +129,15 @@ namespace ET.Client
                 return loadedAsset as TAsset;
             }
 
-            if (UGFComponent.Instance == null)
+            if (GameEntry.Resource == null)
             {
-                Log.Warning($"[SkillAssetResolver] UGFComponent is null. assetPath={assetPath}");
+                Log.Warning($"[SkillAssetResolver] GameEntry.Resource is null. assetPath={assetPath}");
                 return null;
             }
 
             try
             {
-                TAsset asset = await UGFComponent.Instance.LoadAssetAsync<TAsset>(assetPath);
+                TAsset asset = await GameEntry.Resource.LoadAssetAsync<TAsset>(assetPath);
                 if (asset != null)
                 {
                     LoadedAssets[assetPath] = asset;

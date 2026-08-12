@@ -2,8 +2,8 @@ using CodeBind;
 
 namespace ET.Client
 {
-    [CodeBindName("UISkillItem")]
-    [MonoCodeBind]
+    [BindingTargetToken("UISkillItem")]
+    [MonoBehaviourBinding]
     public partial class MonoUISkillItem : AETMonoUGFUIWidget
     {
     }

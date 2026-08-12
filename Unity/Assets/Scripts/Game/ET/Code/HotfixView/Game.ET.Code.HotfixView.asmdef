@@ -31,7 +31,9 @@
         "LoopScrollRect.Runtime",
         "Game",
         "spine-unity",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "UnityGameFramework.Extension",
+        "UnityGameFramework.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

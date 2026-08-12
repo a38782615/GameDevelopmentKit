@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Game;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityGameFramework.Extension;
 
 namespace ET
 {
@@ -250,19 +251,20 @@ namespace ET
 
         private static async UniTask<Texture2D> LoadTextureAsync(this DrawCarpet self, string textureName)
         {
-            return await UGFComponent.Instance.LoadAssetAsync<Texture2D>(AssetUtility.GetNMapTextureAsset(textureName));
+            return await GameEntry.Resource.LoadAssetAsync<Texture2D>(AssetUtility.GetNMapTextureAsset(textureName));
         }
+
 
         private static async UniTask<Material> LoadMaterialAsync(this DrawCarpet self, string materialName)
         {
-            return await UGFComponent.Instance.LoadAssetAsync<Material>(AssetUtility.GetNMapMaterialAsset(materialName));
+            return await GameEntry.Resource.LoadAssetAsync<Material>(AssetUtility.GetNMapMaterialAsset(materialName));
         }
 
         private static void UnloadTexture(this DrawCarpet self, Texture2D texture)
         {
             if (texture != null)
             {
-                UGFComponent.Instance.UnloadAsset(texture);
+                GameEntry.Resource.UnloadAsset(texture);
             }
         }
 
@@ -270,7 +272,7 @@ namespace ET
         {
             if (material != null)
             {
-                UGFComponent.Instance.UnloadAsset(material);
+                GameEntry.Resource.UnloadAsset(material);
             }
         }
 

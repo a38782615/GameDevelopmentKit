@@ -2,8 +2,8 @@ using CodeBind;
 
 namespace ET.Client
 {
-    [CodeBindName("BtmBar")]
-    [MonoCodeBind]
+    [BindingTargetToken("BtmBar")]
+    [MonoBehaviourBinding]
     public partial class MonoUIWidgetBtmBar : AETMonoUGFUIWidget
     {
         

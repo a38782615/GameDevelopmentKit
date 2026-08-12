@@ -47,17 +47,17 @@ namespace ET.Client
 
         private static void LoadGrid(this UIFormBag1 self)
         {
-            self.View.Grid0CommonLoopScrollRect.itemRenderer = self.DropItemRender;
+            self.View.Grid0LoopHorizontalScrollRect.itemRenderer = self.DropItemRender;
 
-            self.View.Grid1CommonLoopScrollRect.itemRenderer = self.BagItemRender;
+            self.View.Grid1LoopHorizontalScrollRect.itemRenderer = self.BagItemRender;
 
             self.Refresh();
         }
 
         private static void Refresh(this UIFormBag1 self)
         {
-            self.View.Grid0CommonLoopScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
-            self.View.Grid1CommonLoopScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
+            self.View.Grid0LoopHorizontalScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
+            self.View.Grid1LoopHorizontalScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
         }
 
         private static void DropItemRender(this UIFormBag1 self, int idx, Transform transform)
@@ -101,8 +101,8 @@ namespace ET.Client
             BagItemDragHandler dragHandler = self.transform.GetComponent<BagItemDragHandler>();
             dragHandler.Initialize(
                 isDropItem,
-                self.Bag1.View.Grid0CommonLoopScrollRect.transform as RectTransform,
-                self.Bag1.View.Grid1CommonLoopScrollRect.transform as RectTransform,
+                self.Bag1.View.Grid0LoopHorizontalScrollRect.transform as RectTransform,
+                self.Bag1.View.Grid1LoopHorizontalScrollRect.transform as RectTransform,
                 self,
                 OnItemDropped);
         }

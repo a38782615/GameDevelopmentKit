@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using SimpleJSON;
+using Luban.SimpleJSON;
 using Luban;
 
 namespace ET.Editor
@@ -23,7 +23,7 @@ public sealed class DRItems :  Luban.EditorBeanBase
             Attr = new System.Collections.Generic.Dictionary<int,long>();
     }
 
-    public override void LoadJson(SimpleJSON.JSONObject _json)
+    public override void LoadJson(JSONObject _json)
     {
         { 
             var _fieldJson = _json["Id"];
@@ -83,7 +83,7 @@ public sealed class DRItems :  Luban.EditorBeanBase
         
     }
 
-    public override void SaveJson(SimpleJSON.JSONObject _json)
+    public override void SaveJson(JSONObject _json)
     {
         {
             _json["Id"] = new JSONNumber(Id);
@@ -114,16 +114,16 @@ public sealed class DRItems :  Luban.EditorBeanBase
         }
     }
 
-    public static DRItems LoadJsonDRItems(SimpleJSON.JSONNode _json)
+    public static DRItems LoadJsonDRItems(JSONNode _json)
     {
         DRItems obj = new DRItems();
-        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        obj.LoadJson((JSONObject)_json);
         return obj;
     }
         
-    public static void SaveJsonDRItems(DRItems _obj, SimpleJSON.JSONNode _json)
+    public static void SaveJsonDRItems(DRItems _obj, JSONNode _json)
     {
-        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+        _obj.SaveJson((JSONObject)_json);
     }
 
     public int Id;

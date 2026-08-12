@@ -10,8 +10,6 @@ namespace ET.Client
     [FriendOf(typeof(ProjectileEffectSpec))]
     public partial class ProjectileEffectSpecHandler : AEffectHandler
     {
-        private const string LegacyProjectileEntityGroupName = "Effect";
-
         public ProjectileEffectSpec SelfSpec()
         {
             if (Spec == null || Spec.IsDisposed)
@@ -202,10 +200,6 @@ namespace ET.Client
                 if (nodeData.projectileEntityId > 0)
                 {
                     await projectileEntity.ShowEntityAsync(nodeData.projectileEntityId);
-                }
-                else if (!string.IsNullOrWhiteSpace(nodeData.projectilePrefabPath))
-                {
-                    await projectileEntity.ShowEntityAsync(nodeData.projectilePrefabPath, LegacyProjectileEntityGroupName);
                 }
                 else
                 {

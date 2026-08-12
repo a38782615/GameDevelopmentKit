@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace ET.Client
 {
     [EnableClass]
-    [MonoCodeBind]
+    [MonoBehaviourBinding]
     public partial class MonoUIFormSkill : AETMonoUGFUIForm
     {
     }

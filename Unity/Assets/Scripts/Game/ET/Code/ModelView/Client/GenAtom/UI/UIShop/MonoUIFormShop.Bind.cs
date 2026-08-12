@@ -4,44 +4,43 @@ namespace ET.Client
 {
     public partial class MonoUIFormShop
     {
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_ShopCommonLoopScrollRect;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_ShopLoopHorizontalScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggle m_ShopTab0UXToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggle m_ShopTab1UXToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggle m_ShopTab2UXToggle;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggleGroup m_ShopTabsUXToggleGroup;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_ShopTempExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_ShopTempImage;
 
-
-        public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => m_BtmBarBtmBar;
-        public Game.CommonLoopScrollRect ShopCommonLoopScrollRect => m_ShopCommonLoopScrollRect;
-        public UnityEngine.UI.UXToggle ShopTab0UXToggle => m_ShopTab0UXToggle;
-        public UnityEngine.UI.UXToggle ShopTab1UXToggle => m_ShopTab1UXToggle;
-        public UnityEngine.UI.UXToggle ShopTab2UXToggle => m_ShopTab2UXToggle;
-        public UnityEngine.UI.UXToggleGroup ShopTabsUXToggleGroup => m_ShopTabsUXToggleGroup;
-        public Game.ExButton ShopTempExButton => m_ShopTempExButton;
-        public UnityEngine.UI.Image ShopTempImage => m_ShopTempImage;
-
+        public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => this.m_BtmBarBtmBar;
+        public Game.ExLoopHorizontalScrollRect ShopLoopHorizontalScrollRect => this.m_ShopLoopHorizontalScrollRect;
+        public UnityEngine.UI.UXToggle ShopTab0UXToggle => this.m_ShopTab0UXToggle;
+        public UnityEngine.UI.UXToggle ShopTab1UXToggle => this.m_ShopTab1UXToggle;
+        public UnityEngine.UI.UXToggle ShopTab2UXToggle => this.m_ShopTab2UXToggle;
+        public UnityEngine.UI.UXToggleGroup ShopTabsUXToggleGroup => this.m_ShopTabsUXToggleGroup;
+        public Game.ExButton ShopTempExButton => this.m_ShopTempExButton;
+        public UnityEngine.UI.Image ShopTempImage => this.m_ShopTempImage;
 
 #if UNITY_EDITOR
-        [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
-        [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
-        [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
-        private string BindDataExitEmptyWarning => "BindData contains empty reference, please check.";
+        [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
+        private void DrawMissingTargetsWarning()
+        {
+            Sirenix.Utilities.Editor.SirenixEditorGUI.MessageBox("Binding targets contain missing references.", UnityEditor.MessageType.Warning);
+        }
 
-        private bool CheckBindDataExitEmpty()
+        private bool HasMissingTargets()
         {
             if (this.m_BtmBarBtmBar == null) return true;
-            if (this.m_ShopCommonLoopScrollRect == null) return true;
+            if (this.m_ShopLoopHorizontalScrollRect == null) return true;
             if (this.m_ShopTab0UXToggle == null) return true;
             if (this.m_ShopTab1UXToggle == null) return true;
             if (this.m_ShopTab2UXToggle == null) return true;
@@ -51,5 +50,6 @@ namespace ET.Client
             return false;
         }
 #endif
+
     }
 }

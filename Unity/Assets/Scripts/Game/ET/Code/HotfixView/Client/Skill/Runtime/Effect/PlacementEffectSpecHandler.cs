@@ -9,8 +9,6 @@ namespace ET.Client
     [FriendOf(typeof(PlacementEffectSpec))]
     public partial class PlacementEffectSpecHandler : AEffectHandler
     {
-        private const string LegacyPlacementEntityGroupName = "Effect";
-
         public PlacementEffectSpec SelfSpec()
         {
             if (Spec == null || Spec.IsDisposed)
@@ -151,10 +149,6 @@ namespace ET.Client
                 if (nodeData.placementEntityId > 0)
                 {
                     await placementEntity.ShowEntityAsync(nodeData.placementEntityId);
-                }
-                else if (!string.IsNullOrWhiteSpace(nodeData.placementPrefabPath))
-                {
-                    await placementEntity.ShowEntityAsync(nodeData.placementPrefabPath, LegacyPlacementEntityGroupName);
                 }
                 else
                 {

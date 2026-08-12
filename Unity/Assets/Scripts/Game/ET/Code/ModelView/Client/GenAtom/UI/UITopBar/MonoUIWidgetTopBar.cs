@@ -2,8 +2,8 @@ using CodeBind;
 
 namespace ET.Client
 {
-    [CodeBindName("TopBar")]
-    [MonoCodeBind]
+    [BindingTargetToken("TopBar")]
+    [MonoBehaviourBinding]
     public partial class MonoUIWidgetTopBar : AETMonoUGFUIWidget
     {
         

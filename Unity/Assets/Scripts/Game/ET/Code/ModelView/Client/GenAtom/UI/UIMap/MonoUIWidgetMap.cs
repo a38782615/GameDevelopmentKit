@@ -2,8 +2,8 @@ using CodeBind;
 
 namespace ET.Client
 {
-    [CodeBindName("WidgetMap")]
-    [MonoCodeBind]
+    [BindingTargetToken("WidgetMap")]
+    [MonoBehaviourBinding]
     public partial class MonoUIWidgetMap : AETMonoUGFUIWidget
     {
         

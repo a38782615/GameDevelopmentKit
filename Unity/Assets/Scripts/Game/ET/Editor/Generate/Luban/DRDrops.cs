@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using SimpleJSON;
+using Luban.SimpleJSON;
 using Luban;
 
 namespace ET.Editor
@@ -21,7 +21,7 @@ public sealed class DRDrops :  Luban.EditorBeanBase
             Items = System.Array.Empty<int[]>();
     }
 
-    public override void LoadJson(SimpleJSON.JSONObject _json)
+    public override void LoadJson(JSONObject _json)
     {
         { 
             var _fieldJson = _json["Id"];
@@ -35,13 +35,13 @@ public sealed class DRDrops :  Luban.EditorBeanBase
             var _fieldJson = _json["Items"];
             if (_fieldJson != null)
             {
-                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; Items = new int[_n0][]; int _index0=0; foreach(SimpleJSON.JSONNode __e0 in _fieldJson.Children) { int[] __v0;  if(!__e0.IsArray) { throw new SerializationException(); } int _n1 = __e0.Count; __v0 = new int[_n1]; int _index1=0; foreach(SimpleJSON.JSONNode __e1 in __e0.Children) { int __v1;  if(!__e1.IsNumber) { throw new SerializationException(); }  __v1 = __e1;  __v0[_index1++] = __v1; }    Items[_index0++] = __v0; }  
+                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; Items = new int[_n0][]; int _index0=0; foreach(JSONNode __e0 in _fieldJson.Children) { int[] __v0;  if(!__e0.IsArray) { throw new SerializationException(); } int _n1 = __e0.Count; __v0 = new int[_n1]; int _index1=0; foreach(JSONNode __e1 in __e0.Children) { int __v1;  if(!__e1.IsNumber) { throw new SerializationException(); }  __v1 = __e1;  __v0[_index1++] = __v1; }    Items[_index0++] = __v0; }  
             }
         }
         
     }
 
-    public override void SaveJson(SimpleJSON.JSONObject _json)
+    public override void SaveJson(JSONObject _json)
     {
         {
             _json["Id"] = new JSONNumber(Id);
@@ -53,16 +53,16 @@ public sealed class DRDrops :  Luban.EditorBeanBase
         }
     }
 
-    public static DRDrops LoadJsonDRDrops(SimpleJSON.JSONNode _json)
+    public static DRDrops LoadJsonDRDrops(JSONNode _json)
     {
         DRDrops obj = new DRDrops();
-        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        obj.LoadJson((JSONObject)_json);
         return obj;
     }
         
-    public static void SaveJsonDRDrops(DRDrops _obj, SimpleJSON.JSONNode _json)
+    public static void SaveJsonDRDrops(DRDrops _obj, JSONNode _json)
     {
-        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+        _obj.SaveJson((JSONObject)_json);
     }
 
     public int Id;

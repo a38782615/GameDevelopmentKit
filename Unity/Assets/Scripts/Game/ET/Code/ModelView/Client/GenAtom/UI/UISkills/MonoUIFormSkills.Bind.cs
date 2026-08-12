@@ -4,63 +4,62 @@ namespace ET.Client
 {
     public partial class MonoUIFormSkills
     {
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_ReturnExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_Skill0CommonLoopScrollRect;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_Skill1CommonLoopScrollRect;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_Skill0LoopHorizontalScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_Skill1LoopHorizontalScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Slider m_SkillExpSlider;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXTextMeshPro m_SkillExpTxtUXTextMeshPro;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXTextMeshPro m_SkillLevelUXTextMeshPro;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXTextMeshPro m_SkillNameUXTextMeshPro;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_SkillTemp1ExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_SkillTemp1Image;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_SkillTemp2ExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_SkillTemp2Image;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_SkillTemp3ExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_SkillTemp3Image;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("BindData"), Sirenix.OdinInspector.ReadOnly]
-        private Game.CommonLoopScrollRect m_SkillsCommonLoopScrollRect;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExLoopHorizontalScrollRect m_SkillsLoopHorizontalScrollRect;
 
-
-        public Game.ExButton ReturnExButton => m_ReturnExButton;
-        public Game.CommonLoopScrollRect Skill0CommonLoopScrollRect => m_Skill0CommonLoopScrollRect;
-        public Game.CommonLoopScrollRect Skill1CommonLoopScrollRect => m_Skill1CommonLoopScrollRect;
-        public UnityEngine.UI.Slider SkillExpSlider => m_SkillExpSlider;
-        public UnityEngine.UI.UXTextMeshPro SkillExpTxtUXTextMeshPro => m_SkillExpTxtUXTextMeshPro;
-        public UnityEngine.UI.UXTextMeshPro SkillLevelUXTextMeshPro => m_SkillLevelUXTextMeshPro;
-        public UnityEngine.UI.UXTextMeshPro SkillNameUXTextMeshPro => m_SkillNameUXTextMeshPro;
-        public Game.ExButton SkillTemp1ExButton => m_SkillTemp1ExButton;
-        public UnityEngine.UI.Image SkillTemp1Image => m_SkillTemp1Image;
-        public Game.ExButton SkillTemp2ExButton => m_SkillTemp2ExButton;
-        public UnityEngine.UI.Image SkillTemp2Image => m_SkillTemp2Image;
-        public Game.ExButton SkillTemp3ExButton => m_SkillTemp3ExButton;
-        public UnityEngine.UI.Image SkillTemp3Image => m_SkillTemp3Image;
-        public Game.CommonLoopScrollRect SkillsCommonLoopScrollRect => m_SkillsCommonLoopScrollRect;
-
+        public Game.ExButton ReturnExButton => this.m_ReturnExButton;
+        public Game.ExLoopHorizontalScrollRect Skill0LoopHorizontalScrollRect => this.m_Skill0LoopHorizontalScrollRect;
+        public Game.ExLoopHorizontalScrollRect Skill1LoopHorizontalScrollRect => this.m_Skill1LoopHorizontalScrollRect;
+        public UnityEngine.UI.Slider SkillExpSlider => this.m_SkillExpSlider;
+        public UnityEngine.UI.UXTextMeshPro SkillExpTxtUXTextMeshPro => this.m_SkillExpTxtUXTextMeshPro;
+        public UnityEngine.UI.UXTextMeshPro SkillLevelUXTextMeshPro => this.m_SkillLevelUXTextMeshPro;
+        public UnityEngine.UI.UXTextMeshPro SkillNameUXTextMeshPro => this.m_SkillNameUXTextMeshPro;
+        public Game.ExButton SkillTemp1ExButton => this.m_SkillTemp1ExButton;
+        public UnityEngine.UI.Image SkillTemp1Image => this.m_SkillTemp1Image;
+        public Game.ExButton SkillTemp2ExButton => this.m_SkillTemp2ExButton;
+        public UnityEngine.UI.Image SkillTemp2Image => this.m_SkillTemp2Image;
+        public Game.ExButton SkillTemp3ExButton => this.m_SkillTemp3ExButton;
+        public UnityEngine.UI.Image SkillTemp3Image => this.m_SkillTemp3Image;
+        public Game.ExLoopHorizontalScrollRect SkillsLoopHorizontalScrollRect => this.m_SkillsLoopHorizontalScrollRect;
 
 #if UNITY_EDITOR
-        [Sirenix.OdinInspector.HideLabel, Sirenix.OdinInspector.ReadOnly, Sirenix.OdinInspector.ShowInInspector]
-        [Sirenix.OdinInspector.GUIColor(1f, 0.8f, 0f), Sirenix.OdinInspector.PropertyOrder(-99999)]
-        [Sirenix.OdinInspector.ShowIf(nameof(CheckBindDataExitEmpty))]
-        private string BindDataExitEmptyWarning => "BindData contains empty reference, please check.";
+        [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
+        private void DrawMissingTargetsWarning()
+        {
+            Sirenix.Utilities.Editor.SirenixEditorGUI.MessageBox("Binding targets contain missing references.", UnityEditor.MessageType.Warning);
+        }
 
-        private bool CheckBindDataExitEmpty()
+        private bool HasMissingTargets()
         {
             if (this.m_ReturnExButton == null) return true;
-            if (this.m_Skill0CommonLoopScrollRect == null) return true;
-            if (this.m_Skill1CommonLoopScrollRect == null) return true;
+            if (this.m_Skill0LoopHorizontalScrollRect == null) return true;
+            if (this.m_Skill1LoopHorizontalScrollRect == null) return true;
             if (this.m_SkillExpSlider == null) return true;
             if (this.m_SkillExpTxtUXTextMeshPro == null) return true;
             if (this.m_SkillLevelUXTextMeshPro == null) return true;
@@ -71,9 +70,10 @@ namespace ET.Client
             if (this.m_SkillTemp2Image == null) return true;
             if (this.m_SkillTemp3ExButton == null) return true;
             if (this.m_SkillTemp3Image == null) return true;
-            if (this.m_SkillsCommonLoopScrollRect == null) return true;
+            if (this.m_SkillsLoopHorizontalScrollRect == null) return true;
             return false;
         }
 #endif
+
     }
 }

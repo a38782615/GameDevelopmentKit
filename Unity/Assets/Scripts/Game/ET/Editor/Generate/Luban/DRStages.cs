@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using SimpleJSON;
+using Luban.SimpleJSON;
 using Luban;
 
 namespace ET.Editor
@@ -22,7 +22,7 @@ public sealed class DRStages :  Luban.EditorBeanBase
             DropIds = System.Array.Empty<int[]>();
     }
 
-    public override void LoadJson(SimpleJSON.JSONObject _json)
+    public override void LoadJson(JSONObject _json)
     {
         { 
             var _fieldJson = _json["Id"];
@@ -52,7 +52,7 @@ public sealed class DRStages :  Luban.EditorBeanBase
             var _fieldJson = _json["Monsters"];
             if (_fieldJson != null)
             {
-                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; Monsters = new int[_n0]; int _index0=0; foreach(SimpleJSON.JSONNode __e0 in _fieldJson.Children) { int __v0;  if(!__e0.IsNumber) { throw new SerializationException(); }  __v0 = __e0;  Monsters[_index0++] = __v0; }  
+                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; Monsters = new int[_n0]; int _index0=0; foreach(JSONNode __e0 in _fieldJson.Children) { int __v0;  if(!__e0.IsNumber) { throw new SerializationException(); }  __v0 = __e0;  Monsters[_index0++] = __v0; }  
             }
         }
         
@@ -60,13 +60,13 @@ public sealed class DRStages :  Luban.EditorBeanBase
             var _fieldJson = _json["DropIds"];
             if (_fieldJson != null)
             {
-                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; DropIds = new int[_n0][]; int _index0=0; foreach(SimpleJSON.JSONNode __e0 in _fieldJson.Children) { int[] __v0;  if(!__e0.IsArray) { throw new SerializationException(); } int _n1 = __e0.Count; __v0 = new int[_n1]; int _index1=0; foreach(SimpleJSON.JSONNode __e1 in __e0.Children) { int __v1;  if(!__e1.IsNumber) { throw new SerializationException(); }  __v1 = __e1;  __v0[_index1++] = __v1; }    DropIds[_index0++] = __v0; }  
+                if(!_fieldJson.IsArray) { throw new SerializationException(); } int _n0 = _fieldJson.Count; DropIds = new int[_n0][]; int _index0=0; foreach(JSONNode __e0 in _fieldJson.Children) { int[] __v0;  if(!__e0.IsArray) { throw new SerializationException(); } int _n1 = __e0.Count; __v0 = new int[_n1]; int _index1=0; foreach(JSONNode __e1 in __e0.Children) { int __v1;  if(!__e1.IsNumber) { throw new SerializationException(); }  __v1 = __e1;  __v0[_index1++] = __v1; }    DropIds[_index0++] = __v0; }  
             }
         }
         
     }
 
-    public override void SaveJson(SimpleJSON.JSONObject _json)
+    public override void SaveJson(JSONObject _json)
     {
         {
             _json["Id"] = new JSONNumber(Id);
@@ -89,16 +89,16 @@ public sealed class DRStages :  Luban.EditorBeanBase
         }
     }
 
-    public static DRStages LoadJsonDRStages(SimpleJSON.JSONNode _json)
+    public static DRStages LoadJsonDRStages(JSONNode _json)
     {
         DRStages obj = new DRStages();
-        obj.LoadJson((SimpleJSON.JSONObject)_json);
+        obj.LoadJson((JSONObject)_json);
         return obj;
     }
         
-    public static void SaveJsonDRStages(DRStages _obj, SimpleJSON.JSONNode _json)
+    public static void SaveJsonDRStages(DRStages _obj, JSONNode _json)
     {
-        _obj.SaveJson((SimpleJSON.JSONObject)_json);
+        _obj.SaveJson((JSONObject)_json);
     }
 
     public int Id;

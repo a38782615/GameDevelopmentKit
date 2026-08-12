@@ -30,7 +30,9 @@ namespace Game
             { "UIAdapter", typeof(UIAdapter) },
             { "IgnoreUIAdapter", typeof(IgnoreUIAdapter) },
             { "UIAdapterScaleScreenRate", typeof(UIAdapterScaleScreenRate) },
-            { "StateController", typeof(StateController.StateController) }
+            { "StateController", typeof(StateController.StateController) },
+            { "LoopHorizontalScrollRect", typeof(ExLoopHorizontalScrollRect) },
+            { "LoopVerticalScrollRect", typeof(ExLoopVerticalScrollRect) }
         };
     }
 }
