@@ -7,8 +7,9 @@ namespace ET.Client
     public class UnitDeath_PlayDeathPresentationAndRemove : AEvent<Scene, UnitDeath>
     {
         private const string DeathAnimationName = "Death";
-        private const int DefaultDeathRemoveDelayMs = 1000;
-        private const int MinDeathRemoveDelayMs = 300;
+        // Keep a brief death presentation while removing defeated units promptly.
+        private const int DefaultDeathRemoveDelayMs = 120;
+        private const int MinDeathRemoveDelayMs = 120;
         private const int MaxDeathRemoveDelayMs = 3000;
 
         protected override async UniTask Run(Scene scene, UnitDeath args)
