@@ -5,6 +5,8 @@ namespace ET.Client
     public partial class MonoUIFormSkills
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_LevelUpExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_ReturnExButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExLoopHorizontalScrollRect m_Skill0LoopHorizontalScrollRect;
@@ -33,6 +35,7 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExLoopHorizontalScrollRect m_SkillsLoopHorizontalScrollRect;
 
+        public Game.ExButton LevelUpExButton => this.m_LevelUpExButton;
         public Game.ExButton ReturnExButton => this.m_ReturnExButton;
         public Game.ExLoopHorizontalScrollRect Skill0LoopHorizontalScrollRect => this.m_Skill0LoopHorizontalScrollRect;
         public Game.ExLoopHorizontalScrollRect Skill1LoopHorizontalScrollRect => this.m_Skill1LoopHorizontalScrollRect;
@@ -57,6 +60,7 @@ namespace ET.Client
 
         private bool HasMissingTargets()
         {
+            if (this.m_LevelUpExButton == null) return true;
             if (this.m_ReturnExButton == null) return true;
             if (this.m_Skill0LoopHorizontalScrollRect == null) return true;
             if (this.m_Skill1LoopHorizontalScrollRect == null) return true;

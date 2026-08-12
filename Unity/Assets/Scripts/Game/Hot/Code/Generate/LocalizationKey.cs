@@ -259,6 +259,66 @@ namespace Game.Hot
         public const string Key_ShopTab2 = "ShopTab2";
 
         /// <summary>
+        /// 被动回血
+        /// </summary>
+        public const string Key_Skill_BeRecBlood = "Skill_BeRecBlood";
+
+        /// <summary>
+        /// 流血
+        /// </summary>
+        public const string Key_Skill_Blood = "Skill_Blood";
+
+        /// <summary>
+        /// 火球术
+        /// </summary>
+        public const string Key_Skill_FireCircle = "Skill_FireCircle";
+
+        /// <summary>
+        /// 火球术
+        /// </summary>
+        public const string Key_Skill_FireCircle2 = "Skill_FireCircle2";
+
+        /// <summary>
+        /// 神罗天正
+        /// </summary>
+        public const string Key_Skill_God = "Skill_God";
+
+        /// <summary>
+        /// 回血
+        /// </summary>
+        public const string Key_Skill_RecBlood = "Skill_RecBlood";
+
+        /// <summary>
+        /// 践踏
+        /// </summary>
+        public const string Key_Skill_RuFood = "Skill_RuFood";
+
+        /// <summary>
+        /// 急速
+        /// </summary>
+        public const string Key_Skill_SpeedUp = "Skill_SpeedUp";
+
+        /// <summary>
+        /// 横扫
+        /// </summary>
+        public const string Key_Skill_Sweep = "Skill_Sweep";
+
+        /// <summary>
+        /// 三火球
+        /// </summary>
+        public const string Key_Skill_ThreeFire = "Skill_ThreeFire";
+
+        /// <summary>
+        /// 万象天引
+        /// </summary>
+        public const string Key_Skill_Wan = "Skill_Wan";
+
+        /// <summary>
+        /// 旋风斩
+        /// </summary>
+        public const string Key_Skill_Wind = "Skill_Wind";
+
+        /// <summary>
         /// 洞穴
         /// </summary>
         public const string Key_SMap = "SMap";
@@ -324,6 +384,15 @@ namespace Game.Hot
                 case 0: return Key_ShopTab0;
                 case 1: return Key_ShopTab1;
                 case 2: return Key_ShopTab2;
+                default: return string.Empty;
+            }
+        }
+
+        public static string Get_Skill_FireCircle(int order)
+        {
+            switch (order)
+            {
+                case 2: return Key_Skill_FireCircle2;
                 default: return string.Empty;
             }
         }

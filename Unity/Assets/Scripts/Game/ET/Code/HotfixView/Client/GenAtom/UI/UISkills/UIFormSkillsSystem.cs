@@ -20,12 +20,13 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this UIFormSkills self)
         {
-            
+            self.SelectedSkill = null;
         }
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkills self)
         {
+            self.SelectedSkill = null;
             self.BindMapSwitchButtons();
             self.LoadGrid();
         }
@@ -73,6 +74,8 @@ namespace ET.Client
             PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
             if (skillDataComponent == null)
             {
+                self.SelectedSkill = null;
+                self.RefreshSelectedSkill();
                 return;
             }
 
@@ -80,10 +83,37 @@ namespace ET.Client
             self.View.Skill0LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
             self.View.Skill1LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
 
+            self.EnsureSelectedSkill(skillDataComponent);
+            self.RefreshSelectedSkill();
+        }
+
+        private static void EnsureSelectedSkill(this UIFormSkills self, PlayerSkillDataComponent skillDataComponent)
+        {
+            if (self.SelectedSkill != null && skillDataComponent.GetPlayerSkill(self.SelectedSkill.ConfigId) != null)
+            {
+                return;
+            }
+
+            XList<PlayerSkillData> learnedSkills = skillDataComponent.GetLearnedSkills();
+            self.SelectedSkill = learnedSkills.Count > 0 ? learnedSkills[0] : null;
+        }
+
+        private static void RefreshSelectedSkill(this UIFormSkills self)
+        {
+            PlayerSkillData selectedSkill = self.SelectedSkill;
+            DRSkill skillConfig = selectedSkill == null ? null : Tables.Instance.DTSkill.GetOrDefault(selectedSkill.ConfigId);
             PlayerData playerData = self.Root().GetPlayerData();
-            float normalizedSkillExp = playerData == null ? 0f : Mathf.Clamp01(playerData.SkillExp / 100f);
+            int skillExp = selectedSkill == null ? 0 : playerData?.SkillExp ?? 0;
+            float normalizedSkillExp = Mathf.Clamp01(skillExp / 100f);
             self.View.SkillExpSlider.SetValueWithoutNotify(normalizedSkillExp);
             self.View.SkillExpSlider.interactable = false;
+            self.View.SkillExpTxtUXTextMeshPro.text = selectedSkill == null
+                    ? string.Empty
+                    : GameFramework.Utility.Text.Format("{0}/100", skillExp);
+            self.View.SkillNameUXTextMeshPro.text = LocalizationHelper.GetString(skillConfig?.Name,"") ?? string.Empty;
+            self.View.SkillLevelUXTextMeshPro.text = selectedSkill == null
+                    ? string.Empty
+                    : GameFramework.Utility.Text.Format("LV.{0}", selectedSkill.Level);
         }
 
         private static void LearnedSkillRender(this UIFormSkills self, int index, Transform transform)
@@ -174,6 +204,9 @@ namespace ET.Client
             {
                 return;
             }
+
+            skills.SelectedSkill = self.Data;
+            skills.RefreshSelectedSkill();
 
             PlayerSkillDataComponent skillDataComponent = skills.GetSkillDataComponent();
             bool targetEquipped = !self.Data.IsEquipped;
