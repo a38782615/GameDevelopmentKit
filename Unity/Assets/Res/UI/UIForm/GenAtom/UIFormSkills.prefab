@@ -1777,6 +1777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01f2991650f41ad4fa73636ac021c5f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_LevelUpExButton: {fileID: 3971207130634326105}
   m_ReturnExButton: {fileID: 3034717575191504666}
   m_Skill0LoopHorizontalScrollRect: {fileID: 8544410855360851254}
   m_Skill1LoopHorizontalScrollRect: {fileID: 3173832134481983651}

@@ -11,6 +11,8 @@ namespace ET.Client
     [FriendOf(typeof(PlayerData))]
     public static partial class UIFormSkillsSystem
     {
+        private const int SkillExpPerLevel = 100;
+
         [EntitySystem]
         private static void Awake(this UIFormSkills self)
         {
@@ -41,11 +43,13 @@ namespace ET.Client
         private static void BindMapSwitchButtons(this UIFormSkills self)
         {
             self.View.ReturnExButton.SetAsync(self.ReturnMap);
+            self.View.LevelUpExButton.SetAsync(self.LevelUpSkill);
         }
 
         private static void UnbindMapSwitchButtons(this UIFormSkills self)
         {
             self.View?.ReturnExButton?.onClick.RemoveAllListeners();
+            self.View?.LevelUpExButton?.onClick.RemoveAllListeners();
         }
 
         private static void LoadGrid(this UIFormSkills self)
@@ -104,16 +108,20 @@ namespace ET.Client
             DRSkill skillConfig = selectedSkill == null ? null : Tables.Instance.DTSkill.GetOrDefault(selectedSkill.ConfigId);
             PlayerData playerData = self.Root().GetPlayerData();
             int skillExp = selectedSkill == null ? 0 : playerData?.SkillExp ?? 0;
-            float normalizedSkillExp = Mathf.Clamp01(skillExp / 100f);
+            float normalizedSkillExp = Mathf.Clamp01(skillExp / (float)SkillExpPerLevel);
             self.View.SkillExpSlider.SetValueWithoutNotify(normalizedSkillExp);
             self.View.SkillExpSlider.interactable = false;
             self.View.SkillExpTxtUXTextMeshPro.text = selectedSkill == null
                     ? string.Empty
-                    : GameFramework.Utility.Text.Format("{0}/100", skillExp);
+                    : GameFramework.Utility.Text.Format("{0}/{1}", skillExp, SkillExpPerLevel);
             self.View.SkillNameUXTextMeshPro.text = LocalizationHelper.GetString(skillConfig?.Name,"") ?? string.Empty;
             self.View.SkillLevelUXTextMeshPro.text = selectedSkill == null
                     ? string.Empty
                     : GameFramework.Utility.Text.Format("LV.{0}", selectedSkill.Level);
+            self.View.LevelUpExButton.interactable = selectedSkill != null &&
+                    playerData != null &&
+                    skillExp >= SkillExpPerLevel &&
+                    Tables.Instance.DTSkillAttribute.Get(selectedSkill.ConfigId, selectedSkill.Level + 1) != null;
         }
 
         private static void LearnedSkillRender(this UIFormSkills self, int index, Transform transform)
@@ -237,6 +245,32 @@ namespace ET.Client
             }
 
             return gameDataMgrComponent.GetPlayerSkillDataComponent();
+        }
+
+        private static async UniTask LevelUpSkill(this UIFormSkills self, Button button)
+        {
+            PlayerSkillData selectedSkill = self.SelectedSkill;
+            PlayerData playerData = self.Root().GetPlayerData();
+            PlayerSkillDataComponent skillDataComponent = self.GetSkillDataComponent();
+            if (selectedSkill == null || playerData == null || skillDataComponent == null ||
+                playerData.SkillExp < SkillExpPerLevel || !skillDataComponent.UpgradeSkill(selectedSkill.ConfigId))
+            {
+                self.RefreshSelectedSkill();
+                return;
+            }
+
+            playerData.SkillExp -= SkillExpPerLevel;
+            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+            if (gameDataMgrComponent != null)
+            {
+                await gameDataMgrComponent.SavePlayerData();
+                await gameDataMgrComponent.SavePlayerSkillData();
+            }
+
+            if (!self.IsDisposed)
+            {
+                self.Refresh();
+            }
         }
 
         private static string GetSkillIconSpritePath(string iconPath)
