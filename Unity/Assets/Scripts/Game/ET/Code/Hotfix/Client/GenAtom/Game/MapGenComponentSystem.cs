@@ -7,9 +7,12 @@ namespace ET.Client
     [FriendOf(typeof(MapGenComponent))]
     public static partial class MapGenComponentSystem
     {
+        private const int BattleVictorySkillExp = 100;
+
         [EntitySystem]
         private static void Awake(this MapGenComponent self)
         {
+            self.VictoryRewardGranted = false;
         }
 
         [EntitySystem]
@@ -45,6 +48,7 @@ namespace ET.Client
         {
             Scene root = self.Root();
             Scene current = self.GetParent<Scene>();
+            self.VictoryRewardGranted = false;
             ClearLocalFightUnits(current);
             var unis1 = new UniTask[1];
 
@@ -92,6 +96,46 @@ namespace ET.Client
 
             await UniTask.WhenAll(unis);
             current.TriggerGameAIChecks();
+        }
+
+        public static async UniTask TryGrantVictoryReward(this MapGenComponent self)
+        {
+            if (self == null || self.IsDisposed || self.VictoryRewardGranted || self.HasRemainingMonster())
+            {
+                return;
+            }
+
+            PlayerData playerData = self.Root().GetPlayerData();
+            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+            if (playerData == null || gameDataMgrComponent == null)
+            {
+                Log.Warning("Battle victory reward skipped because player data is missing.");
+                return;
+            }
+
+            self.VictoryRewardGranted = true;
+            playerData.SkillExp += BattleVictorySkillExp;
+            await gameDataMgrComponent.SavePlayerData();
+            Log.Info($"Battle victory rewarded SkillExp={BattleVictorySkillExp}, TotalSkillExp={playerData.SkillExp}.");
+        }
+
+        private static bool HasRemainingMonster(this MapGenComponent self)
+        {
+            UnitComponent unitComponent = self.GetParent<Scene>()?.GetComponent<UnitComponent>();
+            if (unitComponent?.Children == null)
+            {
+                return false;
+            }
+
+            foreach (Entity entity in unitComponent.Children.Values)
+            {
+                if (entity is Unit unit && unit.Type() == UnitType.Monster)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ClearLocalFightUnits(Scene current)

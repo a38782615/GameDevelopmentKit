@@ -54,8 +54,13 @@ namespace ET.Client
             }
 
             TryShowStageDropItem(scene, unit);
+            bool isMonster = unit.Type() == UnitType.Monster;
             SkillDiagFileLogger.Log($"[Death] RemoveUnit asc={ascInstanceId} unit={unitId}");
             unitComponent.Remove(unitId);
+            if (isMonster)
+            {
+                await scene.GetComponent<MapGenComponent>().TryGrantVictoryReward();
+            }
         }
 
         private static void TryShowStageDropItem(Scene scene, Unit unit)
