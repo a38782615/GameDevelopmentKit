@@ -2125,10 +2125,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1315342542791276502}
     m_Modifications:
+    - target: {fileID: 355538570306991348, guid: f70e923556671c342bc5e63845a6abfa,
+        type: 3}
+      propertyPath: m_Name
+      value: Count_UXTextMeshPro
+      objectReference: {fileID: 0}
     - target: {fileID: 697430348532348652, guid: f70e923556671c342bc5e63845a6abfa,
         type: 3}
       propertyPath: m_Name
       value: ShopTemp_ExButton_Image
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255941506011140638, guid: f70e923556671c342bc5e63845a6abfa,
+        type: 3}
+      propertyPath: m_Name
+      value: Name_UXTextMeshPro
+      objectReference: {fileID: 0}
+    - target: {fileID: 7806614997552886608, guid: f70e923556671c342bc5e63845a6abfa,
+        type: 3}
+      propertyPath: m_Name
+      value: Icon_Image
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: f70e923556671c342bc5e63845a6abfa,
         type: 3}
@@ -2230,11 +2245,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3098322797455971118, guid: f70e923556671c342bc5e63845a6abfa, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 697430348532348652, guid: f70e923556671c342bc5e63845a6abfa,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4107740076023677528}
   m_SourcePrefab: {fileID: 100100000, guid: f70e923556671c342bc5e63845a6abfa, type: 3}
+--- !u!114 &263344817324032877 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6525896531464436584, guid: f70e923556671c342bc5e63845a6abfa,
+    type: 3}
+  m_PrefabInstance: {fileID: 6428662958748743685}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebc664bb9aef7c14082c1eb5c38763d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Leihuo.UXTools.Runtime::UnityEngine.UI.UXTextMeshPro
 --- !u!224 &3046687107416159769 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8322426912280628764, guid: f70e923556671c342bc5e63845a6abfa,
@@ -2253,6 +2285,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &5198654793126447624 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1230157914824585741, guid: f70e923556671c342bc5e63845a6abfa,
+    type: 3}
+  m_PrefabInstance: {fileID: 6428662958748743685}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebc664bb9aef7c14082c1eb5c38763d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Leihuo.UXTools.Runtime::UnityEngine.UI.UXTextMeshPro
 --- !u!114 &5265046380327938380 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1163618855592464713, guid: f70e923556671c342bc5e63845a6abfa,
@@ -2271,3 +2315,30 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 6428662958748743685}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4107740076023677528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5808227152762949353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3ea22792c84b728a6d244916ce1032, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.ET.Code.ModelView::ET.Client.MonoUIShopItem
+  m_CountUXTextMeshPro: {fileID: 5198654793126447624}
+  m_IconImage: {fileID: 6540683529331517572}
+  m_NameUXTextMeshPro: {fileID: 263344817324032877}
+--- !u!114 &6540683529331517572 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 284324784532328577, guid: f70e923556671c342bc5e63845a6abfa,
+    type: 3}
+  m_PrefabInstance: {fileID: 6428662958748743685}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
