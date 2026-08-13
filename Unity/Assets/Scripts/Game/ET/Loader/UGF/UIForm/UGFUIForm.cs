@@ -127,10 +127,15 @@ namespace ET
                 throw new Exception($"UGFUIForm OpenUIFormAsync failed! uiFormAssetName:'{uiFormAssetName}'.");
             }
         }
-        
+
         public void OpenAllUIWidgets()
         {
             this.UGFMono.OpenAllUIWidgets();
+        }
+
+        public void OpenWidget(AUIWidget auiWidget, object userData = null)
+        {
+            this.UGFMono.OpenUIWidget(auiWidget, userData);
         }
 
         public void RefocusUIForm()

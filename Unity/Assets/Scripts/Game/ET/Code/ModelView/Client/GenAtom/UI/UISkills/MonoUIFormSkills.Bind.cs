@@ -5,9 +5,9 @@ namespace ET.Client
     public partial class MonoUIFormSkills
     {
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_LevelUpExButton;
+        private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_ReturnExButton;
+        private Game.ExButton m_LevelUpExButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExLoopHorizontalScrollRect m_Skill0LoopHorizontalScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
@@ -33,10 +33,10 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.Image m_SkillTemp3Image;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExLoopHorizontalScrollRect m_SkillsLoopHorizontalScrollRect;
+        private Game.ExLoopVerticalScrollRect m_SkillsLoopVerticalScrollRect;
 
+        public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => this.m_BtmBarBtmBar;
         public Game.ExButton LevelUpExButton => this.m_LevelUpExButton;
-        public Game.ExButton ReturnExButton => this.m_ReturnExButton;
         public Game.ExLoopHorizontalScrollRect Skill0LoopHorizontalScrollRect => this.m_Skill0LoopHorizontalScrollRect;
         public Game.ExLoopHorizontalScrollRect Skill1LoopHorizontalScrollRect => this.m_Skill1LoopHorizontalScrollRect;
         public UnityEngine.UI.Slider SkillExpSlider => this.m_SkillExpSlider;
@@ -49,7 +49,7 @@ namespace ET.Client
         public UnityEngine.UI.Image SkillTemp2Image => this.m_SkillTemp2Image;
         public Game.ExButton SkillTemp3ExButton => this.m_SkillTemp3ExButton;
         public UnityEngine.UI.Image SkillTemp3Image => this.m_SkillTemp3Image;
-        public Game.ExLoopHorizontalScrollRect SkillsLoopHorizontalScrollRect => this.m_SkillsLoopHorizontalScrollRect;
+        public Game.ExLoopVerticalScrollRect SkillsLoopVerticalScrollRect => this.m_SkillsLoopVerticalScrollRect;
 
 #if UNITY_EDITOR
         [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
@@ -60,8 +60,8 @@ namespace ET.Client
 
         private bool HasMissingTargets()
         {
+            if (this.m_BtmBarBtmBar == null) return true;
             if (this.m_LevelUpExButton == null) return true;
-            if (this.m_ReturnExButton == null) return true;
             if (this.m_Skill0LoopHorizontalScrollRect == null) return true;
             if (this.m_Skill1LoopHorizontalScrollRect == null) return true;
             if (this.m_SkillExpSlider == null) return true;
@@ -74,7 +74,7 @@ namespace ET.Client
             if (this.m_SkillTemp2Image == null) return true;
             if (this.m_SkillTemp3ExButton == null) return true;
             if (this.m_SkillTemp3Image == null) return true;
-            if (this.m_SkillsLoopHorizontalScrollRect == null) return true;
+            if (this.m_SkillsLoopVerticalScrollRect == null) return true;
             return false;
         }
 #endif

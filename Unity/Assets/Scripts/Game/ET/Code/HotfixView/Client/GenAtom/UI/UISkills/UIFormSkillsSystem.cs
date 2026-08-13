@@ -27,6 +27,7 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormSkills self)
         {
+            self.OpenWidget(self.View.BtmBarBtmBar);
             self.SelectedSkill = null;
             self.BindMapSwitchButtons();
             self.LoadGrid();
@@ -42,19 +43,17 @@ namespace ET.Client
 
         private static void BindMapSwitchButtons(this UIFormSkills self)
         {
-            self.View.ReturnExButton.SetAsync(self.ReturnMap);
             self.View.LevelUpExButton.SetAsync(self.LevelUpSkill);
         }
 
         private static void UnbindMapSwitchButtons(this UIFormSkills self)
         {
-            self.View?.ReturnExButton?.onClick.RemoveAllListeners();
             self.View?.LevelUpExButton?.onClick.RemoveAllListeners();
         }
 
         private static void LoadGrid(this UIFormSkills self)
         {
-            self.View.SkillsLoopHorizontalScrollRect.itemRenderer = self.LearnedSkillRender;
+            self.View.SkillsLoopVerticalScrollRect.itemRenderer = self.LearnedSkillRender;
             self.View.Skill0LoopHorizontalScrollRect.itemRenderer = self.EquippedPassiveSkillRender;
             self.View.Skill1LoopHorizontalScrollRect.itemRenderer = self.EquippedActiveSkillRender;
             self.Refresh();
@@ -68,7 +67,7 @@ namespace ET.Client
                 return;
             }
 
-            view.SkillsLoopHorizontalScrollRect.itemRenderer = null;
+            view.SkillsLoopVerticalScrollRect.itemRenderer = null;
             view.Skill0LoopHorizontalScrollRect.itemRenderer = null;
             view.Skill1LoopHorizontalScrollRect.itemRenderer = null;
         }
@@ -83,7 +82,7 @@ namespace ET.Client
                 return;
             }
 
-            self.View.SkillsLoopHorizontalScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
+            self.View.SkillsLoopVerticalScrollRect.numItems = skillDataComponent.GetLearnedSkills().Count;
             self.View.Skill0LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedPassiveSkills().Count;
             self.View.Skill1LoopHorizontalScrollRect.numItems = skillDataComponent.GetEquippedActiveSkills().Count;
 

@@ -7,7 +7,7 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private ET.Client.MonoUIWidgetBtmBar m_BtmBarBtmBar;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExLoopHorizontalScrollRect m_ShopLoopHorizontalScrollRect;
+        private Game.ExLoopVerticalScrollRect m_ShopLoopVerticalScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggle m_ShopTab0UXToggle;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
@@ -22,7 +22,7 @@ namespace ET.Client
         private UnityEngine.UI.Image m_ShopTempImage;
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => this.m_BtmBarBtmBar;
-        public Game.ExLoopHorizontalScrollRect ShopLoopHorizontalScrollRect => this.m_ShopLoopHorizontalScrollRect;
+        public Game.ExLoopVerticalScrollRect ShopLoopVerticalScrollRect => this.m_ShopLoopVerticalScrollRect;
         public UnityEngine.UI.UXToggle ShopTab0UXToggle => this.m_ShopTab0UXToggle;
         public UnityEngine.UI.UXToggle ShopTab1UXToggle => this.m_ShopTab1UXToggle;
         public UnityEngine.UI.UXToggle ShopTab2UXToggle => this.m_ShopTab2UXToggle;
@@ -40,7 +40,7 @@ namespace ET.Client
         private bool HasMissingTargets()
         {
             if (this.m_BtmBarBtmBar == null) return true;
-            if (this.m_ShopLoopHorizontalScrollRect == null) return true;
+            if (this.m_ShopLoopVerticalScrollRect == null) return true;
             if (this.m_ShopTab0UXToggle == null) return true;
             if (this.m_ShopTab1UXToggle == null) return true;
             if (this.m_ShopTab2UXToggle == null) return true;

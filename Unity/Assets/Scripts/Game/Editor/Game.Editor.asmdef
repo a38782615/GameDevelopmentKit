@@ -15,10 +15,6 @@
         "UnityGameFramework.Extension.Editor",
         "GameFramework",
         "Unity.TextMeshPro",
-        "CodeBind",
-        "CodeBind.Editor",
-        "FancyScrollView",
-        "UIEffect",
         "Coffee.UIParticle",
         "Coffee.SoftMaskForUGUI",
         "Coffee.UnmaskForUGUI",
@@ -29,9 +25,10 @@
         "Leihuo.UXTools.Editor.Common",
         "AgentBridge.Editor",
         "Leihuo.UXTools.Editor",
-        "CodeBind.Editor",
         "StateController",
-        "LoopScrollRect.Editor"
+        "LoopScrollRect.Editor",
+        "CodeBind.Editor",
+        "CodeBind"
     ],
     "includePlatforms": [
         "Editor"

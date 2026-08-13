@@ -15,16 +15,14 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this UIFormShop self)
         {
-            self.DisplayItems.Clear();
-            self.ItemWidgets.Clear();
         }
 
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormShop self)
         {
-            self.OpenAllUIWidgets();
+            self.OpenWidget(self.View.BtmBarBtmBar) ;
             self.BindTabs();
-            self.View.ShopLoopHorizontalScrollRect.itemRenderer = self.ShopItemRender;
+            self.View.ShopLoopVerticalScrollRect.itemRenderer = self.ShopItemRender;
             self.SelectTab(0);
         }
 
@@ -32,8 +30,8 @@ namespace ET.Client
         private static void UGFUIFormOnClose(this UIFormShop self, bool isShutdown)
         {
             self.UnbindTabs();
-            self.View.ShopLoopHorizontalScrollRect.itemRenderer = null;
-            self.View.ShopLoopHorizontalScrollRect.numItems = 0;
+            self.View.ShopLoopVerticalScrollRect.itemRenderer = null;
+            self.View.ShopLoopVerticalScrollRect.numItems = 0;
             self.DisplayItems.Clear();
             self.ItemWidgets.Clear();
         }
@@ -115,7 +113,7 @@ namespace ET.Client
                 }
             }
 
-            self.View.ShopLoopHorizontalScrollRect.numItems = self.DisplayItems.Count;
+            self.View.ShopLoopVerticalScrollRect.numItems = self.DisplayItems.Count;
             Log.Info(GameFramework.Utility.Text.Format(
                 "UIFormShop refreshed, TabIndex={0}, ItemType={1}, Count={2}.",
                 tabIndex,
