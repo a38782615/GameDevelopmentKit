@@ -19,6 +19,7 @@ namespace ET.Client
             self.PlayerSkillDataComponent = null;
             self.TaskDataComponent = null;
             self.InventoryDataComponent = null;
+            self.ShopItemDataComponent = null;
         }
 
         public static async UniTask LoadAllData(this GameDataMgrComponent self)
@@ -99,6 +100,18 @@ namespace ET.Client
             return inventoryDataComponent;
         }
 
+        public static ShopItemDataComponent GetShopItemDataComponent(this GameDataMgrComponent self)
+        {
+            ShopItemDataComponent shopItemDataComponent = self.ShopItemDataComponent;
+            if (shopItemDataComponent == null)
+            {
+                shopItemDataComponent = self.GetOrAddComponent<ShopItemDataComponent>();
+                self.ShopItemDataComponent = shopItemDataComponent;
+            }
+
+            return shopItemDataComponent;
+        }
+
         public static async UniTask SavePlayerData(this GameDataMgrComponent self)
         {
             ArchiveComponent archiveComponent = self.GetArchiveComponent();
@@ -138,6 +151,7 @@ namespace ET.Client
             self.GetPlayerSkillDataComponent();
             self.GetTaskDataComponent();
             self.GetInventoryDataComponent();
+            self.GetShopItemDataComponent();
         }
 
         private static ArchiveComponent GetArchiveComponent(this GameDataMgrComponent self)

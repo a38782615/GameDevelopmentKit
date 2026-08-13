@@ -7,5 +7,6 @@ namespace ET.Client
         public EntityRef<PlayerSkillDataComponent> PlayerSkillDataComponent;
         public EntityRef<TaskDataComponent> TaskDataComponent;
         public EntityRef<InventoryDataComponent> InventoryDataComponent;
+        public EntityRef<ShopItemDataComponent> ShopItemDataComponent;
     }
 }
