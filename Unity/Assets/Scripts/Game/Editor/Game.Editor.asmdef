@@ -29,7 +29,9 @@
         "Leihuo.UXTools.Editor.Common",
         "AgentBridge.Editor",
         "Leihuo.UXTools.Editor",
-        "StateController"
+        "CodeBind.Editor",
+        "StateController",
+        "LoopScrollRect.Editor"
     ],
     "includePlatforms": [
         "Editor"

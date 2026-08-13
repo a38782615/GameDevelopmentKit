@@ -46,7 +46,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "2f4016c3864f66353c97953a35010959534e9a35"
+      "hash": "94ef3ada02ea62a8290bd8ce9d3f572edbdcd007"
     },
     "com.coffee.ui-effect": {
       "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
@@ -327,7 +327,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "de6877110432a7aaf0417febd02100e46ff590be"
+      "hash": "2692bed575f6b329f60a0a3270e5c7bc2551010e"
     },
     "me.xw.protobufunity": {
       "version": "https://github.com/XuToWei/Protobuf-Unity.git",
@@ -341,14 +341,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4a72141b66f1b40b66ab12115d171242b425b846"
+      "hash": "fed988d65d0392897dd2084db32f01536c6c193f"
     },
     "me.xw.statecontroller": {
       "version": "https://github.com/XuToWei/StateController.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a29581bd88aaf345d68c5604f876bf467f40ae8c"
+      "hash": "96d019fe7e0ffff29eab17e77f9684a042c5db95"
     },
     "me.xw.toolbarextension": {
       "version": "https://github.com/XuToWei/ToolbarExtension.git",
@@ -365,7 +365,7 @@
         "com.unity.nuget.newtonsoft-json": "3.2.1",
         "com.unity.test-framework": "1.1.33"
       },
-      "hash": "33a5dc50db654ab2ed0b99e9d9dca66095064a28"
+      "hash": "694dcc2e4f6283288261215f2fb897d2371e0648"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
