@@ -22,7 +22,6 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this UIFormSkills self)
         {
-            self.SelectedSkill = null;
         }
 
         [UGFUIFormSystem]
@@ -38,6 +37,7 @@ namespace ET.Client
         {
             self.UnbindMapSwitchButtons();
             self.UnbindSkillLists();
+            self.SelectedSkill = null;
         }
 
         private static void BindMapSwitchButtons(this UIFormSkills self)

@@ -145,6 +145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 203069390299341784}
   - component: {fileID: 4481169179727211956}
+  - component: {fileID: 4165079934786106608}
   m_Layer: 5
   m_Name: Layout
   m_TagString: Untagged
@@ -195,6 +196,14 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 1
   m_ConstraintCount: 4
+--- !u!222 &4165079934786106608
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 287250595398113992}
+  m_CullTransparentMesh: 1
 --- !u!1 &292462884968852338
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +274,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8154490584767323135}
   - component: {fileID: 8825296104742619425}
+  - component: {fileID: 8817594449108926388}
+  - component: {fileID: 7708474526908096070}
   m_Layer: 5
   m_Name: Skills_LoopHorizontalScrollRect
   m_TagString: Untagged
@@ -327,6 +338,44 @@ MonoBehaviour:
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
   m_ItemTemplate: {fileID: 667199740056590874}
+--- !u!222 &8817594449108926388
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503817660244238099}
+  m_CullTransparentMesh: 1
+--- !u!114 &7708474526908096070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503817660244238099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: baaf413cf353ec24798fde6968dfa134, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1626687039071915030
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,7 +822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9f847ec5e66e03e4ead1d3c5f7b510e8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ad94f367e37d9ee47841d194cd2c9bb3, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -852,6 +901,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8769630454736032926}
   - component: {fileID: 3173832134481983651}
+  - component: {fileID: 2142057952604128080}
+  - component: {fileID: 3334495820416176358}
   m_Layer: 5
   m_Name: Skill1_LoopHorizontalScrollRect
   m_TagString: Untagged
@@ -914,6 +965,44 @@ MonoBehaviour:
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
   m_ItemTemplate: {fileID: 8609344341478663907}
+--- !u!222 &2142057952604128080
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4872100588700123121}
+  m_CullTransparentMesh: 1
+--- !u!114 &3334495820416176358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4872100588700123121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: baaf413cf353ec24798fde6968dfa134, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &5026465798018422484
 GameObject:
   m_ObjectHideFlags: 0
@@ -1598,6 +1687,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9009082567844421316}
   - component: {fileID: 8544410855360851254}
+  - component: {fileID: 3192314793344510341}
+  - component: {fileID: 5127648830230319760}
   m_Layer: 5
   m_Name: Skill0_LoopHorizontalScrollRect
   m_TagString: Untagged
@@ -1660,6 +1751,44 @@ MonoBehaviour:
   m_FixedHorizontalScrollbarSize: 0
   m_FixedVerticalScrollbarSize: 0
   m_ItemTemplate: {fileID: 1680174244242404794}
+--- !u!222 &3192314793344510341
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8745379202673912348}
+  m_CullTransparentMesh: 1
+--- !u!114 &5127648830230319760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8745379202673912348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: baaf413cf353ec24798fde6968dfa134, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8968323085960830023
 GameObject:
   m_ObjectHideFlags: 0

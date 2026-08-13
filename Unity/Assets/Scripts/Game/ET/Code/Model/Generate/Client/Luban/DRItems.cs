@@ -17,6 +17,7 @@ public sealed partial class DRItems : Luban.BeanBase
     {
         Id = _buf.ReadInt();
         ItemType = _buf.ReadInt();
+        Name = _buf.ReadString();
         Level = _buf.ReadInt();
         Diamond = _buf.ReadInt();
         AreaName = _buf.ReadString();
@@ -35,6 +36,10 @@ public sealed partial class DRItems : Luban.BeanBase
     /// 类型
     /// </summary>
     public readonly int ItemType;
+    /// <summary>
+    /// 名称
+    /// </summary>
+    public readonly string Name;
     /// <summary>
     /// 品阶
     /// </summary>
@@ -68,6 +73,7 @@ public sealed partial class DRItems : Luban.BeanBase
         return "{ "
         + "Id:" + Id + ","
         + "ItemType:" + ItemType + ","
+        + "Name:" + Name + ","
         + "Level:" + Level + ","
         + "Diamond:" + Diamond + ","
         + "AreaName:" + AreaName + ","

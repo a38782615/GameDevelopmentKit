@@ -2,6 +2,7 @@
   {
     "Id": 10001,
     "ItemType": 1,
+    "Name": "Item10001",
     "Level": 1001,
     "Diamond": 5,
     "AreaName": "青云山",
@@ -11,6 +12,7 @@
   {
     "Id": 10002,
     "ItemType": 1,
+    "Name": "Item10002",
     "Level": 1001,
     "Diamond": 8,
     "AreaName": "溪谷",
@@ -20,6 +22,7 @@
   {
     "Id": 10003,
     "ItemType": 1,
+    "Name": "Item10003",
     "Level": 1002,
     "Diamond": 12,
     "AreaName": "山林",
@@ -29,6 +32,7 @@
   {
     "Id": 10004,
     "ItemType": 1,
+    "Name": "Item10004",
     "Level": 1002,
     "Diamond": 15,
     "AreaName": "山崖",
@@ -38,6 +42,7 @@
   {
     "Id": 10005,
     "ItemType": 1,
+    "Name": "Item10005",
     "Level": 1003,
     "Diamond": 25,
     "AreaName": "火山区域",
@@ -47,6 +52,7 @@
   {
     "Id": 10006,
     "ItemType": 1,
+    "Name": "Item10006",
     "Level": 1003,
     "Diamond": 25,
     "AreaName": "雪山",
@@ -56,6 +62,7 @@
   {
     "Id": 10007,
     "ItemType": 1,
+    "Name": "Item10007",
     "Level": 1003,
     "Diamond": 30,
     "AreaName": "密林",
@@ -65,6 +72,7 @@
   {
     "Id": 10008,
     "ItemType": 1,
+    "Name": "Item10008",
     "Level": 2001,
     "Diamond": 50,
     "AreaName": "洞穴",
@@ -74,6 +82,7 @@
   {
     "Id": 10009,
     "ItemType": 1,
+    "Name": "Item10009",
     "Level": 2001,
     "Diamond": 60,
     "AreaName": "秘境外围",
@@ -83,6 +92,7 @@
   {
     "Id": 10010,
     "ItemType": 1,
+    "Name": "Item10010",
     "Level": 2002,
     "Diamond": 80,
     "AreaName": "秘境",
@@ -92,6 +102,7 @@
   {
     "Id": 10011,
     "ItemType": 1,
+    "Name": "Item10011",
     "Level": 2002,
     "Diamond": 100,
     "AreaName": "阴煞之地",
@@ -101,6 +112,7 @@
   {
     "Id": 10012,
     "ItemType": 1,
+    "Name": "Item10012",
     "Level": 2002,
     "Diamond": 100,
     "AreaName": "熔岩地带",
@@ -110,6 +122,7 @@
   {
     "Id": 10013,
     "ItemType": 1,
+    "Name": "Item10013",
     "Level": 2003,
     "Diamond": 150,
     "AreaName": "灵脉附近",
@@ -119,6 +132,7 @@
   {
     "Id": 10014,
     "ItemType": 1,
+    "Name": "Item10014",
     "Level": 2003,
     "Diamond": 200,
     "AreaName": "灵树",
@@ -128,6 +142,7 @@
   {
     "Id": 10015,
     "ItemType": 1,
+    "Name": "Item10015",
     "Level": 3001,
     "Diamond": 500,
     "AreaName": "秘境核心",
@@ -137,6 +152,7 @@
   {
     "Id": 10016,
     "ItemType": 1,
+    "Name": "Item10016",
     "Level": 3002,
     "Diamond": 800,
     "AreaName": "龙穴",
@@ -146,6 +162,7 @@
   {
     "Id": 10017,
     "ItemType": 1,
+    "Name": "Item10017",
     "Level": 3002,
     "Diamond": 900,
     "AreaName": "古遗迹",
@@ -155,6 +172,7 @@
   {
     "Id": 10018,
     "ItemType": 1,
+    "Name": "Item10018",
     "Level": 3003,
     "Diamond": 1500,
     "AreaName": "灵池",
@@ -164,6 +182,7 @@
   {
     "Id": 10019,
     "ItemType": 1,
+    "Name": "Item10019",
     "Level": 4001,
     "Diamond": 3000,
     "AreaName": "禁地",
@@ -173,6 +192,7 @@
   {
     "Id": 10020,
     "ItemType": 1,
+    "Name": "Item10020",
     "Level": 5001,
     "Diamond": 10000,
     "AreaName": "上古秘境",
@@ -182,6 +202,7 @@
   {
     "Id": 20001,
     "ItemType": 2,
+    "Name": "Item20001",
     "Level": 1001,
     "Diamond": 5,
     "AreaName": "天剑宗",
@@ -194,8 +215,39 @@
     ]
   },
   {
+    "Id": 30001,
+    "ItemType": 3,
+    "Name": "Item30001",
+    "Level": 1001,
+    "Diamond": 5,
+    "AreaName": "天剑宗",
+    "Desc": "增加血量",
+    "Attr": [
+      [
+        10062,
+        100
+      ]
+    ]
+  },
+  {
+    "Id": 30002,
+    "ItemType": 3,
+    "Name": "Item30002",
+    "Level": 1001,
+    "Diamond": 5,
+    "AreaName": "天剑宗",
+    "Desc": "增加气量",
+    "Attr": [
+      [
+        10062,
+        100
+      ]
+    ]
+  },
+  {
     "Id": 40001,
     "ItemType": 4,
+    "Name": "Item40001",
     "Level": 1001,
     "Diamond": 5,
     "AreaName": "家",

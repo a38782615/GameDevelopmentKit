@@ -18,6 +18,7 @@ public sealed class DRItems :  Luban.EditorBeanBase
 {
     public DRItems()
     {
+            Name = "";
             AreaName = "";
             Desc = "";
             Attr = new System.Collections.Generic.Dictionary<int,long>();
@@ -38,6 +39,14 @@ public sealed class DRItems :  Luban.EditorBeanBase
             if (_fieldJson != null)
             {
                 if(!_fieldJson.IsNumber) { throw new SerializationException(); }  ItemType = _fieldJson;
+            }
+        }
+        
+        { 
+            var _fieldJson = _json["Name"];
+            if (_fieldJson != null)
+            {
+                if(!_fieldJson.IsString) { throw new SerializationException(); }  Name = _fieldJson;
             }
         }
         
@@ -92,6 +101,11 @@ public sealed class DRItems :  Luban.EditorBeanBase
             _json["ItemType"] = new JSONNumber(ItemType);
         }
         {
+
+            if (Name == null) { throw new System.ArgumentNullException(); }
+            _json["Name"] = new JSONString(Name);
+        }
+        {
             _json["Level"] = new JSONNumber(Level);
         }
         {
@@ -132,6 +146,11 @@ public sealed class DRItems :  Luban.EditorBeanBase
     /// 类型
     /// </summary>
     public int ItemType;
+
+    /// <summary>
+    /// 名称
+    /// </summary>
+    public string Name;
 
     /// <summary>
     /// 品阶
