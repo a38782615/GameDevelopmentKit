@@ -12,7 +12,7 @@ namespace Game.Editor
     {
         private const string MenuPath = "Game/Tool/Open Codex Admin PowerShell";
         private const string TerminalTitle = "Codex Admin";
-        private const string CodexLaunchOptions = "--model gpt-5.5 --config model_reasoning_effort=xhigh --config service_tier=default --sandbox danger-full-access --ask-for-approval never";
+        private const string CodexLaunchOptions = "--model gpt-5.6-sol --config model_reasoning_effort=medium --config service_tier=default --sandbox danger-full-access --ask-for-approval never";
         private static readonly string[] s_CodexFileNames = { "codex.ps1", "codex.cmd", "codex.exe", "codex.bat" };
 
         [MenuItem(MenuPath)]
