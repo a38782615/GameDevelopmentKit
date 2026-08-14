@@ -4,7 +4,6 @@ namespace ET.Client
 {
     [FriendOf(typeof(UIFormShop))]
     [EntitySystemOf(typeof(UIFormShop))]
-    [FriendOf(typeof(UIWidgetShopItem))]
     public static partial class UIFormShopSystem
     {
         [EntitySystem]
@@ -128,22 +127,28 @@ namespace ET.Client
                 return;
             }
 
-            int instanceId = transform.gameObject.GetInstanceID();
-            if (!self.ItemWidgets.TryGetValue(instanceId, out EntityRef<UIWidgetShopItem> itemRef))
+            MonoUIShopItem view = transform.GetComponent<MonoUIShopItem>();
+            if (view == null)
             {
                 Log.Warning(GameFramework.Utility.Text.Format(
-                    "UIFormShop item widget is missing, Index={0}, InstanceId={1}.", index, instanceId));
+                    "UIFormShop item view is missing, Index={0}.", index));
                 return;
             }
 
-            UIWidgetShopItem item = itemRef.As();
-            if (item == null)
+            var item = new ShopItemTempLogic
             {
-                self.ItemWidgets.Remove(instanceId);
-                return;
-            }
+                View = view,
+                Data = self.DisplayItems[index],
+            };
+            item.ItemRender();
+        }
 
-            item.Bind(self.DisplayItems[index]);
+        private static void ItemRender(this ShopItemTempLogic self)
+        {
+            DRItems itemConfig = self.Data == null ? null : Tables.Instance.DTItems.GetOrDefault(self.Data.ConfigId);
+            self.View.NameUXTextMeshPro.text = itemConfig?.Name ?? string.Empty;
+            self.View.CountUXTextMeshPro.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
+            self.View.IconImage.enabled = self.Data != null;
         }
     }
 }
