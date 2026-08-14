@@ -1,8 +1,11 @@
+using UnityEngine;
+
 namespace ET.Client
 {
     public class ShopItemTempLogic : ET.Object
     {
-        public MonoUIShopItem View;
+        public Transform transform;
         public ShopItemData Data;
+        public UIFormShop Shop;
     }
 }

@@ -264,8 +264,6 @@ MonoBehaviour:
   m_ShopTab1UXToggle: {fileID: 5371690659601347791}
   m_ShopTab2UXToggle: {fileID: 1240695729530122557}
   m_ShopTabsUXToggleGroup: {fileID: 6603171188779070536}
-  m_ShopTempExButton: {fileID: 5265046380327938380}
-  m_ShopTempImage: {fileID: 3595966177835573725}
 --- !u!1 &783031848955776928
 GameObject:
   m_ObjectHideFlags: 0
@@ -2225,17 +2223,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4134866887483447519, guid: 379839704581c50418ec9bbe37cdbd3d,
+        type: 3}
+      propertyPath: m_Name
+      value: Icon
+      objectReference: {fileID: 0}
+    - target: {fileID: 5897592416600366971, guid: 379839704581c50418ec9bbe37cdbd3d,
+        type: 3}
+      propertyPath: m_Name
+      value: Count
+      objectReference: {fileID: 0}
     - target: {fileID: 6672804439050509667, guid: 379839704581c50418ec9bbe37cdbd3d,
         type: 3}
       propertyPath: m_Name
-      value: ShopTemp_ExButton_Image
+      value: ShopTemp
       objectReference: {fileID: 0}
     - target: {fileID: 6672804439050509667, guid: 379839704581c50418ec9bbe37cdbd3d,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7937437371920497041, guid: 379839704581c50418ec9bbe37cdbd3d,
+        type: 3}
+      propertyPath: m_Name
+      value: Name
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3819606977968902610, guid: 379839704581c50418ec9bbe37cdbd3d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2246,30 +2260,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 864805043645682570}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3595966177835573725 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4460560023369740887, guid: 379839704581c50418ec9bbe37cdbd3d,
-    type: 3}
-  m_PrefabInstance: {fileID: 864805043645682570}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5808227152762949353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &5265046380327938380 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4976851780476385990, guid: 379839704581c50418ec9bbe37cdbd3d,
-    type: 3}
-  m_PrefabInstance: {fileID: 864805043645682570}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5808227152762949353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 394a81abdb59605459ee7158fc9280f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.ExButton
 --- !u!1 &5808227152762949353 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6672804439050509667, guid: 379839704581c50418ec9bbe37cdbd3d,

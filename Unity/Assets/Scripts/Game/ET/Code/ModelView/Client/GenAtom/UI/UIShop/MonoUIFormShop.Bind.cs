@@ -16,10 +16,6 @@ namespace ET.Client
         private UnityEngine.UI.UXToggle m_ShopTab2UXToggle;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.UI.UXToggleGroup m_ShopTabsUXToggleGroup;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExButton m_ShopTempExButton;
-        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private UnityEngine.UI.Image m_ShopTempImage;
 
         public ET.Client.MonoUIWidgetBtmBar BtmBarBtmBar => this.m_BtmBarBtmBar;
         public Game.ExLoopVerticalScrollRect ShopLoopVerticalScrollRect => this.m_ShopLoopVerticalScrollRect;
@@ -27,8 +23,6 @@ namespace ET.Client
         public UnityEngine.UI.UXToggle ShopTab1UXToggle => this.m_ShopTab1UXToggle;
         public UnityEngine.UI.UXToggle ShopTab2UXToggle => this.m_ShopTab2UXToggle;
         public UnityEngine.UI.UXToggleGroup ShopTabsUXToggleGroup => this.m_ShopTabsUXToggleGroup;
-        public Game.ExButton ShopTempExButton => this.m_ShopTempExButton;
-        public UnityEngine.UI.Image ShopTempImage => this.m_ShopTempImage;
 
 #if UNITY_EDITOR
         [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
@@ -45,8 +39,6 @@ namespace ET.Client
             if (this.m_ShopTab1UXToggle == null) return true;
             if (this.m_ShopTab2UXToggle == null) return true;
             if (this.m_ShopTabsUXToggleGroup == null) return true;
-            if (this.m_ShopTempExButton == null) return true;
-            if (this.m_ShopTempImage == null) return true;
             return false;
         }
 #endif

@@ -184,6 +184,7 @@ namespace ET.Client
             }
 
             Transform transform = self.transform;
+            transform.gameObject.SetActive(true);
             UXTextMeshPro level = transform.Find("Count").GetComponent<UXTextMeshPro>();
             level.text = self.Data.Level.ToString();
 

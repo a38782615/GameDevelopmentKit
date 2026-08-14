@@ -106,8 +106,6 @@ namespace ET.Client
                     UI = UGFUIFormId.UIMain
                 });
             }
-
-            owner.Visible = false;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace ET.Client
@@ -19,10 +20,10 @@ namespace ET.Client
         [UGFUIFormSystem]
         private static void UGFUIFormOnOpen(this UIFormShop self)
         {
-            self.OpenWidget(self.View.BtmBarBtmBar) ;
+            self.OpenWidget(self.View.BtmBarBtmBar);
             self.BindTabs();
             self.View.ShopLoopVerticalScrollRect.itemRenderer = self.ShopItemRender;
-            self.SelectTab(0);
+            self.Refresh().Forget();
         }
 
         [UGFUIFormSystem]
@@ -30,9 +31,7 @@ namespace ET.Client
         {
             self.UnbindTabs();
             self.View.ShopLoopVerticalScrollRect.itemRenderer = null;
-            self.View.ShopLoopVerticalScrollRect.numItems = 0;
             self.DisplayItems.Clear();
-            self.ItemWidgets.Clear();
         }
 
         private static void BindTabs(this UIFormShop self)
@@ -53,6 +52,12 @@ namespace ET.Client
             self.View.ShopTab0UXToggle.onValueChanged.RemoveListener(self.OnTab0Changed);
             self.View.ShopTab1UXToggle.onValueChanged.RemoveListener(self.OnTab1Changed);
             self.View.ShopTab2UXToggle.onValueChanged.RemoveListener(self.OnTab2Changed);
+        }
+
+        private static async UniTask Refresh(this UIFormShop self)
+        {
+            await UniTask.Delay(100);
+            self.SelectTab(0);
         }
 
         private static void OnTab0Changed(this UIFormShop self, bool isOn)
@@ -108,16 +113,12 @@ namespace ET.Client
                 ShopItemDataComponent shopItemDataComponent = gameDataMgrComponent?.GetShopItemDataComponent();
                 if (shopItemDataComponent != null)
                 {
-                    self.DisplayItems.AddRange(shopItemDataComponent.GetItems(itemType.Value));
+                    var datas = shopItemDataComponent.GetItems(itemType.Value);
+                    self.DisplayItems.AddRange(datas);
                 }
             }
 
             self.View.ShopLoopVerticalScrollRect.numItems = self.DisplayItems.Count;
-            Log.Info(GameFramework.Utility.Text.Format(
-                "UIFormShop refreshed, TabIndex={0}, ItemType={1}, Count={2}.",
-                tabIndex,
-                itemType.HasValue ? ((int)itemType.Value).ToString() : "Pending",
-                self.DisplayItems.Count));
         }
 
         private static void ShopItemRender(this UIFormShop self, int index, Transform transform)
@@ -127,18 +128,11 @@ namespace ET.Client
                 return;
             }
 
-            MonoUIShopItem view = transform.GetComponent<MonoUIShopItem>();
-            if (view == null)
-            {
-                Log.Warning(GameFramework.Utility.Text.Format(
-                    "UIFormShop item view is missing, Index={0}.", index));
-                return;
-            }
-
             var item = new ShopItemTempLogic
             {
-                View = view,
+                transform = transform,
                 Data = self.DisplayItems[index],
+                Shop = self,
             };
             item.ItemRender();
         }
@@ -146,9 +140,9 @@ namespace ET.Client
         private static void ItemRender(this ShopItemTempLogic self)
         {
             DRItems itemConfig = self.Data == null ? null : Tables.Instance.DTItems.GetOrDefault(self.Data.ConfigId);
-            self.View.NameUXTextMeshPro.text = itemConfig?.Name ?? string.Empty;
-            self.View.CountUXTextMeshPro.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
-            self.View.IconImage.enabled = self.Data != null;
+            // self.View.NameUXTextMeshPro.text = itemConfig?.Name ?? string.Empty;
+            // self.View.CountUXTextMeshPro.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
+            // self.View.IconImage.enabled = self.Data != null;
         }
     }
 }
