@@ -198,13 +198,37 @@ namespace ET.Client
                 ShopItemDataComponent shopItemDataComponent = gameDataMgrComponent.GetShopItemDataComponent();
                 PlayerData playerData = self.Root().GetPlayerData();
                 InventoryDataComponent inventoryDataComponent = gameDataMgrComponent.GetInventoryDataComponent();
-                if (!shopItemDataComponent.TryBuy(self.SelectedItem, playerData, inventoryDataComponent))
+                ShopItemData purchasedShopItem = self.SelectedItem;
+                if (!shopItemDataComponent.TryBuy(
+                        purchasedShopItem,
+                        playerData,
+                        inventoryDataComponent,
+                        out InventoryItemData inventoryItem,
+                        out bool inventoryItemCreated,
+                        out int previousInventoryItemCount,
+                        out int previousPlayerDiamond,
+                        out int previousShopItemCount))
                 {
                     return;
                 }
 
-                await gameDataMgrComponent.SavePlayerData();
-                await inventoryDataComponent.SaveInventoryData();
+                try
+                {
+                    await gameDataMgrComponent.SaveShopPurchaseData(playerData);
+                }
+                catch
+                {
+                    shopItemDataComponent.RollbackBuy(
+                        purchasedShopItem,
+                        playerData,
+                        inventoryDataComponent,
+                        inventoryItem,
+                        inventoryItemCreated,
+                        previousInventoryItemCount,
+                        previousPlayerDiamond,
+                        previousShopItemCount);
+                    throw;
+                }
 
                 if (!self.IsDisposed)
                 {

@@ -142,6 +142,37 @@ namespace ET.Client
             return await self.UpsertBatch(entities);
         }
 
+        public static async UniTask ExecuteTransaction(this ArchiveComponent self, Action<LiteDatabase> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            using (await self.WaitArchiveLock())
+            {
+                self.CheckDatabase();
+                if (!self.Database.BeginTrans())
+                {
+                    throw new InvalidOperationException("Archive transaction could not be started.");
+                }
+
+                try
+                {
+                    action(self.Database);
+                    if (!self.Database.Commit())
+                    {
+                        throw new InvalidOperationException("Archive transaction could not be committed.");
+                    }
+                }
+                catch
+                {
+                    self.Database.Rollback();
+                    throw;
+                }
+            }
+        }
+
         public static async UniTask<bool> Upsert<T>(this ArchiveComponent self, T entity)
         {
             if (ReferenceEquals(entity, null))

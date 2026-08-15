@@ -1,4 +1,6 @@
+using System;
 using Cysharp.Threading.Tasks;
+using LiteDB;
 
 namespace ET.Client
 {
@@ -35,6 +37,7 @@ namespace ET.Client
             await self.GetPlayerSkillDataComponent().LoadPlayerSkillData(archiveComponent);
             await self.GetTaskDataComponent().LoadTaskData(archiveComponent);
             await self.GetInventoryDataComponent().LoadInventoryData(archiveComponent);
+            await self.GetShopItemDataComponent().LoadShopData(archiveComponent);
         }
 
         public static async UniTask SaveAllData(this GameDataMgrComponent self)
@@ -50,6 +53,7 @@ namespace ET.Client
             await self.GetPlayerSkillDataComponent().SavePlayerSkillData(archiveComponent);
             await self.GetTaskDataComponent().SaveTaskData(archiveComponent);
             await self.GetInventoryDataComponent().SaveInventoryData();
+            await self.GetShopItemDataComponent().SaveShopData(archiveComponent);
         }
 
         public static PlayerDataComponent GetPlayerDataComponent(this GameDataMgrComponent self)
@@ -143,6 +147,47 @@ namespace ET.Client
             }
 
             await self.GetPlayerSkillDataComponent().SavePlayerSkillData(archiveComponent);
+        }
+
+        public static async UniTask SaveShopData(this GameDataMgrComponent self)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            await self.GetShopItemDataComponent().SaveShopData(archiveComponent);
+        }
+
+        public static async UniTask RefreshShopData(this GameDataMgrComponent self)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null)
+            {
+                return;
+            }
+
+            await self.GetShopItemDataComponent().RefreshShopData(archiveComponent);
+        }
+
+        public static async UniTask SaveShopPurchaseData(this GameDataMgrComponent self, PlayerData playerData)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null || playerData == null)
+            {
+                throw new InvalidOperationException("Shop purchase data cannot be saved without an active archive and player data.");
+            }
+
+            InventoryDataComponent inventoryDataComponent = self.GetInventoryDataComponent();
+            ShopItemDataComponent shopItemDataComponent = self.GetShopItemDataComponent();
+            await archiveComponent.ExecuteTransaction(database =>
+            {
+                database.GetCollection<PlayerData>(nameof(PlayerData)).Upsert(playerData);
+                database.GetCollection<InventoryItemData>(nameof(InventoryItemData))
+                        .Upsert(inventoryDataComponent.GetItems());
+                database.GetCollection<ShopItemData>(nameof(ShopItemData)).Upsert(shopItemDataComponent.GetItems());
+            });
         }
 
         private static void EnsureDataComponents(this GameDataMgrComponent self)
