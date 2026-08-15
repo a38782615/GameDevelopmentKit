@@ -258,5 +258,35 @@
         40
       ]
     ]
+  },
+  {
+    "Id": 50001,
+    "ItemType": 5,
+    "Name": "Item50001",
+    "Level": 1001,
+    "Diamond": 5,
+    "AreaName": "天剑宗",
+    "Desc": "增加血量",
+    "Attr": [
+      [
+        1001,
+        1
+      ]
+    ]
+  },
+  {
+    "Id": 50002,
+    "ItemType": 5,
+    "Name": "Item50002",
+    "Level": 1001,
+    "Diamond": 5,
+    "AreaName": "天剑宗",
+    "Desc": "增加气量",
+    "Attr": [
+      [
+        1008,
+        1
+      ]
+    ]
   }
 ]

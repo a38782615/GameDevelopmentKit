@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6208659054906715859}
-  - component: {fileID: 3474081245887324738}
   - component: {fileID: 4364525327351975964}
   - component: {fileID: 8945470136756173017}
+  - component: {fileID: 6954168022320831805}
   m_Layer: 5
-  m_Name: Grid0_LoopHorizontalScrollRect
+  m_Name: Grid0_LoopVerticalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,41 +39,6 @@ RectTransform:
   m_AnchoredPosition: {x: 54.347, y: 459.14}
   m_SizeDelta: {x: 558.69, y: 329.72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3474081245887324738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 680654262491598777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
-  totalCount: 0
-  reverseDirection: 0
-  m_Content: {fileID: 7008468218276501210}
-  m_Horizontal: 1
-  m_Vertical: 0
-  m_MovementType: 1
-  m_Elasticity: 0.1
-  m_Inertia: 1
-  m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 0}
-  m_HorizontalScrollbar: {fileID: 0}
-  m_VerticalScrollbar: {fileID: 0}
-  m_HorizontalScrollbarVisibility: 0
-  m_VerticalScrollbarVisibility: 0
-  m_HorizontalScrollbarSpacing: 0
-  m_VerticalScrollbarSpacing: 0
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FixedHorizontalScrollbarSize: 0
-  m_FixedVerticalScrollbarSize: 0
-  m_ItemTemplate: {fileID: 7478026932317249318}
 --- !u!222 &4364525327351975964
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -112,6 +77,41 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6954168022320831805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 680654262491598777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3e830a7f2110c4f8898ef85551cce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.ExLoopVerticalScrollRect
+  totalCount: 0
+  reverseDirection: 0
+  m_Content: {fileID: 7008468218276501210}
+  m_Horizontal: 0
+  m_Vertical: 1
+  m_MovementType: 1
+  m_Elasticity: 0.1
+  m_Inertia: 1
+  m_DecelerationRate: 0.135
+  m_ScrollSensitivity: 1
+  m_Viewport: {fileID: 0}
+  m_HorizontalScrollbar: {fileID: 0}
+  m_VerticalScrollbar: {fileID: 0}
+  m_HorizontalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 0
+  m_HorizontalScrollbarSpacing: 0
+  m_VerticalScrollbarSpacing: 0
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FixedHorizontalScrollbarSize: 0
+  m_FixedVerticalScrollbarSize: 0
+  m_ItemTemplate: {fileID: 7478026932317249318}
 --- !u!1 &1715903866863330747
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,11 +184,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 978215301611844895}
-  - component: {fileID: 1166452984019649022}
   - component: {fileID: 671066676274456784}
   - component: {fileID: 8214703324431135247}
+  - component: {fileID: 1559955733645252451}
   m_Layer: 5
-  m_Name: Grid1_LoopHorizontalScrollRect
+  m_Name: Grid1_LoopVerticalScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,41 +214,6 @@ RectTransform:
   m_AnchoredPosition: {x: 2.325714, y: -6.5894775}
   m_SizeDelta: {x: 701.0298, y: 557.0507}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1166452984019649022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2453318533849324073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd7520af95e7c4282e6c876f543a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game::Game.ExLoopHorizontalScrollRect
-  totalCount: 0
-  reverseDirection: 0
-  m_Content: {fileID: 8301563262024448041}
-  m_Horizontal: 1
-  m_Vertical: 1
-  m_MovementType: 1
-  m_Elasticity: 0.1
-  m_Inertia: 1
-  m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 0}
-  m_HorizontalScrollbar: {fileID: 0}
-  m_VerticalScrollbar: {fileID: 0}
-  m_HorizontalScrollbarVisibility: 0
-  m_VerticalScrollbarVisibility: 0
-  m_HorizontalScrollbarSpacing: 0
-  m_VerticalScrollbarSpacing: 0
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FixedHorizontalScrollbarSize: 0
-  m_FixedVerticalScrollbarSize: 0
-  m_ItemTemplate: {fileID: 8498192328121777552}
 --- !u!222 &671066676274456784
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -287,6 +252,41 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1559955733645252451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2453318533849324073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3e830a7f2110c4f8898ef85551cce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game::Game.ExLoopVerticalScrollRect
+  totalCount: 0
+  reverseDirection: 0
+  m_Content: {fileID: 8301563262024448041}
+  m_Horizontal: 0
+  m_Vertical: 1
+  m_MovementType: 1
+  m_Elasticity: 0.1
+  m_Inertia: 1
+  m_DecelerationRate: 0.135
+  m_ScrollSensitivity: 1
+  m_Viewport: {fileID: 0}
+  m_HorizontalScrollbar: {fileID: 0}
+  m_VerticalScrollbar: {fileID: 0}
+  m_HorizontalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 0
+  m_HorizontalScrollbarSpacing: 0
+  m_VerticalScrollbarSpacing: 0
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FixedHorizontalScrollbarSize: 0
+  m_FixedVerticalScrollbarSize: 0
+  m_ItemTemplate: {fileID: 8498192328121777552}
 --- !u!1 &3589174566700600100
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +366,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1098125143258842464}
   m_Father: {fileID: 3227635028681478068}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -396,8 +397,8 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
   m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 1
+  m_ConstraintCount: 5
 --- !u!1 &4585152609209422980
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,8 +517,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.ET.Code.ModelView::ET.Client.MonoUIFormBag1
   m_CenterRectTransform: {fileID: 3693826156874253253}
-  m_Grid0LoopHorizontalScrollRect: {fileID: 3474081245887324738}
-  m_Grid1LoopHorizontalScrollRect: {fileID: 1166452984019649022}
+  m_Grid0LoopVerticalScrollRect: {fileID: 6954168022320831805}
+  m_Grid1LoopVerticalScrollRect: {fileID: 1559955733645252451}
   m_ItemTemp0ExButton: {fileID: 9100804820092270723}
   m_ItemTemp0Image: {fileID: 484926555866361874}
   m_ItemTemp1ExButton: {fileID: 7810474299029199413}
@@ -552,8 +553,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2525158397630454098}
-  - {fileID: 2095792057223833558}
-  - {fileID: 1098125143258842464}
   - {fileID: 6208659054906715859}
   - {fileID: 978215301611844895}
   m_Father: {fileID: 1249877118974636500}
@@ -591,7 +590,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2095792057223833558}
   m_Father: {fileID: 1426959700615991039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -621,8 +621,8 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
   m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 1
+  m_ConstraintCount: 4
 --- !u!1 &8161908143303599298
 GameObject:
   m_ObjectHideFlags: 0
@@ -696,6 +696,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Retun_ExButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 6530678520249798050, guid: 7021d3e63f2ead347a0c9a9127678dab,
+        type: 3}
+      propertyPath: origin_name
+      value: btn_06
       objectReference: {fileID: 0}
     - target: {fileID: 9060091444937405151, guid: 7021d3e63f2ead347a0c9a9127678dab,
         type: 3}
@@ -841,12 +846,17 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 3693826156874253253}
+    m_TransformParent: {fileID: 7008468218276501210}
     m_Modifications:
     - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_Name
       value: ItemTemp0_ExButton_Image
+      objectReference: {fileID: 0}
+    - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
@@ -926,12 +936,12 @@ PrefabInstance:
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -124.998
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 524
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
@@ -995,12 +1005,17 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 3693826156874253253}
+    m_TransformParent: {fileID: 8301563262024448041}
     m_Modifications:
     - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_Name
       value: ItemTemp1_ExButton_Image
+      objectReference: {fileID: 0}
+    - target: {fileID: 697430348532348652, guid: 10514f56274aa4f4697ad3e7cf12c574,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
@@ -1080,12 +1095,12 @@ PrefabInstance:
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -124.998
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 524
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 8322426912280628764, guid: 10514f56274aa4f4697ad3e7cf12c574,
         type: 3}

@@ -129,6 +129,136 @@ namespace ET
         public const string Key_GMap = "GMap";
 
         /// <summary>
+        /// 聚气草
+        /// </summary>
+        public const string Key_Item10001 = "Item10001";
+
+        /// <summary>
+        /// 凝露花
+        /// </summary>
+        public const string Key_Item10002 = "Item10002";
+
+        /// <summary>
+        /// 黄精根
+        /// </summary>
+        public const string Key_Item10003 = "Item10003";
+
+        /// <summary>
+        /// 青灵叶
+        /// </summary>
+        public const string Key_Item10004 = "Item10004";
+
+        /// <summary>
+        /// 赤阳果
+        /// </summary>
+        public const string Key_Item10005 = "Item10005";
+
+        /// <summary>
+        /// 寒霜草
+        /// </summary>
+        public const string Key_Item10006 = "Item10006";
+
+        /// <summary>
+        /// 回春藤
+        /// </summary>
+        public const string Key_Item10007 = "Item10007";
+
+        /// <summary>
+        /// 地灵芝
+        /// </summary>
+        public const string Key_Item10008 = "Item10008";
+
+        /// <summary>
+        /// 紫云花
+        /// </summary>
+        public const string Key_Item10009 = "Item10009";
+
+        /// <summary>
+        /// 金髓草
+        /// </summary>
+        public const string Key_Item10010 = "Item10010";
+
+        /// <summary>
+        /// 玄阴草
+        /// </summary>
+        public const string Key_Item10011 = "Item10011";
+
+        /// <summary>
+        /// 赤炎花
+        /// </summary>
+        public const string Key_Item10012 = "Item10012";
+
+        /// <summary>
+        /// 七叶灵芝
+        /// </summary>
+        public const string Key_Item10013 = "Item10013";
+
+        /// <summary>
+        /// 玉髓果
+        /// </summary>
+        public const string Key_Item10014 = "Item10014";
+
+        /// <summary>
+        /// 筑基果
+        /// </summary>
+        public const string Key_Item10015 = "Item10015";
+
+        /// <summary>
+        /// 龙血草
+        /// </summary>
+        public const string Key_Item10016 = "Item10016";
+
+        /// <summary>
+        /// 玄灵花
+        /// </summary>
+        public const string Key_Item10017 = "Item10017";
+
+        /// <summary>
+        /// 九叶金莲
+        /// </summary>
+        public const string Key_Item10018 = "Item10018";
+
+        /// <summary>
+        /// 天心草
+        /// </summary>
+        public const string Key_Item10019 = "Item10019";
+
+        /// <summary>
+        /// 化婴果
+        /// </summary>
+        public const string Key_Item10020 = "Item10020";
+
+        /// <summary>
+        /// 玄铁飞剑
+        /// </summary>
+        public const string Key_Item20001 = "Item20001";
+
+        /// <summary>
+        /// 培元丹
+        /// </summary>
+        public const string Key_Item30001 = "Item30001";
+
+        /// <summary>
+        /// 凝血丹
+        /// </summary>
+        public const string Key_Item30002 = "Item30002";
+
+        /// <summary>
+        /// 储物袋
+        /// </summary>
+        public const string Key_Item40001 = "Item40001";
+
+        /// <summary>
+        /// 横扫
+        /// </summary>
+        public const string Key_Item50001 = "Item50001";
+
+        /// <summary>
+        /// 三火球
+        /// </summary>
+        public const string Key_Item50002 = "Item50002";
+
+        /// <summary>
         /// 练气初期
         /// </summary>
         public const string Key_Level_0_0 = "Level_0_0";
@@ -244,6 +374,11 @@ namespace ET
         public const string Key_Shop = "Shop";
 
         /// <summary>
+        /// 购买
+        /// </summary>
+        public const string Key_Shop_Buy = "Shop_Buy";
+
+        /// <summary>
         /// 丹药
         /// </summary>
         public const string Key_ShopTab0 = "ShopTab0";
@@ -337,6 +472,40 @@ namespace ET
         /// 测试2
         /// </summary>
         public const string Key_test2 = "test2";
+
+        public static string Get_Item(int order)
+        {
+            switch (order)
+            {
+                case 10001: return Key_Item10001;
+                case 10002: return Key_Item10002;
+                case 10003: return Key_Item10003;
+                case 10004: return Key_Item10004;
+                case 10005: return Key_Item10005;
+                case 10006: return Key_Item10006;
+                case 10007: return Key_Item10007;
+                case 10008: return Key_Item10008;
+                case 10009: return Key_Item10009;
+                case 10010: return Key_Item10010;
+                case 10011: return Key_Item10011;
+                case 10012: return Key_Item10012;
+                case 10013: return Key_Item10013;
+                case 10014: return Key_Item10014;
+                case 10015: return Key_Item10015;
+                case 10016: return Key_Item10016;
+                case 10017: return Key_Item10017;
+                case 10018: return Key_Item10018;
+                case 10019: return Key_Item10019;
+                case 10020: return Key_Item10020;
+                case 20001: return Key_Item20001;
+                case 30001: return Key_Item30001;
+                case 30002: return Key_Item30002;
+                case 40001: return Key_Item40001;
+                case 50001: return Key_Item50001;
+                case 50002: return Key_Item50002;
+                default: return string.Empty;
+            }
+        }
 
         public static string Get_Level_0_(int order)
         {

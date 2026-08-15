@@ -5,5 +5,6 @@ namespace ET
         Herb = 1,
         Weapon = 2,
         Medicine = 3,
+        Book = 5,
     }
 }

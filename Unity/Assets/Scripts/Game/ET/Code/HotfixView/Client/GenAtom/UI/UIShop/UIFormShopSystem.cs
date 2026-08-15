@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -64,7 +65,7 @@ namespace ET.Client
         {
             if (isOn)
             {
-                self.RefreshItems(0, ItemType.Medicine);
+                self.SelectTab(0);
             }
         }
 
@@ -72,7 +73,7 @@ namespace ET.Client
         {
             if (isOn)
             {
-                self.RefreshItems(1, null);
+                self.SelectTab(1);
             }
         }
 
@@ -80,7 +81,7 @@ namespace ET.Client
         {
             if (isOn)
             {
-                self.RefreshItems(2, ItemType.Herb);
+                self.SelectTab(2);
             }
         }
 
@@ -93,6 +94,10 @@ namespace ET.Client
             if (tabIndex == 0)
             {
                 self.RefreshItems(tabIndex, ItemType.Medicine);
+            }
+            else if (tabIndex == 1)
+            {
+                self.RefreshItems(tabIndex, ItemType.Book);
             }
             else if (tabIndex == 2)
             {
@@ -140,7 +145,9 @@ namespace ET.Client
         private static void ItemRender(this ShopItemTempLogic self)
         {
             DRItems itemConfig = self.Data == null ? null : Tables.Instance.DTItems.GetOrDefault(self.Data.ConfigId);
-            // self.View.NameUXTextMeshPro.text = itemConfig?.Name ?? string.Empty;
+
+            var name = self.transform.Find("Name").GetComponent<UXTextMeshPro>();
+            name.text = LocalizationHelper.GetString(itemConfig.Name)  ?? string.Empty;
             // self.View.CountUXTextMeshPro.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
             // self.View.IconImage.enabled = self.Data != null;
         }

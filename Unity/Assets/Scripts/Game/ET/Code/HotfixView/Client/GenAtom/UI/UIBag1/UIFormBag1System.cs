@@ -47,17 +47,17 @@ namespace ET.Client
 
         private static void LoadGrid(this UIFormBag1 self)
         {
-            self.View.Grid0LoopHorizontalScrollRect.itemRenderer = self.DropItemRender;
+            self.View.Grid0LoopVerticalScrollRect.itemRenderer = self.DropItemRender;
 
-            self.View.Grid1LoopHorizontalScrollRect.itemRenderer = self.BagItemRender;
+            self.View.Grid1LoopVerticalScrollRect.itemRenderer = self.BagItemRender;
 
             self.Refresh();
         }
 
         private static void Refresh(this UIFormBag1 self)
         {
-            self.View.Grid0LoopHorizontalScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
-            self.View.Grid1LoopHorizontalScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
+            self.View.Grid0LoopVerticalScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
+            self.View.Grid1LoopVerticalScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
         }
 
         private static void DropItemRender(this UIFormBag1 self, int idx, Transform transform)
@@ -89,6 +89,7 @@ namespace ET.Client
         private static void ItemRender(this ItemTempLogic self)
         {
             var transform = self.transform;
+            transform.gameObject.SetActive(true);
             var c = transform.Find("Count").GetComponent<UXTextMeshPro>();
             c.text = self.Data.Count.ToString();
 
@@ -101,8 +102,8 @@ namespace ET.Client
             BagItemDragHandler dragHandler = self.transform.GetComponent<BagItemDragHandler>();
             dragHandler.Initialize(
                 isDropItem,
-                self.Bag1.View.Grid0LoopHorizontalScrollRect.transform as RectTransform,
-                self.Bag1.View.Grid1LoopHorizontalScrollRect.transform as RectTransform,
+                self.Bag1.View.Grid0LoopVerticalScrollRect.transform as RectTransform,
+                self.Bag1.View.Grid1LoopVerticalScrollRect.transform as RectTransform,
                 self,
                 OnItemDropped);
         }

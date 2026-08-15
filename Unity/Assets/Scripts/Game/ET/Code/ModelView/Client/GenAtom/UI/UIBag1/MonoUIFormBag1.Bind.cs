@@ -7,9 +7,9 @@ namespace ET.Client
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private UnityEngine.RectTransform m_CenterRectTransform;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExLoopHorizontalScrollRect m_Grid0LoopHorizontalScrollRect;
+        private Game.ExLoopVerticalScrollRect m_Grid0LoopVerticalScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
-        private Game.ExLoopHorizontalScrollRect m_Grid1LoopHorizontalScrollRect;
+        private Game.ExLoopVerticalScrollRect m_Grid1LoopVerticalScrollRect;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_ItemTemp0ExButton;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
@@ -22,8 +22,8 @@ namespace ET.Client
         private Game.ExButton m_RetunExButton;
 
         public UnityEngine.RectTransform CenterRectTransform => this.m_CenterRectTransform;
-        public Game.ExLoopHorizontalScrollRect Grid0LoopHorizontalScrollRect => this.m_Grid0LoopHorizontalScrollRect;
-        public Game.ExLoopHorizontalScrollRect Grid1LoopHorizontalScrollRect => this.m_Grid1LoopHorizontalScrollRect;
+        public Game.ExLoopVerticalScrollRect Grid0LoopVerticalScrollRect => this.m_Grid0LoopVerticalScrollRect;
+        public Game.ExLoopVerticalScrollRect Grid1LoopVerticalScrollRect => this.m_Grid1LoopVerticalScrollRect;
         public Game.ExButton ItemTemp0ExButton => this.m_ItemTemp0ExButton;
         public UnityEngine.UI.Image ItemTemp0Image => this.m_ItemTemp0Image;
         public Game.ExButton ItemTemp1ExButton => this.m_ItemTemp1ExButton;
@@ -40,8 +40,8 @@ namespace ET.Client
         private bool HasMissingTargets()
         {
             if (this.m_CenterRectTransform == null) return true;
-            if (this.m_Grid0LoopHorizontalScrollRect == null) return true;
-            if (this.m_Grid1LoopHorizontalScrollRect == null) return true;
+            if (this.m_Grid0LoopVerticalScrollRect == null) return true;
+            if (this.m_Grid1LoopVerticalScrollRect == null) return true;
             if (this.m_ItemTemp0ExButton == null) return true;
             if (this.m_ItemTemp0Image == null) return true;
             if (this.m_ItemTemp1ExButton == null) return true;

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8985697074339608961}
   - component: {fileID: 6252485703905196814}
   m_Layer: 5
-  m_Name: Icon_Image
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 7702963522903964341}
   - component: {fileID: 4910387488009787778}
   m_Layer: 5
-  m_Name: Count_UXTextMeshPro
+  m_Name: Count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -230,9 +230,8 @@ GameObject:
   - component: {fileID: 4174215083996514798}
   - component: {fileID: 4460560023369740887}
   - component: {fileID: 4976851780476385990}
-  - component: {fileID: 3819606977968902610}
   m_Layer: 5
-  m_Name: ShopTemp_ExButton_Image
+  m_Name: ShopTemp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,9 +249,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8561961213255352200}
-  - {fileID: 1267881803894403199}
   - {fileID: 7422028122704646297}
+  - {fileID: 1267881803894403199}
+  - {fileID: 8561961213255352200}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -365,21 +364,6 @@ MonoBehaviour:
   m_OnPointerDown:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3819606977968902610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6672804439050509667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec3ea22792c84b728a6d244916ce1032, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Game.ET.Code.ModelView::ET.Client.MonoUIShopItem
-  m_CountUXTextMeshPro: {fileID: 4910387488009787778}
-  m_IconImage: {fileID: 6252485703905196814}
-  m_NameUXTextMeshPro: {fileID: 1128135409948004583}
 --- !u!1 &7937437371920497041
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,7 +376,7 @@ GameObject:
   - component: {fileID: 2442955221511286465}
   - component: {fileID: 1128135409948004583}
   m_Layer: 5
-  m_Name: Name_UXTextMeshPro
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
