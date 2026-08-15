@@ -6,5 +6,7 @@ namespace ET.Client
     public class UIFormShop : UGFUIForm<MonoUIFormShop>, IAwake, IDestroy, IUGFUIFormOnOpen, IUGFUIFormOnClose
     {
         public readonly List<ShopItemData> DisplayItems = new List<ShopItemData>();
+        public ShopItemData SelectedItem;
+        public bool IsBuying;
     }
 }

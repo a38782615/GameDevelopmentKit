@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Game;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,10 @@ namespace ET.Client
         private static void UGFUIFormOnOpen(this UIFormShop self)
         {
             self.OpenWidget(self.View.BtmBarBtmBar);
+            self.SelectedItem = null;
+            self.IsBuying = false;
             self.BindTabs();
+            self.View.BuyExButton.onClick.SetAsync(self.BuySelectedItem);
             self.View.ShopLoopVerticalScrollRect.itemRenderer = self.ShopItemRender;
             self.Refresh().Forget();
         }
@@ -31,8 +35,11 @@ namespace ET.Client
         private static void UGFUIFormOnClose(this UIFormShop self, bool isShutdown)
         {
             self.UnbindTabs();
+            self.View.BuyExButton.onClick.RemoveAllListeners();
             self.View.ShopLoopVerticalScrollRect.itemRenderer = null;
             self.DisplayItems.Clear();
+            self.SelectedItem = null;
+            self.IsBuying = false;
         }
 
         private static void BindTabs(this UIFormShop self)
@@ -111,6 +118,7 @@ namespace ET.Client
 
         private static void RefreshItems(this UIFormShop self, int tabIndex, ItemType? itemType)
         {
+            self.SelectedItem = null;
             self.DisplayItems.Clear();
             if (itemType.HasValue)
             {
@@ -124,6 +132,7 @@ namespace ET.Client
             }
 
             self.View.ShopLoopVerticalScrollRect.numItems = self.DisplayItems.Count;
+            self.RefreshBuyButton();
         }
 
         private static void ShopItemRender(this UIFormShop self, int index, Transform transform)
@@ -147,9 +156,78 @@ namespace ET.Client
             DRItems itemConfig = self.Data == null ? null : Tables.Instance.DTItems.GetOrDefault(self.Data.ConfigId);
 
             var name = self.transform.Find("Name").GetComponent<UXTextMeshPro>();
-            name.text = LocalizationHelper.GetString(itemConfig.Name)  ?? string.Empty;
-            // self.View.CountUXTextMeshPro.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
+            name.text = itemConfig == null ? string.Empty : LocalizationHelper.GetString(itemConfig.Name) ?? string.Empty;
+
+            var count = self.transform.Find("Count").GetComponent<UXTextMeshPro>();
+            count.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
+
+            ExButton button = self.transform.GetComponent<ExButton>();
+            button.Set(self.SelectItem);
+            button.interactable = self.Data != null && self.Data.Count > 0;
             // self.View.IconImage.enabled = self.Data != null;
+        }
+
+        private static void SelectItem(this ShopItemTempLogic self)
+        {
+            if (self.Shop == null || self.Shop.IsDisposed || self.Data == null)
+            {
+                return;
+            }
+
+            self.Shop.SelectedItem = self.Data;
+            self.Shop.RefreshBuyButton();
+        }
+
+        private static async UniTask BuySelectedItem(this UIFormShop self)
+        {
+            if (self.IsBuying)
+            {
+                return;
+            }
+
+            self.IsBuying = true;
+            self.View.BuyExButton.interactable = false;
+            try
+            {
+                GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+                if (gameDataMgrComponent == null)
+                {
+                    return;
+                }
+
+                ShopItemDataComponent shopItemDataComponent = gameDataMgrComponent.GetShopItemDataComponent();
+                PlayerData playerData = self.Root().GetPlayerData();
+                InventoryDataComponent inventoryDataComponent = gameDataMgrComponent.GetInventoryDataComponent();
+                if (!shopItemDataComponent.TryBuy(self.SelectedItem, playerData, inventoryDataComponent))
+                {
+                    return;
+                }
+
+                await gameDataMgrComponent.SavePlayerData();
+                await inventoryDataComponent.SaveInventoryData();
+
+                if (!self.IsDisposed)
+                {
+                    self.View.ShopLoopVerticalScrollRect.Refresh();
+                }
+            }
+            finally
+            {
+                if (!self.IsDisposed)
+                {
+                    self.IsBuying = false;
+                    self.RefreshBuyButton();
+                }
+            }
+        }
+
+        private static void RefreshBuyButton(this UIFormShop self)
+        {
+            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+            ShopItemDataComponent shopItemDataComponent = gameDataMgrComponent?.GetShopItemDataComponent();
+            PlayerData playerData = self.Root().GetPlayerData();
+            self.View.BuyExButton.interactable = !self.IsBuying && shopItemDataComponent != null &&
+                    shopItemDataComponent.CanBuy(self.SelectedItem, playerData);
         }
     }
 }

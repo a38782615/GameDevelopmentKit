@@ -4,6 +4,7 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(ShopItemDataComponent))]
     [FriendOf(typeof(ShopItemDataComponent))]
+    [FriendOf(typeof(PlayerData))]
     public static partial class ShopItemDataComponentSystem
     {
         private const int StackableDefaultCount = 5;
@@ -86,6 +87,41 @@ namespace ET.Client
             }
 
             return result;
+        }
+
+        public static bool CanBuy(this ShopItemDataComponent self, ShopItemData item, PlayerData playerData)
+        {
+            self.EnsureItems();
+            if (item == null || playerData == null || item.Count <= 0 || !self.Items.Contains(item))
+            {
+                return false;
+            }
+
+            DRItems itemConfig = Tables.Instance?.DTItems?.GetOrDefault(item.ConfigId);
+            return itemConfig != null && itemConfig.Diamond >= 0 && playerData.Diamond >= itemConfig.Diamond;
+        }
+
+        public static bool TryBuy(
+            this ShopItemDataComponent self,
+            ShopItemData item,
+            PlayerData playerData,
+            InventoryDataComponent inventoryDataComponent)
+        {
+            if (inventoryDataComponent == null || !self.CanBuy(item, playerData))
+            {
+                return false;
+            }
+
+            DRItems itemConfig = Tables.Instance.DTItems.Get(item.ConfigId);
+            InventoryItemData inventoryItem = inventoryDataComponent.AddItem(item.ConfigId);
+            if (inventoryItem == null)
+            {
+                return false;
+            }
+
+            playerData.Diamond -= itemConfig.Diamond;
+            item.Count--;
+            return true;
         }
 
         private static int GetDefaultCount(int itemType)
