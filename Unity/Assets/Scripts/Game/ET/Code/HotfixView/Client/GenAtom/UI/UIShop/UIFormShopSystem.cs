@@ -161,6 +161,9 @@ namespace ET.Client
             var count = self.transform.Find("Count").GetComponent<UXTextMeshPro>();
             count.text = self.Data == null ? string.Empty : self.Data.Count.ToString();
 
+            var diamond = self.transform.Find("Diamond").GetComponent<UXTextMeshPro>();
+            diamond.text = self.Data == null ? string.Empty : itemConfig.Diamond.ToString();
+
             ExButton button = self.transform.GetComponent<ExButton>();
             button.Set(self.SelectItem);
             button.interactable = self.Data != null && self.Data.Count > 0;
