@@ -16,6 +16,8 @@ namespace ET.Client
         private static void UGFUIFormOnOpen(this UIFormBag1 self)
         {
             self.OpenAllUIWidgets();
+            self.SelectedItem = null;
+            self.IsSelling = false;
             self.BindMapSwitchButtons();
             self.LoadGrid();
         }
@@ -24,15 +26,26 @@ namespace ET.Client
         private static void UGFUIFormOnClose(this UIFormBag1 self, bool isShutdown)
         {
             self.UnbindMapSwitchButtons();
+            self.View.Grid0LoopVerticalScrollRect.itemRenderer = null;
+            self.View.Grid1LoopVerticalScrollRect.itemRenderer = null;
+            self.SelectedItem = null;
+            self.IsSelling = false;
         }
         private static void BindMapSwitchButtons(this UIFormBag1 self)
         {
             self.View.RetunExButton.SetAsync(self.Return);
+            self.View.SellExButton.SetAsync(self.SellSelectedItem);
         }
 
         private static void UnbindMapSwitchButtons(this UIFormBag1 self)
         {
-            self.View?.RetunExButton?.onClick.RemoveAllListeners();
+            if (object.ReferenceEquals(self.View, null))
+            {
+                return;
+            }
+
+            self.View.RetunExButton.onClick.RemoveAllListeners();
+            self.View.SellExButton.onClick.RemoveAllListeners();
         }
 
         private static async UniTask Return(this UIFormBag1 self, Button button)
@@ -56,8 +69,10 @@ namespace ET.Client
 
         private static void Refresh(this UIFormBag1 self)
         {
-            self.View.Grid0LoopVerticalScrollRect.numItems = self.Root().GetInventoryDataComponent().Drops.Count;
-            self.View.Grid1LoopVerticalScrollRect.numItems = self.Root().GetInventoryDataComponent().Items.Count;
+            InventoryDataComponent inventoryDataComponent = self.Root().GetInventoryDataComponent();
+            self.View.Grid0LoopVerticalScrollRect.numItems = inventoryDataComponent.Drops.Count;
+            self.View.Grid1LoopVerticalScrollRect.numItems = inventoryDataComponent.Items.Count;
+            self.RefreshSellButton();
         }
 
         private static void DropItemRender(this UIFormBag1 self, int idx, Transform transform)
@@ -129,18 +144,85 @@ namespace ET.Client
             item.Bag1.Refresh();
         }
 
-        private static async UniTask ItemClick(this ItemTempLogic self, Button button)
+        private static UniTask ItemClick(this ItemTempLogic self, Button button)
         {
-            if(self.Data.Type1==-1)
+            if (self.Bag1 == null || self.Bag1.IsDisposed || self.Data == null)
             {
-                self.Bag1.Root().GetInventoryDataComponent().DropToBag(self.Data);
-            }
-            else
-            {
-                self.Bag1.Root().GetInventoryDataComponent().BagToDrop(self.Data);
+                return UniTask.CompletedTask;
             }
 
-            self.Bag1?.Refresh();
+            InventoryDataComponent inventoryDataComponent = self.Bag1.Root().GetInventoryDataComponent();
+            self.Bag1.SelectedItem = inventoryDataComponent.Items.Contains(self.Data) ? self.Data : null;
+            self.Bag1.RefreshSellButton();
+            return UniTask.CompletedTask;
+        }
+
+        private static async UniTask SellSelectedItem(this UIFormBag1 self, Button button)
+        {
+            if (self.IsSelling)
+            {
+                return;
+            }
+
+            GameDataMgrComponent gameDataMgrComponent = self.Root().GetComponent<GameDataMgrComponent>();
+            if (gameDataMgrComponent == null)
+            {
+                return;
+            }
+
+            InventoryDataComponent inventoryDataComponent = gameDataMgrComponent.GetInventoryDataComponent();
+            PlayerData playerData = self.Root().GetPlayerData();
+            InventoryItemData soldItem = self.SelectedItem;
+            if (!inventoryDataComponent.TrySell(
+                    soldItem,
+                    playerData,
+                    out int previousItemCount,
+                    out int previousPlayerDiamond,
+                    out int previousItemIndex,
+                    out bool itemRemoved))
+            {
+                self.RefreshSellButton();
+                return;
+            }
+
+            self.IsSelling = true;
+            self.RefreshSellButton();
+            try
+            {
+                await gameDataMgrComponent.SaveInventorySaleData(playerData, soldItem, itemRemoved);
+            }
+            catch
+            {
+                inventoryDataComponent.RollbackSell(
+                    soldItem,
+                    playerData,
+                    previousItemCount,
+                    previousPlayerDiamond,
+                    previousItemIndex,
+                    itemRemoved);
+                throw;
+            }
+            finally
+            {
+                if (!self.IsDisposed)
+                {
+                    self.IsSelling = false;
+                    if (itemRemoved)
+                    {
+                        self.SelectedItem = null;
+                    }
+
+                    self.Refresh();
+                    self.View.Grid1LoopVerticalScrollRect.Refresh();
+                }
+            }
+        }
+
+        private static void RefreshSellButton(this UIFormBag1 self)
+        {
+            InventoryDataComponent inventoryDataComponent = self.Root().GetInventoryDataComponent();
+            self.View.SellExButton.interactable = !self.IsSelling &&
+                    inventoryDataComponent.CanSell(self.SelectedItem);
         }
     }
 }

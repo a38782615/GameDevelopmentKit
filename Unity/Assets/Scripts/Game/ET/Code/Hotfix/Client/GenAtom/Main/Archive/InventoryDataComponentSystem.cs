@@ -5,6 +5,7 @@ namespace ET.Client
 {
     [EntitySystemOf(typeof(InventoryDataComponent))]
     [FriendOf(typeof(InventoryDataComponent))]
+    [FriendOf(typeof(PlayerData))]
     [FriendOfAttribute(typeof(ET.Client.ArchiveMgrComponent))]
 
     public static partial class InventoryDataComponentSystem
@@ -156,6 +157,94 @@ namespace ET.Client
         {
             self.EnsureInventoryItemCache();
             return self.SlotToItemId;
+        }
+
+        public static bool CanSell(this InventoryDataComponent self, InventoryItemData itemData)
+        {
+            self.EnsureInventoryItemCache();
+            if (itemData == null || itemData.Count <= 0 || !self.Items.Contains(itemData))
+            {
+                return false;
+            }
+
+            DRItems itemConfig = Tables.Instance?.DTItems?.GetOrDefault(itemData.ConfigId);
+            return itemConfig != null && itemConfig.Diamond >= 0;
+        }
+
+        public static bool TrySell(
+            this InventoryDataComponent self,
+            InventoryItemData itemData,
+            PlayerData playerData,
+            out int previousItemCount,
+            out int previousPlayerDiamond,
+            out int previousItemIndex,
+            out bool itemRemoved)
+        {
+            previousItemCount = 0;
+            previousPlayerDiamond = 0;
+            previousItemIndex = -1;
+            itemRemoved = false;
+            if (playerData == null || !self.CanSell(itemData))
+            {
+                return false;
+            }
+
+            DRItems itemConfig = Tables.Instance.DTItems.Get(itemData.ConfigId);
+            previousItemCount = itemData.Count;
+            previousPlayerDiamond = playerData.Diamond;
+            previousItemIndex = self.Items.IndexOf(itemData);
+
+            itemData.Count--;
+            playerData.Diamond += itemConfig.Diamond;
+            if (itemData.Count > 0)
+            {
+                return true;
+            }
+
+            itemRemoved = self.Items.Remove(itemData);
+            if (itemRemoved && itemData.IsEquipped)
+            {
+                self.SlotToItemId.Remove(itemData.EquipSlot);
+                self.RefreshUnitEquipAttributes();
+            }
+
+            return itemRemoved;
+        }
+
+        public static void RollbackSell(
+            this InventoryDataComponent self,
+            InventoryItemData itemData,
+            PlayerData playerData,
+            int previousItemCount,
+            int previousPlayerDiamond,
+            int previousItemIndex,
+            bool itemRemoved)
+        {
+            if (playerData != null)
+            {
+                playerData.Diamond = previousPlayerDiamond;
+            }
+
+            if (itemData == null)
+            {
+                return;
+            }
+
+            itemData.Count = previousItemCount;
+            if (!itemRemoved || self.Items.Contains(itemData))
+            {
+                return;
+            }
+
+            int insertIndex = previousItemIndex < 0 || previousItemIndex > self.Items.Count
+                ? self.Items.Count
+                : previousItemIndex;
+            self.Items.Insert(insertIndex, itemData);
+            if (itemData.IsEquipped)
+            {
+                self.SlotToItemId[itemData.EquipSlot] = itemData.Id;
+                self.RefreshUnitEquipAttributes();
+            }
         }
 
         private static void RebuildInventoryItemCache(this InventoryDataComponent self, List<InventoryItemData> itemDatas)

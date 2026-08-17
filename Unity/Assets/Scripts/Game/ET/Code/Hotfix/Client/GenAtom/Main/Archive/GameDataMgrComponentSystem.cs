@@ -190,6 +190,34 @@ namespace ET.Client
             });
         }
 
+        public static async UniTask SaveInventorySaleData(
+            this GameDataMgrComponent self,
+            PlayerData playerData,
+            InventoryItemData inventoryItem,
+            bool itemRemoved)
+        {
+            ArchiveComponent archiveComponent = self.GetArchiveComponent();
+            if (archiveComponent == null || playerData == null || inventoryItem == null)
+            {
+                throw new InvalidOperationException("Inventory sale data cannot be saved without an active archive, player data and inventory item.");
+            }
+
+            await archiveComponent.ExecuteTransaction(database =>
+            {
+                database.GetCollection<PlayerData>(nameof(PlayerData)).Upsert(playerData);
+                ILiteCollection<InventoryItemData> inventoryItems =
+                        database.GetCollection<InventoryItemData>(nameof(InventoryItemData));
+                if (itemRemoved)
+                {
+                    inventoryItems.Delete(inventoryItem.Id);
+                }
+                else
+                {
+                    inventoryItems.Upsert(inventoryItem);
+                }
+            });
+        }
+
         private static void EnsureDataComponents(this GameDataMgrComponent self)
         {
             self.GetPlayerDataComponent();

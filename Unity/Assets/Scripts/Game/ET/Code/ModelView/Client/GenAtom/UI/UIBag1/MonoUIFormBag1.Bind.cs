@@ -20,6 +20,8 @@ namespace ET.Client
         private UnityEngine.UI.Image m_ItemTemp1Image;
         [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
         private Game.ExButton m_RetunExButton;
+        [UnityEngine.SerializeField, Sirenix.OdinInspector.FoldoutGroup("Binding Targets"), Sirenix.OdinInspector.ReadOnly]
+        private Game.ExButton m_SellExButton;
 
         public UnityEngine.RectTransform CenterRectTransform => this.m_CenterRectTransform;
         public Game.ExLoopVerticalScrollRect Grid0LoopVerticalScrollRect => this.m_Grid0LoopVerticalScrollRect;
@@ -29,6 +31,7 @@ namespace ET.Client
         public Game.ExButton ItemTemp1ExButton => this.m_ItemTemp1ExButton;
         public UnityEngine.UI.Image ItemTemp1Image => this.m_ItemTemp1Image;
         public Game.ExButton RetunExButton => this.m_RetunExButton;
+        public Game.ExButton SellExButton => this.m_SellExButton;
 
 #if UNITY_EDITOR
         [Sirenix.OdinInspector.OnInspectorGUI, Sirenix.OdinInspector.PropertyOrder(-99999), Sirenix.OdinInspector.ShowIf(nameof(HasMissingTargets))]
@@ -47,6 +50,7 @@ namespace ET.Client
             if (this.m_ItemTemp1ExButton == null) return true;
             if (this.m_ItemTemp1Image == null) return true;
             if (this.m_RetunExButton == null) return true;
+            if (this.m_SellExButton == null) return true;
             return false;
         }
 #endif
