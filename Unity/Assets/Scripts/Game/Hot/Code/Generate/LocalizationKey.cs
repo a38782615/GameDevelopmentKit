@@ -34,6 +34,11 @@ namespace Game.Hot
         public const string Key_AskQuitGame_Title = "AskQuitGame.Title";
 
         /// <summary>
+        /// 卖出
+        /// </summary>
+        public const string Key_Bag_Sell = "Bag_Sell";
+
+        /// <summary>
         /// 背包
         /// </summary>
         public const string Key_Btm_Bag = "Btm_Bag";
